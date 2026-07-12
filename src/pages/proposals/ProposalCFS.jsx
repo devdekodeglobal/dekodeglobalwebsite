@@ -125,7 +125,7 @@ const ProposalCFS = () => {
             </div>
 
             <div className="svg-container">
-              <svg width="100%" height="1200" viewBox="100 0 800 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="100%" height="1300" viewBox="100 0 800 1300" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="primaryGrad" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stopColor="#053364"/>
@@ -185,81 +185,81 @@ const ProposalCFS = () => {
 
                 {/* PATH 1: STOCK ADEQUATE (NO) */}
                 <g className={getPathClass("flow-element path-skip")}>
-                  <path d="M340 650 H180 V1145 H350" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
+                  <path d="M340 650 H180 V1240 H350" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
                   <rect x="240" y="639" width="40" height="22" rx="11" fill="#ef4444" />
                   <text x="260" y="654" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">NO</text>
                 </g>
 
                 {/* COMMON PATH (Deficit YES) */}
                 <g className={getPathClass("flow-element path-match path-exception path-stockout")}>
-                  <path d="M450 690 V730" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)"/>
-                  <rect x="430" y="699" width="40" height="22" rx="11" fill="#10b981" />
-                  <text x="450" y="714" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">YES</text>
+                  <path d="M450 690 V750" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)"/>
+                  <rect x="430" y="709" width="40" height="22" rx="11" fill="#10b981" />
+                  <text x="450" y="724" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">YES</text>
 
                   {/* 8. Diamond: Exact SKU Found? */}
-                  <polygon points="450,730 560,770 450,810 340,770" fill="var(--bg-card)" stroke="#FEB611" strokeWidth="2"/>
-                  <text x="450" y="774" className="svg-node-text" textAnchor="middle">Exact SKU Found?</text>
+                  <polygon points="450,750 560,790 450,830 340,790" fill="var(--bg-card)" stroke="#FEB611" strokeWidth="2"/>
+                  <text x="450" y="794" className="svg-node-text" textAnchor="middle">Exact SKU Found?</text>
                 </g>
 
                 {/* PATH 2: AUTO-ALLOCATE (Exact SKU Found YES) */}
                 <g className={getPathClass("flow-element path-match")}>
-                  <path d="M560 770 H760 V955" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
-                  <rect x="620" y="759" width="40" height="22" rx="11" fill="#10b981" />
-                  <text x="640" y="774" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">YES</text>
+                  <path d="M560 790 H760 V1015" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
+                  <rect x="620" y="779" width="40" height="22" rx="11" fill="#10b981" />
+                  <text x="640" y="794" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">YES</text>
                 </g>
 
                 {/* COMMON PATH (Exact SKU Found NO) */}
                 <g className={getPathClass("flow-element path-exception path-stockout")}>
-                  <path d="M450 810 V850" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)"/>
-                  <rect x="430" y="819" width="40" height="22" rx="11" fill="#ef4444" />
-                  <text x="450" y="834" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">NO</text>
+                  <path d="M450 830 V890" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)"/>
+                  <rect x="430" y="849" width="40" height="22" rx="11" fill="#ef4444" />
+                  <text x="450" y="864" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">NO</text>
 
                   {/* 9. Process: Find Substitute */}
-                  <rect x="300" y="850" width="300" height="50" rx="8" fill="var(--bg-card)" stroke="#cbd5e1" strokeWidth="2"/>
-                  <text x="450" y="873" className="svg-node-text" textAnchor="middle">Find Substitute</text>
-                  <text x="450" y="890" fill="#64748b" fontSize="10" textAnchor="middle">Score: Heuristics &amp; Other Metrics</text>
-                  <path d="M450 900 V940" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)"/>
+                  <rect x="300" y="890" width="300" height="50" rx="8" fill="var(--bg-card)" stroke="#cbd5e1" strokeWidth="2"/>
+                  <text x="450" y="913" className="svg-node-text" textAnchor="middle">Find Substitute</text>
+                  <text x="450" y="930" fill="#64748b" fontSize="12" textAnchor="middle">Score: Heuristics &amp; Other Metrics</text>
+                  <path d="M450 940 V1000" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)"/>
 
                   {/* 10. Diamond: Perfect Substitute? */}
-                  <polygon points="450,940 560,980 450,1020 340,980" fill="var(--bg-card)" stroke="#FEB611" strokeWidth="2"/>
-                  <text x="450" y="984" className="svg-node-text" textAnchor="middle">Perfect Substitute?</text>
+                  <polygon points="450,1000 560,1040 450,1080 340,1040" fill="var(--bg-card)" stroke="#FEB611" strokeWidth="2"/>
+                  <text x="450" y="1044" className="svg-node-text" textAnchor="middle">Perfect Substitute?</text>
                 </g>
 
                 {/* PATH 3: SUBSTITUTE MATCH (Perfect Substitute YES) */}
                 <g className={getPathClass("flow-element path-exception")}>
-                  <path d="M560 980 H660" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
-                  <rect x="580" y="969" width="40" height="22" rx="11" fill="#10b981" />
-                  <text x="600" y="984" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">YES</text>
+                  <path d="M560 1040 H660" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
+                  <rect x="580" y="1029" width="40" height="22" rx="11" fill="#10b981" />
+                  <text x="600" y="1044" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">YES</text>
                 </g>
 
                 {/* PATHWAY TO ALLOCATION & DISPATCH (SHARED BY 2 & 3) */}
                 <g className={getPathClass("flow-element path-match path-exception")}>
                   {/* 11. Allocate SKU */}
-                  <rect x="660" y="955" width="200" height="50" rx="8" fill="url(#primaryGrad)"/>
-                  <text x="760" y="985" className="svg-white-text" textAnchor="middle">Allocate SKU</text>
-                  <path d="M760 1005 V1060" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)"/>
+                  <rect x="660" y="1015" width="200" height="50" rx="8" fill="url(#primaryGrad)"/>
+                  <text x="760" y="1045" className="svg-white-text" textAnchor="middle">Allocate SKU</text>
+                  <path d="M760 1065 V1140" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)"/>
 
                   {/* 12. Dispatch Order */}
-                  <rect x="640" y="1060" width="240" height="50" rx="8" fill="var(--bg-card)" stroke="#10b981" strokeWidth="2"/>
-                  <text x="760" y="1090" className="svg-node-text" textAnchor="middle">Dispatch Order Generated</text>
-                  <path d="M760 1110 V1145 H550" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
+                  <rect x="640" y="1140" width="240" height="50" rx="8" fill="var(--bg-card)" stroke="#10b981" strokeWidth="2"/>
+                  <text x="760" y="1170" className="svg-node-text" textAnchor="middle">Dispatch Order Generated</text>
+                  <path d="M760 1190 V1240 H550" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
                 </g>
 
                 {/* PATH 4: STOCKOUT (Perfect Substitute NO) */}
                 <g className={getPathClass("flow-element path-stockout")}>
-                  <path d="M450 1020 V1060" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)"/>
-                  <rect x="430" y="1029" width="40" height="22" rx="11" fill="#ef4444" />
-                  <text x="450" y="1044" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">NO</text>
-                  <rect x="330" y="1060" width="240" height="45" rx="8" fill="var(--bg-card)" stroke="#ef4444" strokeWidth="2"/>
-                  <text x="450" y="1087" className="svg-node-text" textAnchor="middle">Report Generated</text>
-                  <path d="M450 1105 V1120" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)"/>
+                  <path d="M450 1080 V1140" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)"/>
+                  <rect x="430" y="1099" width="40" height="22" rx="11" fill="#ef4444" />
+                  <text x="450" y="1114" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">NO</text>
+                  <rect x="330" y="1140" width="240" height="45" rx="8" fill="var(--bg-card)" stroke="#ef4444" strokeWidth="2"/>
+                  <text x="450" y="1167" className="svg-node-text" textAnchor="middle">Report Generated</text>
+                  <path d="M450 1185 V1215" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)"/>
                 </g>
 
                 {/* COMMON END NODE */}
                 <g className={getPathClass("flow-element path-skip path-match path-exception path-stockout")}>
                   {/* 13. END */}
-                  <rect x="350" y="1120" width="200" height="50" rx="25" fill="#053364" />
-                  <text x="450" y="1150" className="svg-white-text" textAnchor="middle">END</text>
+                  <rect x="350" y="1215" width="200" height="50" rx="25" fill="#053364" />
+                  <text x="450" y="1245" className="svg-white-text" textAnchor="middle">END</text>
                 </g>
               </svg>
             </div>
