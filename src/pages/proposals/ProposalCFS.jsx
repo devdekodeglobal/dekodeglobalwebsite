@@ -125,7 +125,7 @@ const ProposalCFS = () => {
             </div>
 
             <div className="svg-container">
-              <svg width="100%" height="1200" viewBox="0 0 1000 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="100%" height="1200" viewBox="150 0 700 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="primaryGrad" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stopColor="#053364"/>
@@ -174,12 +174,12 @@ const ProposalCFS = () => {
                   <path d="M450 490 V520" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)"/>
 
                   {/* 6. Generate Report */}
-                  <rect x="280" y="520" width="340" height="50" rx="8" fill="url(#primaryGrad)"/>
+                  <rect x="250" y="520" width="400" height="50" rx="8" fill="url(#primaryGrad)"/>
                   <text x="450" y="550" className="svg-white-text" textAnchor="middle">Generate Allocation/Replenishment Report</text>
                   <path d="M450 570 V610" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)"/>
 
                   {/* 7. Diamond: Deficit Exists? */}
-                  <polygon points="450,610 540,650 450,690 360,650" fill="var(--bg-card)" stroke="#FEB611" strokeWidth="2"/>
+                  <polygon points="450,610 560,650 450,690 340,650" fill="var(--bg-card)" stroke="#FEB611" strokeWidth="2"/>
                   <text x="450" y="654" className="svg-node-text" textAnchor="middle">Deficit Exists?</text>
                 </g>
 
@@ -197,13 +197,13 @@ const ProposalCFS = () => {
                   <text x="450" y="714" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">YES</text>
 
                   {/* 8. Diamond: Exact SKU Found? */}
-                  <polygon points="450,730 540,770 450,810 360,770" fill="var(--bg-card)" stroke="#FEB611" strokeWidth="2"/>
+                  <polygon points="450,730 560,770 450,810 340,770" fill="var(--bg-card)" stroke="#FEB611" strokeWidth="2"/>
                   <text x="450" y="774" className="svg-node-text" textAnchor="middle">Exact SKU Found?</text>
                 </g>
 
                 {/* PATH 2: AUTO-ALLOCATE (Exact SKU Found YES) */}
                 <g className={getPathClass("flow-element path-match")}>
-                  <path d="M540 770 H700 V955" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
+                  <path d="M560 770 H700 V955" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
                   <rect x="600" y="759" width="40" height="22" rx="11" fill="#10b981" />
                   <text x="620" y="774" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">YES</text>
                 </g>
@@ -221,13 +221,13 @@ const ProposalCFS = () => {
                   <path d="M450 900 V940" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)"/>
 
                   {/* 10. Diamond: Perfect Substitute? */}
-                  <polygon points="450,940 540,980 450,1020 360,980" fill="var(--bg-card)" stroke="#FEB611" strokeWidth="2"/>
+                  <polygon points="450,940 560,980 450,1020 340,980" fill="var(--bg-card)" stroke="#FEB611" strokeWidth="2"/>
                   <text x="450" y="984" className="svg-node-text" textAnchor="middle">Perfect Substitute?</text>
                 </g>
 
                 {/* PATH 3: SUBSTITUTE MATCH (Perfect Substitute YES) */}
                 <g className={getPathClass("flow-element path-exception")}>
-                  <path d="M540 980 H620" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
+                  <path d="M560 980 H600" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
                   <rect x="560" y="969" width="40" height="22" rx="11" fill="#10b981" />
                   <text x="580" y="984" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">YES</text>
                 </g>
@@ -235,12 +235,12 @@ const ProposalCFS = () => {
                 {/* PATHWAY TO ALLOCATION & DISPATCH (SHARED BY 2 & 3) */}
                 <g className={getPathClass("flow-element path-match path-exception")}>
                   {/* 11. Allocate SKU */}
-                  <rect x="620" y="955" width="160" height="50" rx="8" fill="url(#primaryGrad)"/>
+                  <rect x="600" y="955" width="200" height="50" rx="8" fill="url(#primaryGrad)"/>
                   <text x="700" y="985" className="svg-white-text" textAnchor="middle">Allocate SKU</text>
                   <path d="M700 1005 V1060" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)"/>
 
                   {/* 12. Dispatch Order */}
-                  <rect x="610" y="1060" width="180" height="50" rx="8" fill="var(--bg-card)" stroke="#10b981" strokeWidth="2"/>
+                  <rect x="580" y="1060" width="240" height="50" rx="8" fill="var(--bg-card)" stroke="#10b981" strokeWidth="2"/>
                   <text x="700" y="1090" className="svg-node-text" textAnchor="middle">Dispatch Order Generated</text>
                   <path d="M700 1110 V1145 H550" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
                 </g>
@@ -301,7 +301,7 @@ const ProposalCFS = () => {
           <div className="flowchart-section">
             
             <div className="svg-container">
-              <svg width="100%" height="1100" viewBox="0 0 1100 1100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="100%" height="1100" viewBox="250 0 780 1100" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="painGrad" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stopColor="#f97316"/>
@@ -367,11 +367,11 @@ const ProposalCFS = () => {
                 <path d="M450 810 V860" stroke="#94a3b8" strokeWidth="2" markerEnd="url(#arrow)"/>
 
                 {/* 9. Diamond: More Grade A Stores? */}
-                <polygon points="450,860 560,900 450,940 340,900" fill="var(--bg-card)" stroke="#FEB611" strokeWidth="2"/>
+                <polygon points="450,860 580,900 450,940 320,900" fill="var(--bg-card)" stroke="#FEB611" strokeWidth="2"/>
                 <text x="450" y="904" className="svg-node-text" textAnchor="middle">More Grade A Stores?</text>
 
                 {/* YES Path (Next Store Loop) */}
-                <path d="M560 900 H980 V60 H600" stroke="#FEB611" strokeWidth="2" strokeDasharray="8 8" fill="none" markerEnd="url(#arrow)"/>
+                <path d="M580 900 H980 V60 H600" stroke="#FEB611" strokeWidth="2" strokeDasharray="8 8" fill="none" markerEnd="url(#arrow)"/>
                 <rect x="580" y="889" width="40" height="22" rx="11" fill="#10b981" />
                 <text x="600" y="904" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">YES</text>
                 <text x="970" y="480" fill="#FEB611" fontSize="12" fontWeight="700" textAnchor="middle" transform="rotate(-90 970 480)">NEXT STORE</text>
