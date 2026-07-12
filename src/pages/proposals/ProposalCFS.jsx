@@ -125,7 +125,7 @@ const ProposalCFS = () => {
             </div>
 
             <div className="svg-container">
-              <svg width="100%" height="1200" viewBox="150 0 700 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="100%" height="1200" viewBox="100 0 800 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="primaryGrad" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stopColor="#053364"/>
@@ -185,9 +185,9 @@ const ProposalCFS = () => {
 
                 {/* PATH 1: STOCK ADEQUATE (NO) */}
                 <g className={getPathClass("flow-element path-skip")}>
-                  <path d="M360 650 H200 V1145 H350" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
-                  <rect x="250" y="639" width="40" height="22" rx="11" fill="#ef4444" />
-                  <text x="270" y="654" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">NO</text>
+                  <path d="M340 650 H180 V1145 H350" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
+                  <rect x="240" y="639" width="40" height="22" rx="11" fill="#ef4444" />
+                  <text x="260" y="654" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">NO</text>
                 </g>
 
                 {/* COMMON PATH (Deficit YES) */}
@@ -203,9 +203,9 @@ const ProposalCFS = () => {
 
                 {/* PATH 2: AUTO-ALLOCATE (Exact SKU Found YES) */}
                 <g className={getPathClass("flow-element path-match")}>
-                  <path d="M560 770 H700 V955" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
-                  <rect x="600" y="759" width="40" height="22" rx="11" fill="#10b981" />
-                  <text x="620" y="774" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">YES</text>
+                  <path d="M560 770 H760 V955" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
+                  <rect x="620" y="759" width="40" height="22" rx="11" fill="#10b981" />
+                  <text x="640" y="774" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">YES</text>
                 </g>
 
                 {/* COMMON PATH (Exact SKU Found NO) */}
@@ -227,22 +227,22 @@ const ProposalCFS = () => {
 
                 {/* PATH 3: SUBSTITUTE MATCH (Perfect Substitute YES) */}
                 <g className={getPathClass("flow-element path-exception")}>
-                  <path d="M560 980 H600" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
-                  <rect x="560" y="969" width="40" height="22" rx="11" fill="#10b981" />
-                  <text x="580" y="984" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">YES</text>
+                  <path d="M560 980 H660" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
+                  <rect x="580" y="969" width="40" height="22" rx="11" fill="#10b981" />
+                  <text x="600" y="984" fill="white" fontSize="11" fontWeight="600" textAnchor="middle">YES</text>
                 </g>
 
                 {/* PATHWAY TO ALLOCATION & DISPATCH (SHARED BY 2 & 3) */}
                 <g className={getPathClass("flow-element path-match path-exception")}>
                   {/* 11. Allocate SKU */}
-                  <rect x="600" y="955" width="200" height="50" rx="8" fill="url(#primaryGrad)"/>
-                  <text x="700" y="985" className="svg-white-text" textAnchor="middle">Allocate SKU</text>
-                  <path d="M700 1005 V1060" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)"/>
+                  <rect x="660" y="955" width="200" height="50" rx="8" fill="url(#primaryGrad)"/>
+                  <text x="760" y="985" className="svg-white-text" textAnchor="middle">Allocate SKU</text>
+                  <path d="M760 1005 V1060" stroke="#64748b" strokeWidth="2" markerEnd="url(#arrow)"/>
 
                   {/* 12. Dispatch Order */}
-                  <rect x="580" y="1060" width="240" height="50" rx="8" fill="var(--bg-card)" stroke="#10b981" strokeWidth="2"/>
-                  <text x="700" y="1090" className="svg-node-text" textAnchor="middle">Dispatch Order Generated</text>
-                  <path d="M700 1110 V1145 H550" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
+                  <rect x="640" y="1060" width="240" height="50" rx="8" fill="var(--bg-card)" stroke="#10b981" strokeWidth="2"/>
+                  <text x="760" y="1090" className="svg-node-text" textAnchor="middle">Dispatch Order Generated</text>
+                  <path d="M760 1110 V1145 H550" stroke="#64748b" strokeWidth="2" fill="none" markerEnd="url(#arrow)"/>
                 </g>
 
                 {/* PATH 4: STOCKOUT (Perfect Substitute NO) */}
