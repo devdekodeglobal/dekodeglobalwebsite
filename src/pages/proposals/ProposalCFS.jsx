@@ -60,7 +60,7 @@ const ProposalCFS = () => {
     <div className="workflow-container" style={{paddingTop: '120px'}}>
       
       <div style={{textAlign: 'center', marginBottom: '40px'}}>
-        <h1 style={{color: '#053364', fontSize: '36px', margin: '0 0 8px 0', fontWeight: '800', letterSpacing: '-0.5px'}}>Center For Sight</h1>
+        <h1 style={{color: '#053364', fontSize: '36px', margin: '0 0 8px 0', fontWeight: '800', letterSpacing: '-0.5px'}}>Centre For Sight</h1>
         <p style={{color: '#475569', fontSize: '20px', margin: '0', fontWeight: '500'}}>Inventory &amp; Distribution System</p>
       </div>
 
