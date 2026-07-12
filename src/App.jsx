@@ -32,6 +32,7 @@ const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 const FoodManufacture = lazy(() => import('./pages/FoodManufacture'));
 const PrimarySchool = lazy(() => import('./pages/PrimarySchool'));
+const ProposalCFS = lazy(() => import('./pages/proposals/ProposalCFS'));
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/case-study/food-manufacture" element={<FoodManufacture />} />
               <Route path="/case-study/primary-school" element={<PrimarySchool />} />
+              <Route path="/proposals/cfs-9x2a4p" element={<ProposalCFS />} />
             </Routes>
           </Suspense>
         </main>
