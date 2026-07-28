@@ -184,6 +184,25 @@
   left: -28px;
 }
 
+.sidebar-nav-btn.completed-step::before {
+  content: '✓';
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 10px;
+  background-color: #3b82f6;
+  border-color: #ffffff;
+  width: 14px;
+  height: 14px;
+  left: -30px;
+}
+
+.sidebar-nav-btn.completed-step.active::before {
+  background-color: #003b7a;
+  border-color: #eff6ff;
+}
+
 .proposal-main-content {
   flex: 1;
   padding: 40px;

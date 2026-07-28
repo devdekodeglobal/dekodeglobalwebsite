@@ -69,19 +69,19 @@ const ProposalCFS = () => {
           </div>
 
           <button 
-            className={`sidebar-nav-btn ${view === 'manual' ? 'active' : ''}`}
+            className={`sidebar-nav-btn completed-step ${view === 'manual' ? 'active' : ''}`}
             onClick={() => setView('manual')}
           >
             Current Process: Manual
           </button>
           <button 
-            className={`sidebar-nav-btn ${view === 'automated' ? 'active' : ''}`}
+            className={`sidebar-nav-btn completed-step ${view === 'automated' ? 'active' : ''}`}
             onClick={() => setView('automated')}
           >
             Proposed Process: OptiFlow
           </button>
           <button 
-            className={`sidebar-nav-btn ${view === 'prototype' ? 'active' : ''}`}
+            className={`sidebar-nav-btn completed-step ${view === 'prototype' ? 'active' : ''}`}
             onClick={() => setView('prototype')}
           >
             Prototype
@@ -90,7 +90,7 @@ const ProposalCFS = () => {
             className={`sidebar-nav-btn ${view === 'logic' ? 'active' : ''}`}
             onClick={() => setView('logic')}
           >
-            Detailed Logic Flow
+            Allocation Logic Flow
           </button>
         </div>
       </div>
