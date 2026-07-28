@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './ProposalCFS.css';
+import prototypeImage from './image.png';
 
 const ProposalCFS = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -57,29 +58,421 @@ const ProposalCFS = () => {
   }
 
   return (
-    <div className="workflow-container" style={{paddingTop: '120px'}}>
-      
-      <div style={{textAlign: 'center', marginBottom: '40px'}}>
-        <h1 style={{color: '#053364', fontSize: '36px', margin: '0 0 8px 0', fontWeight: '800', letterSpacing: '-0.5px'}}>Centre For Sight</h1>
-        <p style={{color: '#475569', fontSize: '20px', margin: '0', fontWeight: '500'}}>Inventory &amp; Distribution System</p>
+    <div className="proposal-page-container">
+      <div className="proposal-layout-wrapper">
+        {/* SIDEBAR */}
+        <div className="proposal-sidebar">
+          
+        <div className="journey-nav">
+          <div className="journey-title">
+            Discovery
+          </div>
+
+          <button 
+            className={`sidebar-nav-btn ${view === 'manual' ? 'active' : ''}`}
+            onClick={() => setView('manual')}
+          >
+            Current Process: Manual
+          </button>
+          <button 
+            className={`sidebar-nav-btn ${view === 'automated' ? 'active' : ''}`}
+            onClick={() => setView('automated')}
+          >
+            Proposed Process: OptiFlow
+          </button>
+          <button 
+            className={`sidebar-nav-btn ${view === 'prototype' ? 'active' : ''}`}
+            onClick={() => setView('prototype')}
+          >
+            Prototype
+          </button>
+          <button 
+            className={`sidebar-nav-btn ${view === 'logic' ? 'active' : ''}`}
+            onClick={() => setView('logic')}
+          >
+            Detailed Logic Flow
+          </button>
+        </div>
       </div>
 
-      {/* Unified Segmented Control Toggle */}
-      <div className="segmented-control">
-        <button 
-          className={`segmented-btn ${view === 'manual' ? 'active' : ''}`} 
-          onClick={() => setView('manual')}
-        >
-          Current Process: Manual
-        </button>
-        <button 
-          className={`segmented-btn ${view === 'automated' ? 'active' : ''}`} 
-          onClick={() => setView('automated')}
-        >
-          Proposed Process: OptiFlow
-        </button>
-      </div>
-      
+      {/* MAIN CONTENT */}
+      <div className="proposal-main-content">
+        
+        {/* PROPOSAL TOP HEADER */}
+        <div className="proposal-top-header" style={{ textAlign: 'center' }}>
+          <h1 style={{color: '#053364', fontSize: '36px', margin: '0 0 8px 0', fontWeight: '800', letterSpacing: '-0.5px'}}>Centre For Sight</h1>
+          <p style={{color: '#475569', fontSize: '20px', margin: '0', fontWeight: '500'}}>Inventory &amp; Distribution System</p>
+        </div>
+        
+        {view === 'prototype' && (
+          <div className="prototype-view-container" style={{
+            maxWidth: '1000px',
+            margin: '24px auto 40px auto',
+            padding: '48px',
+            background: 'linear-gradient(145deg, #ffffff, #f8fafc)',
+            borderRadius: '24px',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.05)',
+            border: '1px solid rgba(255,255,255,0.8)',
+            display: 'flex',
+            gap: '48px',
+            alignItems: 'center',
+            textAlign: 'left'
+          }}>
+            {/* Left Column: Content */}
+            <div style={{ flex: '1', minWidth: '350px' }}>
+              <h2 style={{
+                fontSize: '32px',
+                fontWeight: '800',
+                color: '#0b1d3a',
+                marginBottom: '16px',
+                letterSpacing: '-0.5px'
+              }}>OptiFlow Interactive Prototype</h2>
+              
+              <p style={{
+                fontSize: '16px',
+                color: '#475569',
+                lineHeight: '1.6',
+                marginBottom: '32px'
+              }}>
+                Experience the future of inventory distribution. Our working prototype demonstrates the automated allocation engine, smart filtering, and real-time dashboard analytics.
+              </p>
+              
+              <a 
+                href="https://optiflow-poc.vercel.app/allocation" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  padding: '14px 32px',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  color: '#ffffff',
+                  backgroundColor: '#053364',
+                  borderRadius: '50px',
+                  textDecoration: 'none',
+                  boxShadow: '0 10px 25px -5px rgba(5, 51, 100, 0.4)',
+                  transition: 'all 0.3s ease',
+                  marginBottom: '32px'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 15px 35px -5px rgba(5, 51, 100, 0.5)';
+                  e.currentTarget.style.backgroundColor = '#00254d';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 10px 25px -5px rgba(5, 51, 100, 0.4)';
+                  e.currentTarget.style.backgroundColor = '#053364';
+                }}
+              >
+                Launch Prototype 
+                <span style={{marginLeft: '12px', fontSize: '18px'}}>→</span>
+              </a>
+              
+              <div style={{ padding: '24px', backgroundColor: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '12px', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px' }}>Demo Access Credentials</div>
+                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                  <div style={{ flex: 1, backgroundColor: '#ffffff', padding: '12px 16px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', border: '1px solid #f1f5f9', minWidth: '130px' }}>
+                    <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px', fontWeight: '600' }}>Admin</div>
+                    <div style={{ fontSize: '15px', color: '#053364', fontWeight: '800', fontFamily: 'monospace' }}>dekode1234</div>
+                  </div>
+                  <div style={{ flex: 1, backgroundColor: '#ffffff', padding: '12px 16px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', border: '1px solid #f1f5f9', minWidth: '130px' }}>
+                    <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px', fontWeight: '600' }}>User</div>
+                    <div style={{ fontSize: '15px', color: '#053364', fontWeight: '800', fontFamily: 'monospace' }}>dekode5678</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Image */}
+            <div style={{ flex: '1', display: 'flex', justifyContent: 'center' }}>
+              <a 
+                href="https://optiflow-poc.vercel.app/allocation" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{ display: 'block', width: '100%' }}
+              >
+                <img 
+                  src={prototypeImage} 
+                  alt="OptiFlow Prototype Dashboard" 
+                  style={{
+                    width: '100%',
+                    borderRadius: '16px',
+                    boxShadow: '0 15px 35px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
+                    border: '1px solid #e2e8f0',
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    cursor: 'pointer'
+                  }} 
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.03)';
+                    e.currentTarget.style.boxShadow = '0 25px 50px -12px rgba(0,0,0,0.15)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = '0 15px 35px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)';
+                  }}
+                />
+              </a>
+            </div>
+          </div>
+        )}
+
+
+      {/* DETAILED LOGIC FLOW VIEW */}
+      {view === 'logic' && (
+        <div id="logic-view">
+          <div className="header-section" style={{textAlign: 'center', marginBottom: '40px'}}>
+            <h1 style={{fontSize: '36px', fontWeight: '800', color: '#0b1d3a', marginBottom: '12px'}}>OptiFlow Allocation Process Flow</h1>
+            <p style={{fontSize: '18px', color: '#475569', fontWeight: '500'}}>Automated Intelligent Allocation Workflow.</p>
+            
+            <div style={{textAlign: 'left', background: '#f0fdf4', borderLeft: '4px solid #15803d', padding: '24px', borderRadius: '8px', marginTop: '24px', maxWidth: '600px', margin: '24px auto 0 auto'}}>
+              <h3 style={{marginTop: 0, marginBottom: '12px', color: '#15803d', fontSize: '18px', fontWeight: '800', textAlign: 'center'}}>Global Constraints Key</h3>
+              <ul style={{margin: 0, paddingLeft: '20px', fontSize: '14px', color: '#166534', lineHeight: '1.8'}}>
+                <li style={{marginBottom: '8px'}}><strong>Max 3 Colors/Model:</strong> Limits assortment redundancy per model.</li>
+                <li style={{marginBottom: '8px'}}><strong>Max 2 Units/SKU:</strong> Caps dispatch depth to control store run.</li>
+                <li style={{marginBottom: '0px'}}><strong>Min 85% Brand Uniqueness:</strong> Maintained across active store displays.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="flowchart-section">
+            <h2 style={{marginTop: '0', marginBottom: '8px'}}>Automated Decision Workflow</h2>
+            <p style={{color: 'var(--text-secondary)', marginBottom: '24px'}}>End-to-end logic for how the system processes store schedules, calculates deficits, and routes exceptions.</p>
+
+            {/* Dynamic Interactive Filters */}
+            <div className="filter-btn-group" style={{marginBottom: '30px', display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap'}}>
+              <button className={`filter-btn ${activePath === 'all' ? 'active' : ''}`} onClick={() => highlightPath('all')}>Show Full Workflow</button>
+              <button className={`filter-btn ${activePath === 'path-skip' ? 'active' : ''}`} onClick={() => highlightPath('path-skip')}>Target Met (No Deficit)</button>
+              <button className={`filter-btn ${activePath === 'path-t1' ? 'active' : ''}`} onClick={() => highlightPath('path-t1')}>T1 Auto-Allocate</button>
+              <button className={`filter-btn ${activePath === 'path-t2' ? 'active' : ''}`} onClick={() => highlightPath('path-t2')}>T2 Auto-Allocate</button>
+              <button className={`filter-btn ${activePath === 'path-sub' ? 'active' : ''}`} onClick={() => highlightPath('path-sub')}>T3 Substitute Match</button>
+            </div>
+
+            <div className="svg-container">
+              <svg width="100%" height="1600" viewBox="0 0 1250 1600" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <marker id="arrow-logic" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#5a738e" />
+                  </marker>
+                  <marker id="arrow-orange-logic" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#f5a623" />
+                  </marker>
+                </defs>
+
+                {/* COMMON HEADER & NO-DEFICIT PATHS */}
+                <g className={getPathClass("flow-element path-skip path-t1 path-t2 path-sub path-loop")}>
+                  <path d="M625 95 V140" stroke="#5a738e" strokeWidth="2.5" markerEnd="url(#arrow-logic)"/>
+                  <path d="M625 195 V235" stroke="#5a738e" strokeWidth="2.5" markerEnd="url(#arrow-logic)"/>
+                  <path d="M625 290 V310" stroke="#5a738e" strokeWidth="2.5" markerEnd="url(#arrow-logic)"/>
+
+                  <rect x="495" y="40" width="260" height="55" rx="27.5" fill="#0f3a68" />
+                  <text x="625" y="63" className="svg-white-text" textAnchor="middle" fontSize="15" fontWeight="700">Start</text>
+                  <text x="625" y="79" className="svg-white-sub" textAnchor="middle" fontSize="11">OptiFlow Allocation Process</text>
+
+                  <rect x="465" y="140" width="320" height="55" rx="8" fill="#ffffff" stroke="#d9e2ec" strokeWidth="2"/>
+                  <text x="625" y="163" className="svg-node-text" textAnchor="middle" fontSize="13" fontWeight="700">Initialize &amp; Rank Stores</text>
+                  <text x="625" y="180" className="svg-sub-text" textAnchor="middle" fontSize="11">Grade Priority A, B, C &amp; Inner Lists</text>
+
+                  <rect x="465" y="235" width="320" height="55" rx="8" fill="#ffffff" stroke="#d9e2ec" strokeWidth="2"/>
+                  <text x="625" y="258" className="svg-node-text" textAnchor="middle" fontSize="13" fontWeight="700">Calculate Store Deficits</text>
+                  <text x="625" y="275" className="svg-sub-text" textAnchor="middle" fontSize="11">Deficit = Target (Facing+Depth) - SOH</text>
+
+                  <polygon points="625,310 715,360 625,410 535,360" fill="#ffffff" stroke="#f5a623" strokeWidth="2"/>
+                  <text x="625" y="364" className="svg-node-text" textAnchor="middle" fontSize="13" fontWeight="700">Is Deficit &gt; 0?</text>
+                </g>
+
+                {/* YES branch from Deficit Check */}
+                <g className={getPathClass("flow-element path-t1 path-t2 path-sub path-loop")}>
+                  <path d="M625 410 V500 H230 V555" stroke="#5a738e" strokeWidth="2.5" fill="none" markerEnd="url(#arrow-logic)"/>
+                  <rect x="210" y="490" width="40" height="22" rx="11" fill="#10b981" />
+                  <text x="230" y="505" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">YES</text>
+                </g>
+
+                {/* Deficit NO Branch */}
+                <g className={getPathClass("flow-element path-skip")}>
+                  <path d="M535 360 H30 V1510 H525" stroke="#5a738e" strokeWidth="2.5" fill="none" markerEnd="url(#arrow-logic)"/>
+                  <rect x="10" y="349" width="40" height="22" rx="11" fill="#ef4444" />
+                  <text x="30" y="364" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">NO</text>
+                </g>
+
+                {/* COLUMN 1: TIER 1 (Center x=230) */}
+                <g className={getPathClass("flow-element path-t1 path-t2 path-sub path-loop")}>
+                  <rect x="90" y="555" width="280" height="60" rx="8" fill="#ffffff" stroke="#cbd5e1" strokeWidth="2"/>
+                  <text x="230" y="579" className="svg-node-text" textAnchor="middle" fontSize="13" fontWeight="700">Tier 1: Recent Sales Match</text>
+                  <text x="230" y="598" className="svg-sub-text" textAnchor="middle" fontSize="11">Fetch exact SKUs sold in Last X Days</text>
+
+                  <path d="M230 615 V655" stroke="#5a738e" strokeWidth="2.5" markerEnd="url(#arrow-logic)"/>
+                  <polygon points="230,655 305,705 230,755 155,705" fill="#ffffff" stroke="#f5a623" strokeWidth="2"/>
+                  <text x="230" y="709" className="svg-node-text" textAnchor="middle" fontSize="12" fontWeight="700">Constraints Met?</text>
+
+                  <path d="M230 755 V795" stroke="#5a738e" strokeWidth="2.5" markerEnd="url(#arrow-logic)"/>
+                  <rect x="210" y="764" width="40" height="22" rx="11" fill="#10b981" />
+                  <text x="230" y="779" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">YES</text>
+
+                  <polygon points="230,795 305,845 230,895 155,845" fill="#ffffff" stroke="#f5a623" strokeWidth="2"/>
+                  <text x="230" y="849" className="svg-node-text" textAnchor="middle" fontSize="12" fontWeight="700">In Stock?</text>
+                </g>
+
+                {/* NO Stock in T1 -> Go to T2 */}
+                <g className={getPathClass("flow-element path-t2 path-sub")}>
+                  <path d="M305 845 H415 V585 H485" stroke="#5a738e" strokeWidth="2.5" fill="none" markerEnd="url(#arrow-logic)"/>
+                  <rect x="335" y="834" width="40" height="22" rx="11" fill="#ef4444" />
+                  <text x="355" y="849" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">NO</text>
+                </g>
+
+                <g className={getPathClass("flow-element path-t1 path-loop")}>
+                  <path d="M230 895 V955" stroke="#5a738e" strokeWidth="2.5" markerEnd="url(#arrow-logic)"/>
+                  <rect x="210" y="915" width="40" height="22" rx="11" fill="#10b981" />
+                  <text x="230" y="930" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">YES</text>
+
+                  <rect x="115" y="955" width="230" height="48" rx="8" fill="#ffffff" stroke="#cbd5e1" strokeWidth="2"/>
+                  <text x="230" y="984" className="svg-node-text" textAnchor="middle" fontSize="13" fontWeight="700">Allocate SKU &amp; Deficit</text>
+
+                  <path d="M230 1003 V1035" stroke="#5a738e" strokeWidth="2.5" markerEnd="url(#arrow-logic)"/>
+                  <polygon points="230,1035 305,1085 230,1135 155,1085" fill="#ffffff" stroke="#f5a623" strokeWidth="2"/>
+                  <text x="230" y="1089" className="svg-node-text" textAnchor="middle" fontSize="12" fontWeight="700">Filled?</text>
+
+                  <path d="M230 1135 V1210 H465 V1240" stroke="#5a738e" strokeWidth="2.5" fill="none" markerEnd="url(#arrow-logic)"/>
+                  <rect x="210" y="1155" width="40" height="22" rx="11" fill="#10b981" />
+                  <text x="230" y="1170" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">YES</text>
+                </g>
+
+                <g className={getPathClass("flow-element path-loop")}>
+                  <path d="M155 705 H70 V585 H90" stroke="#f5a623" strokeWidth="2.5" strokeDasharray="6 6" fill="none" markerEnd="url(#arrow-orange-logic)"/>
+                  <rect x="50" y="630" width="40" height="22" rx="11" fill="#ef4444" />
+                  <text x="70" y="645" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">NO</text>
+                  <text x="58" y="595" fill="#f5a623" fontSize="10" fontWeight="700" textAnchor="middle" transform="rotate(-90 58 595)">NEXT SKU</text>
+
+                  <path d="M155 1085 H70 V585 H90" stroke="#f5a623" strokeWidth="2.5" strokeDasharray="6 6" fill="none" markerEnd="url(#arrow-orange-logic)"/>
+                  <rect x="50" y="955" width="40" height="22" rx="11" fill="#ef4444" />
+                  <text x="70" y="970" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">NO</text>
+                </g>
+
+                {/* COLUMN 2: TIER 2 (Center x=625) */}
+                <g className={getPathClass("flow-element path-t2 path-sub")}>
+                  <rect x="485" y="555" width="280" height="60" rx="8" fill="#ffffff" stroke="#cbd5e1" strokeWidth="2"/>
+                  <text x="625" y="579" className="svg-node-text" textAnchor="middle" fontSize="13" fontWeight="700">Tier 2: Historical Sales Match</text>
+                  <text x="625" y="598" className="svg-sub-text" textAnchor="middle" fontSize="11">Fetch exact SKUs sold in Last 6 Months</text>
+
+                  <path d="M625 615 V655" stroke="#5a738e" strokeWidth="2.5" markerEnd="url(#arrow-logic)"/>
+                  <polygon points="625,655 700,705 625,755 550,705" fill="#ffffff" stroke="#f5a623" strokeWidth="2"/>
+                  <text x="625" y="709" className="svg-node-text" textAnchor="middle" fontSize="12" fontWeight="700">Constraints Met?</text>
+
+                  <path d="M625 755 V795" stroke="#5a738e" strokeWidth="2.5" markerEnd="url(#arrow-logic)"/>
+                  <rect x="605" y="764" width="40" height="22" rx="11" fill="#10b981" />
+                  <text x="625" y="779" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">YES</text>
+
+                  <polygon points="625,795 700,845 625,895 550,845" fill="#ffffff" stroke="#f5a623" strokeWidth="2"/>
+                  <text x="625" y="849" className="svg-node-text" textAnchor="middle" fontSize="12" fontWeight="700">In Stock?</text>
+                </g>
+
+                {/* NO Stock in T2 -> Go to T3 */}
+                <g className={getPathClass("flow-element path-sub")}>
+                  <path d="M700 845 H810 V585 H880" stroke="#5a738e" strokeWidth="2.5" fill="none" markerEnd="url(#arrow-logic)"/>
+                  <rect x="730" y="834" width="40" height="22" rx="11" fill="#ef4444" />
+                  <text x="750" y="849" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">NO</text>
+                </g>
+
+                <g className={getPathClass("flow-element path-t2")}>
+                  <path d="M625 895 V955" stroke="#5a738e" strokeWidth="2.5" markerEnd="url(#arrow-logic)"/>
+                  <rect x="605" y="915" width="40" height="22" rx="11" fill="#10b981" />
+                  <text x="625" y="930" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">YES</text>
+
+                  <rect x="510" y="955" width="230" height="48" rx="8" fill="#ffffff" stroke="#cbd5e1" strokeWidth="2"/>
+                  <text x="625" y="984" className="svg-node-text" textAnchor="middle" fontSize="13" fontWeight="700">Allocate SKU &amp; Deficit</text>
+
+                  <path d="M625 1003 V1035" stroke="#5a738e" strokeWidth="2.5" markerEnd="url(#arrow-logic)"/>
+                  <polygon points="625,1035 700,1085 625,1135 550,1085" fill="#ffffff" stroke="#f5a623" strokeWidth="2"/>
+                  <text x="625" y="1089" className="svg-node-text" textAnchor="middle" fontSize="12" fontWeight="700">Filled?</text>
+
+                  <path d="M625 1135 V1240" stroke="#5a738e" strokeWidth="2.5" markerEnd="url(#arrow-logic)"/>
+                  <rect x="605" y="1155" width="40" height="22" rx="11" fill="#10b981" />
+                  <text x="625" y="1170" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">YES</text>
+                </g>
+
+                <g className={getPathClass("flow-element path-loop")}>
+                  <path d="M550 705 H465 V585 H485" stroke="#f5a623" strokeWidth="2.5" strokeDasharray="6 6" fill="none" markerEnd="url(#arrow-orange-logic)"/>
+                  <rect x="445" y="630" width="40" height="22" rx="11" fill="#ef4444" />
+                  <text x="465" y="645" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">NO</text>
+
+                  <path d="M550 1085 H465 V585 H485" stroke="#f5a623" strokeWidth="2.5" strokeDasharray="6 6" fill="none" markerEnd="url(#arrow-orange-logic)"/>
+                  <rect x="445" y="955" width="40" height="22" rx="11" fill="#ef4444" />
+                  <text x="465" y="970" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">NO</text>
+                </g>
+
+                {/* COLUMN 3: TIER 3 (Center x=1020) */}
+                <g className={getPathClass("flow-element path-sub")}>
+                  <rect x="880" y="555" width="280" height="60" rx="8" fill="#ffffff" stroke="#cbd5e1" strokeWidth="2"/>
+                  <text x="1020" y="579" className="svg-node-text" textAnchor="middle" fontSize="13" fontWeight="700">Tier 3: Substitute Cascade</text>
+                  <text x="1020" y="598" className="svg-sub-text" textAnchor="middle" fontSize="11">MRP ±20% | Relax: Color➔Mat➔Shape</text>
+
+                  <path d="M1020 615 V655" stroke="#5a738e" strokeWidth="2.5" markerEnd="url(#arrow-logic)"/>
+                  <polygon points="1020,655 1095,705 1020,755 945,705" fill="#ffffff" stroke="#f5a623" strokeWidth="2"/>
+                  <text x="1020" y="709" className="svg-node-text" textAnchor="middle" fontSize="12" fontWeight="700">Constraints Met?</text>
+
+                  <path d="M1020 755 V795" stroke="#5a738e" strokeWidth="2.5" markerEnd="url(#arrow-logic)"/>
+                  <rect x="1000" y="764" width="40" height="22" rx="11" fill="#10b981" />
+                  <text x="1020" y="779" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">YES</text>
+
+                  <polygon points="1020,795 1095,845 1020,895 945,845" fill="#ffffff" stroke="#f5a623" strokeWidth="2"/>
+                  <text x="1020" y="849" className="svg-node-text" textAnchor="middle" fontSize="12" fontWeight="700">In Stock?</text>
+
+                  <path d="M1020 895 V955" stroke="#5a738e" strokeWidth="2.5" markerEnd="url(#arrow-logic)"/>
+                  <rect x="1000" y="915" width="40" height="22" rx="11" fill="#10b981" />
+                  <text x="1020" y="930" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">YES</text>
+
+                  <rect x="905" y="955" width="230" height="48" rx="8" fill="#ffffff" stroke="#cbd5e1" strokeWidth="2"/>
+                  <text x="1020" y="984" className="svg-node-text" textAnchor="middle" fontSize="13" fontWeight="700">Allocate Substitute SKU</text>
+
+                  <path d="M1020 1003 V1035" stroke="#5a738e" strokeWidth="2.5" markerEnd="url(#arrow-logic)"/>
+                  <polygon points="1020,1035 1095,1085 1020,1135 945,1085" fill="#ffffff" stroke="#f5a623" strokeWidth="2"/>
+                  <text x="1020" y="1089" className="svg-node-text" textAnchor="middle" fontSize="12" fontWeight="700">Filled?</text>
+
+                  <path d="M1020 1135 V1210 H785 V1240" stroke="#5a738e" strokeWidth="2.5" fill="none" markerEnd="url(#arrow-logic)"/>
+                  <rect x="1000" y="1155" width="40" height="22" rx="11" fill="#10b981" />
+                  <text x="1020" y="1170" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">YES</text>
+
+                  <path d="M1095 845 H1210 V1280 H785" stroke="#5a738e" strokeWidth="2.5" fill="none" markerEnd="url(#arrow-logic)"/>
+                  <rect x="1135" y="834" width="40" height="22" rx="11" fill="#ef4444" />
+                  <text x="1155" y="849" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">NO</text>
+                </g>
+
+                <g className={getPathClass("flow-element path-loop")}>
+                  <path d="M945 705 H860 V585 H880" stroke="#f5a623" strokeWidth="2.5" strokeDasharray="6 6" fill="none" markerEnd="url(#arrow-orange-logic)"/>
+                  <rect x="840" y="630" width="40" height="22" rx="11" fill="#ef4444" />
+                  <text x="860" y="645" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">NO</text>
+
+                  <path d="M945 1085 H860 V585 H880" stroke="#f5a623" strokeWidth="2.5" strokeDasharray="6 6" fill="none" markerEnd="url(#arrow-orange-logic)"/>
+                  <rect x="840" y="955" width="40" height="22" rx="11" fill="#ef4444" />
+                  <text x="860" y="970" fill="white" fontSize="11" fontWeight="800" textAnchor="middle">NO</text>
+                </g>
+
+                {/* COMMON FOOTER SECTION */}
+                <g className={getPathClass("flow-element path-t1 path-t2 path-sub path-loop")}>
+                  <rect x="465" y="1240" width="320" height="80" rx="8" fill="#ffffff" stroke="#cbd5e1" strokeWidth="2"/>
+                  <text x="625" y="1270" className="svg-node-text" textAnchor="middle" fontSize="14" fontWeight="700">Apply FIFO Batch Rule</text>
+                  <text x="625" y="1290" className="svg-sub-text" textAnchor="middle" fontSize="12">Pull oldest warehouse stock age first</text>
+
+                  <path d="M625 1320 V1380" stroke="#5a738e" strokeWidth="2.5" markerEnd="url(#arrow-logic)"/>
+
+                  <rect x="465" y="1380" width="320" height="45" rx="8" fill="#ffffff" stroke="#10b981" strokeWidth="2"/>
+                  <text x="625" y="1407" className="svg-node-text" textAnchor="middle" fontSize="14" fontWeight="700">Generate Dispatch Order</text>
+
+                  <path d="M625 1425 V1485" stroke="#5a738e" strokeWidth="2.5" markerEnd="url(#arrow-logic)"/>
+                </g>
+
+                {/* END Node */}
+                <g className={getPathClass("flow-element path-skip path-t1 path-t2 path-sub path-loop")}>
+                  <rect x="525" y="1485" width="200" height="50" rx="25" fill="#0f3a68" />
+                  <text x="625" y="1515" className="svg-white-text" textAnchor="middle">END</text>
+                </g>
+              </svg>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* AUTOMATED VIEW */}
       {view === 'automated' && (
         <div id="automated-view">
@@ -394,6 +787,8 @@ const ProposalCFS = () => {
           </div>
         </div>
       )}
+      </div>
+    </div>
     </div>
   );
 };

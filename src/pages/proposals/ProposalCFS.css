@@ -1,5 +1,5 @@
 .workflow-container {
-  max-width: 1000px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 60px 24px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -28,34 +28,166 @@
   }
 }
 
-.segmented-control {
+.proposal-page-container {
+  padding-top: 80px;
+  background-color: #f8fafc;
+  min-height: 100vh;
   display: flex;
-  justify-content: center;
-  background: rgba(15, 37, 64, 0.08);
-  padding: 4px;
-  border-radius: 30px;
-  max-width: 500px;
-  margin: 0 auto 40px auto;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  flex-direction: column;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-.segmented-btn {
+.proposal-top-header {
+  padding: 0 32px 24px 32px;
+  background-color: #f8fafc;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.proposal-layout-wrapper {
+  display: flex;
   flex: 1;
+  color: #0f172a;
+}
+
+.proposal-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  background-color: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: calc(100vh - 80px);
+  position: sticky;
+  top: 80px;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  margin-bottom: 24px;
+  padding-left: 12px;
+}
+
+.sidebar-header h2 {
+  color: #053364;
+  font-size: 20px;
+  margin: 0 0 4px 0;
+  font-weight: 800;
+}
+
+.sidebar-header p {
+  color: #64748b;
+  font-size: 13px;
+  margin: 0;
+}
+
+.journey-nav {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 32px;
+  margin-top: 16px;
+  margin-left: 4px;
+}
+
+/* Timeline Vertical Line */
+.journey-nav::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 20px;
+  bottom: 24px;
+  width: 2px;
+  background-color: #e2e8f0;
+  z-index: 1;
+}
+
+.journey-title {
+  position: relative;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: #053364;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin: 0 0 8px 0;
+  padding: 8px 16px;
+}
+
+.journey-title::before {
+  content: '';
+  position: absolute;
+  left: -27px; 
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  z-index: 2;
+}
+
+.sidebar-nav-btn {
+  text-align: left;
   border: none;
   background: transparent;
-  padding: 12px 24px;
-  border-radius: 26px;
+  padding: 12px 16px;
+  border-radius: 8px;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   color: #475569;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
-.segmented-btn.active {
+.sidebar-nav-btn::before {
+  content: '';
+  position: absolute;
+  left: -27px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #cbd5e1;
+  border: 2px solid #ffffff;
+  z-index: 2;
+  transition: all 0.2s ease;
+}
+
+.sidebar-nav-btn:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.sidebar-nav-btn:hover::before {
+  background-color: #94a3b8;
+}
+
+.sidebar-nav-btn.active {
+  background-color: #eff6ff;
+  color: #003b7a;
+  font-weight: 700;
+}
+
+.sidebar-nav-btn.active::before {
   background-color: #003b7a;
-  color: white;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  border-color: #eff6ff;
+  width: 10px;
+  height: 10px;
+  left: -28px;
+}
+
+.proposal-main-content {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
 }
 
 .header-section h1 {
@@ -174,9 +306,9 @@
 }
 
 .svg-title { fill: #0f172a; font-weight: 700; font-size: 20px; }
-.svg-node-text { fill: #0f172a; font-weight: 600; font-size: 16px; }
-.svg-sub-text { fill: #94a3b8; font-size: 14px; }
-.svg-white-text { fill: #ffffff; font-weight: 600; font-size: 16px; }
+.svg-node-text { fill: #0f172a; font-weight: 700; font-size: 13px; }
+.svg-sub-text { fill: #475569; font-size: 11px; font-weight: 500; }
+.svg-white-text { fill: #ffffff; font-weight: 700; font-size: 15px; }
 
 .issue-node {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
