@@ -134,7 +134,7 @@ const ProposalCFS = () => {
                 lineHeight: '1.6',
                 marginBottom: '32px'
               }}>
-                Experience the future of inventory distribution. Our working prototype demonstrates the automated allocation engine, smart filtering, and real-time dashboard analytics.
+                Dive into the OptiFlow prototype to see our centralized system for seamless stock allocation and distribution in action.
               </p>
               
               <a 
