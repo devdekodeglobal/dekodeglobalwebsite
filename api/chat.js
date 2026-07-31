@@ -92,8 +92,15 @@ export default async function handler(request, response) {
     });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return response.status(503).json({ ok: false, error: 'The AI assistant is not configured yet.' });
+  const allKeys = [
+    process.env.GEMINI_API_KEY,
+    process.env.GEMINI_API_KEY_2,
+    process.env.GEMINI_API_KEY_3,
+  ].filter(Boolean);
+
+  if (allKeys.length === 0) return response.status(503).json({ ok: false, error: 'The AI assistant is not configured yet.' });
+
+  const apiKey = allKeys[Math.floor(Math.random() * allKeys.length)];
 
   const history = Array.isArray(request.body?.history) ? request.body.history : [];
   const { matches, context } = formatKnowledgeContext(question);
