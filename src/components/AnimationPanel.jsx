@@ -358,33 +358,114 @@ const DefaultWebAnimation = ({ level }) => {
   );
 };
 
-export default function AnimationPanel({ projectType, level }) {
+export default function AnimationPanel({ projectType, level, messages = [] }) {
+  const [activeTab, setActiveTab] = React.useState('web');
+
+  React.useEffect(() => {
+    if (!messages || messages.length === 0) return;
+    
+    // Scan messages from newest to oldest to auto-switch tab based on keywords
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const msg = String(messages[i].text || "").toLowerCase();
+      if (msg.includes('web') || msg.includes('site') || msg.includes('browser') || msg.includes('desktop') || msg.includes('portal')) {
+        setActiveTab('web');
+        break;
+      }
+      if (msg.includes('mobile') || msg.includes('app') || msg.includes('phone') || msg.includes('ios') || msg.includes('android')) {
+        setActiveTab('mobile');
+        break;
+      }
+    }
+  }, [messages]);
+
+  React.useEffect(() => {
+    setActiveTab('web'); // Reset to default when projectType changes
+  }, [projectType]);
+
   if (level === 0 || !projectType) {
     return null;
   }
 
+  const isMobileAndWeb = projectType === 'Mobile & Web';
+
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={projectType}
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ duration: 0.4 }}
-        style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
-      >
-        {projectType.includes('AI') ? (
-          <AIAgentAnimation level={level} />
-        ) : projectType.includes('Cloud') ? (
-          <CloudInfraAnimation level={level} />
-        ) : projectType.includes('E-commerce') ? (
-          <EcommerceAnimation level={level} />
-        ) : projectType.includes('Mobile') ? (
-          <MobileAppAnimation level={level} />
-        ) : (
-          <DefaultWebAnimation level={level} />
-        )}
-      </motion.div>
-    </AnimatePresence>
+    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      {isMobileAndWeb && (
+        <div style={{ 
+          display: 'flex', 
+          gap: '4px', 
+          marginBottom: '20px', 
+          background: 'rgba(15, 23, 42, 0.4)', 
+          padding: '4px', 
+          borderRadius: '24px', 
+          border: '1px solid rgba(255,255,255,0.08)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+        }}>
+          <button
+            type="button"
+            onClick={() => setActiveTab('web')}
+            style={{
+              padding: '6px 18px',
+              borderRadius: '20px',
+              border: 'none',
+              background: activeTab === 'web' ? 'var(--color-brand-blue)' : 'transparent',
+              color: activeTab === 'web' ? 'white' : 'rgba(255,255,255,0.6)',
+              cursor: 'pointer',
+              fontSize: '11px',
+              fontWeight: '700',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+            }}
+          >
+            Web App
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('mobile')}
+            style={{
+              padding: '6px 18px',
+              borderRadius: '20px',
+              border: 'none',
+              background: activeTab === 'mobile' ? 'var(--color-brand-blue)' : 'transparent',
+              color: activeTab === 'mobile' ? 'white' : 'rgba(255,255,255,0.6)',
+              cursor: 'pointer',
+              fontSize: '11px',
+              fontWeight: '700',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+            }}
+          >
+            Mobile App
+          </button>
+        </div>
+      )}
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={isMobileAndWeb ? `${projectType}-${activeTab}` : projectType}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.4 }}
+          style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+        >
+          {projectType.includes('AI') ? (
+            <AIAgentAnimation level={level} />
+          ) : projectType.includes('Cloud') ? (
+            <CloudInfraAnimation level={level} />
+          ) : projectType.includes('E-commerce') ? (
+            <EcommerceAnimation level={level} />
+          ) : isMobileAndWeb ? (
+            activeTab === 'mobile' ? <MobileAppAnimation level={level} /> : <DefaultWebAnimation level={level} />
+          ) : projectType.includes('Mobile') ? (
+            <MobileAppAnimation level={level} />
+          ) : (
+            <DefaultWebAnimation level={level} />
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </div>
   );
 }

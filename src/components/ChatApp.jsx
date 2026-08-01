@@ -58,8 +58,7 @@ function getTimeAwareGreeting(date = new Date()) {
 }
 
 const PROJECT_OPTION_ROWS = [
-  PROJECT_OPTIONS.slice(0, 5),
-  PROJECT_OPTIONS.slice(5),
+  PROJECT_OPTIONS,
 ];
 
 export default function ChatApp({
@@ -908,6 +907,7 @@ export default function ChatApp({
             <AnimationPanel
               projectType={projectType}
               level={getAnimationLevel()}
+              messages={messages}
             />
           )}
         </div>
