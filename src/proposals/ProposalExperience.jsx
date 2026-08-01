@@ -54,9 +54,17 @@ export default function ProposalExperience({ proposal, onExit }) {
     })
 
     content.querySelectorAll('.sidebar-nav-btn').forEach((button) => {
-      const isCurrent = normaliseText(button.textContent) === normaliseText(section.navigationLabel)
+      const buttonLabel = normaliseText(button.textContent)
+      const isCurrent = buttonLabel === normaliseText(section.navigationLabel)
       button.classList.toggle('active', isCurrent)
       button.setAttribute('aria-current', isCurrent ? 'step' : 'false')
+      
+      const btnIndex = proposal.sections.findIndex(s => normaliseText(s.navigationLabel) === buttonLabel)
+      if (btnIndex !== -1 && btnIndex < activeIndex) {
+        button.classList.add('completed-step')
+      } else {
+        button.classList.remove('completed-step')
+      }
     })
 
     content.querySelectorAll('svg').forEach((diagram) => {
