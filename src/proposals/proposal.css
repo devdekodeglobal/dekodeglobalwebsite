@@ -292,21 +292,18 @@
     white-space: nowrap;
   }
 
-  .proposal-mobile-nav-controls {
-    display: grid;
-    grid-template-columns: 40px minmax(0, 1fr) 40px;
-    align-items: center;
-    gap: 6px;
-    min-width: 0;
-  }
-
   .proposal-mobile-tabs {
     display: flex;
     gap: 6px;
-    min-width: 0;
+    width: calc(100% + 24px);
+    margin-inline: -12px;
+    padding-inline: 12px;
     overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-padding-inline: 12px;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
+    touch-action: pan-x;
   }
 
   .proposal-mobile-tabs::-webkit-scrollbar {
@@ -316,7 +313,7 @@
   .proposal-mobile-tabs button {
     flex: 0 0 auto;
     min-height: 44px;
-    max-width: min(70vw, 260px);
+    max-width: min(78vw, 300px);
     padding: 9px 14px;
     overflow: hidden;
     color: #526173;
@@ -336,25 +333,6 @@
     color: #fff;
     border-color: #053364;
     background: #053364;
-  }
-
-  .proposal-mobile-nav-arrow {
-    display: grid;
-    place-items: center;
-    width: 40px;
-    min-height: 44px;
-    padding: 0;
-    color: #053364;
-    border: 1px solid #cbd8e6;
-    border-radius: 6px;
-    background: #fff;
-    cursor: pointer;
-  }
-
-  .proposal-mobile-nav-arrow:disabled {
-    color: #9aa9b9;
-    background: #eef2f6;
-    cursor: not-allowed;
   }
 
   .proposal-original-content .proposal-main-content {

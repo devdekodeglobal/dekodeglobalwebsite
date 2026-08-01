@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight, LogOut } from 'lucide-react'
+import { LogOut } from 'lucide-react'
 
 const PATH_BY_LABEL = {
   'Show Full Workflow': 'all',
@@ -124,39 +124,19 @@ export default function ProposalExperience({ proposal, onExit }) {
             <span>Proposal sections</span>
             <strong>{activeIndex + 1} of {proposal.sections.length}</strong>
           </div>
-          <div className="proposal-mobile-nav-controls">
-            <button
-              type="button"
-              className="proposal-mobile-nav-arrow"
-              onClick={() => selectSection(activeIndex - 1)}
-              disabled={activeIndex === 0}
-              aria-label="Previous proposal section"
-            >
-              <ChevronLeft size={18} />
-            </button>
-            <div ref={mobileTabsRef} className="proposal-mobile-tabs" role="tablist" aria-label="Proposal sections">
-              {proposal.sections.map((candidate, index) => (
-                <button
-                  key={candidate.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={index === activeIndex}
-                  className={index === activeIndex ? 'active' : ''}
-                  onClick={() => selectSection(index)}
-                >
-                  {candidate.navigationLabel}
-                </button>
-              ))}
-            </div>
-            <button
-              type="button"
-              className="proposal-mobile-nav-arrow"
-              onClick={() => selectSection(activeIndex + 1)}
-              disabled={activeIndex === proposal.sections.length - 1}
-              aria-label="Next proposal section"
-            >
-              <ChevronRight size={18} />
-            </button>
+          <div ref={mobileTabsRef} className="proposal-mobile-tabs" role="tablist" aria-label="Proposal sections">
+            {proposal.sections.map((candidate, index) => (
+              <button
+                key={candidate.id}
+                type="button"
+                role="tab"
+                aria-selected={index === activeIndex}
+                className={index === activeIndex ? 'active' : ''}
+                onClick={() => selectSection(index)}
+              >
+                {candidate.navigationLabel}
+              </button>
+            ))}
           </div>
         </nav>
         <article
