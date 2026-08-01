@@ -10,7 +10,8 @@ import { BrowserSpeechToTextProvider } from '../../voice/providers/browserSpeech
 import { BrowserTextToSpeechProvider } from '../../voice/providers/browserTextToSpeechProvider.js';
 import { KnowledgeConversationProvider } from '../../voice/realtimeConversationProvider.js';
 import { emptyLeadProfile } from '../../voice/leadQualificationManager.js';
-import { MockMeetingSlotProvider } from '../../meetings/mockMeetingSlotProvider.js';
+import { createMeetingSlotProvider } from '../../meetings/meetingProviderFactory.js';
+import { CalendarBookingService } from '../../meetings/calendarBookingService.js';
 import { generateLeadForm } from '../../leads/leadFormGenerator.js';
 import { LeadNotificationService } from '../../leads/leadNotificationService.js';
 import { voiceConfig } from '../../voice/config.js';
@@ -51,7 +52,8 @@ export default function DekodeVoiceSession({ onClose, onSwitchToText, onTurn, on
   const stt = useMemo(() => new BrowserSpeechToTextProvider(), []);
   const tts = useMemo(() => new BrowserTextToSpeechProvider(), []);
   const conversation = useMemo(() => new KnowledgeConversationProvider(), []);
-  const meetings = useMemo(() => new MockMeetingSlotProvider({ companyTimezone: voiceConfig.companyTimezone }), []);
+  const meetings = useMemo(() => createMeetingSlotProvider({ provider: voiceConfig.meetingProvider, companyTimezone: voiceConfig.companyTimezone }), []);
+  const calendarBooking = useMemo(() => new CalendarBookingService(), []);
   const notification = useMemo(() => new LeadNotificationService({ mode: voiceConfig.notificationMode, endpoint: voiceConfig.leadEndpoint }), []);
 
   useEffect(() => { stateRef.current = state; }, [state]);
@@ -143,11 +145,17 @@ export default function DekodeVoiceSession({ onClose, onSwitchToText, onTurn, on
       onPanelChange?.(response);
       onTurn?.({ userText: clean, assistantText: response.text, response });
       trackVoiceEvent('voice_question_completed', { topic: response.topic });
-      if (response.action === 'offer_meeting' && voiceConfig.mockMeetingSlotsEnabled) {
+      if (response.action === 'offer_meeting') {
         trackVoiceEvent('meeting_offer_shown');
-        const nextSlots = await meetings.getAvailableSlots();
-        setSlots(nextSlots);
-        speak(response.text, () => setState(VOICE_STATES.SELECTING_SLOT));
+        try {
+          const nextSlots = await meetings.getAvailableSlots();
+          if (!nextSlots.length) throw new Error('No meeting times are currently available.');
+          setSlots(nextSlots);
+          speak(response.text, () => setState(VOICE_STATES.SELECTING_SLOT));
+        } catch (calendarError) {
+          setError(calendarError.message);
+          speak(`${response.text} Live availability is unavailable right now, but you can still send an enquiry.`, () => setState(VOICE_STATES.ENDED));
+        }
       } else {
         speak(response.text);
       }
@@ -215,7 +223,17 @@ export default function DekodeVoiceSession({ onClose, onSwitchToText, onTurn, on
   const submitLead = async (form, consent) => {
     setState(VOICE_STATES.SUBMITTING);
     try {
-      const result = await notification.submit(form, consent);
+      const result = form.preferredMeetingStart && !form.meetingSlotIsMock
+        ? await calendarBooking.book({
+            slot: { iso: form.preferredMeetingStart },
+            name: form.name,
+            email: form.email,
+            company: form.company,
+            projectSummary: form.projectSummary,
+            timezone: form.timezone,
+            consent,
+          })
+        : await notification.submit(form, consent);
       setSubmissionResult(result);
       setState(VOICE_STATES.COMPLETED);
       trackVoiceEvent('lead_form_submitted');
@@ -280,7 +298,7 @@ export default function DekodeVoiceSession({ onClose, onSwitchToText, onTurn, on
           <div className="voice-slots">
             <VoiceOrb state={state} />
             <h3>Choose a preferred meeting time</h3>
-            <p>Times are shown in {slots[0]?.visitorTimezone || 'your local timezone'}. These are temporary options; DEKODE will confirm availability.</p>
+            <p>Times are shown in {slots[0]?.visitorTimezone || 'your local timezone'}. Live slots are rechecked before your meeting is confirmed.</p>
             <div className="voice-slot-grid">
               {slots.slice(0, 12).map((slot) => (
                 <button key={slot.id} type="button" onClick={() => selectSlot(slot)}>
@@ -293,8 +311,8 @@ export default function DekodeVoiceSession({ onClose, onSwitchToText, onTurn, on
         ) : state === VOICE_STATES.COMPLETED ? (
           <div className="voice-ended">
             <ShieldCheck size={46} />
-            <h3>{submissionResult?.delivered ? 'Enquiry submitted' : 'Enquiry prepared in development mode'}</h3>
-            <p>{submissionResult?.delivered ? 'The DEKODE team has received your request.' : 'No email or booking was sent. The mock service validated and prepared the request safely.'}</p>
+            <h3>{submissionResult?.booked ? 'Discovery call booked' : submissionResult?.delivered ? 'Enquiry submitted' : 'Enquiry prepared in development mode'}</h3>
+            <p>{submissionResult?.booked ? 'Google Calendar sent the invitation and meeting details to your email.' : submissionResult?.delivered ? 'The DEKODE team has received your request.' : 'No email or booking was sent. The mock service validated and prepared the request safely.'}</p>
             <button type="button" className="voice-primary-btn" onClick={onClose}>Return to chat</button>
           </div>
         ) : state === VOICE_STATES.ENDED ? (
