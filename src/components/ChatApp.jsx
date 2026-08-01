@@ -666,13 +666,13 @@ export default function ChatApp({
     autoFocus = false,
   } = {}) => (
     <div className="chat-input-field">
-      {!inputValue && !readOnly && (
+      {step === "centered" && !inputValue && !readOnly && (
         <span
-          key={step === "centered" ? placeholderMessages[placeholderIndex] : "active-chat-placeholder"}
+          key={placeholderMessages[placeholderIndex]}
           className="rotating-placeholder"
           aria-hidden="true"
         >
-          {step === "centered" ? placeholderMessages[placeholderIndex] : "Message DEKODE"}
+          {placeholderMessages[placeholderIndex]}
         </span>
       )}
       <textarea

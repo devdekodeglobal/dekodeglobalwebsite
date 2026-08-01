@@ -64,7 +64,8 @@ test('pauses rotating hints for active voice typing states', () => {
   assert.match(chatApp, /data-state=\{voiceTypingState\}/);
 });
 
-test('rotates inspiration only on the home composer and keeps active chat static', () => {
+test('renders composer inspiration only on the home screen', () => {
   assert.match(chatApp, /step !== "centered"/);
-  assert.match(chatApp, /step === "centered" \? placeholderMessages\[placeholderIndex\] : "Message DEKODE"/);
+  assert.match(chatApp, /step === "centered" && !inputValue && !readOnly/);
+  assert.doesNotMatch(chatApp, /Message DEKODE|active-chat-placeholder/);
 });
