@@ -5,6 +5,8 @@ import { readFile } from 'node:fs/promises';
 const indexCss = await readFile(new URL('../src/index.css', import.meta.url), 'utf8');
 const voiceCss = await readFile(new URL('../src/components/voice/voice.css', import.meta.url), 'utf8');
 const chatApp = await readFile(new URL('../src/components/ChatApp.jsx', import.meta.url), 'utf8');
+const backToTop = await readFile(new URL('../src/components/BackToTopButton.jsx', import.meta.url), 'utf8');
+const app = await readFile(new URL('../src/App.jsx', import.meta.url), 'utf8');
 const projectOptions = await readFile(new URL('../src/config/projectOptions.js', import.meta.url), 'utf8');
 
 test('uses dynamic viewport units and safe-area spacing for app and voice surfaces', () => {
@@ -62,4 +64,23 @@ test('keeps the composer responsive with rotating hints and separate voice typin
 test('pauses rotating hints for active voice typing states', () => {
   assert.match(chatApp, /\['requesting', 'listening', 'processing'\]\.includes\(voiceTypingState\)/);
   assert.match(chatApp, /data-state=\{voiceTypingState\}/);
+});
+
+test('renders composer inspiration only on the home screen', () => {
+  assert.match(chatApp, /step !== "centered"/);
+  assert.match(chatApp, /step === "centered" && !inputValue && !readOnly/);
+  assert.doesNotMatch(chatApp, /Message DEKODE|active-chat-placeholder/);
+});
+
+test('provides one translucent back-to-top control across every DEKODE layout', () => {
+  assert.match(app, /<BackToTopButton key=\{proposal \? 'proposal' : 'site'\}/);
+  assert.match(backToTop, /\.app-container, \.chat-scroll-area, \.proposal-source-stage/);
+  assert.match(backToTop, /document\.addEventListener\('scroll', handleScroll, true\)/);
+  assert.match(backToTop, /aria-label="Back to top"/);
+  assert.match(backToTop, /reduceMotion \? 'auto' : 'smooth'/);
+  assert.match(indexCss, /\.back-to-top-button\s*\{[^}]*width:\s*44px[^}]*height:\s*44px/s);
+  assert.match(indexCss, /right:\s*calc\(32px \+ env\(safe-area-inset-right, 0px\)\)/);
+  assert.match(indexCss, /bottom:\s*calc\(32px \+ env\(safe-area-inset-bottom, 0px\)\)/);
+  assert.match(indexCss, /right:\s*calc\(20px \+ env\(safe-area-inset-right, 0px\)\)/);
+  assert.match(indexCss, /background:\s*rgba\(5, 51, 100, 0\.72\)/);
 });

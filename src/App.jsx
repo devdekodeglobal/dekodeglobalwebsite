@@ -1,4 +1,5 @@
 import React, { lazy, Suspense, useState } from 'react'
+import BackToTopButton from './components/BackToTopButton'
 import ChatApp from './components/ChatApp'
 import ProposalAccessGateway from './proposals/ProposalAccessGateway'
 import ProposalExperience from './proposals/ProposalExperience'
@@ -63,6 +64,7 @@ function App() {
           onAccess={activateProposal}
         />
       )}
+      <BackToTopButton key={proposal ? 'proposal' : 'site'} />
     </div>
   )
 }
