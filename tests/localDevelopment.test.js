@@ -17,5 +17,7 @@ test('Vite development serves the existing proposal API without exposing credent
   assert.match(localApi, /api\/proposals\/content/)
   assert.match(localApi, /api\/proposals\/logout/)
   assert.match(localApi, /api\/proposals\/query/)
+  assert.match(localApi, /api\/calendar\/availability/)
+  assert.match(localApi, /api\/calendar\/book/)
   assert.doesNotMatch(localApi, /OCTX2026TV|DEKODExcfs/)
 })
