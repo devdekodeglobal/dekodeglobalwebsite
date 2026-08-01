@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { LogOut } from 'lucide-react'
+import { ChevronLeft, ChevronRight, LogOut } from 'lucide-react'
 
 const PATH_BY_LABEL = {
   'Show Full Workflow': 'all',
@@ -19,6 +19,7 @@ export default function ProposalExperience({ proposal, onExit }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [activePath, setActivePath] = useState('all')
   const contentRef = useRef(null)
+  const mobileTabsRef = useRef(null)
   const scrollRef = useRef(null)
   const section = proposal.sections[activeIndex]
 
@@ -27,6 +28,13 @@ export default function ProposalExperience({ proposal, onExit }) {
     setActiveIndex(index)
     setActivePath('all')
     scrollRef.current?.scrollTo({ top: 0, behavior: 'auto' })
+  }
+
+  const selectSectionByLabel = (label) => {
+    const index = proposal.sections.findIndex(
+      (candidate) => normaliseText(candidate.navigationLabel) === normaliseText(label),
+    )
+    selectSection(index)
   }
 
   useEffect(() => {
@@ -45,8 +53,8 @@ export default function ProposalExperience({ proposal, onExit }) {
       button.type = 'button'
     })
 
-    content.querySelectorAll('.sidebar-nav-btn').forEach((button, index) => {
-      const isCurrent = index === activeIndex
+    content.querySelectorAll('.sidebar-nav-btn').forEach((button) => {
+      const isCurrent = normaliseText(button.textContent) === normaliseText(section.navigationLabel)
       button.classList.toggle('active', isCurrent)
       button.setAttribute('aria-current', isCurrent ? 'step' : 'false')
     })
@@ -71,11 +79,19 @@ export default function ProposalExperience({ proposal, onExit }) {
     })
   }, [activeIndex, activePath, section.navigationLabel])
 
+  useEffect(() => {
+    const tabs = mobileTabsRef.current
+    const activeTab = tabs?.querySelector('[aria-selected="true"]')
+    if (!tabs || !activeTab) return
+
+    const centeredLeft = activeTab.offsetLeft - (tabs.clientWidth - activeTab.clientWidth) / 2
+    tabs.scrollTo({ left: Math.max(0, centeredLeft), behavior: 'auto' })
+  }, [activeIndex])
+
   const handleApprovedContentClick = (event) => {
     const navigationButton = event.target.closest('.sidebar-nav-btn')
     if (navigationButton && contentRef.current?.contains(navigationButton)) {
-      const buttons = [...contentRef.current.querySelectorAll('.sidebar-nav-btn')]
-      selectSection(buttons.indexOf(navigationButton))
+      selectSectionByLabel(navigationButton.textContent)
       return
     }
 
@@ -103,7 +119,48 @@ export default function ProposalExperience({ proposal, onExit }) {
         className="proposal-source-stage"
         aria-label={`${proposal.title} ${proposal.subtitle}`}
       >
+        <nav className="proposal-mobile-nav" aria-label="Proposal sections">
+          <div className="proposal-mobile-nav-heading">
+            <span>Proposal sections</span>
+            <strong>{activeIndex + 1} of {proposal.sections.length}</strong>
+          </div>
+          <div className="proposal-mobile-nav-controls">
+            <button
+              type="button"
+              className="proposal-mobile-nav-arrow"
+              onClick={() => selectSection(activeIndex - 1)}
+              disabled={activeIndex === 0}
+              aria-label="Previous proposal section"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <div ref={mobileTabsRef} className="proposal-mobile-tabs" role="tablist" aria-label="Proposal sections">
+              {proposal.sections.map((candidate, index) => (
+                <button
+                  key={candidate.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={index === activeIndex}
+                  className={index === activeIndex ? 'active' : ''}
+                  onClick={() => selectSection(index)}
+                >
+                  {candidate.navigationLabel}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="proposal-mobile-nav-arrow"
+              onClick={() => selectSection(activeIndex + 1)}
+              disabled={activeIndex === proposal.sections.length - 1}
+              aria-label="Next proposal section"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        </nav>
         <article
+          key={section.id}
           ref={contentRef}
           className="proposal-original-content"
           onClick={handleApprovedContentClick}

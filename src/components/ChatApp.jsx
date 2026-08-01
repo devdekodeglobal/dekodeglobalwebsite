@@ -182,6 +182,7 @@ export default function ChatApp({
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const voiceTypingActive = ['requesting', 'listening', 'processing'].includes(voiceTypingState);
     if (
+      step !== "centered" ||
       isInputFocused ||
       inputValue ||
       voiceTypingActive ||
@@ -196,7 +197,7 @@ export default function ChatApp({
     }, placeholderInterval);
 
     return () => window.clearInterval(intervalId);
-  }, [isInputFocused, inputValue, voiceTypingState]);
+  }, [isInputFocused, inputValue, step, voiceTypingState]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -667,11 +668,11 @@ export default function ChatApp({
     <div className="chat-input-field">
       {!inputValue && !readOnly && (
         <span
-          key={placeholderMessages[placeholderIndex]}
+          key={step === "centered" ? placeholderMessages[placeholderIndex] : "active-chat-placeholder"}
           className="rotating-placeholder"
           aria-hidden="true"
         >
-          {placeholderMessages[placeholderIndex]}
+          {step === "centered" ? placeholderMessages[placeholderIndex] : "Message DEKODE"}
         </span>
       )}
       <textarea

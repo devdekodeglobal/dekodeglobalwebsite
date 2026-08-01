@@ -31,13 +31,11 @@ test('proposal renders the approved old DEKODE presentation directly', () => {
 
 test('original sidebar navigation switches all five protected sections', () => {
   assert.match(experience, /querySelectorAll\('\.sidebar-nav-btn'\)/)
-  assert.match(experience, /selectSection\(buttons\.indexOf\(navigationButton\)\)/)
+  assert.match(experience, /selectSectionByLabel\(navigationButton\.textContent\)/)
+  assert.match(experience, /candidate\.navigationLabel/)
+  assert.match(experience, /key=\{section\.id\}/)
   assert.match(experience, /aria-current/)
   assert.match(styles, /\.proposal-original-content \.proposal-sidebar/)
-  assert.doesNotMatch(
-    styles,
-    /\.proposal-original-content \.proposal-sidebar\s*\{[^}]*display:\s*none/s,
-  )
   assert.match(experience, /proposal\.sections\.length/)
   assert.match(sourceStyles, /\.architecture-view-container/)
   assert.match(sourceStyles, /\.architecture-image/)
@@ -73,5 +71,10 @@ test('restored proposal remains responsive, keyboard-visible, and motion-safe', 
   assert.match(styles, /@media \(max-width:\s*560px\)/)
   assert.match(styles, /@media \(prefers-reduced-motion:\s*reduce\)/)
   assert.match(styles, /focus-visible/)
-  assert.match(styles, /grid-template-columns:\s*repeat\(5,\s*minmax\(170px,\s*1fr\)\)/)
+  assert.match(experience, /className="proposal-mobile-tabs"/)
+  assert.match(experience, /aria-label="Previous proposal section"/)
+  assert.match(experience, /aria-label="Next proposal section"/)
+  assert.match(experience, /\{activeIndex \+ 1\} of \{proposal\.sections\.length\}/)
+  assert.match(styles, /\.proposal-mobile-tabs\s*\{[^}]*overflow-x:\s*auto/s)
+  assert.match(styles, /\.proposal-original-content \.proposal-sidebar\s*\{[^}]*display:\s*none/s)
 })
