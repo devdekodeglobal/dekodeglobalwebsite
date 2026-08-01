@@ -22,6 +22,9 @@ export default function ProposalExperience({ proposal, onExit }) {
   const mobileTabsRef = useRef(null)
   const scrollRef = useRef(null)
   const section = proposal.sections[activeIndex]
+  const progressRatio = proposal.sections.length > 1
+    ? activeIndex / (proposal.sections.length - 1)
+    : 1
 
   const selectSection = (index) => {
     if (index < 0 || index >= proposal.sections.length) return
@@ -123,6 +126,23 @@ export default function ProposalExperience({ proposal, onExit }) {
           <div className="proposal-mobile-nav-heading">
             <span>Proposal sections</span>
             <strong>{activeIndex + 1} of {proposal.sections.length}</strong>
+          </div>
+          <div className="proposal-mobile-progress" aria-hidden="true">
+            <span className="proposal-mobile-progress-track" />
+            <span
+              className="proposal-mobile-progress-fill"
+              style={{ width: `calc(${progressRatio * 100}% - ${progressRatio * 10}px)` }}
+            />
+            {proposal.sections.map((candidate, index) => (
+              <span
+                key={candidate.id}
+                className={[
+                  'proposal-mobile-progress-dot',
+                  index <= activeIndex ? 'completed' : '',
+                  index === activeIndex ? 'current' : '',
+                ].filter(Boolean).join(' ')}
+              />
+            ))}
           </div>
           <div ref={mobileTabsRef} className="proposal-mobile-tabs" role="tablist" aria-label="Proposal sections">
             {proposal.sections.map((candidate, index) => (

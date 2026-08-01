@@ -292,6 +292,50 @@
     white-space: nowrap;
   }
 
+  .proposal-mobile-progress {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 12px;
+    margin-inline: 4px;
+  }
+
+  .proposal-mobile-progress-track,
+  .proposal-mobile-progress-fill {
+    position: absolute;
+    left: 5px;
+    height: 2px;
+    border-radius: 2px;
+  }
+
+  .proposal-mobile-progress-track {
+    right: 5px;
+    background: #cbd8e6;
+  }
+
+  .proposal-mobile-progress-fill {
+    background: #0b5fa5;
+  }
+
+  .proposal-mobile-progress-dot {
+    z-index: 1;
+    width: 10px;
+    height: 10px;
+    border: 2px solid #9aabbd;
+    border-radius: 50%;
+    background: #f8fafc;
+  }
+
+  .proposal-mobile-progress-dot.completed {
+    border-color: #0b5fa5;
+    background: #0b5fa5;
+  }
+
+  .proposal-mobile-progress-dot.current {
+    box-shadow: 0 0 0 3px rgba(11, 95, 165, 0.18);
+  }
+
   .proposal-mobile-tabs {
     display: flex;
     gap: 6px;
