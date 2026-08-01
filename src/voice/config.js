@@ -10,6 +10,7 @@ export const voiceConfig = Object.freeze({
   provider: env.VITE_VOICE_PROVIDER || 'browser',
   fallbackEnabled: readBoolean(env.VITE_VOICE_FALLBACK_ENABLED, true),
   mockMeetingSlotsEnabled: readBoolean(env.VITE_MOCK_MEETING_SLOTS_ENABLED, true),
+  meetingProvider: env.VITE_MEETING_PROVIDER || (readBoolean(env.VITE_MOCK_MEETING_SLOTS_ENABLED, false) ? 'mock' : 'calendar'),
   companyTimezone: env.VITE_COMPANY_TIMEZONE || 'Australia/Melbourne',
   notificationMode: env.VITE_LEAD_NOTIFICATION_MODE || 'mock',
   leadEndpoint: env.VITE_LEAD_NOTIFICATION_ENDPOINT || '/api/leads',

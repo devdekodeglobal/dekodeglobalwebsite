@@ -4,11 +4,15 @@ import getProposalContent from '../api/proposals/content.js'
 import logoutProposal from '../api/proposals/logout.js'
 import queryProposal from '../api/proposals/query.js'
 import submitLead from '../api/leads.js'
+import getCalendarAvailability from '../api/calendar/availability.js'
+import bookCalendarMeeting from '../api/calendar/book.js'
 
 const MAX_LOCAL_BODY_BYTES = 64_000
 
 const handlers = new Map([
   ['/api/leads', submitLead],
+  ['/api/calendar/availability', getCalendarAvailability],
+  ['/api/calendar/book', bookCalendarMeeting],
   ['/api/proposals/access', accessProposal],
   ['/api/proposals/asset', getProposalAsset],
   ['/api/proposals/content', getProposalContent],

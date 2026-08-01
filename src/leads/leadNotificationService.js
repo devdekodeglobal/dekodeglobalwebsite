@@ -10,6 +10,8 @@ export function prepareLeadPayload(form, sourcePage = globalThis.location?.pathn
     timeline: sanitize(form.timeline),
     budgetRange: sanitize(form.budgetRange),
     selectedMeetingPreference: sanitize(form.preferredMeetingTime),
+    selectedMeetingStart: sanitize(form.preferredMeetingStart),
+    selectedMeetingEnd: sanitize(form.preferredMeetingEnd),
     timezone: sanitize(form.timezone),
     conversationSummary: sanitize(form.projectSummary),
     sourcePage: sanitize(sourcePage),

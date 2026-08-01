@@ -48,7 +48,7 @@ export default function VoiceLeadReviewForm({ initialForm, onSubmit, onBack, isS
         <div className="voice-meeting-preference">
           <strong>Preferred meeting time</strong>
           <span>{form.preferredMeetingTime}</span>
-          <small>The DEKODE team will confirm availability.</small>
+          <small>{form.meetingSlotIsMock ? 'Preview only; no calendar event will be created.' : 'This live slot will be rechecked when you submit.'}</small>
         </div>
       )}
       <label className="voice-consent-check">
@@ -58,7 +58,7 @@ export default function VoiceLeadReviewForm({ initialForm, onSubmit, onBack, isS
       {errors.consent && <small className="voice-form-error" role="alert">{errors.consent}</small>}
       <div className="voice-form-actions">
         <button type="button" className="voice-secondary-btn" onClick={onBack}><ArrowLeft size={16} /> Return to conversation</button>
-        <button type="submit" className="voice-primary-btn" disabled={isSubmitting}><Send size={16} /> {isSubmitting ? 'Preparing…' : 'Submit enquiry'}</button>
+        <button type="submit" className="voice-primary-btn" disabled={isSubmitting}><Send size={16} /> {isSubmitting ? 'Submitting...' : form.preferredMeetingStart && !form.meetingSlotIsMock ? 'Confirm meeting' : 'Submit enquiry'}</button>
       </div>
     </form>
   );

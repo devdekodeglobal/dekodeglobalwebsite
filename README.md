@@ -62,9 +62,31 @@ To disable DEKODE Voice and retain the legacy microphone path:
 VITE_DEKODE_VOICE_ENABLED=false
 ```
 
+## Google Calendar booking
+
+The text and voice experiences share the same server-side Google Calendar integration. The browser requests safe availability data from `/api/calendar/availability`; `/api/calendar/book` rechecks the selected time before creating an event, Google Meet link, and attendee invitation.
+
+Set these server-only values in Vercel and `.env.local`:
+
+```env
+GOOGLE_CALENDAR_ID=yuvraj.sharma@dekodeglobal.com
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_REFRESH_TOKEN=
+GOOGLE_CALENDAR_TIMEZONE=Australia/Melbourne
+GOOGLE_CALENDAR_WORKDAY_START=09:00
+GOOGLE_CALENDAR_WORKDAY_END=17:00
+GOOGLE_CALENDAR_MEETING_DURATION_MINUTES=30
+GOOGLE_CALENDAR_BUFFER_MINUTES=15
+GOOGLE_CALENDAR_MINIMUM_NOTICE_HOURS=24
+VITE_MEETING_PROVIDER=calendar
+```
+
+Enable the Google Calendar API in the Google Cloud project and generate the refresh token with a Google Calendar OAuth scope. Keep all four `GOOGLE_*` credentials server-side. To transfer scheduling later, authorize `contactus@dekodeglobal.com`, then replace `GOOGLE_CALENDAR_ID` and `GOOGLE_REFRESH_TOKEN` in Vercel and redeploy.
+
 ## Mock meeting slots
 
-`MockMeetingSlotProvider` is active when `VITE_MOCK_MEETING_SLOTS_ENABLED=true`. It:
+`MockMeetingSlotProvider` is active when `VITE_MEETING_PROVIDER=mock`. It:
 
 - generates the next seven weekdays dynamically;
 - excludes Saturday and Sunday;
@@ -76,13 +98,7 @@ VITE_DEKODE_VOICE_ENABLED=false
 
 The interface calls these values “preferred meeting times” and never claims a booking is confirmed.
 
-To connect a real calendar:
-
-1. Implement `CalendarMeetingSlotProvider#getAvailableSlots`.
-2. Add a secure server-side calendar route that owns all calendar credentials.
-3. Return the same slot shape as `MockMeetingSlotProvider`.
-4. Add a provider factory controlled by a non-secret public provider name.
-5. Keep final booking behind the existing explicit review/submit step and return a real confirmation only after the calendar API succeeds.
+Mock slots are preview-only and cannot create a calendar event.
 
 ## Connecting a production voice provider
 
@@ -124,7 +140,7 @@ fallback is never permitted in production.
 
 - Browser speech recognition support varies by browser and may use a browser-vendor speech service.
 - Browser speech synthesis is not a low-latency production realtime voice implementation.
-- Meeting availability is generated mock data and is not connected to a calendar.
+- Calendar booking requires Google OAuth credentials in the server environment; mock slots remain available for UI development.
 - Lead delivery defaults to mock mode and does not send email.
 - The current application has no authentication layer, so the consent-gated profile reuse adapter is implemented and tested but not connected to a logged-in UI.
 - Conversational lead extraction is deterministic and intentionally conservative; every inferred form field remains editable.

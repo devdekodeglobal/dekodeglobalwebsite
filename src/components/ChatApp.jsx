@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Send,
-  Calendar,
   CheckCircle2,
   Bot,
   Mic,
@@ -16,6 +15,7 @@ import ParticleBackground from "./ParticleBackground";
 import TypewriterText from "./TypewriterText";
 import DekodeVoiceEntry from "./voice/DekodeVoiceEntry";
 import DekodeVoiceSession from "./voice/DekodeVoiceSession";
+import MeetingScheduler from "./MeetingScheduler";
 import { voiceConfig } from "../voice/config";
 import { BrowserSpeechToTextProvider } from "../voice/providers/browserSpeechToTextProvider";
 import { placeholderInterval, placeholderMessages } from "./chatComposerConfig";
@@ -549,15 +549,17 @@ export default function ChatApp({
     }
   };
 
-  const handleScheduleTime = (time) => {
+  const handleMeetingBooked = (_result, slot) => {
     setMessages((prev) => [
       ...prev,
-      { id: Date.now(), sender: "user", text: `I'm available on ${time}` },
+      { id: Date.now(), sender: "user", text: `Discovery call booked for ${slot.label}` },
+      {
+        id: Date.now() + 1,
+        sender: "ai",
+        text: "Your discovery call is confirmed. Google Calendar has sent the invitation and meeting details to your email.",
+      },
     ]);
     setStep("done");
-    simulateAiTyping(
-      "Perfect! Your request has been securely sent to our team. We've booked that slot on our calendar and sent a confirmation email to you. We look forward to speaking with you!",
-    );
   };
 
   const showVoiceStatus = (message, persist = false) => {
@@ -1130,50 +1132,10 @@ export default function ChatApp({
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                   >
-                    <div
-                      style={{
-                        padding: "1.5rem",
-                        background: "rgba(255,255,255,0.1)",
-                        backdropFilter: "blur(12px)",
-                        borderRadius: "16px",
-                        border: "1px solid rgba(255,255,255,0.1)",
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "0.5rem",
-                          marginBottom: "1rem",
-                          color: "white",
-                          fontWeight: 600,
-                        }}
-                      >
-                        <Calendar size={20} /> Select a Discovery Call Time
-                      </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: "0.5rem",
-                        }}
-                      >
-                        {[
-                          "Tomorrow, 10:00 AM",
-                          "Tomorrow, 2:00 PM",
-                          "Next Monday, 11:30 AM",
-                        ].map((time) => (
-                          <button
-                            key={time}
-                            className="action-pill"
-                            style={{ background: "rgba(255,255,255,0.15)" }}
-                            onClick={() => handleScheduleTime(time)}
-                          >
-                            {time}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+                    <MeetingScheduler
+                      projectSummary={messages.filter((message) => message.sender === "user").map((message) => message.text).join(" ").slice(0, 2000)}
+                      onBooked={handleMeetingBooked}
+                    />
                   </motion.div>
                 )}
 
@@ -1187,9 +1149,9 @@ export default function ChatApp({
                       size={48}
                       style={{ margin: "0 auto 1rem", color: "#22c55e" }}
                     />
-                    <h3 style={{ color: "white" }}>Request Submitted!</h3>
+                    <h3 style={{ color: "white" }}>Meeting confirmed</h3>
                     <p style={{ color: "rgba(255,255,255,0.7)" }}>
-                      We'll talk to you soon.
+                      Your calendar invitation is on its way.
                     </p>
                   </motion.div>
                 )}
