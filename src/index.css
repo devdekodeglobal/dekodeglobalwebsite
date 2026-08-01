@@ -109,6 +109,37 @@ h1, h2, h3, h4, h5, h6 {
   height: 100dvh;
 }
 
+.back-to-top-button {
+  position: fixed;
+  right: calc(32px + env(safe-area-inset-right, 0px));
+  bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+  z-index: 190;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 50%;
+  background: rgba(5, 51, 100, 0.72);
+  box-shadow: 0 10px 24px rgba(2, 24, 48, 0.24);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.back-to-top-button:hover {
+  background: rgba(5, 51, 100, 0.92);
+  box-shadow: 0 12px 28px rgba(2, 24, 48, 0.3);
+  transform: translateY(-2px);
+}
+
+.back-to-top-button:focus-visible {
+  outline: 3px solid #feb611;
+  outline-offset: 3px;
+}
+
 .interactive-section-placeholder {
   min-height: 70vh;
 }
@@ -1106,6 +1137,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (max-width: 767px) {
+  .back-to-top-button {
+    right: calc(20px + env(safe-area-inset-right, 0px));
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  }
+
   .centered-layout {
     justify-content: center;
     padding: max(4.25rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
