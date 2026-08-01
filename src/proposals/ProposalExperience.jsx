@@ -60,8 +60,8 @@ export default function ProposalExperience({ proposal, onExit }) {
       button.setAttribute('aria-current', isCurrent ? 'step' : 'false')
       
       const btnIndex = proposal.sections.findIndex(s => normaliseText(s.navigationLabel) === buttonLabel)
-      // Only the first 3 steps (Manual, OptiFlow, Prototype) have checkmark ticks when completed
-      if (btnIndex !== -1 && btnIndex < 3 && btnIndex < activeIndex) {
+      // First 3 steps (Manual, OptiFlow, Prototype) always show ticks; rest show dots
+      if (btnIndex >= 0 && btnIndex < 3) {
         button.classList.add('completed-step')
       } else {
         button.classList.remove('completed-step')
