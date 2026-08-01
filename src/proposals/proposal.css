@@ -292,53 +292,10 @@
     white-space: nowrap;
   }
 
-  .proposal-mobile-progress {
+  .proposal-mobile-tabs {
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    min-height: 12px;
-    margin-inline: 4px;
-  }
-
-  .proposal-mobile-progress-track,
-  .proposal-mobile-progress-fill {
-    position: absolute;
-    left: 5px;
-    height: 2px;
-    border-radius: 2px;
-  }
-
-  .proposal-mobile-progress-track {
-    right: 5px;
-    background: #cbd8e6;
-  }
-
-  .proposal-mobile-progress-fill {
-    background: #0b5fa5;
-  }
-
-  .proposal-mobile-progress-dot {
-    z-index: 1;
-    width: 10px;
-    height: 10px;
-    border: 2px solid #9aabbd;
-    border-radius: 50%;
-    background: #f8fafc;
-  }
-
-  .proposal-mobile-progress-dot.completed {
-    border-color: #0b5fa5;
-    background: #0b5fa5;
-  }
-
-  .proposal-mobile-progress-dot.current {
-    box-shadow: 0 0 0 3px rgba(11, 95, 165, 0.18);
-  }
-
-  .proposal-mobile-tabs {
-    display: flex;
-    gap: 6px;
     width: calc(100% + 24px);
     margin-inline: -12px;
     padding-inline: 12px;
@@ -354,12 +311,17 @@
     display: none;
   }
 
-  .proposal-mobile-tabs button {
+  .proposal-mobile-tab-step {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+  }
+
+  .proposal-mobile-tab-step button {
     flex: 0 0 auto;
     min-height: 44px;
     max-width: min(78vw, 300px);
     padding: 9px 14px;
-    overflow: hidden;
     color: #526173;
     border: 1px solid #dbe4ee;
     border-radius: 6px;
@@ -367,16 +329,37 @@
     font-size: 12px;
     font-weight: 700;
     text-align: center;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     scroll-snap-align: center;
     cursor: pointer;
   }
 
-  .proposal-mobile-tabs button.active {
+  .proposal-mobile-tab-step button > span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .proposal-mobile-tab-step.completed button {
+    color: #064f88;
+    border-color: #7eb1d8;
+    background: #edf7ff;
+  }
+
+  .proposal-mobile-tab-step button.active {
     color: #fff;
     border-color: #053364;
     background: #053364;
+  }
+
+  .proposal-mobile-tab-connector {
+    width: 22px;
+    height: 2px;
+    background: #cbd8e6;
+  }
+
+  .proposal-mobile-tab-step.completed .proposal-mobile-tab-connector {
+    background: #0b5fa5;
   }
 
   .proposal-original-content .proposal-main-content {

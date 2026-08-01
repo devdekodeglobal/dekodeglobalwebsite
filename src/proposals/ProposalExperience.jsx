@@ -22,9 +22,6 @@ export default function ProposalExperience({ proposal, onExit }) {
   const mobileTabsRef = useRef(null)
   const scrollRef = useRef(null)
   const section = proposal.sections[activeIndex]
-  const progressRatio = proposal.sections.length > 1
-    ? activeIndex / (proposal.sections.length - 1)
-    : 1
 
   const selectSection = (index) => {
     if (index < 0 || index >= proposal.sections.length) return
@@ -85,9 +82,10 @@ export default function ProposalExperience({ proposal, onExit }) {
   useEffect(() => {
     const tabs = mobileTabsRef.current
     const activeTab = tabs?.querySelector('[aria-selected="true"]')
-    if (!tabs || !activeTab) return
+    const activeStep = activeTab?.closest('.proposal-mobile-tab-step')
+    if (!tabs || !activeStep) return
 
-    const centeredLeft = activeTab.offsetLeft - (tabs.clientWidth - activeTab.clientWidth) / 2
+    const centeredLeft = activeStep.offsetLeft - (tabs.clientWidth - activeStep.clientWidth) / 2
     tabs.scrollTo({ left: Math.max(0, centeredLeft), behavior: 'auto' })
   }, [activeIndex])
 
@@ -127,35 +125,26 @@ export default function ProposalExperience({ proposal, onExit }) {
             <span>Proposal sections</span>
             <strong>{activeIndex + 1} of {proposal.sections.length}</strong>
           </div>
-          <div className="proposal-mobile-progress" aria-hidden="true">
-            <span className="proposal-mobile-progress-track" />
-            <span
-              className="proposal-mobile-progress-fill"
-              style={{ width: `calc(${progressRatio * 100}% - ${progressRatio * 10}px)` }}
-            />
-            {proposal.sections.map((candidate, index) => (
-              <span
-                key={candidate.id}
-                className={[
-                  'proposal-mobile-progress-dot',
-                  index <= activeIndex ? 'completed' : '',
-                  index === activeIndex ? 'current' : '',
-                ].filter(Boolean).join(' ')}
-              />
-            ))}
-          </div>
           <div ref={mobileTabsRef} className="proposal-mobile-tabs" role="tablist" aria-label="Proposal sections">
             {proposal.sections.map((candidate, index) => (
-              <button
+              <div
                 key={candidate.id}
-                type="button"
-                role="tab"
-                aria-selected={index === activeIndex}
-                className={index === activeIndex ? 'active' : ''}
-                onClick={() => selectSection(index)}
+                role="presentation"
+                className={`proposal-mobile-tab-step${index < activeIndex ? ' completed' : ''}`}
               >
-                {candidate.navigationLabel}
-              </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={index === activeIndex}
+                  className={index === activeIndex ? 'active' : ''}
+                  onClick={() => selectSection(index)}
+                >
+                  <span>{candidate.navigationLabel}</span>
+                </button>
+                {index < proposal.sections.length - 1 && (
+                  <span className="proposal-mobile-tab-connector" aria-hidden="true" />
+                )}
+              </div>
             ))}
           </div>
         </nav>
