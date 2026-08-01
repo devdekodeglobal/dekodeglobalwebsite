@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ArrowUp, LogOut } from 'lucide-react'
+import { LogOut } from 'lucide-react'
 
 const PATH_BY_LABEL = {
   'Show Full Workflow': 'all',
@@ -18,7 +18,6 @@ const normaliseText = (value = '') => value.replace(/\s+/g, ' ').trim()
 export default function ProposalExperience({ proposal, onExit }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [activePath, setActivePath] = useState('all')
-  const [showBackToTop, setShowBackToTop] = useState(false)
   const contentRef = useRef(null)
   const mobileTabsRef = useRef(null)
   const scrollRef = useRef(null)
@@ -28,19 +27,7 @@ export default function ProposalExperience({ proposal, onExit }) {
     if (index < 0 || index >= proposal.sections.length) return
     setActiveIndex(index)
     setActivePath('all')
-    setShowBackToTop(false)
     scrollRef.current?.scrollTo({ top: 0, behavior: 'auto' })
-  }
-
-  const handleProposalScroll = (event) => {
-    const stage = event.currentTarget
-    setShowBackToTop(stage.scrollTop > Math.max(400, stage.clientHeight * 0.75))
-  }
-
-  const scrollProposalToTop = () => {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    scrollRef.current?.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
-    setShowBackToTop(false)
   }
 
   const selectSectionByLabel = (label) => {
@@ -132,7 +119,6 @@ export default function ProposalExperience({ proposal, onExit }) {
         ref={scrollRef}
         className="proposal-source-stage"
         aria-label={`${proposal.title} ${proposal.subtitle}`}
-        onScroll={handleProposalScroll}
       >
         <nav className="proposal-mobile-nav" aria-label="Proposal sections">
           <div className="proposal-mobile-nav-heading">
@@ -170,17 +156,6 @@ export default function ProposalExperience({ proposal, onExit }) {
           dangerouslySetInnerHTML={{ __html: section.html }}
         />
       </section>
-      {showBackToTop && (
-        <button
-          type="button"
-          className="proposal-back-to-top"
-          onClick={scrollProposalToTop}
-          aria-label="Back to top"
-          title="Back to top"
-        >
-          <ArrowUp size={20} aria-hidden="true" />
-        </button>
-      )}
     </main>
   )
 }
