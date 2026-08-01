@@ -82,3 +82,12 @@ test('restored proposal remains responsive, keyboard-visible, and motion-safe', 
   assert.match(styles, /scroll-padding-inline:\s*12px/)
   assert.match(styles, /\.proposal-original-content \.proposal-sidebar\s*\{[^}]*display:\s*none/s)
 })
+
+test('long proposal sections provide an accessible back-to-top control', () => {
+  assert.match(experience, /onScroll=\{handleProposalScroll\}/)
+  assert.match(experience, /stage\.scrollTop > Math\.max\(400, stage\.clientHeight \* 0\.75\)/)
+  assert.match(experience, /aria-label="Back to top"/)
+  assert.match(experience, /<ArrowUp size=\{20\}/)
+  assert.match(experience, /reduceMotion \? 'auto' : 'smooth'/)
+  assert.match(styles, /\.proposal-back-to-top\s*\{[^}]*width:\s*44px[^}]*height:\s*44px/s)
+})
