@@ -18,11 +18,12 @@ export default async function handler(request, response) {
   }
 
   const { password } = request.body || {}
-  if (!verifyCredentials(password)) {
+  const auth = verifyCredentials(password)
+  if (!auth || !auth.valid) {
     return response.status(401).json({ ok: false, error: genericAccessError })
   }
 
-  response.setHeader('Set-Cookie', createSessionCookie(request))
+  response.setHeader('Set-Cookie', createSessionCookie(request, auth.accessLevel))
   console.info('[Proposal audit] Access granted.', {
     proposalId: PROPOSAL_ID,
     version: PROPOSAL_VERSION,

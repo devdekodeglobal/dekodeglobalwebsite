@@ -11,13 +11,26 @@ const architectureAssetPath = resolve(
   fileURLToPath(new URL('..', import.meta.url)),
   '_proposal/source/arch.png',
 )
+const businessPlanAssetPath = resolve(
+  fileURLToPath(new URL('..', import.meta.url)),
+  '_proposal/source/business_plan.pdf',
+)
 
 export default async function handler(request, response) {
   privateHeaders(response)
   if (request.method !== 'GET') return response.status(405).end()
-  if (!readSession(request)) return response.status(401).end()
+  const session = readSession(request)
+  if (!session) return response.status(401).end()
+  
   const requestedAsset = request.query?.asset ||
     new URL(request.url || '/', 'http://localhost').searchParams.get('asset')
+    
+  if (requestedAsset === 'business_plan') {
+    if (session.accessLevel !== 'extended') return response.status(403).end()
+    response.setHeader('Content-Type', 'application/pdf')
+    return response.status(200).send(await readFile(businessPlanAssetPath))
+  }
+    
   const assetPath = requestedAsset === 'architecture'
     ? architectureAssetPath
     : prototypeAssetPath

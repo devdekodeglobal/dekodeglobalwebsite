@@ -9,6 +9,8 @@ import {
 const PASSWORD_SALT = 'dekode-cfs-access-v1'
 const PASSWORD_HASH =
   'f423ec88d9d0369cc0fb449151a994f5bbf44945dba0fde9d42ba8a166d8f475'
+const EXTENDED_PASSWORD_HASH = 
+  'a815bd17bf5b316984c9d96404c9d3d411286de1e7ed7f44e327f181b216850d'
 const SESSION_TTL_SECONDS = 60 * 60 * 2
 const COOKIE_NAME = 'dekode_proposal_session'
 const attempts = new Map()
@@ -68,14 +70,21 @@ export function verifyCredentials(password) {
     32,
     'sha256',
   ).toString('hex')
-  return safeEqual(passwordHash, PASSWORD_HASH)
+  if (safeEqual(passwordHash, PASSWORD_HASH)) {
+    return { valid: true, accessLevel: 'standard' }
+  }
+  if (safeEqual(passwordHash, EXTENDED_PASSWORD_HASH)) {
+    return { valid: true, accessLevel: 'extended' }
+  }
+  return { valid: false, accessLevel: 'none' }
 }
 
-export function createSessionCookie(request) {
+export function createSessionCookie(request, accessLevel = 'standard') {
   const now = Math.floor(Date.now() / 1000)
   const payload = encode({
     proposalId: PROPOSAL_ID,
     version: PROPOSAL_VERSION,
+    accessLevel,
     issuedAt: now,
     expiresAt: now + SESSION_TTL_SECONDS,
     nonce: randomBytes(16).toString('hex'),
@@ -99,22 +108,16 @@ export function readSession(request) {
     .map((value) => value.trim())
   const sessionCookie = cookies.find((value) => value.startsWith(`${COOKIE_NAME}=`))
   if (!sessionCookie) return null
-  const token = sessionCookie.slice(COOKIE_NAME.length + 1)
-  const separator = token.lastIndexOf('.')
-  if (separator < 1) return null
-  const payload = token.slice(0, separator)
-  const signature = token.slice(separator + 1)
+  const sessionValue = sessionCookie.substring(COOKIE_NAME.length + 1)
+  const [payload, signature] = sessionValue.split('.')
+  if (!payload || !signature) return null
   if (!safeEqual(signature, sign(payload))) return null
   try {
-    const session = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'))
-    if (
-      session.proposalId !== PROPOSAL_ID ||
-      session.version !== PROPOSAL_VERSION ||
-      session.expiresAt <= Math.floor(Date.now() / 1000)
-    ) {
-      return null
-    }
-    return session
+    const decoded = JSON.parse(Buffer.from(payload, 'base64url').toString())
+    if (decoded.proposalId !== PROPOSAL_ID) return null
+    if (decoded.version !== PROPOSAL_VERSION) return null
+    if (decoded.expiresAt < Math.floor(Date.now() / 1000)) return null
+    return decoded
   } catch {
     return null
   }
