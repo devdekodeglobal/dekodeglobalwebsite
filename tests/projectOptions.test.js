@@ -7,17 +7,10 @@ import {
 import { generateAudienceResponse } from '../src/utils/chatIntelligence.js';
 
 const EXPECTED_LABELS = [
-  'AI Strategy & Consulting',
-  'Generative AI',
-  'Agentic AI',
-  'Predictive AI',
-  'Analytical AI',
-  'Mobile App',
-  'Web App',
+  'AI Strategy',
+  'AI Automation',
+  'Mobile & Web',
   'Cloud Solutions',
-  'Process Automation',
-  'Systems Integration',
-  'E-commerce',
 ];
 
 test('uses the approved project labels exactly once', () => {
@@ -28,11 +21,10 @@ test('uses the approved project labels exactly once', () => {
 });
 
 test('maps common wording to the right project category', () => {
-  assert.equal(findProjectOption('I need a GenAI copilot')?.label, 'Generative AI');
-  assert.equal(findProjectOption('Build an AI agent for sales')?.label, 'Agentic AI');
+  assert.equal(findProjectOption('I need a GenAI copilot')?.label, 'AI Automation');
+  assert.equal(findProjectOption('Build an AI agent for sales')?.label, 'AI Automation');
   assert.equal(findProjectOption('Move our systems to the cloud')?.label, 'Cloud Solutions');
-  assert.equal(findProjectOption('Connect our CRM through an API integration')?.label, 'Systems Integration');
-  assert.equal(findProjectOption('A web application for customers')?.label, 'Web App');
+  assert.equal(findProjectOption('A web application for customers')?.label, 'Mobile & Web');
 });
 
 test('asks category-specific follow-up questions', () => {

@@ -922,6 +922,15 @@ export default function ChatApp({
       <a className="brand-logo" href={import.meta.env.BASE_URL || "/"} aria-label="Go to DEKODE home">
         DEKODE
       </a>
+      {onOpenProposalAccess && !proposalContext && (
+        <button
+          type="button"
+          className="action-pill proposal-entry-button client-portal-top-right"
+          onClick={onOpenProposalAccess}
+        >
+          <LockKeyhole size={15} /> Client Portal
+        </button>
+      )}
       {proposalContext && (
         <div className="proposal-context-bar">
           <span id="proposal-chat-title"><i /> Proposal chat</span>
@@ -990,21 +999,6 @@ export default function ChatApp({
                       ))}
                     </div>
                   ))}
-                  {onOpenProposalAccess && (
-                    <div
-                      className="option-row option-row-portal"
-                      role="group"
-                      aria-label="Client portal"
-                    >
-                      <button
-                        type="button"
-                        className="action-pill proposal-entry-button"
-                        onClick={onOpenProposalAccess}
-                      >
-                        <LockKeyhole size={15} /> Client Portal
-                      </button>
-                    </div>
-                  )}
                 </div>
               </>
             )}
