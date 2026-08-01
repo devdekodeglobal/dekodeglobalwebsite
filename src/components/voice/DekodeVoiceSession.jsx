@@ -115,7 +115,10 @@ export default function DekodeVoiceSession({ onClose, onSwitchToText, onTurn, on
 
   const speak = useCallback((text, after = beginListening) => {
     setState(VOICE_STATES.SPEAKING);
-    tts.speak(text, {
+    // Convert DEKODE to Dekode only for the voice engine so it pronounces it as a word, 
+    // while the on-screen text remains capitalized.
+    const spokenText = text.replace(/DEKODE/g, 'Dekode');
+    tts.speak(spokenText, {
       muted: outputMuted,
       onEnd: after,
       onError: () => {
