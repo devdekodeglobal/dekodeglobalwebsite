@@ -79,5 +79,8 @@ test('provides one translucent back-to-top control across every DEKODE layout', 
   assert.match(backToTop, /aria-label="Back to top"/);
   assert.match(backToTop, /reduceMotion \? 'auto' : 'smooth'/);
   assert.match(indexCss, /\.back-to-top-button\s*\{[^}]*width:\s*44px[^}]*height:\s*44px/s);
+  assert.match(indexCss, /right:\s*calc\(32px \+ env\(safe-area-inset-right, 0px\)\)/);
+  assert.match(indexCss, /bottom:\s*calc\(32px \+ env\(safe-area-inset-bottom, 0px\)\)/);
+  assert.match(indexCss, /right:\s*calc\(20px \+ env\(safe-area-inset-right, 0px\)\)/);
   assert.match(indexCss, /background:\s*rgba\(5, 51, 100, 0\.72\)/);
 });
