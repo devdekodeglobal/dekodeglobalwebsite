@@ -13,7 +13,7 @@ const architectureAssetPath = resolve(
 )
 const businessPlanAssetPath = resolve(
   fileURLToPath(new URL('..', import.meta.url)),
-  '_proposal/source/business_plan.pdf',
+  '_proposal/source/CFS_Business_Impact_Statement.pdf',
 )
 
 export default async function handler(request, response) {
