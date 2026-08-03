@@ -222,11 +222,10 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
                 <rect x="523" y="260" width="24" height="60" rx="4" fill={isNight ? '#1e1b4b' : '#78350f'} />
               </g>
 
-              {/* Building 5 (x=620, w=160): DEKODE AI TECH TOWER with Neon Sign */}
+              {/* Building 5 (x=620, w=160): Corporate Tech Tower */}
               <g className="b-5">
                 <rect x="620" y="40" width="160" height="280" rx="10" fill={isNight ? '#1e1b4b' : isEvening ? '#311b92' : '#818cf8'} />
                 <rect x="640" y="18" width="120" height="22" rx="4" fill="url(#neonGlow)" style={{ filter: 'drop-shadow(0 0 10px #38bdf8)' }} />
-                <text x="700" y="34" fill="#ffffff" fontSize="12" fontWeight="bold" textAnchor="middle" letterSpacing="1">DEKODE AI</text>
                 {[0, 1, 2, 3, 4, 5].map((r) =>
                   [0, 1, 2].map((c) => (
                     <rect key={`b5-${r}-${c}`} x={642 + c * 42} y={60 + r * 38} width="28" height="22" rx="3" fill={windowFill} style={{ filter: windowGlow, transition: 'fill 1.2s' }} />
