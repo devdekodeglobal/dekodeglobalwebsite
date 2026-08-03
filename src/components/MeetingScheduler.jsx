@@ -6,9 +6,15 @@ import { voiceConfig } from '../voice/config.js';
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export default function MeetingScheduler({ projectSummary, onBooked }) {
+export default function MeetingScheduler({
+  projectSummary,
+  onBooked,
+  selectedSlotId,
+  onSlotSelect,
+  onSlotsChange,
+}) {
   const [slots, setSlots] = useState([]);
-  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [localSelectedSlotId, setLocalSelectedSlotId] = useState(null);
   const [status, setStatus] = useState('loading');
   const [error, setError] = useState('');
   const [consent, setConsent] = useState(false);
@@ -19,20 +25,34 @@ export default function MeetingScheduler({ projectSummary, onBooked }) {
     companyTimezone: voiceConfig.companyTimezone,
   }), []);
   const booking = useMemo(() => new CalendarBookingService(), []);
+  const activeSelectedSlotId = selectedSlotId === undefined ? localSelectedSlotId : selectedSlotId;
+  const selectedSlot = useMemo(
+    () => slots.find((slot) => slot.id === activeSelectedSlotId) || null,
+    [activeSelectedSlotId, slots],
+  );
+
+  const selectSlot = useCallback((slot) => {
+    setLocalSelectedSlotId(slot?.id || null);
+    onSlotSelect?.(slot);
+    setError('');
+  }, [onSlotSelect]);
 
   const loadSlots = useCallback(async () => {
     setStatus('loading');
     setError('');
-    setSelectedSlot(null);
+    selectSlot(null);
     try {
       const nextSlots = await provider.getAvailableSlots(undefined, timezone);
       setSlots(nextSlots);
+      onSlotsChange?.(nextSlots);
       setStatus(nextSlots.length ? 'ready' : 'empty');
     } catch (nextError) {
+      setSlots([]);
+      onSlotsChange?.([]);
       setError(nextError.message);
       setStatus('error');
     }
-  }, [provider, timezone]);
+  }, [onSlotsChange, provider, selectSlot, timezone]);
 
   useEffect(() => { loadSlots(); }, [loadSlots]);
 
@@ -84,7 +104,7 @@ export default function MeetingScheduler({ projectSummary, onBooked }) {
       ) : (
         <div className="meeting-slot-grid">
           {slots.slice(0, 12).map((slot) => (
-            <button key={slot.id} type="button" className={selectedSlot?.id === slot.id ? 'is-selected' : ''} onClick={() => { setSelectedSlot(slot); setError(''); }}>
+            <button key={slot.id} type="button" className={selectedSlot?.id === slot.id ? 'is-selected' : ''} onClick={() => selectSlot(slot)}>
               {slot.label}
             </button>
           ))}

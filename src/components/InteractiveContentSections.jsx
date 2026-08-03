@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowUpRight, Calendar, MessageCircle, Mic, Sparkles } from "lucide-react";
+import { ArrowUpRight, Calendar, Mail, MapPin, MessageCircle, Mic, Phone, Scale, ShieldCheck, Sparkles } from "lucide-react";
 import { interactiveSiteContent as content } from "../content/interactiveSiteContent";
+import { loadCompanyKnowledge } from "../knowledge/companyKnowledgeLoader";
 import {
   openDekodeVoice,
   sendContentToChat,
@@ -15,6 +16,8 @@ const reveal = {
   viewport: { once: true, amount: 0.16 },
   transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
 };
+
+const companyKnowledge = loadCompanyKnowledge();
 
 function ChatAction({ section, item, label, intent }) {
   return (
@@ -55,6 +58,7 @@ export default function InteractiveContentSections() {
   const [activeProject, setActiveProject] = useState(content.selectedWork[0].id);
   const [activeStage, setActiveStage] = useState(content.deliveryProcess[0].id);
   const [activeIndustry, setActiveIndustry] = useState(content.industries[0].id);
+  const [openLegalDocument, setOpenLegalDocument] = useState(null);
   const [sessionSummary, setSessionSummary] = useState("");
 
   useEffect(() => subscribeToSessionSummary(setSessionSummary), []);
@@ -239,6 +243,58 @@ export default function InteractiveContentSections() {
           <button type="button" onClick={() => sendContentToChat({ sourceSection: "start-project", topic: "Meeting", intent: "meeting_request", displayLabel: "Request a Meeting", suggestedPrompt: content.conversionPrompts.meeting })}>
             <Calendar size={18} /> Request a Meeting
           </button>
+        </div>
+      </motion.section>
+
+      <motion.section className="story-section company-info-section" {...(shouldReduceMotion ? { initial: false } : reveal)}>
+        <SectionHeading
+          eyebrow="Company information"
+          title="Contact, locations and policies"
+          description="Verified details from DEKODE's published company information."
+        />
+        <div className="company-info-grid">
+          <section className="company-info-block">
+            <h3><Mail size={18} /> Contact DEKODE</h3>
+            <a href={`mailto:${companyKnowledge.contact.email}`}>{companyKnowledge.contact.email}</a>
+            {companyKnowledge.contact.phones.map((phone, index) => (
+              <a href={`tel:${phone}`} key={phone}><Phone size={15} /> {companyKnowledge.contact.phoneLabels[index]}</a>
+            ))}
+            <a href={`https://wa.me/${companyKnowledge.contact.whatsapp}`} target="_blank" rel="noreferrer">
+              <MessageCircle size={15} /> WhatsApp {companyKnowledge.contact.phoneLabels[0]}
+            </a>
+          </section>
+
+          <section className="company-info-block">
+            <h3><MapPin size={18} /> Where we work</h3>
+            <p>{companyKnowledge.contact.operatingModel}</p>
+            {companyKnowledge.contact.locations.map((location) => (
+              <p key={location.country}><strong>{location.country}</strong><span>{location.address}</span></p>
+            ))}
+          </section>
+
+          {[
+            ['privacy', ShieldCheck],
+            ['terms', Scale],
+          ].map(([type, Icon]) => {
+            const document = companyKnowledge.legal[type];
+            return (
+              <details className="company-legal-details" key={type} open={openLegalDocument === type}>
+                <summary onClick={(event) => { event.preventDefault(); setOpenLegalDocument((current) => current === type ? null : type); }}>
+                  <Icon size={18} /><span>{document.title}</span><ArrowUpRight size={15} />
+                </summary>
+                <p>{document.summary}</p>
+                {document.contactEmail && (
+                  <a className="company-legal-contact" href={`mailto:${document.contactEmail}`}>Privacy enquiries: {document.contactEmail}</a>
+                )}
+                {document.sections.map((section) => (
+                  <div key={section.title}>
+                    <h4>{section.title}</h4>
+                    <p>{section.summary}</p>
+                  </div>
+                ))}
+              </details>
+            );
+          })}
         </div>
       </motion.section>
     </main>

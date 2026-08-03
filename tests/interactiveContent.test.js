@@ -29,6 +29,7 @@ test("all requested story sections and state controls are present", () => {
     "How DEKODE works",
     "Industries and solutions",
     "Have an idea?",
+    "Contact, locations and policies",
   ]) assert.match(sections, new RegExp(label.replace(/[?]/g, "\\?")));
   assert.match(sections, /activeCapability/);
   assert.match(sections, /activeProject/);
@@ -42,6 +43,10 @@ test("structured content is sourced and responsive fallbacks are available", () 
   assert.match(content, /selectedWork:/);
   assert.match(content, /deliveryProcess:/);
   assert.match(content, /industries:/);
+  assert.match(sections, /companyKnowledge\.legal/);
+  assert.match(sections, /companyKnowledge\.contact\.locations/);
+  assert.match(sections, /open=\{openLegalDocument === type\}/);
+  assert.match(sections, /setOpenLegalDocument/);
   assert.match(css, /@media \(max-width: 600px\)/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(css, /content-visibility:\s*auto/);

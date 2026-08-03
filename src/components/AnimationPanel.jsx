@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Settings, CheckCircle2, Server, Database, Cloud, Shield, ShoppingCart, CreditCard, GitMerge, FileText, MessageSquare, Bot, Wrench, Layers } from 'lucide-react';
+import { CalendarDays, CheckCircle2, ChevronLeft, ChevronRight, Clock, Server, Database, Cloud, Shield, ShoppingCart, GitMerge, FileText, MessageSquare, Bot, Wrench, Layers } from 'lucide-react';
+import { resolveVisualMode } from '../utils/visualIntent';
 
 const CodeLine = ({ delay = 0, width = "100%", color = "rgba(255,255,255,0.2)" }) => (
   <motion.div 
@@ -8,26 +9,6 @@ const CodeLine = ({ delay = 0, width = "100%", color = "rgba(255,255,255,0.2)" }
     animate={{ width, opacity: 1 }}
     transition={{ delay, duration: 0.5 }}
     style={{ height: '6px', background: color, borderRadius: '3px', marginBottom: '8px' }}
-  />
-);
-
-const FloatingBlock = ({ delay = 0, yOffset = -20 }) => (
-  <motion.div
-    initial={{ y: yOffset, opacity: 0 }}
-    animate={{ y: 0, opacity: 1 }}
-    transition={{ delay, type: "spring", stiffness: 100, damping: 10 }}
-    style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '8px', padding: '10px', backdropFilter: 'blur(4px)', border: '1px solid rgba(255,255,255,0.1)' }}
-  >
-    <CodeLine delay={delay + 0.2} width="80%" />
-    <CodeLine delay={delay + 0.3} width="40%" />
-  </motion.div>
-);
-
-const Spinner = () => (
-  <motion.div
-    animate={{ rotate: 360 }}
-    transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-    style={{ width: '24px', height: '24px', border: '3px solid rgba(255,255,255,0.1)', borderTopColor: 'var(--color-accent-yellow)', borderRadius: '50%', margin: '0 auto' }}
   />
 );
 
@@ -321,6 +302,125 @@ const MobileAppAnimation = ({ level }) => {
   );
 };
 
+const toLocalDateKey = (value) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+};
+
+const CalendarBookingAnimation = ({ slots = [], selectedSlotId, onSelectSlot }) => {
+  const initialSlot = slots.find((slot) => slot.id === selectedSlotId) || slots[0];
+  const initialDate = initialSlot ? new Date(initialSlot.iso) : new Date();
+  const [viewDate, setViewDate] = React.useState(() => new Date(initialDate.getFullYear(), initialDate.getMonth(), 1));
+  const [selectedDateKey, setSelectedDateKey] = React.useState(() => toLocalDateKey(initialSlot?.iso));
+
+  const slotsByDate = React.useMemo(() => slots.reduce((groups, slot) => {
+    const key = toLocalDateKey(slot.iso);
+    if (!key) return groups;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(slot);
+    return groups;
+  }, new Map()), [slots]);
+
+  React.useEffect(() => {
+    const nextSlot = slots.find((slot) => slot.id === selectedSlotId) || slots[0];
+    if (!nextSlot) return;
+    const nextDate = new Date(nextSlot.iso);
+    setSelectedDateKey(toLocalDateKey(nextSlot.iso));
+    setViewDate(new Date(nextDate.getFullYear(), nextDate.getMonth(), 1));
+  }, [selectedSlotId, slots]);
+
+  const currentYear = new Date().getFullYear();
+  const availableYears = React.useMemo(() => {
+    const years = new Set([currentYear, currentYear + 1, currentYear + 2, viewDate.getFullYear()]);
+    slots.forEach((slot) => years.add(new Date(slot.iso).getFullYear()));
+    return [...years].filter(Number.isFinite).sort((a, b) => a - b);
+  }, [currentYear, slots, viewDate]);
+  const firstWeekday = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay();
+  const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
+  const days = Array.from({ length: 42 }, (_, index) => {
+    const day = index - firstWeekday + 1;
+    return day >= 1 && day <= daysInMonth ? day : null;
+  });
+  const visibleDatePrefix = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}`;
+  const selectedDateIsVisible = selectedDateKey.startsWith(visibleDatePrefix);
+  const visibleSlots = selectedDateIsVisible ? slotsByDate.get(selectedDateKey) || [] : [];
+  const moveMonth = (offset) => setViewDate((current) => new Date(current.getFullYear(), current.getMonth() + offset, 1));
+  const updateMonth = (month) => setViewDate((current) => new Date(current.getFullYear(), Number(month), 1));
+  const updateYear = (year) => setViewDate((current) => new Date(Number(year), current.getMonth(), 1));
+  const timeFormatter = React.useMemo(() => new Intl.DateTimeFormat(undefined, {
+    hour: 'numeric',
+    minute: '2-digit',
+  }), []);
+
+  return (
+    <div className="booking-calendar-visual">
+      <div className="booking-calendar-header">
+        <div className="booking-calendar-title">
+          <CalendarDays size={20} />
+          <strong>Choose a date</strong>
+        </div>
+        <div className="booking-calendar-navigation">
+          <button type="button" onClick={() => moveMonth(-1)} aria-label="Previous month" title="Previous month"><ChevronLeft size={16} /></button>
+          <select value={viewDate.getMonth()} onChange={(event) => updateMonth(event.target.value)} aria-label="Calendar month">
+            {Array.from({ length: 12 }, (_, month) => (
+              <option key={month} value={month}>{new Intl.DateTimeFormat(undefined, { month: 'long' }).format(new Date(2020, month, 1))}</option>
+            ))}
+          </select>
+          <select value={viewDate.getFullYear()} onChange={(event) => updateYear(event.target.value)} aria-label="Calendar year">
+            {availableYears.map((year) => <option key={year} value={year}>{year}</option>)}
+          </select>
+          <button type="button" onClick={() => moveMonth(1)} aria-label="Next month" title="Next month"><ChevronRight size={16} /></button>
+        </div>
+      </div>
+
+      <div className="booking-calendar-grid">
+        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
+          <span className="booking-calendar-weekday" key={`${day}-${index}`}>{day}</span>
+        ))}
+        {days.map((day, index) => {
+          const dateKey = day ? `${visibleDatePrefix}-${String(day).padStart(2, '0')}` : '';
+          const hasSlots = slotsByDate.has(dateKey);
+          return day ? (
+            <motion.button
+              type="button"
+              key={dateKey}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.006 * index }}
+              className={selectedDateKey === dateKey ? 'is-selected' : ''}
+              disabled={!hasSlots}
+              onClick={() => {
+                setSelectedDateKey(dateKey);
+                if (selectedSlotId && toLocalDateKey(slots.find((slot) => slot.id === selectedSlotId)?.iso) !== dateKey) {
+                  onSelectSlot?.(null);
+                }
+              }}
+              aria-label={`${day} ${new Intl.DateTimeFormat(undefined, { month: 'long' }).format(viewDate)}${hasSlots ? ', times available' : ', unavailable'}`}
+            >
+              {day}
+            </motion.button>
+          ) : <span key={`empty-${index}`} aria-hidden="true" />;
+        })}
+      </div>
+
+      <div className="booking-calendar-times" aria-live="polite">
+        <Clock size={15} />
+        {visibleSlots.length ? visibleSlots.map((slot) => (
+          <button
+            type="button"
+            key={slot.id}
+            className={selectedSlotId === slot.id ? 'is-selected' : ''}
+            onClick={() => onSelectSlot?.(slot)}
+          >
+            {timeFormatter.format(new Date(slot.iso))}
+          </button>
+        )) : <span className="booking-calendar-empty">{slots.length ? 'Select an available date' : 'Loading live availability...'}</span>}
+      </div>
+    </div>
+  );
+};
+
 const DefaultWebAnimation = ({ level }) => {
   return (
     <div className="browser-frame" style={{ width: '100%', maxWidth: '100%', height: '300px', display: 'flex', flexDirection: 'column' }}>
@@ -358,25 +458,22 @@ const DefaultWebAnimation = ({ level }) => {
   );
 };
 
-export default function AnimationPanel({ projectType, level, messages = [] }) {
+export default function AnimationPanel({
+  projectType,
+  level,
+  messages = [],
+  meetingSlots = [],
+  selectedMeetingSlotId,
+  onMeetingSlotSelect,
+}) {
   const [activeTab, setActiveTab] = React.useState('web');
 
   React.useEffect(() => {
     if (!messages || messages.length === 0) return;
     
-    // Scan messages from newest to oldest to auto-switch tab based on keywords
-    for (let i = messages.length - 1; i >= 0; i--) {
-      const msg = String(messages[i].text || "").toLowerCase();
-      if (msg.includes('web') || msg.includes('site') || msg.includes('browser') || msg.includes('desktop') || msg.includes('portal')) {
-        setActiveTab('web');
-        break;
-      }
-      if (msg.includes('mobile') || msg.includes('app') || msg.includes('phone') || msg.includes('ios') || msg.includes('android')) {
-        setActiveTab('mobile');
-        break;
-      }
-    }
-  }, [messages]);
+    const inferredMode = resolveVisualMode(projectType, messages);
+    if (inferredMode === 'web' || inferredMode === 'mobile') setActiveTab(inferredMode);
+  }, [messages, projectType]);
 
   React.useEffect(() => {
     setActiveTab('web'); // Reset to default when projectType changes
@@ -387,6 +484,12 @@ export default function AnimationPanel({ projectType, level, messages = [] }) {
   }
 
   const isMobileAndWeb = projectType === 'Mobile & Web';
+  const inferredMode = resolveVisualMode(projectType, messages);
+  const visualMode = isMobileAndWeb && ['web', 'mobile'].includes(inferredMode)
+    ? activeTab
+    : inferredMode;
+  const userTurnCount = messages.filter((message) => message.sender === 'user').length;
+  const dynamicLevel = Math.max(level, Math.min(4, userTurnCount + 1));
 
   return (
     <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -444,25 +547,29 @@ export default function AnimationPanel({ projectType, level, messages = [] }) {
 
       <AnimatePresence mode="wait">
         <motion.div
-          key={isMobileAndWeb ? `${projectType}-${activeTab}` : projectType}
+          key={`${projectType}-${visualMode}`}
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.4 }}
           style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
         >
-          {projectType.includes('AI') ? (
-            <AIAgentAnimation level={level} />
-          ) : projectType.includes('Cloud') ? (
-            <CloudInfraAnimation level={level} />
-          ) : projectType.includes('E-commerce') ? (
-            <EcommerceAnimation level={level} />
-          ) : isMobileAndWeb ? (
-            activeTab === 'mobile' ? <MobileAppAnimation level={level} /> : <DefaultWebAnimation level={level} />
-          ) : projectType.includes('Mobile') ? (
-            <MobileAppAnimation level={level} />
+          {visualMode === 'calendar' ? (
+            <CalendarBookingAnimation
+              slots={meetingSlots}
+              selectedSlotId={selectedMeetingSlotId}
+              onSelectSlot={onMeetingSlotSelect}
+            />
+          ) : visualMode === 'ai' ? (
+            <AIAgentAnimation level={dynamicLevel} />
+          ) : visualMode === 'cloud' ? (
+            <CloudInfraAnimation level={dynamicLevel} />
+          ) : visualMode === 'ecommerce' ? (
+            <EcommerceAnimation level={dynamicLevel} />
+          ) : visualMode === 'mobile' ? (
+            <MobileAppAnimation level={dynamicLevel} />
           ) : (
-            <DefaultWebAnimation level={level} />
+            <DefaultWebAnimation level={dynamicLevel} />
           )}
         </motion.div>
       </AnimatePresence>

@@ -7,6 +7,9 @@ const questions = {
   process: ['Our Services', 'Why Choose DEKODE', 'Industries'],
   why: ['Our Services', 'Industries', 'Development Process'],
   contact: ['Our Services', 'Why Choose DEKODE', 'Development Process'],
+  location: ['Contact DEKODE', 'Privacy Policy', 'Terms & Conditions'],
+  privacy: ['Contact DEKODE', 'DEKODE Locations', 'Terms & Conditions'],
+  terms: ['Contact DEKODE', 'Privacy Policy', 'DEKODE Locations'],
 };
 
 const promptByLabel = {
@@ -16,6 +19,10 @@ const promptByLabel = {
   'Technology Stack': 'What technologies do you use?',
   'Development Process': 'What is your development process?',
   'Why Choose DEKODE': 'Why should I choose DEKODE?',
+  'Contact DEKODE': 'How can I contact DEKODE?',
+  'DEKODE Locations': 'Where is DEKODE located?',
+  'Privacy Policy': "What is DEKODE's privacy policy?",
+  'Terms & Conditions': "What are DEKODE's terms and conditions?",
 };
 
 export function getSuggestedQuestions(topic) {

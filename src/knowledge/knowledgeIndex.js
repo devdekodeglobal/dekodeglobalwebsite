@@ -30,7 +30,8 @@ export function findTopic(message) {
 
   for (const [topic, terms] of Object.entries(topicTerms)) {
     const score = terms.reduce((total, term) => total + (input.includes(term) ? term.split(' ').length : 0), 0);
-    if (score > best.score) best = { topic, score };
+    const replacesGenericCompanyTie = score === best.score && best.topic === 'company' && topic !== 'company';
+    if (score > best.score || replacesGenericCompanyTie) best = { topic, score };
   }
 
   const service = knowledge.services.find((item) => {

@@ -40,3 +40,14 @@ test('retrieves focused knowledge for the new solution labels', () => {
     assert.ok(matches.length <= 5);
   }
 });
+
+test('retrieves verified location and legal documents for Gemini grounding', () => {
+  const locationMatches = retrieveCompanyKnowledge('Where is the DEKODE office located?');
+  const privacyMatches = retrieveCompanyKnowledge("What is DEKODE's privacy policy?");
+  const termsMatches = retrieveCompanyKnowledge('What are the terms and conditions?');
+
+  assert.ok(locationMatches.some((match) => match.id === 'locations'));
+  assert.ok(privacyMatches.some((match) => match.id === 'privacy-policy'));
+  assert.ok(termsMatches.some((match) => match.id === 'terms-of-service'));
+  assert.match(privacyMatches.find((match) => match.id === 'privacy-policy').text, /pm@dekodeglobal\.com/);
+});
