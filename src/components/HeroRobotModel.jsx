@@ -100,10 +100,10 @@ function RobotModel({ isNight }) {
   }, [scene]);
 
   return (
-    <group position={[1.85, -0.9, 0]}>
+    <group position={[1.8, -0.45, 0]}>
       {/* HTML Speech Bubble floating above robot head */}
       {showSpeech && (
-        <Html position={[0, 1.3, 0]} center distanceFactor={8} zIndexRange={[100, 0]}>
+        <Html position={[0, 1.25, 0]} center distanceFactor={8} zIndexRange={[100, 0]}>
           <div className="robot-speech-bubble" onClick={() => setShowSpeech(false)}>
             <div className="speech-bubble-text">{speechText}</div>
             <div className="speech-bubble-arrow" />
@@ -114,7 +114,7 @@ function RobotModel({ isNight }) {
       <primitive 
         ref={robotRef}
         object={scene} 
-        scale={0.95} 
+        scale={0.92} 
         position={[0, 0, 0]} 
         onClick={handleClick}
         onPointerOver={() => (document.body.style.cursor = 'pointer')}
