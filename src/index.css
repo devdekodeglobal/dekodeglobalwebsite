@@ -107,12 +107,12 @@ body {
   inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 1;
-  pointer-events: none; /* Allow wheel & touch scroll to pass through to page */
+  z-index: 25;
+  pointer-events: none;
 }
 
 .hero-3d-container canvas {
-  pointer-events: none; /* Never block mouse/touch clicks on HTML UI elements */
+  pointer-events: auto; /* Enable 3D robot cursor tracking & dance click interactions */
 }
 
 /* Hero Scenery & Celestial Objects */
@@ -485,9 +485,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .client-portal-top-right {
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
+  position: absolute !important;
+  top: 1.5rem !important;
+  right: 1.5rem !important;
+  left: auto !important;
   z-index: 100;
   padding: 0.45rem 0.95rem;
   font-size: 0.85rem;
@@ -506,6 +507,7 @@ h1, h2, h3, h4, h5, h6 {
   max-width: min(1120px, 100%);
   color: #ffffff;
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.6);
+  pointer-events: none; /* Let clicks in title area pass through to 3D robot companion */
 }
 
 .hero-subtitle {
