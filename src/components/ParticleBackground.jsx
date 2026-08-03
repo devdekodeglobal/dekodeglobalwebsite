@@ -51,36 +51,38 @@ export default function ParticleBackground({ timeOfDay = 'noon' }) {
       }
 
       draw(ctx) {
-        ctx.beginPath();
         const currentRadius = this.radius * (0.8 + Math.sin(this.pulse) * 0.3);
-        ctx.arc(this.x, this.y, currentRadius, 0, Math.PI * 2);
-        
         const stage = timeOfDayRef.current;
-        const alpha = 0.35 + Math.sin(this.pulse) * 0.3;
+        const alpha = Math.max(0.1, 0.35 + Math.sin(this.pulse) * 0.3);
+
+        // Fast Radial Gradient Glow (Zero shadowBlur GPU Lag)
+        const glowRadius = currentRadius * 2.5;
+        const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, glowRadius);
 
         if (stage === 'night' || stage === 'evening') {
-          // Glowing Fireflies halo
-          ctx.fillStyle = `rgba(254, 240, 138, ${alpha})`;
-          ctx.shadowBlur = 10;
-          ctx.shadowColor = 'rgba(254, 240, 138, 0.9)';
+          grad.addColorStop(0, `rgba(254, 240, 138, ${alpha})`);
+          grad.addColorStop(0.5, `rgba(254, 240, 138, ${alpha * 0.4})`);
+          grad.addColorStop(1, 'rgba(254, 240, 138, 0)');
         } else if (stage === 'morning') {
-          ctx.fillStyle = `rgba(254, 215, 170, ${alpha})`;
-          ctx.shadowBlur = 6;
-          ctx.shadowColor = 'rgba(251, 146, 60, 0.6)';
+          grad.addColorStop(0, `rgba(254, 215, 170, ${alpha})`);
+          grad.addColorStop(0.5, `rgba(251, 146, 60, ${alpha * 0.3})`);
+          grad.addColorStop(1, 'rgba(251, 146, 60, 0)');
         } else {
-          ctx.fillStyle = `rgba(186, 230, 253, ${alpha * 0.8})`;
-          ctx.shadowBlur = 4;
-          ctx.shadowColor = 'rgba(56, 189, 248, 0.4)';
+          grad.addColorStop(0, `rgba(186, 230, 253, ${alpha * 0.8})`);
+          grad.addColorStop(0.5, `rgba(56, 189, 248, ${alpha * 0.25})`);
+          grad.addColorStop(1, 'rgba(56, 189, 248, 0)');
         }
-        
+
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, glowRadius, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
         ctx.fill();
-        ctx.shadowBlur = 0; // Reset shadow blur
       }
     }
 
     const initParticles = () => {
       particles = [];
-      const numParticles = Math.min(110, Math.floor((canvas.width * canvas.height) / 15000));
+      const numParticles = Math.min(65, Math.floor((canvas.width * canvas.height) / 22000));
       for (let i = 0; i < numParticles; i++) {
         particles.push(new Particle());
       }
