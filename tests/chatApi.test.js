@@ -47,6 +47,49 @@ test('answers known knowledge gaps without calling Gemini', async () => {
   }
 });
 
+test('answers verified location and legal questions without calling Gemini', async () => {
+  const originalFetch = global.fetch;
+  const originalKey = process.env.GEMINI_API_KEY;
+  let fetchCalls = 0;
+  global.fetch = async () => {
+    fetchCalls += 1;
+    throw new Error('Gemini should not be called for verified company facts');
+  };
+  process.env.GEMINI_API_KEY = 'test-key';
+
+  try {
+    const locationResponse = makeResponse();
+    await handler(
+      {
+        method: 'POST',
+        headers: { 'x-forwarded-for': 'verified-location-test' },
+        body: { question: 'company location' },
+      },
+      locationResponse,
+    );
+    assert.equal(locationResponse.statusCode, 200);
+    assert.match(locationResponse.body.answer, /Little Collins Street/);
+    assert.match(locationResponse.body.answer, /Janak Puri/);
+
+    const legalResponse = makeResponse();
+    await handler(
+      {
+        method: 'POST',
+        headers: { 'x-forwarded-for': 'verified-legal-test' },
+        body: { question: "Explain DEKODE's Governing Law terms" },
+      },
+      legalResponse,
+    );
+    assert.equal(legalResponse.statusCode, 200);
+    assert.match(legalResponse.body.answer, /^Governing Law/m);
+    assert.equal(fetchCalls, 0);
+  } finally {
+    global.fetch = originalFetch;
+    if (originalKey === undefined) delete process.env.GEMINI_API_KEY;
+    else process.env.GEMINI_API_KEY = originalKey;
+  }
+});
+
 test('retries a transient Gemini failure and returns the recovered answer', async () => {
   const originalFetch = global.fetch;
   const originalKey = process.env.GEMINI_API_KEY;

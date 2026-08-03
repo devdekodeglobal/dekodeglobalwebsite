@@ -73,7 +73,28 @@ function makeDocuments() {
     {
       id: 'contact',
       label: 'Contact',
-      text: `Email: ${companyKnowledge.contact.email}. Phone: ${companyKnowledge.contact.phone}.`,
+      text: `Email: ${companyKnowledge.contact.email}. Phone numbers: ${joinItems(companyKnowledge.contact.phones)}. WhatsApp: +${companyKnowledge.contact.whatsapp}.`,
+    },
+    {
+      id: 'locations',
+      label: 'DEKODE locations',
+      text: `DEKODE office locations and addresses. ${companyKnowledge.contact.operatingModel}\n${companyKnowledge.contact.locations
+        .map((location) => `${location.country}: ${location.address}`)
+        .join('\n')}`,
+    },
+    {
+      id: 'privacy-policy',
+      label: companyKnowledge.legal.privacy.title,
+      text: `${companyKnowledge.legal.privacy.summary}\nPrivacy contact: ${companyKnowledge.legal.privacy.contactEmail}.\n${companyKnowledge.legal.privacy.sections
+        .map((section) => `${section.title}: ${section.summary}`)
+        .join('\n')}`,
+    },
+    {
+      id: 'terms-of-service',
+      label: companyKnowledge.legal.terms.title,
+      text: `${companyKnowledge.legal.terms.summary}\n${companyKnowledge.legal.terms.sections
+        .map((section) => `${section.title}: ${section.summary}`)
+        .join('\n')}`,
     },
     ...companyKnowledge.faqs.map((faq, index) => ({
       id: `faq-${index + 1}`,
@@ -82,7 +103,10 @@ function makeDocuments() {
     })),
   ];
 
-  return documents.map((document) => ({ ...document, terms: tokenize(document.text) }));
+  return documents.map((document) => ({
+    ...document,
+    terms: tokenize(`${document.label} ${document.text}`),
+  }));
 }
 
 const documents = makeDocuments();

@@ -12,11 +12,6 @@ const LEADERSHIP_PATTERNS = [
   /\b(founder|owner|ceo|director|leadership team)\b/i,
 ];
 
-const LOCATION_PATTERNS = [
-  /\b(where|what address).{0,30}\b(based|located|office|headquarters|hq)\b/i,
-  /\b(office address|headquarters|hq)\b/i,
-];
-
 const PRICING_PATTERNS = [
   /\b(how much|exact price|pricing|price list|hourly rate|day rate)\b/i,
   /\bwhat.{0,20}\b(cost|charge)\b/i,
@@ -31,10 +26,6 @@ export function getKnowledgeGapResponse(message) {
 
   if (LEADERSHIP_PATTERNS.some((pattern) => pattern.test(text))) {
     return "DEKODE's public company information does not name its founders, owner, CEO, or leadership team, so I don't want to guess. The DEKODE team can confirm those details directly.";
-  }
-
-  if (LOCATION_PATTERNS.some((pattern) => pattern.test(text))) {
-    return `DEKODE's public company information does not publish an office or headquarters address. You can contact the team at ${knowledge.contact.email} for the correct location details.`;
   }
 
   if (PRICING_PATTERNS.some((pattern) => pattern.test(text))) {

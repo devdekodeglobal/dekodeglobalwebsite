@@ -69,7 +69,7 @@ The text and voice experiences share the same server-side Google Calendar integr
 Set these server-only values in Vercel and `.env.local`:
 
 ```env
-GOOGLE_CALENDAR_ID=yuvraj.sharma@dekodeglobal.com
+GOOGLE_CALENDAR_ID=contactus@dekodeglobal.com
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 GOOGLE_REFRESH_TOKEN=
@@ -82,7 +82,7 @@ GOOGLE_CALENDAR_MINIMUM_NOTICE_HOURS=24
 VITE_MEETING_PROVIDER=calendar
 ```
 
-Enable the Google Calendar API in the Google Cloud project and generate the refresh token with a Google Calendar OAuth scope. Keep all four `GOOGLE_*` credentials server-side. To transfer scheduling later, authorize `contactus@dekodeglobal.com`, then replace `GOOGLE_CALENDAR_ID` and `GOOGLE_REFRESH_TOKEN` in Vercel and redeploy.
+Enable the Google Calendar API in the Google Cloud project and generate the refresh token while signed in as `contactus@dekodeglobal.com`, with a Google Calendar OAuth scope. Keep all four `GOOGLE_*` credentials server-side, then redeploy after setting them in Vercel.
 
 ## Mock meeting slots
 

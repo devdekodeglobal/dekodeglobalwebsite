@@ -13,6 +13,8 @@ const sourceFiles = {
   home: resolve(sourceRoot, 'src', 'pages', 'Home.jsx'),
   delivery: resolve(sourceRoot, 'src', 'components', 'DeliveryFlow.jsx'),
   contact: resolve(sourceRoot, 'src', 'pages', 'Contact.jsx'),
+  privacy: resolve(sourceRoot, 'src', 'pages', 'PrivacyPolicy.jsx'),
+  terms: resolve(sourceRoot, 'src', 'pages', 'TermsOfService.jsx'),
 };
 
 const missingSourceFiles = [];
@@ -129,6 +131,22 @@ const extractPrinciples = () => {
   )].map(([, name, description]) => ({ name: clean(name), description: clean(description) }));
 };
 
+const extractLegalSections = (source, expectedCount, label) => {
+  const sections = [...source.matchAll(
+    /<section className="[^"]*"[\s\S]*?<h2[^>]*>([\s\S]*?)<\/h2>([\s\S]*?)<\/section>/g,
+  )]
+    .slice(0, expectedCount)
+    .map(([, title, body]) => ({
+      title: clean(title).replace(/^\d{2}\.\s*/, ''),
+      summary: clean(body),
+    }));
+
+  if (sections.length !== expectedCount) {
+    throw new Error(`Expected ${expectedCount} ${label} sections, found ${sections.length}`);
+  }
+  return sections;
+};
+
 const industriesSentence = matchOne(
   entries.about,
   /We partner with small and medium businesses across([\s\S]*?)<\/p>/,
@@ -146,6 +164,91 @@ const services = extractServices();
 const developmentProcess = extractProcess();
 const whyChooseUs = extractDifferences();
 const values = extractPrinciples();
+const solutionAreas = [
+  {
+    id: 'ai-strategy',
+    name: 'AI Strategy & Consulting',
+    serviceId: 'ai-strategy',
+    summary: 'DEKODE helps teams assess AI readiness, identify useful opportunities, prioritise use cases, review data and workflows, and build a responsible, vendor-neutral AI roadmap.',
+  },
+  {
+    id: 'generative-ai',
+    name: 'Generative AI',
+    serviceId: 'custom-ai',
+    summary: 'DEKODE builds generative AI solutions tailored to business workflows, including internal copilots, intelligent search, knowledge systems, and AI-powered support and operations tools.',
+  },
+  {
+    id: 'agentic-ai',
+    name: 'Agentic AI',
+    serviceId: 'custom-ai',
+    summary: 'DEKODE designs AI agents for defined business workflows, connecting them to approved tools, APIs, and knowledge while accounting for permissions, human oversight, privacy, safety, and governance.',
+  },
+  {
+    id: 'predictive-ai',
+    name: 'Predictive AI',
+    serviceId: 'custom-ai',
+    summary: 'DEKODE develops custom machine learning solutions that use relevant business data to support forecasting, prioritisation, and better operational decisions. The right approach depends on the use case and data readiness.',
+  },
+  {
+    id: 'analytical-ai',
+    name: 'Analytical AI',
+    serviceId: 'custom-ai',
+    summary: 'DEKODE applies AI and machine learning to business data to surface useful patterns and decision support, delivered through practical workflows, dashboards, or internal tools.',
+  },
+  {
+    id: 'mobile-app',
+    name: 'Mobile App',
+    serviceId: 'web-mobile',
+    summary: 'DEKODE designs and develops iOS and Android mobile apps with user journeys, prototypes, accessible interfaces, integrations, security, and production-ready delivery.',
+  },
+  {
+    id: 'web-app',
+    name: 'Web App',
+    serviceId: 'web-mobile',
+    summary: 'DEKODE builds web applications, dashboards, and internal portals around real user workflows, from UX and rapid prototyping through secure production delivery.',
+  },
+  {
+    id: 'cloud-solutions',
+    name: 'Cloud Solutions',
+    serviceId: 'cloud-it',
+    summary: 'DEKODE provides cloud strategy, architecture, migration, monitoring, security hardening, and ongoing optimisation across AWS, Azure, and Google Cloud Platform.',
+  },
+  {
+    id: 'process-automation',
+    name: 'Process Automation',
+    serviceId: 'integrations',
+    summary: 'DEKODE automates repetitive business processes across operations, finance, and support, connecting the required systems so information moves cleanly and teams spend less time on manual work.',
+  },
+  {
+    id: 'systems-integration',
+    name: 'Systems Integration',
+    serviceId: 'integrations',
+    summary: 'DEKODE connects business systems through custom APIs and third-party integrations, including payment, chat, text, and email services, with reliable data flows and maintainable delivery.',
+  },
+  {
+    id: 'ecommerce',
+    name: 'E-commerce',
+    serviceId: 'ecommerce',
+    summary: 'DEKODE builds scalable e-commerce platforms with intelligent search, personalised recommendations, inventory and fulfilment automation, payment integrations, and performance-focused user experiences.',
+  },
+];
+const australianLocation = matchOne(
+  entries.contact,
+  /<strong>Australia<\/strong>\s*-\s*([\s\S]*?)<\/p>/,
+  'Australia location',
+);
+const indiaLocation = matchOne(
+  entries.contact,
+  /<strong>India<\/strong>\s*-\s*([\s\S]*?)<\/p>/,
+  'India location',
+);
+const phoneNumbers = [...new Set(
+  [...entries.contact.matchAll(/href="tel:([^"]+)"/g)].map((match) => match[1]),
+)];
+const phoneLabels = [...new Set(
+  [...entries.contact.matchAll(/<span className="phone-number">([\s\S]*?)<\/span>/g)]
+    .map((match) => clean(match[1])),
+)];
 
 const knowledge = {
   schemaVersion: 1,
@@ -167,6 +270,7 @@ const knowledge = {
     belief: matchOne(entries.about, /<p className="about-accent-text">([\s\S]*?)<\/p>/, 'company belief'),
   },
   services,
+  solutionAreas,
   industries,
   technologies: ['AWS', 'Azure', 'Google Cloud Platform'],
   capabilities: [...new Set(services.flatMap((service) => service.capabilities))],
@@ -175,7 +279,40 @@ const knowledge = {
   developmentProcess,
   contact: {
     email: entries.contact.match(/mailto:([^"]+)/)?.[1] || null,
-    phone: entries.contact.match(/tel:([^"]+)/)?.[1] || null,
+    phone: phoneNumbers[0] || null,
+    phones: phoneNumbers,
+    phoneLabels: phoneLabels.slice(0, phoneNumbers.length),
+    whatsapp: entries.contact.match(/https:\/\/wa\.me\/([0-9]+)/)?.[1] || null,
+    locations: [
+      { country: 'Australia', address: australianLocation },
+      { country: 'India', address: indiaLocation },
+    ],
+    operatingModel: matchOne(
+      entries.contact,
+      /<h3 className="floating-title">Where We Work<\/h3>[\s\S]*?<p className="floating-desc">([\s\S]*?)<\/p>/,
+      'operating locations',
+    ),
+  },
+  legal: {
+    privacy: {
+      title: 'Privacy Policy',
+      contactEmail: entries.privacy.match(/mailto:([^"]+)/)?.[1] || null,
+      summary: matchOne(
+        entries.privacy,
+        /<p className="text-xl[^>]*>([\s\S]*?)<\/p>/,
+        'privacy summary',
+      ),
+      sections: extractLegalSections(entries.privacy, 5, 'privacy'),
+    },
+    terms: {
+      title: 'Terms of Service',
+      summary: matchOne(
+        entries.terms,
+        /<p className="text-xl[^>]*>([\s\S]*?)<\/p>/,
+        'terms summary',
+      ),
+      sections: extractLegalSections(entries.terms, 6, 'terms'),
+    },
   },
   faqs: [
     {
@@ -199,7 +336,10 @@ const knowledge = {
     process: ['process', 'method', 'methodology', 'workflow', 'delivery', 'how you work', 'approach'],
     why: ['why choose', 'different', 'difference', 'values', 'culture', 'principles'],
     company: ['dekode', 'company', 'business', 'who are you', 'about you', 'what do you do'],
-    contact: ['contact', 'email', 'phone', 'get in touch', 'reach you'],
+    contact: ['contact', 'contact us', 'email', 'phone', 'whatsapp', 'get in touch', 'reach you'],
+    location: ['location', 'locations', 'located', 'address', 'office', 'offices', 'where is', 'where are you', 'where are you based', 'headquarters', 'hq'],
+    privacy: ['privacy', 'privacy policy', 'personal data', 'data protection', 'data security', 'my data'],
+    terms: ['terms', 'terms and conditions', 'terms of service', 'conditions', 'legal', 'liability', 'intellectual property', 'governing law'],
   },
 };
 
