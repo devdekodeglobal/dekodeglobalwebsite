@@ -952,16 +952,7 @@ export default function ChatApp({
       <ParticleBackground timeOfDay={timeOfDay} />
       
       {step === "centered" && (
-        <>
-          <HeroScenery timeOfDay={timeOfDay} />
-          <div className="hero-3d-container">
-            <Canvas camera={{ position: [0, 0, 4.5], fov: 45 }} shadows>
-              <Suspense fallback={null}>
-                <HeroRobotModel timeOfDay={timeOfDay} />
-              </Suspense>
-            </Canvas>
-          </div>
-        </>
+        <HeroScenery timeOfDay={timeOfDay} />
       )}
 
       <a className="brand-logo" href={import.meta.env.BASE_URL || "/"} aria-label="Go to DEKODE home">
