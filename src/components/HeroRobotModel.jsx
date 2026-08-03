@@ -3,36 +3,59 @@ import { useFrame } from '@react-three/fiber';
 import { useGLTF, Float, Html } from '@react-three/drei';
 import robotModelUrl from '../assets/cute-robot-companion.glb?url';
 
-// Preload the model
+// Preload model
 useGLTF.preload(robotModelUrl);
 
 const ROBOT_PHRASES = [
   "Hi! I'm your DEKODE AI companion. Ask me anything!",
-  "Let me help you turn your bright ideas into reality!",
+  "Let me help turn your bright ideas into reality!",
   "Looking for AI strategy, cloud, or web solutions?",
   "Click me anytime to see my dance moves!",
   "What digital product would you like to build today?",
 ];
 
-function RobotModel({ isNight }) {
+function RobotModel({ timeOfDay }) {
   const { scene } = useGLTF(robotModelUrl);
   const robotRef = useRef();
   
   const [danceTimer, setDanceTimer] = useState(0);
+  const [danceRoutine, setDanceRoutine] = useState(0); // 0: Flip, 1: Shuffle, 2: Hop
   const [speechText, setSpeechText] = useState(
     "Hi! I'm DEKODE Companion. Click me to talk or dance!"
   );
   const [showSpeech, setShowSpeech] = useState(true);
 
-  // Auto-hide speech bubble initially after 6s
+  // Auto-hide speech bubble after 5 seconds initially
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSpeech(false);
-    }, 6000);
+    }, 5000);
     return () => clearTimeout(timer);
   }, []);
 
-  // Frame animation: cursor-tracking (NO auto spin) + dance bounce on click
+  // Female voice synthesis selector
+  const speakFemaleVoice = (text) => {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    const voices = window.speechSynthesis.getVoices();
+
+    // Search for female voices in browser speech synthesis engine
+    const femaleVoice = voices.find((v) =>
+      /female|samantha|victoria|zira|karen|serena|fiona|google us english/i.test(v.name)
+    ) || voices.find((v) => v.lang.startsWith('en'));
+
+    if (femaleVoice) {
+      utterance.voice = femaleVoice;
+    }
+
+    utterance.pitch = 1.35; // Bright friendly companion tone
+    utterance.rate = 1.05;
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // Frame animation: Mouse cursor tracking + 3 Dance Routines
   useFrame((state, delta) => {
     if (!robotRef.current) return;
 
@@ -41,17 +64,32 @@ function RobotModel({ isNight }) {
       setDanceTimer((prev) => Math.max(0, prev - delta));
     }
 
-    // Base position
-    const baseY = -0.9;
-    
+    const baseY = 0;
+    const time = state.clock.getElapsedTime();
+
     if (danceTimer > 0) {
-      // Dance hop & tilt wiggle!
-      const time = state.clock.getElapsedTime();
-      robotRef.current.position.y = baseY + Math.abs(Math.sin(time * 14)) * 0.25;
-      robotRef.current.rotation.z = Math.sin(time * 12) * 0.18;
-      robotRef.current.rotation.y = (state.pointer.x * Math.PI) * 0.15 + Math.sin(time * 10) * 0.3;
+      // Execute selected Dance Routine
+      if (danceRoutine === 0) {
+        // Routine 0: Backflip Spin Combo
+        const progress = (2.2 - danceTimer) / 2.2;
+        robotRef.current.rotation.x = Math.sin(progress * Math.PI * 2) * Math.PI;
+        robotRef.current.position.y = baseY + Math.sin(progress * Math.PI) * 0.35;
+        robotRef.current.rotation.y = time * 8;
+      } else if (danceRoutine === 1) {
+        // Routine 1: Side Shuffle & Wiggle
+        robotRef.current.rotation.z = Math.sin(time * 18) * 0.35;
+        robotRef.current.position.x = Math.sin(time * 12) * 0.15;
+        robotRef.current.position.y = baseY + Math.abs(Math.sin(time * 14)) * 0.15;
+        robotRef.current.rotation.y = (state.pointer.x * Math.PI) * 0.15;
+      } else {
+        // Routine 2: High Trampoline Hop & Nod
+        robotRef.current.position.y = baseY + Math.abs(Math.sin(time * 16)) * 0.4;
+        robotRef.current.rotation.x = Math.sin(time * 14) * 0.25;
+        robotRef.current.rotation.y = (state.pointer.x * Math.PI) * 0.15 + Math.sin(time * 8) * 0.2;
+      }
     } else {
-      // Reset position & tilt smoothly
+      // Smooth reset to natural standing posture
+      robotRef.current.position.x += (0 - robotRef.current.position.x) * 0.1;
       robotRef.current.position.y += (baseY - robotRef.current.position.y) * 0.1;
       robotRef.current.rotation.z += (0 - robotRef.current.rotation.z) * 0.1;
 
@@ -66,23 +104,17 @@ function RobotModel({ isNight }) {
 
   const handleClick = (e) => {
     e.stopPropagation();
-    
-    // Trigger 2.2 second dance
-    setDanceTimer(2.2);
 
-    // Pick random phrase
+    // Trigger 2.2 second dance & pick next routine
+    setDanceTimer(2.2);
+    setDanceRoutine((prev) => (prev + 1) % 3);
+
+    // Pick random phrase & speak with female voice
     const randomPhrase = ROBOT_PHRASES[Math.floor(Math.random() * ROBOT_PHRASES.length)];
     setSpeechText(randomPhrase);
     setShowSpeech(true);
 
-    // Voice Synthesis (Audio Speech)
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(randomPhrase);
-      utterance.pitch = 1.25; // Cute robotic companion pitch
-      utterance.rate = 1.05;
-      window.speechSynthesis.speak(utterance);
-    }
+    speakFemaleVoice(randomPhrase);
   };
 
   // Configure model materials
@@ -100,10 +132,10 @@ function RobotModel({ isNight }) {
   }, [scene]);
 
   return (
-    <group position={[1.8, -0.45, 0]}>
-      {/* HTML Speech Bubble floating above robot head */}
+    <group position={[1.85, -0.65, 0]}>
+      {/* Compact HTML Speech Bubble anchored directly above robot head */}
       {showSpeech && (
-        <Html position={[0, 1.25, 0]} center distanceFactor={8} zIndexRange={[100, 0]}>
+        <Html position={[0, 0.65, 0]} center distanceFactor={8} zIndexRange={[100, 0]}>
           <div className="robot-speech-bubble" onClick={() => setShowSpeech(false)}>
             <div className="speech-bubble-text">{speechText}</div>
             <div className="speech-bubble-arrow" />
@@ -114,7 +146,7 @@ function RobotModel({ isNight }) {
       <primitive 
         ref={robotRef}
         object={scene} 
-        scale={0.92} 
+        scale={0.55} 
         position={[0, 0, 0]} 
         onClick={handleClick}
         onPointerOver={() => (document.body.style.cursor = 'pointer')}
@@ -176,37 +208,12 @@ export default function HeroRobotModel({ timeOfDay = 'noon' }) {
 
   return (
     <>
-      {/* Ambient Lighting */}
       <ambientLight color={lights.ambientColor} intensity={lights.ambientIntensity} />
+      <directionalLight position={[5, 5, 5]} color={lights.dir1Color} intensity={lights.dir1Intensity} castShadow />
+      <directionalLight position={[-5, 3, -2]} color={lights.dir2Color} intensity={lights.dir2Intensity} />
+      <directionalLight position={[0, -3, 3]} color={lights.rimColor} intensity={1.5} />
 
-      {/* Primary Key Light */}
-      <directionalLight 
-        position={[5, 5, 5]} 
-        color={lights.dir1Color} 
-        intensity={lights.dir1Intensity} 
-        castShadow
-      />
-
-      {/* Fill Light / Accent */}
-      <directionalLight 
-        position={[-5, 3, -2]} 
-        color={lights.dir2Color} 
-        intensity={lights.dir2Intensity} 
-      />
-
-      {/* Rim Light */}
-      <directionalLight 
-        position={[0, -3, 3]} 
-        color={lights.rimColor} 
-        intensity={1.5} 
-      />
-
-      <Float 
-        speed={1.5} 
-        rotationIntensity={0.08} 
-        floatIntensity={0.25} 
-        floatingRange={[-0.08, 0.08]}
-      >
+      <Float speed={1.5} rotationIntensity={0.08} floatIntensity={0.2} floatingRange={[-0.05, 0.05]}>
         <RobotModel timeOfDay={timeOfDay} />
       </Float>
     </>
