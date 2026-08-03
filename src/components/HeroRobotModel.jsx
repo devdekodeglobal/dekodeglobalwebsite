@@ -1,45 +1,91 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { useGLTF, Float } from '@react-three/drei';
+import { useGLTF, Float, Html } from '@react-three/drei';
 import robotModelUrl from '../assets/cute-robot-companion.glb?url';
 
 // Preload the model
 useGLTF.preload(robotModelUrl);
 
+const ROBOT_PHRASES = [
+  "Hi! I'm your DEKODE AI companion. Ask me anything!",
+  "Let me help you turn your bright ideas into reality!",
+  "Looking for AI strategy, cloud, or web solutions?",
+  "Click me anytime to see my dance moves!",
+  "What digital product would you like to build today?",
+];
+
 function RobotModel({ isNight }) {
   const { scene } = useGLTF(robotModelUrl);
   const robotRef = useRef();
-  const spinVelocityRef = useRef(0);
+  
+  const [danceTimer, setDanceTimer] = useState(0);
+  const [speechText, setSpeechText] = useState(
+    "Hi! I'm DEKODE Companion. Click me to talk or dance!"
+  );
+  const [showSpeech, setShowSpeech] = useState(true);
 
-  // Smooth mouse-follow, gentle auto-rotation, and click spin reaction
-  useFrame((state) => {
+  // Auto-hide speech bubble initially after 6s
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSpeech(false);
+    }, 6000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Frame animation: cursor-tracking (NO auto spin) + dance bounce on click
+  useFrame((state, delta) => {
     if (!robotRef.current) return;
 
-    // Decay spin velocity
-    if (spinVelocityRef.current > 0.001) {
-      spinVelocityRef.current *= 0.95;
-    } else {
-      spinVelocityRef.current = 0;
+    // Decay dance timer
+    if (danceTimer > 0) {
+      setDanceTimer((prev) => Math.max(0, prev - delta));
     }
 
-    // Gentle continuous spin + spin velocity boost on click
-    const baseRotationY = state.clock.getElapsedTime() * 0.15;
+    // Base position
+    const baseY = -0.9;
     
-    // Calculate targets based on mouse pointer (-1 to 1)
-    const targetRotX = -(state.pointer.y * Math.PI) * 0.08;
-    const targetRotY = baseRotationY + (state.pointer.x * Math.PI) * 0.12;
-    
-    // Smooth interpolation (lerp)
-    robotRef.current.rotation.x += (targetRotX - robotRef.current.rotation.x) * 0.08;
-    robotRef.current.rotation.y += (targetRotY - robotRef.current.rotation.y) * 0.08 + spinVelocityRef.current;
+    if (danceTimer > 0) {
+      // Dance hop & tilt wiggle!
+      const time = state.clock.getElapsedTime();
+      robotRef.current.position.y = baseY + Math.abs(Math.sin(time * 14)) * 0.25;
+      robotRef.current.rotation.z = Math.sin(time * 12) * 0.18;
+      robotRef.current.rotation.y = (state.pointer.x * Math.PI) * 0.15 + Math.sin(time * 10) * 0.3;
+    } else {
+      // Reset position & tilt smoothly
+      robotRef.current.position.y += (baseY - robotRef.current.position.y) * 0.1;
+      robotRef.current.rotation.z += (0 - robotRef.current.rotation.z) * 0.1;
+
+      // Mouse tracking ONLY (no continuous auto rotation)
+      const targetRotX = -(state.pointer.y * Math.PI) * 0.08;
+      const targetRotY = (state.pointer.x * Math.PI) * 0.15; // Face forward, look at mouse
+
+      robotRef.current.rotation.x += (targetRotX - robotRef.current.rotation.x) * 0.08;
+      robotRef.current.rotation.y += (targetRotY - robotRef.current.rotation.y) * 0.08;
+    }
   });
 
   const handleClick = (e) => {
     e.stopPropagation();
-    spinVelocityRef.current = 0.4; // Boost spin velocity when clicked!
+    
+    // Trigger 2.2 second dance
+    setDanceTimer(2.2);
+
+    // Pick random phrase
+    const randomPhrase = ROBOT_PHRASES[Math.floor(Math.random() * ROBOT_PHRASES.length)];
+    setSpeechText(randomPhrase);
+    setShowSpeech(true);
+
+    // Voice Synthesis (Audio Speech)
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(randomPhrase);
+      utterance.pitch = 1.25; // Cute robotic companion pitch
+      utterance.rate = 1.05;
+      window.speechSynthesis.speak(utterance);
+    }
   };
 
-  // Apply materials configuration
+  // Configure model materials
   useEffect(() => {
     scene.traverse((child) => {
       if (child.isMesh) {
@@ -54,29 +100,39 @@ function RobotModel({ isNight }) {
   }, [scene]);
 
   return (
-    <primitive 
-      ref={robotRef}
-      object={scene} 
-      scale={1.3} 
-      position={[0, -0.3, 0]} 
-      onClick={handleClick}
-      onPointerOver={() => (document.body.style.cursor = 'pointer')}
-      onPointerOut={() => (document.body.style.cursor = 'auto')}
-    />
+    <group position={[1.85, -0.9, 0]}>
+      {/* HTML Speech Bubble floating above robot head */}
+      {showSpeech && (
+        <Html position={[0, 1.3, 0]} center distanceFactor={8} zIndexRange={[100, 0]}>
+          <div className="robot-speech-bubble" onClick={() => setShowSpeech(false)}>
+            <div className="speech-bubble-text">{speechText}</div>
+            <div className="speech-bubble-arrow" />
+          </div>
+        </Html>
+      )}
+
+      <primitive 
+        ref={robotRef}
+        object={scene} 
+        scale={0.95} 
+        position={[0, 0, 0]} 
+        onClick={handleClick}
+        onPointerOver={() => (document.body.style.cursor = 'pointer')}
+        onPointerOut={() => (document.body.style.cursor = 'auto')}
+      />
+    </group>
   );
 }
 
 export default function HeroRobotModel({ isNight }) {
   // Dynamic light colors based on Day/Night theme
-  // Day: Warm sunset/sunlight tones (gold, bright orange, warm white)
-  // Night: Cyberpunk/Lunar tones (cool teal, soft violet/purple, moonlight)
   const ambientColor = isNight ? '#1e1b4b' : '#fef08a';
   const ambientIntensity = isNight ? 1.2 : 1.8;
 
-  const dirLightColor1 = isNight ? '#818cf8' : '#fb923c'; // Indigo vs Orange
+  const dirLightColor1 = isNight ? '#818cf8' : '#fb923c';
   const dirLightIntensity1 = isNight ? 3.0 : 4.0;
 
-  const dirLightColor2 = isNight ? '#c084fc' : '#38bdf8'; // Purple vs Sky Blue
+  const dirLightColor2 = isNight ? '#c084fc' : '#38bdf8';
   const dirLightIntensity2 = isNight ? 2.0 : 2.5;
 
   return (
@@ -99,7 +155,7 @@ export default function HeroRobotModel({ isNight }) {
         intensity={dirLightIntensity2} 
       />
 
-      {/* Subtle Blue/Cyan Rim Light to catch edges */}
+      {/* Subtle Rim Light */}
       <directionalLight 
         position={[0, -3, 3]} 
         color={isNight ? '#22d3ee' : '#f472b6'} 
@@ -107,10 +163,10 @@ export default function HeroRobotModel({ isNight }) {
       />
 
       <Float 
-        speed={2.2} 
-        rotationIntensity={0.15} 
-        floatIntensity={0.4} 
-        floatingRange={[-0.15, 0.15]}
+        speed={1.5} 
+        rotationIntensity={0.08} 
+        floatIntensity={0.25} 
+        floatingRange={[-0.08, 0.08]}
       >
         <RobotModel isNight={isNight} />
       </Float>
