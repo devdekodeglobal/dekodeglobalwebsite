@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Canvas } from "@react-three/fiber";
 import {
   Send,
   CheckCircle2,
@@ -8,11 +9,14 @@ import {
   ChevronDown,
   LockKeyhole,
   X,
+  Sun,
+  Moon,
 } from "lucide-react";
 import AnimationPanel from "./AnimationPanel";
 import CompanyKnowledgePanel from "./CompanyKnowledgePanel";
 import ParticleBackground from "./ParticleBackground";
 import TypewriterText from "./TypewriterText";
+import HeroRobotModel from "./HeroRobotModel";
 import DekodeVoiceEntry from "./voice/DekodeVoiceEntry";
 import DekodeVoiceSession from "./voice/DekodeVoiceSession";
 import MeetingScheduler from "./MeetingScheduler";
@@ -72,6 +76,10 @@ export default function ChatApp({
   isProposalChatOpen = false,
 }) {
   const [messages, setMessages] = useState([]);
+  const [isNight, setIsNight] = useState(() => {
+    const hour = new Date().getHours();
+    return hour < 6 || hour >= 18;
+  });
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -920,11 +928,33 @@ export default function ChatApp({
 
   return (
     <>
-      <div className="vibrant-background" />
-      <ParticleBackground />
+      <div className={`vibrant-background vibrant-background-day ${!isNight ? "active" : ""}`} />
+      <div className={`vibrant-background vibrant-background-night ${isNight ? "active" : ""}`} />
+      <ParticleBackground isNight={isNight} />
+      
+      {step === "centered" && (
+        <div className="hero-3d-container">
+          <Canvas camera={{ position: [0, 0, 4.5], fov: 45 }} shadows>
+            <Suspense fallback={null}>
+              <HeroRobotModel isNight={isNight} />
+            </Suspense>
+          </Canvas>
+        </div>
+      )}
+
       <a className="brand-logo" href={import.meta.env.BASE_URL || "/"} aria-label="Go to DEKODE home">
         DEKODE
       </a>
+
+      <button
+        type="button"
+        className="theme-toggle-btn"
+        onClick={() => setIsNight(!isNight)}
+        aria-label="Toggle light/dark theme"
+      >
+        {isNight ? <Sun size={18} /> : <Moon size={18} />}
+      </button>
+
       {onOpenProposalAccess && !proposalContext && (
         <button
           type="button"

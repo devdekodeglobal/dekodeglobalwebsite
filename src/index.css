@@ -40,7 +40,18 @@ body {
 .vibrant-background {
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: -2;
+  background-size: 200% 200%;
+  animation: mesh-drift 20s ease infinite alternate;
+  opacity: 0;
+  transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.vibrant-background.active {
+  opacity: 1;
+}
+
+.vibrant-background-night {
   background-color: #041B33; /* Darker Navy base */
   background-image: 
     radial-gradient(at 0% 0%, rgba(4, 51, 100, 1) 0, transparent 50%), 
@@ -49,14 +60,93 @@ body {
     radial-gradient(at 0% 100%, rgba(254, 182, 17, 0.6) 0, transparent 60%), 
     radial-gradient(at 50% 100%, rgba(53, 118, 193, 0.6) 0, transparent 50%), 
     radial-gradient(at 100% 100%, rgba(254, 182, 17, 0.8) 0, transparent 60%);
-  background-size: 200% 200%;
-  animation: mesh-drift 15s ease infinite alternate;
+}
+
+.vibrant-background-day {
+  background-color: #f1f5f9; /* Slate-100 base */
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(186, 230, 253, 0.7) 0, transparent 55%), 
+    radial-gradient(at 50% 0%, rgba(254, 240, 138, 0.5) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, rgba(253, 186, 116, 0.5) 0, transparent 55%), 
+    radial-gradient(at 0% 100%, rgba(254, 240, 138, 0.55) 0, transparent 60%), 
+    radial-gradient(at 50% 100%, rgba(186, 230, 253, 0.6) 0, transparent 50%), 
+    radial-gradient(at 100% 100%, rgba(254, 243, 199, 0.8) 0, transparent 65%);
 }
 
 @keyframes mesh-drift {
   0% { background-position: 0% 0%; }
   50% { background-position: 100% 100%; }
   100% { background-position: 0% 100%; }
+}
+
+/* 3D Model Wrapper */
+.hero-3d-container {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: auto; /* Allow interactions so R3F mouse follow works */
+}
+
+/* Theme Toggle button */
+.theme-toggle-btn {
+  position: absolute;
+  top: 2rem;
+  right: 12.5rem;
+  z-index: 50;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+}
+
+.theme-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.08) rotate(15deg);
+}
+
+/* Day Mode UI Colors adjustments */
+.vibrant-background-day ~ .theme-toggle-btn {
+  color: #0f172a;
+  border-color: rgba(15, 23, 42, 0.12);
+  background: rgba(15, 23, 42, 0.05);
+}
+
+.vibrant-background-day ~ .theme-toggle-btn:hover {
+  background: rgba(15, 23, 42, 0.1);
+  border-color: rgba(15, 23, 42, 0.25);
+}
+
+.vibrant-background-day ~ .brand-logo {
+  color: #0f172a;
+}
+.vibrant-background-day ~ .brand-logo:hover {
+  color: #1e3a8a;
+}
+
+.vibrant-background-day ~ .action-pill.proposal-entry-button {
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #0f172a;
+  background: rgba(15, 23, 42, 0.05);
+}
+
+.vibrant-background-day ~ .action-pill.proposal-entry-button:hover {
+  background: rgba(15, 23, 42, 0.1);
+  border-color: rgba(15, 23, 42, 0.25);
+}
+
+.vibrant-background-day ~ .app-container .hero-title {
+  color: #0f172a;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -157,6 +247,11 @@ h1, h2, h3, h4, h5, h6 {
   min-width: 0;
   min-height: 0;
   overflow-y: auto;
+  pointer-events: none; /* Let pointer events fall through to R3F Canvas in the background */
+}
+
+.centered-layout > * {
+  pointer-events: auto; /* Re-enable pointer events for form inputs and buttons */
 }
 
 .active-chat-layout {

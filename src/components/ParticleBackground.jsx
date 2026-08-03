@@ -1,7 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 
-export default function ParticleBackground() {
+export default function ParticleBackground({ isNight = true }) {
   const canvasRef = useRef(null);
+  const isNightRef = useRef(isNight);
+
+  useEffect(() => {
+    isNightRef.current = isNight;
+  }, [isNight]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -45,7 +50,10 @@ export default function ParticleBackground() {
       draw(ctx) {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        // Day mode uses deep blue particles, Night uses white/starry particles
+        ctx.fillStyle = isNightRef.current 
+          ? 'rgba(255, 255, 255, 0.45)' 
+          : 'rgba(53, 118, 193, 0.45)';
         ctx.fill();
       }
     }
@@ -61,6 +69,7 @@ export default function ParticleBackground() {
     initParticles();
 
     const drawLines = () => {
+      const isNightMode = isNightRef.current;
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
@@ -69,7 +78,10 @@ export default function ParticleBackground() {
 
           if (distance < 120) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(255, 255, 255, ${0.15 - distance / 800})`; // Fade based on distance
+            // Lighter lines for day mode
+            ctx.strokeStyle = isNightMode
+              ? `rgba(255, 255, 255, ${0.15 - distance / 800})`
+              : `rgba(53, 118, 193, ${0.12 - distance / 1000})`;
             ctx.lineWidth = 0.5;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
