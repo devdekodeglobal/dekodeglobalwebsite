@@ -34,14 +34,17 @@ export default function ParticleBackground({ timeOfDay = 'noon' }) {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.5;
-        this.vy = (Math.random() - 0.5) * 0.5;
-        this.radius = Math.random() * 1.5 + 0.5;
+        this.vx = (Math.random() - 0.5) * 0.4;
+        this.vy = (Math.random() - 0.5) * 0.4;
+        this.radius = Math.random() * 2.0 + 0.8;
+        this.pulse = Math.random() * Math.PI * 2;
+        this.pulseSpeed = Math.random() * 0.04 + 0.02;
       }
 
       update() {
         this.x += this.vx;
         this.y += this.vy;
+        this.pulse += this.pulseSpeed;
 
         if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
         if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
@@ -49,18 +52,29 @@ export default function ParticleBackground({ timeOfDay = 'noon' }) {
 
       draw(ctx) {
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        const currentRadius = this.radius * (0.8 + Math.sin(this.pulse) * 0.3);
+        ctx.arc(this.x, this.y, currentRadius, 0, Math.PI * 2);
+        
         const stage = timeOfDayRef.current;
-        if (stage === 'night') {
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
-        } else if (stage === 'evening') {
-          ctx.fillStyle = 'rgba(251, 146, 60, 0.45)'; // Amber sunset dust
+        const alpha = 0.35 + Math.sin(this.pulse) * 0.3;
+
+        if (stage === 'night' || stage === 'evening') {
+          // Glowing Fireflies halo
+          ctx.fillStyle = `rgba(254, 240, 138, ${alpha})`;
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = 'rgba(254, 240, 138, 0.9)';
         } else if (stage === 'morning') {
-          ctx.fillStyle = 'rgba(254, 215, 170, 0.45)'; // Sunrise peach motes
+          ctx.fillStyle = `rgba(254, 215, 170, ${alpha})`;
+          ctx.shadowBlur = 6;
+          ctx.shadowColor = 'rgba(251, 146, 60, 0.6)';
         } else {
-          ctx.fillStyle = 'rgba(53, 118, 193, 0.35)';  // Noon sky particles
+          ctx.fillStyle = `rgba(186, 230, 253, ${alpha * 0.8})`;
+          ctx.shadowBlur = 4;
+          ctx.shadowColor = 'rgba(56, 189, 248, 0.4)';
         }
+        
         ctx.fill();
+        ctx.shadowBlur = 0; // Reset shadow blur
       }
     }
 

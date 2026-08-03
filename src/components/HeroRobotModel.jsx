@@ -1,18 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { useGLTF, Float, Html } from '@react-three/drei';
+import { useGLTF, Float } from '@react-three/drei';
 import robotModelUrl from '../assets/cute-robot-companion.glb?url';
 
 // Preload model
 useGLTF.preload(robotModelUrl);
-
-const ROBOT_PHRASES = [
-  "Hi! I'm your DEKODE AI companion. Ask me anything!",
-  "Let me help turn your bright ideas into reality!",
-  "Looking for AI strategy, cloud, or web solutions?",
-  "Click me anytime to see my dance moves!",
-  "What digital product would you like to build today?",
-];
 
 function RobotModel({ timeOfDay }) {
   const { scene } = useGLTF(robotModelUrl);
@@ -20,40 +12,6 @@ function RobotModel({ timeOfDay }) {
   
   const [danceTimer, setDanceTimer] = useState(0);
   const [danceRoutine, setDanceRoutine] = useState(0); // 0: Flip, 1: Shuffle, 2: Hop
-  const [speechText, setSpeechText] = useState(
-    "Hi! I'm DEKODE Companion. Click me to talk or dance!"
-  );
-  const [showSpeech, setShowSpeech] = useState(true);
-
-  // Auto-hide speech bubble after 5 seconds initially
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSpeech(false);
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Female voice synthesis selector
-  const speakFemaleVoice = (text) => {
-    if (!('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
-    
-    const utterance = new SpeechSynthesisUtterance(text);
-    const voices = window.speechSynthesis.getVoices();
-
-    // Search for female voices in browser speech synthesis engine
-    const femaleVoice = voices.find((v) =>
-      /female|samantha|victoria|zira|karen|serena|fiona|google us english/i.test(v.name)
-    ) || voices.find((v) => v.lang.startsWith('en'));
-
-    if (femaleVoice) {
-      utterance.voice = femaleVoice;
-    }
-
-    utterance.pitch = 1.35; // Bright friendly companion tone
-    utterance.rate = 1.05;
-    window.speechSynthesis.speak(utterance);
-  };
 
   // Frame animation: Mouse cursor tracking + 3 Dance Routines
   useFrame((state, delta) => {
@@ -108,13 +66,6 @@ function RobotModel({ timeOfDay }) {
     // Trigger 2.2 second dance & pick next routine
     setDanceTimer(2.2);
     setDanceRoutine((prev) => (prev + 1) % 3);
-
-    // Pick random phrase & speak with female voice
-    const randomPhrase = ROBOT_PHRASES[Math.floor(Math.random() * ROBOT_PHRASES.length)];
-    setSpeechText(randomPhrase);
-    setShowSpeech(true);
-
-    speakFemaleVoice(randomPhrase);
   };
 
   // Configure model materials
@@ -132,17 +83,7 @@ function RobotModel({ timeOfDay }) {
   }, [scene]);
 
   return (
-    <group position={[1.85, -0.65, 0]}>
-      {/* Compact HTML Speech Bubble anchored directly above robot head */}
-      {showSpeech && (
-        <Html position={[0, 0.65, 0]} center distanceFactor={8} zIndexRange={[100, 0]}>
-          <div className="robot-speech-bubble" onClick={() => setShowSpeech(false)}>
-            <div className="speech-bubble-text">{speechText}</div>
-            <div className="speech-bubble-arrow" />
-          </div>
-        </Html>
-      )}
-
+    <group position={[0, 0.95, 0]}>
       <primitive 
         ref={robotRef}
         object={scene} 
