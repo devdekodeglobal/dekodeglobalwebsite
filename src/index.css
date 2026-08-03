@@ -108,7 +108,11 @@ body {
   width: 100%;
   height: 100%;
   z-index: 1;
-  pointer-events: auto; /* Allow interactions so R3F mouse follow works */
+  pointer-events: none; /* Allow wheel & touch scroll to pass through to page */
+}
+
+.hero-3d-container canvas {
+  pointer-events: auto; /* Enable 3D robot cursor tracking & click interactions */
 }
 
 /* Hero Scenery & Celestial Objects */
@@ -210,11 +214,14 @@ body {
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 100%;
+  right: 0;
+  width: 100vw;
+  max-width: 100vw;
   height: 38vh;
   min-height: 240px;
   display: flex;
   align-items: flex-end;
+  overflow: hidden;
 }
 
 .scenery-svg {
