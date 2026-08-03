@@ -77,10 +77,25 @@ export default function ChatApp({
   isProposalChatOpen = false,
 }) {
   const [messages, setMessages] = useState([]);
-  const [isNight, setIsNight] = useState(() => {
+  const [timeOfDayIndex, setTimeOfDayIndex] = useState(() => {
     const hour = new Date().getHours();
-    return hour < 6 || hour >= 18;
+    if (hour >= 5 && hour < 11) return 0; // morning
+    if (hour >= 11 && hour < 17) return 1; // noon
+    if (hour >= 17 && hour < 21) return 2; // evening
+    return 3; // night
   });
+
+  const TIMES_OF_DAY = useMemo(() => ["morning", "noon", "evening", "night"], []);
+  const timeOfDay = TIMES_OF_DAY[timeOfDayIndex];
+
+  // Automatic time-of-day cycle every 30 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeOfDayIndex((prev) => (prev + 1) % 4);
+    }, 30000);
+    return () => clearInterval(timer);
+  }, []);
+
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -929,17 +944,20 @@ export default function ChatApp({
 
   return (
     <>
-      <div className={`vibrant-background vibrant-background-day ${!isNight ? "active" : ""}`} />
-      <div className={`vibrant-background vibrant-background-night ${isNight ? "active" : ""}`} />
-      <ParticleBackground isNight={isNight} />
+      <div className={`vibrant-background vibrant-background-morning ${timeOfDay === "morning" ? "active" : ""}`} />
+      <div className={`vibrant-background vibrant-background-noon ${timeOfDay === "noon" ? "active" : ""}`} />
+      <div className={`vibrant-background vibrant-background-evening ${timeOfDay === "evening" ? "active" : ""}`} />
+      <div className={`vibrant-background vibrant-background-night ${timeOfDay === "night" ? "active" : ""}`} />
+      
+      <ParticleBackground timeOfDay={timeOfDay} />
       
       {step === "centered" && (
         <>
-          <HeroScenery isNight={isNight} />
+          <HeroScenery timeOfDay={timeOfDay} />
           <div className="hero-3d-container">
             <Canvas camera={{ position: [0, 0, 4.5], fov: 45 }} shadows>
               <Suspense fallback={null}>
-                <HeroRobotModel isNight={isNight} />
+                <HeroRobotModel timeOfDay={timeOfDay} />
               </Suspense>
             </Canvas>
           </div>
@@ -949,15 +967,6 @@ export default function ChatApp({
       <a className="brand-logo" href={import.meta.env.BASE_URL || "/"} aria-label="Go to DEKODE home">
         DEKODE
       </a>
-
-      <button
-        type="button"
-        className="theme-toggle-btn"
-        onClick={() => setIsNight(!isNight)}
-        aria-label="Toggle light/dark theme"
-      >
-        {isNight ? <Sun size={18} /> : <Moon size={18} />}
-      </button>
 
       {onOpenProposalAccess && !proposalContext && (
         <button

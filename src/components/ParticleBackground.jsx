@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 
-export default function ParticleBackground({ isNight = true }) {
+export default function ParticleBackground({ timeOfDay = 'noon' }) {
   const canvasRef = useRef(null);
-  const isNightRef = useRef(isNight);
+  const timeOfDayRef = useRef(timeOfDay);
 
   useEffect(() => {
-    isNightRef.current = isNight;
-  }, [isNight]);
+    timeOfDayRef.current = timeOfDay;
+  }, [timeOfDay]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -50,17 +50,23 @@ export default function ParticleBackground({ isNight = true }) {
       draw(ctx) {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        // Day mode uses deep blue particles, Night uses white/starry particles
-        ctx.fillStyle = isNightRef.current 
-          ? 'rgba(255, 255, 255, 0.45)' 
-          : 'rgba(53, 118, 193, 0.45)';
+        const stage = timeOfDayRef.current;
+        if (stage === 'night') {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+        } else if (stage === 'evening') {
+          ctx.fillStyle = 'rgba(251, 146, 60, 0.45)'; // Amber sunset dust
+        } else if (stage === 'morning') {
+          ctx.fillStyle = 'rgba(254, 215, 170, 0.45)'; // Sunrise peach motes
+        } else {
+          ctx.fillStyle = 'rgba(53, 118, 193, 0.35)';  // Noon sky particles
+        }
         ctx.fill();
       }
     }
 
     const initParticles = () => {
       particles = [];
-      const numParticles = Math.min(110, Math.floor((canvas.width * canvas.height) / 15000)); // Responsive density
+      const numParticles = Math.min(110, Math.floor((canvas.width * canvas.height) / 15000));
       for (let i = 0; i < numParticles; i++) {
         particles.push(new Particle());
       }
@@ -69,7 +75,7 @@ export default function ParticleBackground({ isNight = true }) {
     initParticles();
 
     const drawLines = () => {
-      const isNightMode = isNightRef.current;
+      const stage = timeOfDayRef.current;
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
@@ -78,10 +84,15 @@ export default function ParticleBackground({ isNight = true }) {
 
           if (distance < 120) {
             ctx.beginPath();
-            // Lighter lines for day mode
-            ctx.strokeStyle = isNightMode
-              ? `rgba(255, 255, 255, ${0.15 - distance / 800})`
-              : `rgba(53, 118, 193, ${0.12 - distance / 1000})`;
+            if (stage === 'night') {
+              ctx.strokeStyle = `rgba(255, 255, 255, ${0.15 - distance / 800})`;
+            } else if (stage === 'evening') {
+              ctx.strokeStyle = `rgba(251, 146, 60, ${0.12 - distance / 900})`;
+            } else if (stage === 'morning') {
+              ctx.strokeStyle = `rgba(251, 146, 60, ${0.12 - distance / 900})`;
+            } else {
+              ctx.strokeStyle = `rgba(53, 118, 193, ${0.12 - distance / 1000})`;
+            }
             ctx.lineWidth = 0.5;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);

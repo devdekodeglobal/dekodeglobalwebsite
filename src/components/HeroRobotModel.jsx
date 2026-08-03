@@ -124,41 +124,80 @@ function RobotModel({ isNight }) {
   );
 }
 
-export default function HeroRobotModel({ isNight }) {
-  // Dynamic light colors based on Day/Night theme
-  const ambientColor = isNight ? '#1e1b4b' : '#fef08a';
-  const ambientIntensity = isNight ? 1.2 : 1.8;
+export default function HeroRobotModel({ timeOfDay = 'noon' }) {
+  // Dynamic light colors based on 4-stage timeOfDay theme
+  const getLighting = () => {
+    switch (timeOfDay) {
+      case 'morning':
+        return {
+          ambientColor: '#fed7aa',
+          ambientIntensity: 1.6,
+          dir1Color: '#fb923c',
+          dir1Intensity: 3.5,
+          dir2Color: '#f472b6',
+          dir2Intensity: 2.2,
+          rimColor: '#fde047',
+        };
+      case 'noon':
+        return {
+          ambientColor: '#fef08a',
+          ambientIntensity: 1.8,
+          dir1Color: '#f59e0b',
+          dir1Intensity: 4.0,
+          dir2Color: '#38bdf8',
+          dir2Intensity: 2.5,
+          rimColor: '#67e8f9',
+        };
+      case 'evening':
+        return {
+          ambientColor: '#4c1d95',
+          ambientIntensity: 1.5,
+          dir1Color: '#ef4444',
+          dir1Intensity: 3.8,
+          dir2Color: '#c084fc',
+          dir2Intensity: 2.5,
+          rimColor: '#fb7185',
+        };
+      case 'night':
+      default:
+        return {
+          ambientColor: '#1e1b4b',
+          ambientIntensity: 1.2,
+          dir1Color: '#818cf8',
+          dir1Intensity: 3.0,
+          dir2Color: '#c084fc',
+          dir2Intensity: 2.0,
+          rimColor: '#22d3ee',
+        };
+    }
+  };
 
-  const dirLightColor1 = isNight ? '#818cf8' : '#fb923c';
-  const dirLightIntensity1 = isNight ? 3.0 : 4.0;
-
-  const dirLightColor2 = isNight ? '#c084fc' : '#38bdf8';
-  const dirLightIntensity2 = isNight ? 2.0 : 2.5;
+  const lights = getLighting();
 
   return (
     <>
       {/* Ambient Lighting */}
-      <ambientLight color={ambientColor} intensity={ambientIntensity} />
+      <ambientLight color={lights.ambientColor} intensity={lights.ambientIntensity} />
 
       {/* Primary Key Light */}
       <directionalLight 
         position={[5, 5, 5]} 
-        color={dirLightColor1} 
-        intensity={dirLightIntensity1} 
+        color={lights.dir1Color} 
+        intensity={lights.dir1Intensity} 
         castShadow
       />
 
       {/* Fill Light / Accent */}
       <directionalLight 
         position={[-5, 3, -2]} 
-        color={dirLightColor2} 
-        intensity={dirLightIntensity2} 
+        color={lights.dir2Color} 
+        intensity={lights.dir2Intensity} 
       />
 
-      {/* Subtle Rim Light */}
+      {/* Rim Light */}
       <directionalLight 
         position={[0, -3, 3]} 
-        color={isNight ? '#22d3ee' : '#f472b6'} 
+        color={lights.rimColor} 
         intensity={1.5} 
       />
 
@@ -168,7 +207,7 @@ export default function HeroRobotModel({ isNight }) {
         floatIntensity={0.25} 
         floatingRange={[-0.08, 0.08]}
       >
-        <RobotModel isNight={isNight} />
+        <RobotModel timeOfDay={timeOfDay} />
       </Float>
     </>
   );
