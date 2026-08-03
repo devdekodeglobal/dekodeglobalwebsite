@@ -9,12 +9,20 @@ useGLTF.preload(robotModelUrl);
 function RobotModel({ isNight }) {
   const { scene } = useGLTF(robotModelUrl);
   const robotRef = useRef();
+  const spinVelocityRef = useRef(0);
 
-  // Smooth mouse-follow and gentle auto-rotation
+  // Smooth mouse-follow, gentle auto-rotation, and click spin reaction
   useFrame((state) => {
     if (!robotRef.current) return;
 
-    // Gentle continuous spin
+    // Decay spin velocity
+    if (spinVelocityRef.current > 0.001) {
+      spinVelocityRef.current *= 0.95;
+    } else {
+      spinVelocityRef.current = 0;
+    }
+
+    // Gentle continuous spin + spin velocity boost on click
     const baseRotationY = state.clock.getElapsedTime() * 0.15;
     
     // Calculate targets based on mouse pointer (-1 to 1)
@@ -23,16 +31,20 @@ function RobotModel({ isNight }) {
     
     // Smooth interpolation (lerp)
     robotRef.current.rotation.x += (targetRotX - robotRef.current.rotation.x) * 0.08;
-    robotRef.current.rotation.y += (targetRotY - robotRef.current.rotation.y) * 0.08;
+    robotRef.current.rotation.y += (targetRotY - robotRef.current.rotation.y) * 0.08 + spinVelocityRef.current;
   });
 
-  // Apply materials configuration or custom lighting properties to model if needed
+  const handleClick = (e) => {
+    e.stopPropagation();
+    spinVelocityRef.current = 0.4; // Boost spin velocity when clicked!
+  };
+
+  // Apply materials configuration
   useEffect(() => {
     scene.traverse((child) => {
       if (child.isMesh) {
         child.castShadow = true;
         child.receiveShadow = true;
-        // Make the materials slightly metallic/rough to catch dynamic lighting beautifully
         if (child.material) {
           child.material.roughness = 0.3;
           child.material.metalness = 0.1;
@@ -45,8 +57,11 @@ function RobotModel({ isNight }) {
     <primitive 
       ref={robotRef}
       object={scene} 
-      scale={2.2} 
-      position={[0, -0.6, 0]} 
+      scale={1.3} 
+      position={[0, -0.3, 0]} 
+      onClick={handleClick}
+      onPointerOver={() => (document.body.style.cursor = 'pointer')}
+      onPointerOut={() => (document.body.style.cursor = 'auto')}
     />
   );
 }

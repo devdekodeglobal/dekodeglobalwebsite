@@ -89,6 +89,118 @@ body {
   pointer-events: auto; /* Allow interactions so R3F mouse follow works */
 }
 
+/* Hero Scenery & Celestial Objects */
+.hero-scenery-wrapper {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Celestial Sun */
+.celestial-sun-container {
+  position: absolute;
+  top: 12%;
+  right: 15%;
+  width: 110px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sun-core {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fffef0, #fef08a 60%, #f59e0b 100%);
+  box-shadow: 0 0 35px rgba(254, 240, 138, 0.8), 0 0 70px rgba(245, 158, 11, 0.5);
+}
+
+.sun-glow-ring {
+  position: absolute;
+  inset: -15px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(254, 240, 138, 0.3) 0%, transparent 70%);
+  animation: sun-pulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes sun-pulse {
+  0% { transform: scale(0.95); opacity: 0.7; }
+  100% { transform: scale(1.15); opacity: 1; }
+}
+
+/* Celestial Moon */
+.celestial-moon-container {
+  position: absolute;
+  top: 10%;
+  left: 12%;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.moon-core {
+  position: relative;
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff, #e0e7ff 70%, #a5b4fc 100%);
+  box-shadow: 0 0 25px rgba(224, 231, 255, 0.7), 0 0 50px rgba(165, 180, 252, 0.4);
+  overflow: hidden;
+}
+
+.moon-crater {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(147, 197, 253, 0.25);
+  box-shadow: inset 1px 1px 2px rgba(30, 27, 75, 0.3);
+}
+
+.crater-1 {
+  width: 16px;
+  height: 16px;
+  top: 14px;
+  left: 18px;
+}
+
+.crater-2 {
+  width: 10px;
+  height: 10px;
+  bottom: 16px;
+  right: 18px;
+}
+
+.moon-glow-ring {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(224, 231, 255, 0.25) 0%, transparent 70%);
+}
+
+/* Buildings Scenery Container */
+.scenery-buildings-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 38vh;
+  min-height: 240px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.scenery-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 -4px 12px rgba(0, 0, 0, 0.15));
+}
+
 /* Theme Toggle button */
 .theme-toggle-btn {
   position: absolute;

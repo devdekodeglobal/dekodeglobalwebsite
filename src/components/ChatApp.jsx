@@ -17,6 +17,7 @@ import CompanyKnowledgePanel from "./CompanyKnowledgePanel";
 import ParticleBackground from "./ParticleBackground";
 import TypewriterText from "./TypewriterText";
 import HeroRobotModel from "./HeroRobotModel";
+import HeroScenery from "./HeroScenery";
 import DekodeVoiceEntry from "./voice/DekodeVoiceEntry";
 import DekodeVoiceSession from "./voice/DekodeVoiceSession";
 import MeetingScheduler from "./MeetingScheduler";
@@ -933,13 +934,16 @@ export default function ChatApp({
       <ParticleBackground isNight={isNight} />
       
       {step === "centered" && (
-        <div className="hero-3d-container">
-          <Canvas camera={{ position: [0, 0, 4.5], fov: 45 }} shadows>
-            <Suspense fallback={null}>
-              <HeroRobotModel isNight={isNight} />
-            </Suspense>
-          </Canvas>
-        </div>
+        <>
+          <HeroScenery isNight={isNight} />
+          <div className="hero-3d-container">
+            <Canvas camera={{ position: [0, 0, 4.5], fov: 45 }} shadows>
+              <Suspense fallback={null}>
+                <HeroRobotModel isNight={isNight} />
+              </Suspense>
+            </Canvas>
+          </div>
+        </>
       )}
 
       <a className="brand-logo" href={import.meta.env.BASE_URL || "/"} aria-label="Go to DEKODE home">
