@@ -1,7 +1,8 @@
 .interactive-story {
   position: relative;
-  z-index: 8;
+  z-index: 5;
   width: 100%;
+  clear: both;
   color: var(--color-text-main);
   background: linear-gradient(180deg, rgba(4, 27, 51, 0.16), rgba(4, 27, 51, 0.78));
 }
