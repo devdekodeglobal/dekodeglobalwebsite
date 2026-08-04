@@ -16,10 +16,12 @@ const PROJECT_REQUEST_PATTERNS = [
 
 const COMPANY_CUES = [
   /\bdekode\b/i,
-  /\b(your|the)\s+(company|business|services?|capabilities|team|culture|values?|technolog(?:y|ies)|stack|process|clients?|industr(?:y|ies))\b/i,
+  /\b(your|the)\s+(company|business|services?|capabilities|team|culture|values?|technolog(?:y|ies)|stack|process|clients?|industr(?:y|ies)|locations?|address|privacy|terms|polic(?:y|ies))\b/i,
   /\b(who are you|what do you do|why (?:should i )?choose you|how do you work)\b/i,
   /\b(do|can)\s+you\s+(build|provide|offer|support|work|help|develop|design)\b/i,
   /\bwhat\s+(?:services?|solutions?|industries|technologies)\s+do\s+you\b/i,
+  /\b(where are you|where (?:is|are).{0,20}(?:office|located|based)|office address|headquarters|privacy policy|terms (?:and conditions|of service))\b/i,
+  /\b(contact us|contact information|email address|phone number|company location)\b/i,
 ];
 
 export function classifyCompanyIntent(message, context = {}) {

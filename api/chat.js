@@ -1,6 +1,7 @@
 import { formatKnowledgeContext } from './_chat/companyRetrieval.js';
 import { isLikelyGibberish } from '../src/utils/messageQuality.js';
 import { getKnowledgeGapResponse } from '../src/knowledge/knowledgeGapResponse.js';
+import { classifyCompanyIntent, generateCompanyResponse } from '../src/knowledge/index.js';
 
 const MAX_QUESTION_LENGTH = 1_200;
 const MAX_HISTORY_MESSAGES = 6;
@@ -109,6 +110,15 @@ export default async function handler(request, response) {
     return response.status(200).json({
       ok: true,
       answer: knowledgeGapAnswer,
+      sources: matches.map(({ id, label }) => ({ id, label })),
+    });
+  }
+
+  const verifiedIntent = classifyCompanyIntent(question);
+  if (['contact', 'location', 'privacy', 'terms'].includes(verifiedIntent.topic)) {
+    return response.status(200).json({
+      ok: true,
+      answer: generateCompanyResponse(question, verifiedIntent).text,
       sources: matches.map(({ id, label }) => ({ id, label })),
     });
   }

@@ -5,7 +5,16 @@ import { getSuggestedQuestions } from './suggestedQuestionGenerator.js';
 import { getKnowledgeGapResponse } from './knowledgeGapResponse.js';
 
 const knowledge = loadCompanyKnowledge();
-const bullets = (items) => items.map((item) => `• ${item}`).join('\n');
+const bullets = (items) => items.map((item) => `- ${item}`).join('\n');
+
+function findLegalSection(document, message) {
+  const input = message.toLowerCase();
+  return document.sections.find((section) => {
+    const title = section.title.toLowerCase();
+    const meaningfulWords = title.split(/\s+/).filter((word) => word.length > 3);
+    return input.includes(title) || meaningfulWords.length > 0 && meaningfulWords.every((word) => input.includes(word));
+  });
+}
 
 function responseForTopic(topic, message, detectedService, detectedSolutionArea) {
   const service = detectedService || findNamedOffering(message);
@@ -18,11 +27,11 @@ function responseForTopic(topic, message, detectedService, detectedSolutionArea)
 
   if (/\bsaas\b/i.test(message) && !service) {
     const webService = knowledge.services.find((item) => item.id === 'web-mobile');
-    return `DEKODE’s public company profile doesn’t specifically name SaaS as a separate offering, so I don’t want to overstate it.\n\nThe closest confirmed capability is ${webService.name}: ${webService.summary}\n\nThat service covers web applications, dashboards, internal portals, UX/UI design, and production-ready delivery.`;
+    return `DEKODE's public company profile does not specifically name SaaS as a separate offering, so I do not want to overstate it.\n\nThe closest confirmed capability is ${webService.name}: ${webService.summary}\n\nThat service covers web applications, dashboards, internal portals, UX/UI design, and production-ready delivery.`;
   }
 
   if (topic === 'services' && service) {
-    return `${service.name} is one of DEKODE’s core services. ${service.summary}\n\nIt includes:\n${bullets(service.capabilities.slice(0, 5))}\n\nIt’s designed for ${service.audience.charAt(0).toLowerCase()}${service.audience.slice(1)}`;
+    return `${service.name} is one of DEKODE's core services. ${service.summary}\n\nIt includes:\n${bullets(service.capabilities.slice(0, 5))}\n\nIt is designed for ${service.audience.charAt(0).toLowerCase()}${service.audience.slice(1)}`;
   }
 
   switch (topic) {
@@ -30,20 +39,30 @@ function responseForTopic(topic, message, detectedService, detectedSolutionArea)
       return `DEKODE brings strategy, build, infrastructure, security, and ongoing support together in one delivery partner.\n\nOur core services are:\n${bullets(knowledge.services.map((item) => item.name))}\n\nWhich area would you like to explore?`;
     case 'ai': {
       const aiServices = knowledge.services.filter((item) => /AI/i.test(item.name));
-      return `Yes. DEKODE helps businesses adopt AI from strategy through production.\n\n${bullets(aiServices.map((item) => `${item.name} — ${item.summary}`))}\n\nThat includes custom machine learning, generative AI, internal copilots, intelligent search, knowledge systems, and AI-powered workflow tools.`;
+      return `Yes. DEKODE helps businesses adopt AI from strategy through production.\n\n${bullets(aiServices.map((item) => `${item.name}: ${item.summary}`))}\n\nThat includes custom machine learning, generative AI, internal copilots, intelligent search, knowledge systems, and AI-powered workflow tools.`;
     }
     case 'industries':
-      return `DEKODE partners with small and medium businesses that want technology to solve real problems without creating new ones.\n\nIndustries named in our company profile include:\n${bullets(knowledge.industries)}\n\nOur approach is adapted to each organisation’s workflows, constraints, and goals.`;
+      return `DEKODE partners with small and medium businesses that want technology to solve real problems without creating new ones.\n\nIndustries named in our company profile include:\n${bullets(knowledge.industries)}\n\nOur approach is adapted to each organisation's workflows, constraints, and goals.`;
     case 'technologies':
-      return `DEKODE chooses technology around the problem, with reliability, security, and maintainability in mind.\n\nThe platforms explicitly named in our company profile are:\n${bullets(knowledge.technologies)}\n\nWe also build with AI, machine learning, generative AI, APIs, mobile and web technologies. The public profile doesn’t list a more detailed framework-by-framework stack.`;
+      return `DEKODE chooses technology around the problem, with reliability, security, and maintainability in mind.\n\nThe platforms explicitly named in our company profile are:\n${bullets(knowledge.technologies)}\n\nWe also build with AI, machine learning, generative AI, APIs, mobile and web technologies. The public profile does not list a more detailed framework-by-framework stack.`;
     case 'process':
-      return `DEKODE uses a simple, risk-reducing delivery flow:\n\n${bullets(knowledge.developmentProcess.map((step) => `${step.name} — ${step.description}`))}\n\nThe aim is clear scope, security from day one, and support after launch.`;
+      return `DEKODE uses a simple, risk-reducing delivery flow:\n\n${bullets(knowledge.developmentProcess.map((step) => `${step.name}: ${step.description}`))}\n\nThe aim is clear scope, security from day one, and support after launch.`;
     case 'why':
-      return `DEKODE is built around practical delivery, clear communication, and long-term accountability.\n\nWhat makes us different:\n${bullets(knowledge.whyChooseUs.map((item) => `${item.name} — ${item.description}`))}\n\nWe focus on useful outcomes, not technology hype.`;
+      return `DEKODE is built around practical delivery, clear communication, and long-term accountability.\n\nWhat makes us different:\n${bullets(knowledge.whyChooseUs.map((item) => `${item.name}: ${item.description}`))}\n\nWe focus on useful outcomes, not technology hype.`;
     case 'contact':
-      return knowledge.contact.email
-        ? `You can reach DEKODE at ${knowledge.contact.email}. Tell us what you’re exploring and we’ll help recommend a practical next step.`
-        : `I couldn’t find a direct contact detail in the company profile, but DEKODE can help with AI, product development, automation, cloud, security, and ongoing support.`;
+      return `You can reach DEKODE at ${knowledge.contact.email}.\n\nAustralia: ${knowledge.contact.phoneLabels[0]}\nIndia: ${knowledge.contact.phoneLabels[1]}\nWhatsApp: ${knowledge.contact.phoneLabels[0]}\n\nTell us what you are exploring and we will help recommend a practical next step.`;
+    case 'location':
+      return `${knowledge.contact.operatingModel}\n\n${bullets(knowledge.contact.locations.map((location) => `${location.country}: ${location.address}`))}`;
+    case 'privacy': {
+      const section = findLegalSection(knowledge.legal.privacy, message);
+      if (section) return `${section.title}\n\n${section.summary}`;
+      return `${knowledge.legal.privacy.summary}\n\nThe policy covers:\n${bullets(knowledge.legal.privacy.sections.map((section) => section.title))}\n\nFor privacy questions or requests, contact ${knowledge.legal.privacy.contactEmail}.`;
+    }
+    case 'terms': {
+      const section = findLegalSection(knowledge.legal.terms, message);
+      if (section) return `${section.title}\n\n${section.summary}`;
+      return `${knowledge.legal.terms.summary}\n\nThe terms cover:\n${bullets(knowledge.legal.terms.sections.map((section) => section.title))}\n\nThe full terms are available in the Company information section below.`;
+    }
     case 'company':
     default:
       return `${knowledge.company.about}\n\nIn short, DEKODE combines:\n${bullets(['AI strategy and custom AI', 'Web and mobile products', 'E-commerce, integrations, and automation', 'Cloud, managed IT, and security'])}\n\n${knowledge.company.belief}`;

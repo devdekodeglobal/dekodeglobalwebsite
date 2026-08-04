@@ -8,6 +8,8 @@ const chatApp = await readFile(new URL('../src/components/ChatApp.jsx', import.m
 const backToTop = await readFile(new URL('../src/components/BackToTopButton.jsx', import.meta.url), 'utf8');
 const app = await readFile(new URL('../src/App.jsx', import.meta.url), 'utf8');
 const projectOptions = await readFile(new URL('../src/config/projectOptions.js', import.meta.url), 'utf8');
+const animationPanel = await readFile(new URL('../src/components/AnimationPanel.jsx', import.meta.url), 'utf8');
+const meetingScheduler = await readFile(new URL('../src/components/MeetingScheduler.jsx', import.meta.url), 'utf8');
 
 test('uses dynamic viewport units and safe-area spacing for app and voice surfaces', () => {
   assert.match(indexCss, /height:\s*100dvh/);
@@ -51,6 +53,9 @@ test('keeps the composer responsive with rotating hints and separate voice typin
   assert.match(indexCss, /\.hero-title\s*\{[^}]*font-size:\s*clamp\(1\.65rem,\s*2\.4vw,\s*2\.2rem\)[^}]*max-width:\s*min\(1120px,\s*100%\)/s);
   assert.match(indexCss, /@media \(min-width:\s*901px\)[\s\S]*\.hero-title\s*\{[^}]*white-space:\s*nowrap/s);
   assert.match(chatApp, /className="action-pill proposal-entry-button client-portal-top-right"/);
+  assert.match(chatApp, /className="action-pill calendar-entry-button"/);
+  assert.match(chatApp, /aria-label="Book a meeting"/);
+  assert.match(chatApp, /setStep\('scheduling'\)/);
   assert.match(chatApp, /> Client Portal/);
   assert.doesNotMatch(chatApp, /Access Client Portal|Access client proposal/);
   assert.equal((projectOptions.match(/label:\s*"/g) || []).length, 4);
@@ -59,6 +64,7 @@ test('keeps the composer responsive with rotating hints and separate voice typin
   assert.match(indexCss, /@media \(max-width:\s*767px\)[\s\S]*\.option-row/s);
   assert.match(indexCss, /\.proposal-entry-button\s*\{[^}]*white-space:\s*nowrap/s);
   assert.match(indexCss, /\.chat-mic-btn\s*\{[^}]*width:\s*44px[^}]*height:\s*44px/s);
+  assert.match(indexCss, /\.contact-panel-grid \.knowledge-panel-button span,[\s\S]*overflow-wrap:\s*anywhere/);
 });
 
 test('pauses rotating hints for active voice typing states', () => {
@@ -83,4 +89,21 @@ test('provides one translucent back-to-top control across every DEKODE layout', 
   assert.match(indexCss, /bottom:\s*calc\(32px \+ env\(safe-area-inset-bottom, 0px\)\)/);
   assert.match(indexCss, /right:\s*calc\(20px \+ env\(safe-area-inset-right, 0px\)\)/);
   assert.match(indexCss, /background:\s*rgba\(5, 51, 100, 0\.72\)/);
+});
+
+test('synchronizes the functional calendar visual with live booking availability', () => {
+  assert.match(animationPanel, /aria-label="Calendar month"/);
+  assert.match(animationPanel, /aria-label="Calendar year"/);
+  assert.match(animationPanel, /disabled=\{!hasSlots\}/);
+  assert.match(animationPanel, /onClick=\{\(\) => onSelectSlot\?\.\(slot\)\}/);
+  assert.match(chatApp, /meetingSlots=\{meetingSlots\}/);
+  assert.match(chatApp, /selectedSlotId=\{selectedMeetingSlotId\}/);
+  assert.match(meetingScheduler, /onSlotsChange\?\.\(nextSlots\)/);
+  assert.match(meetingScheduler, /onSlotSelect\?\.\(slot\)/);
+});
+
+test('shows numbered progress only during staged discovery questions', () => {
+  assert.match(chatApp, /const showDiscoveryProgress = \[/);
+  assert.match(chatApp, /\{showDiscoveryProgress && <div/);
+  assert.doesNotMatch(chatApp, /showDiscoveryProgress[^;]*"scheduling"/s);
 });

@@ -8,6 +8,7 @@ import {
 } from '../src/knowledge/index.js';
 import { getPanelForTopic } from '../src/knowledge/visualPanelMapper.js';
 import { loadCompanyKnowledge } from '../src/knowledge/companyKnowledgeLoader.js';
+import { resolveVisualMode } from '../src/utils/visualIntent.js';
 
 test('classifies representative company questions without capturing general chat', () => {
   const companyQuestions = [
@@ -20,6 +21,10 @@ test('classifies representative company questions without capturing general chat
     'Can you help with process automation?',
     'Do you provide systems integration?',
     'Why should I choose Dekode?',
+    'How can I contact DEKODE?',
+    'Where is DEKODE located?',
+    "What is DEKODE's privacy policy?",
+    'What are your terms and conditions?',
   ];
   const generalQuestions = [
     'Hello',
@@ -56,6 +61,53 @@ test('maps each knowledge topic to its intended visual panel', () => {
   assert.equal(getPanelForTopic('process'), 'process');
   assert.equal(getPanelForTopic('why'), 'why');
   assert.equal(getPanelForTopic('ai'), 'ai');
+  assert.equal(getPanelForTopic('contact'), 'contact');
+  assert.equal(getPanelForTopic('location'), 'location');
+  assert.equal(getPanelForTopic('privacy'), 'privacy');
+  assert.equal(getPanelForTopic('terms'), 'terms');
+});
+
+test('answers verified contact, location, privacy, and terms questions', () => {
+  const cases = [
+    ['How can I contact DEKODE?', /contactus@dekodeglobal\.com/],
+    ['Where is DEKODE located?', /Little Collins Street/],
+    ["What is DEKODE's privacy policy?", /Information We Collect/],
+    ['What are your terms and conditions?', /Governing Law/],
+  ];
+
+  for (const [question, expected] of cases) {
+    const intent = classifyCompanyIntent(question);
+    assert.equal(intent.isCompanyRelated, true, question);
+    assert.match(generateCompanyResponse(question, intent).text, expected, question);
+  }
+});
+
+test('routes direct location and contact wording to verified company details', () => {
+  const locationIntent = classifyCompanyIntent('company location');
+  assert.equal(locationIntent.isCompanyRelated, true);
+  assert.equal(locationIntent.topic, 'location');
+  assert.match(generateCompanyResponse('company location', locationIntent).text, /Little Collins Street/);
+  assert.match(generateCompanyResponse('company location', locationIntent).text, /Janak Puri/);
+
+  const contactIntent = classifyCompanyIntent('contact information');
+  assert.equal(contactIntent.isCompanyRelated, true);
+  assert.equal(contactIntent.topic, 'contact');
+});
+
+test('answers a requested legal section instead of repeating the whole document overview', () => {
+  const question = "Explain DEKODE's Governing Law terms";
+  const response = generateCompanyResponse(question, classifyCompanyIntent(question));
+  assert.match(response.text, /^Governing Law/m);
+  assert.doesNotMatch(response.text, /The terms cover:/);
+});
+
+test('changes project visuals when the latest user intent changes', () => {
+  assert.equal(resolveVisualMode('Discovery Call', []), 'calendar');
+  assert.equal(resolveVisualMode('Custom Project', [{ sender: 'user', text: 'Show me an available meeting time' }]), 'calendar');
+  assert.equal(resolveVisualMode('Mobile & Web', [{ sender: 'user', text: 'The app needs Android support' }]), 'mobile');
+  assert.equal(resolveVisualMode('Mobile & Web', [{ sender: 'user', text: 'Connect it to AWS and our database' }]), 'cloud');
+  assert.equal(resolveVisualMode('Custom Project', [{ sender: 'user', text: 'Add an AI support agent' }]), 'ai');
+  assert.equal(resolveVisualMode('Custom Project', [{ sender: 'user', text: 'Build an online checkout' }]), 'ecommerce');
 });
 
 test('generates evidence-bound responses and suggestions from loaded knowledge', () => {
@@ -65,7 +117,7 @@ test('generates evidence-bound responses and suggestions from loaded knowledge',
   assert.match(response.text, /AWS/);
   assert.match(response.text, /Azure/);
   assert.match(response.text, /Google Cloud Platform/);
-  assert.match(response.text, /doesn’t list a more detailed/);
+  assert.match(response.text, /does not list a more detailed/);
   assert.ok(response.suggestions.length >= 3);
 });
 
@@ -92,7 +144,7 @@ test('answers unsupported company facts directly instead of returning an overvie
 test('does not invent a SaaS offering absent from the company profile', () => {
   const intent = classifyCompanyIntent('Do you build SaaS?');
   const response = generateCompanyResponse('Do you build SaaS?', intent);
-  assert.match(response.text, /doesn’t specifically name SaaS/);
+  assert.match(response.text, /does not specifically name SaaS/);
 });
 
 test('answers each new solution area with its specific approved knowledge', () => {

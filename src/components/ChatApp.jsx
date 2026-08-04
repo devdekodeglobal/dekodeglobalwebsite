@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef, Suspense } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Canvas } from "@react-three/fiber";
 import {
@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   Bot,
   Mic,
+  CalendarDays,
   ChevronDown,
   LockKeyhole,
   X,
@@ -116,6 +117,8 @@ export default function ChatApp({
     tone: "neutral",
   });
   const [companyPanel, setCompanyPanel] = useState(null);
+  const [meetingSlots, setMeetingSlots] = useState([]);
+  const [selectedMeetingSlotId, setSelectedMeetingSlotId] = useState(null);
   const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const [isVisualPanelExpanded, setIsVisualPanelExpanded] = useState(false);
   const [isCompactLayout, setIsCompactLayout] = useState(
@@ -305,6 +308,34 @@ export default function ChatApp({
   const handleOptionSelect = (option) => {
     startConversation(option);
   };
+
+  const handleOpenMeetingScheduler = () => {
+    setCompanyPanel(null);
+    setProjectType('Discovery Call');
+    setGatheredTags(['Meeting']);
+    setMeetingSlots([]);
+    setSelectedMeetingSlotId(null);
+    setMessages((current) => [
+      ...current,
+      {
+        id: Date.now(),
+        sender: 'ai',
+        text: 'Choose an available time below, then add your details to book a discovery call with DEKODE.',
+      },
+    ]);
+    setStep('scheduling');
+  };
+
+  const handleMeetingSlotsChange = useCallback((nextSlots) => {
+    setMeetingSlots(nextSlots);
+    setSelectedMeetingSlotId((currentId) => (
+      nextSlots.some((slot) => slot.id === currentId) ? currentId : null
+    ));
+  }, []);
+
+  const handleMeetingSlotSelect = useCallback((slot) => {
+    setSelectedMeetingSlotId(slot?.id || null);
+  }, []);
 
   const handleCompanyPrompt = async (userMessage) => {
     if (!userMessage.trim() || isTyping) return;
@@ -773,9 +804,21 @@ export default function ChatApp({
     if (step === "gathering_audience") return 1;
     if (step === "gathering_features") return 2;
     if (step === "gathering_timeline") return 3;
+    if (step === "custom_discovery_problem") return 1;
+    if (step === "custom_discovery_platform") return 2;
+    if (step === "custom_discovery_complexity") return 3;
     if (step === "scheduling" || step === "done") return 4;
     return 0;
   };
+
+  const showDiscoveryProgress = [
+    "gathering_audience",
+    "gathering_features",
+    "gathering_timeline",
+    "custom_discovery_problem",
+    "custom_discovery_platform",
+    "custom_discovery_complexity",
+  ].includes(step);
 
   const renderAnimationCard = (classNameExt = "") => (
     <motion.div
@@ -842,7 +885,7 @@ export default function ChatApp({
         ) : (
           <>
             {/* Progress Tracker */}
-            <div
+            {showDiscoveryProgress && <div
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -886,7 +929,7 @@ export default function ChatApp({
                   {num}
                 </div>
               ))}
-            </div>
+            </div>}
 
             {/* Tag Chips */}
             <div
@@ -935,6 +978,9 @@ export default function ChatApp({
               projectType={projectType}
               level={getAnimationLevel()}
               messages={messages}
+              meetingSlots={meetingSlots}
+              selectedMeetingSlotId={selectedMeetingSlotId}
+              onMeetingSlotSelect={handleMeetingSlotSelect}
             />
           )}
         </div>
@@ -958,15 +1004,27 @@ export default function ChatApp({
       <a className="brand-logo" href={import.meta.env.BASE_URL || "/"} aria-label="Go to DEKODE home">
         DEKODE
       </a>
-
-      {onOpenProposalAccess && !proposalContext && (
-        <button
-          type="button"
-          className="action-pill proposal-entry-button client-portal-top-right"
-          onClick={onOpenProposalAccess}
-        >
-          <LockKeyhole size={15} /> Client Portal
-        </button>
+      {!proposalContext && (
+        <div className="top-right-actions">
+          <button
+            type="button"
+            className="action-pill calendar-entry-button"
+            onClick={handleOpenMeetingScheduler}
+            aria-label="Book a meeting"
+            title="Book a meeting"
+          >
+            <CalendarDays size={18} strokeWidth={2.5} />
+          </button>
+          {onOpenProposalAccess && (
+            <button
+              type="button"
+              className="action-pill proposal-entry-button client-portal-top-right"
+              onClick={onOpenProposalAccess}
+            >
+              <LockKeyhole size={15} /> Client Portal
+            </button>
+          )}
+        </div>
       )}
       {proposalContext && (
         <div className="proposal-context-bar">
@@ -1170,6 +1228,9 @@ export default function ChatApp({
                     <MeetingScheduler
                       projectSummary={messages.filter((message) => message.sender === "user").map((message) => message.text).join(" ").slice(0, 2000)}
                       onBooked={handleMeetingBooked}
+                      selectedSlotId={selectedMeetingSlotId}
+                      onSlotSelect={handleMeetingSlotSelect}
+                      onSlotsChange={handleMeetingSlotsChange}
                     />
                   </motion.div>
                 )}
