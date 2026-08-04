@@ -131,8 +131,8 @@ body {
 /* Celestial Sun */
 .celestial-sun-container {
   position: absolute;
-  top: 12%;
-  right: 15%;
+  top: 0;
+  left: 0;
   width: 110px;
   height: 110px;
   display: flex;
@@ -164,8 +164,6 @@ body {
 /* Celestial Moon */
 .celestial-moon-container {
   position: absolute;
-  top: 10%;
-  left: 12%;
   width: 100px;
   height: 100px;
   display: flex;
