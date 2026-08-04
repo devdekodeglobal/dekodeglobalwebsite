@@ -122,6 +122,7 @@ test('communicates availability, timezone conversion, progress, and mobile order
   assert.match(indexCss, /\.meeting-mobile-summary\s*\{\s*display:\s*none/);
   assert.match(indexCss, /@media \(max-width:\s*767px\)[\s\S]*\.meeting-mobile-summary\s*\{\s*display:\s*block/s);
   assert.match(indexCss, /\.is-booking-layout \.booking-summary-panel\s*\{\s*display:\s*none/);
+  assert.ok(indexCss.indexOf('.meeting-calendar-grid button:disabled') < indexCss.indexOf('.meeting-calendar-grid button.is-today'));
 });
 
 test('keeps booking controls accessible and motion-sensitive', () => {
