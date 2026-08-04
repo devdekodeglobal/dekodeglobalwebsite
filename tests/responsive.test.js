@@ -134,6 +134,15 @@ test('keeps booking controls accessible and motion-sensitive', () => {
   assert.match(indexCss, /\.meeting-calendar-grid button:focus-visible/);
 });
 
+test('keeps consent aligned and resumes normal chat after booking', () => {
+  assert.match(indexCss, /\.meeting-consent\s*\{[^}]*align-items:\s*center/);
+  assert.match(indexCss, /\.meeting-consent input\s*\{[^}]*margin:\s*0/);
+  assert.match(chatApp, /if \(step === "done"\) \{\s*handleCompanyPrompt\(userMessage\);\s*return;/);
+  assert.match(chatApp, /readOnly:\s*step === "scheduling"/);
+  assert.doesNotMatch(chatApp, /readOnly:\s*step === "scheduling" \|\| step === "done"/);
+  assert.match(chatApp, /if \(step === "centered" \|\| step === "done"\) setStep\("company"\)/);
+});
+
 test('shows numbered progress only during staged discovery questions', () => {
   assert.match(chatApp, /const showDiscoveryProgress = \[/);
   assert.match(chatApp, /\{showDiscoveryProgress && <div/);

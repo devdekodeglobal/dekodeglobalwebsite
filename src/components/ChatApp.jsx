@@ -345,7 +345,7 @@ export default function ChatApp({
       ...prev,
       { id: Date.now(), sender: "user", text: userMessage },
     ]);
-    if (step === "centered") setStep("company");
+    if (step === "centered" || step === "done") setStep("company");
     companyContextRef.current = rememberCompanyTurn(
       companyContextRef.current,
       fallbackResponse.topic,
@@ -432,7 +432,7 @@ export default function ChatApp({
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
-    if (step === "scheduling" || step === "done" || isTyping) return;
+    if (step === "scheduling" || isTyping) return;
     if (isListening) {
       speechProviderRef.current?.stop();
       setIsListening(false);
@@ -449,6 +449,11 @@ export default function ChatApp({
 
     if (proposalContext) {
       handleProposalPrompt(userMessage);
+      return;
+    }
+
+    if (step === "done") {
+      handleCompanyPrompt(userMessage);
       return;
     }
 
@@ -1242,18 +1247,15 @@ export default function ChatApp({
                   >
                     {renderDekodeVoiceButton()}
                     {renderComposerInput({
-                      readOnly: step === "scheduling" || step === "done",
+                      readOnly: step === "scheduling",
                     })}
-                    {renderVoiceTypingButton(
-                      step === "scheduling" || step === "done",
-                    )}
+                    {renderVoiceTypingButton(step === "scheduling")}
                     <button
                       type="submit"
                       className={`chat-submit-btn ${isSending ? "shake-anim" : ""}`}
                       disabled={
                         !inputValue.trim() ||
                         step === "scheduling" ||
-                        step === "done" ||
                         isTyping
                       }
                       aria-label="Send message"

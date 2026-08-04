@@ -1199,8 +1199,9 @@ h1, h2, h3, h4, h5, h6 {
 .meeting-booking-fields input, .meeting-booking-fields textarea { width: 100%; min-width: 0; padding: 0.7rem 0.75rem; color: white; background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 6px; font: inherit; resize: vertical; }
 .meeting-booking-fields input:focus, .meeting-booking-fields textarea:focus { outline: 2px solid rgba(199, 243, 107, 0.5); border-color: #c7f36b; }
 .meeting-summary-field, .meeting-consent, .meeting-book-btn { grid-column: 1 / -1; }
-.meeting-consent { display: flex !important; grid-template-columns: auto 1fr; align-items: flex-start; gap: 0.55rem !important; }
-.meeting-consent input { width: 16px; margin-top: 0.1rem; accent-color: #c7f36b; }
+.meeting-consent { display: flex !important; align-items: center; gap: 0.55rem !important; }
+.meeting-consent input { flex: 0 0 16px; width: 16px; height: 16px; margin: 0; accent-color: #c7f36b; }
+.meeting-consent > span { line-height: 1.35; }
 .meeting-book-btn { min-height: 42px; display: flex; justify-content: center; align-items: center; gap: 0.45rem; color: #08111f; background: #c7f36b; border: 0; border-radius: 6px; font: inherit; font-weight: 700; cursor: pointer; }
 .meeting-book-btn:disabled { opacity: 0.65; cursor: wait; }
 .meeting-honeypot { position: absolute !important; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
