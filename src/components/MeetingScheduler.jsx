@@ -23,6 +23,9 @@ import {
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const weekdayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+const readableCompanyTimezone = (timezone) => (
+  ['Asia/Kolkata', 'Asia/Calcutta'].includes(timezone) ? 'India time' : getTimeZoneAbbreviation(timezone)
+);
 
 export default function MeetingScheduler({
   projectSummary,
@@ -60,7 +63,7 @@ export default function MeetingScheduler({
     [activeSelectedSlotId, slots],
   );
   const companyTimezone = slots[0]?.companyTimezone || voiceConfig.companyTimezone;
-  const companyTimezoneLabel = getTimeZoneAbbreviation(companyTimezone);
+  const companyTimezoneLabel = readableCompanyTimezone(companyTimezone);
 
   const slotsByDate = useMemo(() => slots.reduce((groups, slot) => {
     const key = toLocalDateKey(slot.iso);
