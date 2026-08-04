@@ -4,54 +4,81 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function HeroScenery({ timeOfDay = 'noon' }) {
   const isNight = timeOfDay === 'night';
   const isEvening = timeOfDay === 'evening';
+  const isMorning = timeOfDay === 'morning';
+  const isAfternoon = timeOfDay === 'noon';
 
-  // Generate 150 static stars only once per session
-  const stars = useMemo(() => Array.from({ length: 150 }).map((_, i) => ({
+  // Generate 250 static stars only once per session for a richer night sky
+  const stars = useMemo(() => Array.from({ length: 250 }).map((_, i) => ({
     id: i,
     x: Math.random() * 100,
     y: Math.random() * 100,
-    size: Math.random() * 2 + 1,
+    size: Math.random() * 2 + 0.5,
     delay: Math.random() * 5,
     duration: Math.random() * 3 + 2,
-    opacity: Math.random() * 0.5 + 0.5,
+    opacity: Math.random() * 0.6 + 0.4,
   })), []);
 
   // Celestial Positions mapped for an arc across the screen
-  // Sun travels from left to right and sets. Moon rises from left to right.
+  // Instead of two bodies, a single celestial body morphs across the sky
   const celestialConfig = {
     morning: {
-      sun: { x: '15vw', y: '30vh', opacity: 1, scale: 1 },
-      moon: { x: '15vw', y: '120vh', opacity: 0, scale: 0.8 },
+      body: { x: '15vw', y: '30vh', scale: 1 },
+      sunOpacity: 1,
+      moonOpacity: 0,
     },
     noon: {
-      sun: { x: '50vw', y: '10vh', opacity: 1, scale: 1 },
-      moon: { x: '50vw', y: '120vh', opacity: 0, scale: 0.8 },
+      body: { x: '50vw', y: '10vh', scale: 1 },
+      sunOpacity: 1,
+      moonOpacity: 0,
     },
     evening: {
-      sun: { x: '85vw', y: '45vh', opacity: 1, scale: 1.2 },
-      moon: { x: '15vw', y: '90vh', opacity: 0.5, scale: 0.8 }, // Moon starts peaking
+      body: { x: '85vw', y: '45vh', scale: 1.2 },
+      sunOpacity: 1,
+      moonOpacity: 0, // Still the sun, getting larger as it sets
     },
     night: {
-      sun: { x: '85vw', y: '120vh', opacity: 0, scale: 0.8 }, // Sun has set
-      moon: { x: '50vw', y: '20vh', opacity: 1, scale: 1 }, // Moon is high
+      body: { x: '50vw', y: '20vh', scale: 1 },
+      sunOpacity: 0, // Sun fades out completely
+      moonOpacity: 1, // Moon fades in perfectly in its place
     }
   };
 
-  const sunTarget = celestialConfig[timeOfDay]?.sun || celestialConfig.noon.sun;
-  const moonTarget = celestialConfig[timeOfDay]?.moon || celestialConfig.noon.moon;
+  const targetState = celestialConfig[timeOfDay] || celestialConfig.noon;
 
   return (
     <div className="hero-scenery-wrapper minimalist-sky" aria-hidden="true" style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
       
+      {/* Dynamic Sky Gradient Underlay for extra twilight depth */}
+      <AnimatePresence>
+        {isEvening && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 3, ease: 'easeInOut' }}
+            style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(244,63,94,0.3) 0%, transparent 60%)', zIndex: 0 }}
+          />
+        )}
+        {isNight && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 3, ease: 'easeInOut' }}
+            style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(2,6,23,0.8) 0%, rgba(30,27,75,0.8) 100%)', zIndex: 0 }}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Starry Night Layer */}
       <AnimatePresence>
         {(isNight || isEvening) && (
           <motion.div
             className="stars-container"
             initial={{ opacity: 0 }}
-            animate={{ opacity: isNight ? 1 : 0.6 }}
+            animate={{ opacity: isNight ? 1 : 0.4 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 1.5, ease: 'easeInOut' }}
+            transition={{ duration: 3, ease: 'easeInOut' }}
             style={{ position: 'absolute', inset: 0, zIndex: 1 }}
           >
             {stars.map(star => (
@@ -65,8 +92,9 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
                   height: `${star.size}px`,
                   backgroundColor: '#fff',
                   borderRadius: '50%',
+                  boxShadow: `0 0 ${star.size * 2}px rgba(255, 255, 255, 0.8)`
                 }}
-                animate={{ opacity: [star.opacity * 0.3, star.opacity, star.opacity * 0.3] }}
+                animate={{ opacity: [star.opacity * 0.2, star.opacity, star.opacity * 0.2] }}
                 transition={{ duration: star.duration, delay: star.delay, repeat: Infinity, ease: 'easeInOut' }}
               />
             ))}
@@ -74,41 +102,43 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
         )}
       </AnimatePresence>
 
-      {/* Sun */}
+      {/* Unified Celestial Body (Sun that morphs into Moon) */}
       <motion.div
-        className="celestial-sun-container"
+        className="celestial-body-container"
         initial={false}
         animate={{
-          x: `calc(${sunTarget.x} - 55px)`,
-          y: `calc(${sunTarget.y} - 55px)`,
-          opacity: sunTarget.opacity,
-          scale: sunTarget.scale,
+          x: `calc(${targetState.body.x} - 55px)`,
+          y: `calc(${targetState.body.y} - 55px)`,
+          scale: targetState.body.scale,
         }}
-        transition={{ type: 'spring', damping: 25, stiffness: 45, mass: 1 }}
+        // Slowed down transition: much higher damping/stiffness creates a slower, majestic sweeping arc
+        transition={{ type: 'spring', damping: 40, stiffness: 20, mass: 1 }}
         style={{ zIndex: 2 }}
       >
-        <div className="sun-core" />
-        <div className="sun-glow-ring" />
-      </motion.div>
+        {/* Sun Visuals */}
+        <motion.div
+          style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          initial={false}
+          animate={{ opacity: targetState.sunOpacity }}
+          transition={{ duration: 2, ease: 'easeInOut' }}
+        >
+          <div className="sun-core" />
+          <div className="sun-glow-ring" />
+        </motion.div>
 
-      {/* Moon */}
-      <motion.div
-        className="celestial-moon-container"
-        initial={false}
-        animate={{
-          x: `calc(${moonTarget.x} - 50px)`,
-          y: `calc(${moonTarget.y} - 50px)`,
-          opacity: moonTarget.opacity,
-          scale: moonTarget.scale,
-        }}
-        transition={{ type: 'spring', damping: 25, stiffness: 45, mass: 1 }}
-        style={{ zIndex: 2 }}
-      >
-        <div className="moon-core">
-          <div className="moon-crater crater-1" />
-          <div className="moon-crater crater-2" />
-        </div>
-        <div className="moon-glow-ring" />
+        {/* Moon Visuals */}
+        <motion.div
+          style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          initial={false}
+          animate={{ opacity: targetState.moonOpacity }}
+          transition={{ duration: 2, ease: 'easeInOut' }}
+        >
+          <div className="moon-core">
+            <div className="moon-crater crater-1" />
+            <div className="moon-crater crater-2" />
+          </div>
+          <div className="moon-glow-ring" />
+        </motion.div>
       </motion.div>
     </div>
   );
