@@ -41,6 +41,9 @@ test('calendar configuration remains server-only and uses safe defaults', async 
   assert.equal(parsed.calendarId, 'private@example.com');
   assert.equal(parsed.meetingMinutes, 30);
   assert.equal(parsed.bufferMinutes, 15);
+  assert.equal(parsed.minimumNoticeHours, 0);
+  assert.equal(parsed.daysToSearch, 31);
+  assert.equal(parsed.maximumSlots, 250);
 
   const [example, scheduler] = await Promise.all([
     readFile(new URL('../.env.example', import.meta.url), 'utf8'),
@@ -72,6 +75,13 @@ test('candidate slots follow business hours and busy intervals remove buffered c
   }], 15);
   assert.ok(available.every((slot) => slot.start.toISOString() !== '2026-08-03T09:00:00.000Z'));
   assert.ok(available.every((slot) => slot.start.toISOString() !== '2026-08-03T09:45:00.000Z'));
+});
+
+test('same-day booking keeps future slots available when no notice period is configured', () => {
+  const candidates = generateCandidateSlots(config, new Date('2026-08-03T10:00:00.000Z'));
+
+  assert.equal(candidates[0].start.toISOString(), '2026-08-03T10:30:00.000Z');
+  assert.ok(candidates.every((slot) => slot.start.getTime() >= new Date('2026-08-03T10:00:00.000Z').getTime()));
 });
 
 test('availability reads free-busy data and returns visitor-timezone labels', async () => {

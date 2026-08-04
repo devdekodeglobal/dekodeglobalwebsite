@@ -162,7 +162,8 @@ export default function MeetingScheduler({
   ])].filter(Number.isFinite).sort((a, b) => a - b);
   const firstWeekday = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay();
   const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
-  const calendarDays = Array.from({ length: 42 }, (_, index) => {
+  const calendarCellCount = Math.ceil((firstWeekday + daysInMonth) / 7) * 7;
+  const calendarDays = Array.from({ length: calendarCellCount }, (_, index) => {
     const day = index - firstWeekday + 1;
     return day >= 1 && day <= daysInMonth ? day : null;
   });

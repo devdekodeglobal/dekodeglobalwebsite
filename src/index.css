@@ -1301,11 +1301,11 @@ h1, h2, h3, h4, h5, h6 {
 .booking-calendar-empty { color: rgba(255, 255, 255, 0.56); font-size: 0.7rem; }
 
 /* Guided meeting booking experience */
-.schedule-card-wrapper { width: min(100%, 720px); margin: 1rem auto 0; }
+.schedule-card-wrapper { width: min(100%, 640px); margin: 1rem auto 0; }
 
 .meeting-scheduler {
-  gap: 1.15rem;
-  padding: clamp(1rem, 2vw, 1.5rem);
+  gap: 0.9rem;
+  padding: clamp(0.9rem, 1.6vw, 1.2rem);
   background: rgba(7, 15, 32, 0.88);
   border-color: rgba(255, 255, 255, 0.12);
   box-shadow: 0 20px 55px rgba(0, 0, 0, 0.22);
@@ -1333,7 +1333,7 @@ h1, h2, h3, h4, h5, h6 {
 .meeting-availability-card strong { min-width: 0; color: rgba(255, 255, 255, 0.88); font-size: 0.7rem; overflow-wrap: anywhere; }
 .meeting-availability-card em { color: rgba(255, 255, 255, 0.48); font-size: 0.62rem; font-style: normal; overflow-wrap: anywhere; }
 
-.meeting-calendar { display: grid; gap: 0.75rem; }
+.meeting-calendar { display: grid; gap: 0.6rem; }
 .meeting-calendar-header { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
 .meeting-calendar-header > div:first-child,
 .meeting-section-heading > span,
@@ -1354,13 +1354,13 @@ h1, h2, h3, h4, h5, h6 {
 .meeting-calendar-navigation button:focus-visible,
 .meeting-calendar-navigation select:focus-visible { outline: 2px solid #93c5fd; outline-offset: 2px; }
 
-.meeting-calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.38rem; }
+.meeting-calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.3rem; }
 .meeting-calendar-weekday { padding-bottom: 0.2rem; color: rgba(255, 255, 255, 0.42); text-align: center; font-size: 0.65rem; font-weight: 700; }
 .meeting-calendar-grid button {
   position: relative;
-  aspect-ratio: 1.15;
+  height: 36px;
   min-width: 0;
-  min-height: 42px;
+  min-height: 36px;
   padding: 0;
   color: rgba(255, 255, 255, 0.86);
   background: rgba(255, 255, 255, 0.045);
@@ -1377,7 +1377,7 @@ h1, h2, h3, h4, h5, h6 {
 .meeting-calendar-grid button.is-today { color: #facc15; border-color: rgba(250, 204, 21, 0.38); }
 .meeting-calendar-grid button.is-selected { color: white; background: #245f9e; border-color: #60a5fa; box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.18); font-weight: 700; }
 .meeting-calendar-grid button.is-selected::after { background: #facc15; }
-.meeting-calendar-grid button:disabled { color: rgba(255, 255, 255, 0.2); background: transparent; border-color: transparent; cursor: default; }
+.meeting-calendar-grid button:disabled { color: rgba(255, 255, 255, 0.42); background: rgba(255, 255, 255, 0.018); border-color: transparent; cursor: default; }
 .meeting-calendar-legend { display: flex; justify-content: flex-end; gap: 0.8rem; color: rgba(255, 255, 255, 0.46); font-size: 0.62rem; }
 .meeting-calendar-legend span { display: flex; align-items: center; gap: 0.3rem; }
 .meeting-calendar-legend i { width: 6px; height: 6px; border-radius: 50%; background: #60a5fa; }
@@ -1522,7 +1522,7 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (min-width: 768px) and (max-width: 1180px) {
   .active-chat-layout.is-booking-layout { flex-direction: row; }
-  .is-booking-layout .chat-section { order: 1; width: min(66%, 720px); }
+  .is-booking-layout .chat-section { order: 1; width: min(64%, 660px); }
   .is-booking-layout .responsive-visual-panel {
     order: 2;
     width: min(34%, 370px);
@@ -1636,7 +1636,7 @@ h1, h2, h3, h4, h5, h6 {
   .meeting-calendar-navigation { width: 100%; }
   .meeting-calendar-navigation select:first-of-type { flex: 1; width: auto; }
   .meeting-calendar-grid { gap: 0.28rem; }
-  .meeting-calendar-grid button { min-height: 40px; aspect-ratio: 1; }
+  .meeting-calendar-grid button { height: auto; min-height: 40px; aspect-ratio: 1; }
   .meeting-time-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .meeting-section-heading,
   .meeting-details-heading { align-items: flex-start; flex-direction: column; }

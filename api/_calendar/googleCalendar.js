@@ -8,9 +8,9 @@ const DEFAULTS = Object.freeze({
   workdayEnd: '17:00',
   meetingMinutes: 30,
   bufferMinutes: 15,
-  minimumNoticeHours: 24,
-  daysToSearch: 14,
-  maximumSlots: 18,
+  minimumNoticeHours: 0,
+  daysToSearch: 31,
+  maximumSlots: 250,
 });
 
 const integer = (value, fallback, minimum, maximum) => {
@@ -39,7 +39,7 @@ export function readCalendarConfig(env = process.env) {
     bufferMinutes: integer(env.GOOGLE_CALENDAR_BUFFER_MINUTES, DEFAULTS.bufferMinutes, 0, 120),
     minimumNoticeHours: integer(env.GOOGLE_CALENDAR_MINIMUM_NOTICE_HOURS, DEFAULTS.minimumNoticeHours, 0, 168),
     daysToSearch: integer(env.GOOGLE_CALENDAR_DAYS_TO_SEARCH, DEFAULTS.daysToSearch, 1, 31),
-    maximumSlots: integer(env.GOOGLE_CALENDAR_MAXIMUM_SLOTS, DEFAULTS.maximumSlots, 1, 50),
+    maximumSlots: integer(env.GOOGLE_CALENDAR_MAXIMUM_SLOTS, DEFAULTS.maximumSlots, 1, 500),
   };
 }
 
