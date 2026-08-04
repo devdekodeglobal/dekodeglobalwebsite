@@ -49,6 +49,7 @@ import {
   subscribeToContentChat,
   subscribeToVoiceOpen,
 } from "../content/ContentToChatBridge";
+import { toLocalDateKey } from "../utils/calendarPresentation";
 
 function getTimeAwareGreeting(date = new Date()) {
   const hour = date.getHours();
@@ -94,6 +95,7 @@ export default function ChatApp({
   });
   const [companyPanel, setCompanyPanel] = useState(null);
   const [meetingSlots, setMeetingSlots] = useState([]);
+  const [selectedMeetingDateKey, setSelectedMeetingDateKey] = useState("");
   const [selectedMeetingSlotId, setSelectedMeetingSlotId] = useState(null);
   const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const [isVisualPanelExpanded, setIsVisualPanelExpanded] = useState(false);
@@ -290,13 +292,14 @@ export default function ChatApp({
     setProjectType('Discovery Call');
     setGatheredTags(['Meeting']);
     setMeetingSlots([]);
+    setSelectedMeetingDateKey("");
     setSelectedMeetingSlotId(null);
     setMessages((current) => [
       ...current,
       {
         id: Date.now(),
         sender: 'ai',
-        text: 'Choose an available time below, then add your details to book a discovery call with DEKODE.',
+        text: 'Choose an available date below. We will guide you through the time and details next.',
       },
     ]);
     setStep('scheduling');
@@ -304,6 +307,9 @@ export default function ChatApp({
 
   const handleMeetingSlotsChange = useCallback((nextSlots) => {
     setMeetingSlots(nextSlots);
+    setSelectedMeetingDateKey((currentKey) => (
+      nextSlots.some((slot) => toLocalDateKey(slot.iso) === currentKey) ? currentKey : ""
+    ));
     setSelectedMeetingSlotId((currentId) => (
       nextSlots.some((slot) => slot.id === currentId) ? currentId : null
     ));
@@ -311,6 +317,10 @@ export default function ChatApp({
 
   const handleMeetingSlotSelect = useCallback((slot) => {
     setSelectedMeetingSlotId(slot?.id || null);
+  }, []);
+
+  const handleMeetingDateSelect = useCallback((dateKey) => {
+    setSelectedMeetingDateKey(dateKey || "");
   }, []);
 
   const handleCompanyPrompt = async (userMessage) => {
@@ -795,13 +805,14 @@ export default function ChatApp({
     "custom_discovery_platform",
     "custom_discovery_complexity",
   ].includes(step);
+  const isBookingExperience = projectType === "Discovery Call" && ["scheduling", "done"].includes(step);
 
   const renderAnimationCard = (classNameExt = "") => (
     <motion.div
       initial={{ x: 100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ delay: 0.3, duration: 0.6, type: "spring", damping: 20 }}
-      className={`floating-animation-panel ${classNameExt} ${isVisualPanelExpanded ? "visual-panel-expanded" : "visual-panel-collapsed"}`}
+      className={`floating-animation-panel ${classNameExt} ${isBookingExperience ? "booking-summary-panel" : ""} ${isVisualPanelExpanded ? "visual-panel-expanded" : "visual-panel-collapsed"}`}
     >
       <div className="anim-header">
         <span className="anim-title">
@@ -813,7 +824,7 @@ export default function ChatApp({
               verticalAlign: "text-bottom",
             }}
           />
-          {companyPanel ? "Company Knowledge" : "Building Context"}
+          {companyPanel ? "Company Knowledge" : isBookingExperience ? "Booking Summary" : "Building Context"}
         </span>
         <div className="anim-header-actions">
           <div className="anim-window-dots" aria-hidden="true">
@@ -838,7 +849,7 @@ export default function ChatApp({
       </div>
 
       {/* Requirement Tags & Progress Bar */}
-      <div
+      {!isBookingExperience && <div
         className="anim-body-container"
         style={{
           padding: "1rem",
@@ -935,7 +946,7 @@ export default function ChatApp({
             </div>
           </>
         )}
-      </div>
+      </div>}
 
       <div
         className="anim-content"
@@ -955,8 +966,9 @@ export default function ChatApp({
               level={getAnimationLevel()}
               messages={messages}
               meetingSlots={meetingSlots}
+              selectedMeetingDateKey={selectedMeetingDateKey}
               selectedMeetingSlotId={selectedMeetingSlotId}
-              onMeetingSlotSelect={handleMeetingSlotSelect}
+              bookingComplete={step === "done"}
             />
           )}
         </div>
@@ -1071,7 +1083,7 @@ export default function ChatApp({
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="active-chat-layout"
+            className={`active-chat-layout ${isBookingExperience ? "is-booking-layout" : ""}`}
           >
             <div className="chat-section">
               <div className="chat-scroll-area" ref={scrollRef}>
@@ -1195,6 +1207,8 @@ export default function ChatApp({
                     <MeetingScheduler
                       projectSummary={messages.filter((message) => message.sender === "user").map((message) => message.text).join(" ").slice(0, 2000)}
                       onBooked={handleMeetingBooked}
+                      selectedDateKey={selectedMeetingDateKey}
+                      onDateSelect={handleMeetingDateSelect}
                       selectedSlotId={selectedMeetingSlotId}
                       onSlotSelect={handleMeetingSlotSelect}
                       onSlotsChange={handleMeetingSlotsChange}

@@ -10,6 +10,7 @@ const app = await readFile(new URL('../src/App.jsx', import.meta.url), 'utf8');
 const projectOptions = await readFile(new URL('../src/config/projectOptions.js', import.meta.url), 'utf8');
 const animationPanel = await readFile(new URL('../src/components/AnimationPanel.jsx', import.meta.url), 'utf8');
 const meetingScheduler = await readFile(new URL('../src/components/MeetingScheduler.jsx', import.meta.url), 'utf8');
+const bookingSummary = await readFile(new URL('../src/components/BookingSummary.jsx', import.meta.url), 'utf8');
 
 test('uses dynamic viewport units and safe-area spacing for app and voice surfaces', () => {
   assert.match(indexCss, /height:\s*100dvh/);
@@ -91,15 +92,45 @@ test('provides one translucent back-to-top control across every DEKODE layout', 
   assert.match(indexCss, /background:\s*rgba\(5, 51, 100, 0\.72\)/);
 });
 
-test('synchronizes the functional calendar visual with live booking availability', () => {
-  assert.match(animationPanel, /aria-label="Calendar month"/);
-  assert.match(animationPanel, /aria-label="Calendar year"/);
-  assert.match(animationPanel, /disabled=\{!hasSlots\}/);
-  assert.match(animationPanel, /onClick=\{\(\) => onSelectSlot\?\.\(slot\)\}/);
+test('guides booking from date to time, summary, and details', () => {
+  assert.match(meetingScheduler, /id="meeting-calendar-title">Choose a date/);
+  assert.match(meetingScheduler, /aria-label="Calendar month"/);
+  assert.match(meetingScheduler, /aria-label="Calendar year"/);
+  assert.match(meetingScheduler, /disabled=\{unavailable\}/);
+  assert.match(meetingScheduler, /activeSelectedDateKey && status !== 'loading'/);
+  assert.match(meetingScheduler, /selectedDateSlots\.map/);
+  assert.match(meetingScheduler, /\{selectedSlot && \(/);
+  assert.match(meetingScheduler, /Review and complete your details/);
   assert.match(chatApp, /meetingSlots=\{meetingSlots\}/);
+  assert.match(chatApp, /selectedDateKey=\{selectedMeetingDateKey\}/);
   assert.match(chatApp, /selectedSlotId=\{selectedMeetingSlotId\}/);
   assert.match(meetingScheduler, /onSlotsChange\?\.\(nextSlots\)/);
   assert.match(meetingScheduler, /onSlotSelect\?\.\(slot\)/);
+  assert.match(animationPanel, /<BookingSummary/);
+  assert.match(bookingSummary, /No meeting selected yet/);
+  assert.match(bookingSummary, /Choose an available time/);
+});
+
+test('communicates availability, timezone conversion, progress, and mobile ordering', () => {
+  assert.match(meetingScheduler, /Monday - Friday/);
+  assert.match(meetingScheduler, /9:00 AM - 5:00 PM/);
+  assert.match(meetingScheduler, /Converted from \{companyTimezone\.replaceAll/);
+  assert.match(bookingSummary, /Your timezone/);
+  assert.match(bookingSummary, /Company timezone/);
+  assert.match(bookingSummary, /progressLabels = \['Choose date', 'Choose time', 'Details', 'Confirm'\]/);
+  assert.match(meetingScheduler, /className="meeting-mobile-summary"/);
+  assert.match(indexCss, /\.meeting-mobile-summary\s*\{\s*display:\s*none/);
+  assert.match(indexCss, /@media \(max-width:\s*767px\)[\s\S]*\.meeting-mobile-summary\s*\{\s*display:\s*block/s);
+  assert.match(indexCss, /\.is-booking-layout \.booking-summary-panel\s*\{\s*display:\s*none/);
+});
+
+test('keeps booking controls accessible and motion-sensitive', () => {
+  assert.match(meetingScheduler, /aria-pressed=\{activeSelectedDateKey === dateKey\}/);
+  assert.match(meetingScheduler, /aria-pressed=\{selectedSlot\?\.id === slot\.id\}/);
+  assert.match(meetingScheduler, /requestAnimationFrame/);
+  assert.match(meetingScheduler, /useReducedMotion/);
+  assert.match(bookingSummary, /aria-live="polite"/);
+  assert.match(indexCss, /\.meeting-calendar-grid button:focus-visible/);
 });
 
 test('shows numbered progress only during staged discovery questions', () => {

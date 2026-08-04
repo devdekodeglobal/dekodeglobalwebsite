@@ -8,6 +8,11 @@ import {
   readCalendarConfig,
   removeBusySlots,
 } from '../api/_calendar/googleCalendar.js';
+import {
+  dateFromLocalKey,
+  formatTimeInZone,
+  toLocalDateKey,
+} from '../src/utils/calendarPresentation.js';
 
 const config = {
   calendarId: 'calendar@example.com',
@@ -44,6 +49,14 @@ test('calendar configuration remains server-only and uses safe defaults', async 
   assert.match(example, /GOOGLE_CLIENT_SECRET=/);
   assert.doesNotMatch(example, /GOOGLE_CLIENT_SECRET=\S+/);
   assert.doesNotMatch(scheduler, /GOOGLE_CLIENT_SECRET|GOOGLE_REFRESH_TOKEN/);
+});
+
+test('calendar presentation groups local dates and formats existing slots without changing them', () => {
+  const iso = '2026-08-03T09:00:00.000Z';
+  assert.equal(toLocalDateKey(iso), toLocalDateKey(new Date(iso)));
+  assert.equal(dateFromLocalKey('2026-08-18').getDate(), 18);
+  assert.match(formatTimeInZone(iso, 'Asia/Kolkata'), /2:30/);
+  assert.equal(iso, '2026-08-03T09:00:00.000Z');
 });
 
 test('candidate slots follow business hours and busy intervals remove buffered conflicts', () => {
