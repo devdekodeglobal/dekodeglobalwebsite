@@ -170,7 +170,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
               <g className="b-1">
                 <rect x="10" y="110" width="130" height="210" rx="6" fill={isNight ? '#3730a3' : isEvening ? '#9f1239' : '#f87171'} />
                 <rect x="5" y="100" width="140" height="12" rx="3" fill={isNight ? '#1e1b4b' : isEvening ? '#881337' : '#ef4444'} />
-                {[0, 1, 2].map((r) =>
+                {[0, 1, 2].flatMap((r) =>
                   [0, 1].map((c) => (
                     <rect key={`b1-${r}-${c}`} x={30 + c * 45} y={130 + r * 45} width="25" height="30" rx="3" fill={windowFill} style={{ filter: windowGlow }} />
                   ))
@@ -196,7 +196,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
                 <circle cx="375" cy="110" r="22" fill="#fffef0" stroke="#fbbf24" strokeWidth="3.5" />
                 <line x1="375" y1="110" x2="375" y2="95" stroke="#0f172a" strokeWidth="3.5" strokeLinecap="round" />
                 <line x1="375" y1="110" x2="387" y2="110" stroke="#0f172a" strokeWidth="3.5" strokeLinecap="round" />
-                {[0, 1, 2].map((r) =>
+                {[0, 1, 2].flatMap((r) =>
                   [0, 1].map((c) => (
                     <rect key={`b3-${r}-${c}`} x={335 + c * 45} y={150 + r * 48} width="24" height="32" rx="4" fill={windowFill} style={{ filter: windowGlow }} />
                   ))
@@ -210,7 +210,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
                 <rect x="490" y="55" width="30" height="30" fill="#78350f" rx="3" />
                 <line x1="495" y1="85" x2="495" y2="100" stroke="#451a03" strokeWidth="3" />
                 <line x1="515" y1="85" x2="515" y2="100" stroke="#451a03" strokeWidth="3" />
-                {[0, 1].map((r) =>
+                {[0, 1].flatMap((r) =>
                   [0, 1].map((c) => (
                     <rect key={`b4-${r}-${c}`} x={490 + c * 45} y={155 + r * 50} width="24" height="34" rx="4" fill={windowFill} style={{ filter: windowGlow }} />
                   ))
@@ -222,7 +222,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
               <g className="b-5">
                 <rect x="620" y="40" width="160" height="280" rx="10" fill={isNight ? '#1e1b4b' : isEvening ? '#311b92' : '#818cf8'} />
                 <rect x="640" y="18" width="120" height="22" rx="4" fill="url(#neonGlow)" />
-                {[0, 1, 2, 3, 4, 5].map((r) =>
+                {[0, 1, 2, 3, 4, 5].flatMap((r) =>
                   [0, 1, 2].map((c) => (
                     <rect key={`b5-${r}-${c}`} x={642 + c * 42} y={60 + r * 38} width="28" height="22" rx="3" fill={windowFill} style={{ filter: windowGlow }} />
                   ))
@@ -233,7 +233,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
               <g className="b-6">
                 <rect x="800" y="100" width="145" height="220" rx="8" fill={isNight ? '#3730a3' : isEvening ? '#9a3412' : '#facc15'} />
                 <rect x="820" y="85" width="105" height="15" rx="4" fill={isNight ? '#1e1b4b' : isEvening ? '#7c2d12' : '#eab308'} />
-                {[0, 1, 2].map((r) =>
+                {[0, 1, 2].flatMap((r) =>
                   [0, 1].map((c) => (
                     <rect key={`b6-${r}-${c}`} x={825 + c * 55} y={120 + r * 55} width="38" height="36" rx="5" fill={windowFill} style={{ filter: windowGlow }} />
                   ))
@@ -244,7 +244,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
               <g className="b-7">
                 <rect x="960" y="120" width="145" height="200" rx="8" fill={isNight ? '#1e293b' : isEvening ? '#334155' : '#475569'} />
                 <circle cx="1032" cy="100" r="14" fill="#94a3b8" />
-                {[0, 1, 2, 3].map((r) =>
+                {[0, 1, 2, 3].flatMap((r) =>
                   [0, 1].map((c) => (
                     <rect key={`b7-${r}-${c}`} x={982 + c * 55} y={140 + r * 42} width="35" height="28" rx="4" fill={windowFill} style={{ filter: windowGlow }} />
                   ))
@@ -255,7 +255,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
               <g className="b-8">
                 <rect x="1130" y="100" width="135" height="220" rx="6" fill={isNight ? '#4c1d95' : isEvening ? '#831843' : '#e11d48'} />
                 <rect x="1120" y="90" width="155" height="12" fill={isNight ? '#3b0764' : isEvening ? '#701a75' : '#be123c'} rx="3" />
-                {[0, 1, 2].map((r) =>
+                {[0, 1, 2].flatMap((r) =>
                   [0, 1].map((c) => (
                     <rect key={`b8-${r}-${c}`} x={1150 + c * 50} y={120 + r * 55} width="30" height="38" rx="4" fill={windowFill} style={{ filter: windowGlow }} />
                   ))
@@ -267,7 +267,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
                 <rect x="1280" y="40" width="160" height="280" rx="8" fill={isNight ? '#0f172a' : isEvening ? '#1e1b4b' : '#0284c7'} />
                 <line x1="1280" y1="40" x2="1280" y2="320" stroke="#38bdf8" strokeWidth="4" />
                 <line x1="1440" y1="40" x2="1440" y2="320" stroke="#38bdf8" strokeWidth="4" />
-                {[0, 1, 2, 3, 4, 5].map((r) =>
+                {[0, 1, 2, 3, 4, 5].flatMap((r) =>
                   [0, 1, 2].map((c) => (
                     <rect key={`b9-${r}-${c}`} x={1300 + c * 42} y={60 + r * 38} width="28" height="22" rx="3" fill={windowFill} style={{ filter: windowGlow }} />
                   ))
@@ -278,7 +278,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
               <g className="b-10">
                 <rect x="1460" y="130" width="140" height="190" rx="6" fill={isNight ? '#312e81' : isEvening ? '#431407' : '#d97706'} />
                 <rect x="1570" y="60" width="16" height="70" fill="#78350f" rx="2" />
-                {[0, 1].map((r) =>
+                {[0, 1].flatMap((r) =>
                   [0, 1].map((c) => (
                     <rect key={`b10-${r}-${c}`} x={1480 + c * 50} y={155 + r * 55} width="32" height="38" rx="4" fill={windowFill} style={{ filter: windowGlow }} />
                   ))
@@ -289,7 +289,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
               <g className="b-11">
                 <rect x="1620" y="50" width="135" height="270" rx="8" fill={isNight ? '#1e1b4b' : isEvening ? '#4a044e' : '#a855f7'} />
                 <polygon points="1620,50 1687,10 1755,50" fill={isNight ? '#0f172a' : isEvening ? '#2e0249' : '#9333ea'} />
-                {[0, 1, 2, 3, 4].map((r) =>
+                {[0, 1, 2, 3, 4].flatMap((r) =>
                   [0, 1].map((c) => (
                     <rect key={`b11-${r}-${c}`} x={1640 + c * 48} y={75 + r * 42} width="30" height="25" rx="3" fill={windowFill} style={{ filter: windowGlow }} />
                   ))
@@ -299,7 +299,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
               {/* Building 12: Edge Glass Building */}
               <g className="b-12">
                 <rect x="1770" y="90" width="145" height="230" rx="6" fill={isNight ? '#1e293b' : isEvening ? '#1c1917' : '#0f766e'} />
-                {[0, 1, 2, 3].map((r) =>
+                {[0, 1, 2, 3].flatMap((r) =>
                   [0, 1].map((c) => (
                     <rect key={`b12-${r}-${c}`} x={1790 + c * 55} y={110 + r * 45} width="35" height="30" rx="4" fill={windowFill} style={{ filter: windowGlow }} />
                   ))
