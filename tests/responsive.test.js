@@ -101,6 +101,10 @@ test('guides booking from date to time, summary, and details', () => {
   assert.match(indexCss, /\.meeting-scheduler\.has-selected-date\s*\{[^}]*grid-template-columns:\s*repeat\(2/);
   assert.match(indexCss, /\.meeting-scheduler\.has-selected-date > \.meeting-calendar\s*\{[^}]*grid-column:\s*1/);
   assert.match(indexCss, /\.meeting-scheduler\.has-selected-date > \.meeting-time-section\s*\{[^}]*grid-column:\s*2/);
+  assert.match(indexCss, /\.meeting-time-grid button\s*\{[^}]*border-radius:\s*999px[^}]*box-shadow:/);
+  assert.match(indexCss, /\.meeting-calendar-grid button\s*\{[^}]*border-radius:\s*999px[^}]*box-shadow:/);
+  assert.match(indexCss, /\.meeting-booking-fields input:not\(\[type="checkbox"\]\)\s*\{[^}]*border-radius:\s*999px/);
+  assert.match(indexCss, /\.meeting-booking-fields textarea\s*\{[^}]*border-radius:\s*18px/);
   assert.match(meetingScheduler, /disabled=\{unavailable\}/);
   assert.match(meetingScheduler, /activeSelectedDateKey && status !== 'loading'/);
   assert.match(meetingScheduler, /selectedDateSlots\.map/);
