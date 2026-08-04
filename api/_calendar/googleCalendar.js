@@ -215,7 +215,8 @@ export async function createCalendarBooking(config, booking, fetchImpl = fetch) 
     body: JSON.stringify({
       summary: `DEKODE discovery call - ${booking.visitorName}`,
       description: [
-        booking.company ? `Company: ${booking.company}` : '',
+        `Company: ${booking.company}`,
+        `Phone: ${booking.phone}`,
         booking.projectSummary ? `Project: ${booking.projectSummary}` : '',
         'Booked through dekodeglobal.com',
       ].filter(Boolean).join('\n\n'),

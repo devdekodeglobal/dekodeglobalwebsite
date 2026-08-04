@@ -5,6 +5,7 @@ export function prepareLeadPayload(form, sourcePage = globalThis.location?.pathn
     visitorName: sanitize(form.name),
     visitorEmail: sanitize(form.email),
     company: sanitize(form.company),
+    phone: sanitize(form.phone),
     projectSummary: sanitize(form.projectSummary),
     services: (form.interestedServices || []).map(sanitize).slice(0, 10),
     timeline: sanitize(form.timeline),

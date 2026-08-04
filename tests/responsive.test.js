@@ -95,12 +95,20 @@ test('provides one translucent back-to-top control across every DEKODE layout', 
 test('guides booking from date to time, summary, and details', () => {
   assert.match(meetingScheduler, /id="meeting-calendar-title">Choose a date/);
   assert.match(meetingScheduler, /aria-label="Calendar month"/);
-  assert.match(meetingScheduler, /aria-label="Calendar year"/);
+  assert.doesNotMatch(meetingScheduler, /aria-label="Calendar year"/);
+  assert.doesNotMatch(meetingScheduler, /Previous month|Next month|ChevronLeft|ChevronRight/);
+  assert.match(meetingScheduler, /className=\{`meeting-scheduler \$\{activeSelectedDateKey \? 'has-selected-date' : ''\}`\}/);
+  assert.match(indexCss, /\.meeting-scheduler\.has-selected-date\s*\{[^}]*grid-template-columns:\s*repeat\(2/);
+  assert.match(indexCss, /\.meeting-scheduler\.has-selected-date > \.meeting-calendar\s*\{[^}]*grid-column:\s*1/);
+  assert.match(indexCss, /\.meeting-scheduler\.has-selected-date > \.meeting-time-section\s*\{[^}]*grid-column:\s*2/);
   assert.match(meetingScheduler, /disabled=\{unavailable\}/);
   assert.match(meetingScheduler, /activeSelectedDateKey && status !== 'loading'/);
   assert.match(meetingScheduler, /selectedDateSlots\.map/);
   assert.match(meetingScheduler, /\{selectedSlot && \(/);
   assert.match(meetingScheduler, /Review and complete your details/);
+  assert.doesNotMatch(meetingScheduler, /Company <small>\(optional\)<\/small>/);
+  assert.match(meetingScheduler, /<span>Company<\/span><input required/);
+  assert.match(meetingScheduler, /<span>Phone number<\/span><input required type="tel"/);
   assert.match(chatApp, /meetingSlots=\{meetingSlots\}/);
   assert.match(chatApp, /selectedDateKey=\{selectedMeetingDateKey\}/);
   assert.match(chatApp, /selectedSlotId=\{selectedMeetingSlotId\}/);
@@ -141,6 +149,8 @@ test('keeps consent aligned and resumes normal chat after booking', () => {
   assert.match(chatApp, /readOnly:\s*step === "scheduling"/);
   assert.doesNotMatch(chatApp, /readOnly:\s*step === "scheduling" \|\| step === "done"/);
   assert.match(chatApp, /if \(step === "centered" \|\| step === "done"\) setStep\("company"\)/);
+  assert.match(chatApp, /We have sent the invitation and meeting details to your email/);
+  assert.doesNotMatch(chatApp, /Google Calendar has sent the invitation/);
 });
 
 test('shows numbered progress only during staged discovery questions', () => {

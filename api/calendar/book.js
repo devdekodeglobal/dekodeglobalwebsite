@@ -8,6 +8,7 @@ const sanitize = (value, limit) => [...String(value ?? '')]
   .trim()
   .slice(0, limit);
 const validEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+const validPhone = (value) => /^\+?[0-9][0-9\s().-]{6,24}$/.test(value);
 
 export default async function handler(request, response) {
   response.setHeader('Cache-Control', 'private, no-store, max-age=0');
@@ -21,12 +22,13 @@ export default async function handler(request, response) {
     visitorName: sanitize(payload.visitorName, 120),
     visitorEmail: sanitize(payload.visitorEmail, 254),
     company: sanitize(payload.company, 160),
+    phone: sanitize(payload.phone, 30),
     projectSummary: sanitize(payload.projectSummary, 2000),
     startIso: sanitize(payload.startIso, 40),
     visitorTimezone: sanitize(payload.timezone, 100) || 'UTC',
   };
-  if (booking.visitorName.length < 2 || !validEmail(booking.visitorEmail) || booking.projectSummary.length < 4 || !Number.isFinite(Date.parse(booking.startIso))) {
-    return response.status(400).json({ ok: false, error: 'Name, valid email, project summary, and meeting time are required.' });
+  if (booking.visitorName.length < 2 || !validEmail(booking.visitorEmail) || booking.company.length < 2 || !validPhone(booking.phone) || booking.projectSummary.length < 4 || !Number.isFinite(Date.parse(booking.startIso))) {
+    return response.status(400).json({ ok: false, error: 'Name, valid email, company, phone number, project summary, and meeting time are required.' });
   }
   if (payload.website) return response.status(400).json({ ok: false, error: 'The booking could not be submitted.' });
 

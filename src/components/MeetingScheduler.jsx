@@ -3,8 +3,6 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
   CalendarDays,
   CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
   Clock3,
   Globe2,
   LoaderCircle,
@@ -22,6 +20,7 @@ import {
 } from '../utils/calendarPresentation.js';
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const phonePattern = /^\+?[0-9][0-9\s().-]{6,24}$/;
 const weekdayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 const readableCompanyTimezone = (timezone) => (
   ['Asia/Kolkata', 'Asia/Calcutta'].includes(timezone) ? 'India time' : getTimeZoneAbbreviation(timezone)
@@ -46,7 +45,7 @@ export default function MeetingScheduler({
   const [status, setStatus] = useState('loading');
   const [error, setError] = useState('');
   const [consent, setConsent] = useState(false);
-  const [form, setForm] = useState({ name: '', email: '', company: '', projectSummary, website: '' });
+  const [form, setForm] = useState({ name: '', email: '', company: '', phone: '', projectSummary, website: '' });
   const timeSectionRef = useRef(null);
   const detailsHeadingRef = useRef(null);
   const reduceMotion = useReducedMotion();
@@ -128,8 +127,8 @@ export default function MeetingScheduler({
   const submit = async (event) => {
     event.preventDefault();
     if (!selectedSlot) return setError('Choose a meeting time first.');
-    if (form.name.trim().length < 2 || !emailPattern.test(form.email) || form.projectSummary.trim().length < 4) {
-      return setError('Add your name, a valid email, and a short project summary.');
+    if (form.name.trim().length < 2 || !emailPattern.test(form.email) || form.company.trim().length < 2 || !phonePattern.test(form.phone.trim()) || form.projectSummary.trim().length < 4) {
+      return setError('Add your name, valid email, company, phone number, and a short project summary.');
     }
     if (!consent) return setError('Please confirm consent before booking.');
     if (selectedSlot.isMock) {
@@ -152,14 +151,6 @@ export default function MeetingScheduler({
     return <div className="meeting-scheduler-success"><CheckCircle2 size={30} /><strong>Discovery call booked</strong><span>A calendar invitation is on its way to your email.</span></div>;
   }
 
-  const currentYear = new Date().getFullYear();
-  const availableYears = [...new Set([
-    currentYear,
-    currentYear + 1,
-    currentYear + 2,
-    viewDate.getFullYear(),
-    ...slots.map((slot) => new Date(slot.iso).getFullYear()),
-  ])].filter(Number.isFinite).sort((a, b) => a - b);
   const firstWeekday = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay();
   const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
   const calendarCellCount = Math.ceil((firstWeekday + daysInMonth) / 7) * 7;
@@ -169,14 +160,26 @@ export default function MeetingScheduler({
   });
   const visibleDatePrefix = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}`;
   const todayKey = toLocalDateKey(new Date());
-  const monthOptions = Array.from({ length: 12 }, (_, month) => ({
-    value: month,
-    label: new Intl.DateTimeFormat(undefined, { month: 'long' }).format(new Date(2020, month, 1)),
-  }));
-  const moveMonth = (offset) => setViewDate((current) => new Date(current.getFullYear(), current.getMonth() + offset, 1));
+  const monthOptions = [...new Map([
+    new Date(),
+    ...slots.map((slot) => new Date(slot.iso)),
+  ].map((date) => {
+    const monthDate = new Date(date.getFullYear(), date.getMonth(), 1);
+    const value = `${monthDate.getFullYear()}-${String(monthDate.getMonth() + 1).padStart(2, '0')}`;
+    return [value, {
+      value,
+      date: monthDate,
+      label: new Intl.DateTimeFormat(undefined, { month: 'long' }).format(monthDate),
+    }];
+  })).values()].sort((a, b) => a.date - b.date);
+  const selectedMonthValue = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}`;
+  const selectMonth = (value) => {
+    const [year, month] = value.split('-').map(Number);
+    setViewDate(new Date(year, month - 1, 1));
+  };
 
   return (
-    <form className="meeting-scheduler" onSubmit={submit}>
+    <form className={`meeting-scheduler ${activeSelectedDateKey ? 'has-selected-date' : ''}`} onSubmit={submit}>
       <header className="meeting-scheduler-heading">
         <div>
           <span className="meeting-heading-icon"><CalendarDays size={19} /></span>
@@ -205,14 +208,9 @@ export default function MeetingScheduler({
           <div className="meeting-calendar-header">
             <div><small>Step 1</small><strong id="meeting-calendar-title">Choose a date</strong></div>
             <div className="meeting-calendar-navigation">
-              <button type="button" onClick={() => moveMonth(-1)} aria-label="Previous month" title="Previous month"><ChevronLeft size={17} /></button>
-              <select value={viewDate.getMonth()} onChange={(event) => setViewDate(new Date(viewDate.getFullYear(), Number(event.target.value), 1))} aria-label="Calendar month">
+              <select value={selectedMonthValue} onChange={(event) => selectMonth(event.target.value)} aria-label="Calendar month">
                 {monthOptions.map((month) => <option key={month.value} value={month.value}>{month.label}</option>)}
               </select>
-              <select value={viewDate.getFullYear()} onChange={(event) => setViewDate(new Date(Number(event.target.value), viewDate.getMonth(), 1))} aria-label="Calendar year">
-                {availableYears.map((year) => <option key={year} value={year}>{year}</option>)}
-              </select>
-              <button type="button" onClick={() => moveMonth(1)} aria-label="Next month" title="Next month"><ChevronRight size={17} /></button>
             </div>
           </div>
           <div className="meeting-calendar-grid">
@@ -292,10 +290,11 @@ export default function MeetingScheduler({
               <span className="meeting-selection-confirmed"><CheckCircle2 size={16} /> {selectedDateLabel}, {formatTimeInZone(selectedSlot.iso, timezone)}</span>
             </div>
             <div className="meeting-booking-fields">
-              <label><span>Name</span><input value={form.name} onChange={(event) => update('name', event.target.value)} autoComplete="name" /></label>
-              <label><span>Email</span><input type="email" value={form.email} onChange={(event) => update('email', event.target.value)} autoComplete="email" /></label>
-              <label><span>Company <small>(optional)</small></span><input value={form.company} onChange={(event) => update('company', event.target.value)} autoComplete="organization" /></label>
-              <label className="meeting-summary-field"><span>Project summary</span><textarea rows="3" value={form.projectSummary} onChange={(event) => update('projectSummary', event.target.value)} /></label>
+              <label><span>Name</span><input required value={form.name} onChange={(event) => update('name', event.target.value)} autoComplete="name" /></label>
+              <label><span>Email</span><input required type="email" value={form.email} onChange={(event) => update('email', event.target.value)} autoComplete="email" /></label>
+              <label><span>Company</span><input required value={form.company} onChange={(event) => update('company', event.target.value)} autoComplete="organization" /></label>
+              <label><span>Phone number</span><input required type="tel" value={form.phone} onChange={(event) => update('phone', event.target.value)} autoComplete="tel" inputMode="tel" /></label>
+              <label className="meeting-summary-field"><span>Project summary</span><textarea required rows="3" value={form.projectSummary} onChange={(event) => update('projectSummary', event.target.value)} /></label>
               <label className="meeting-honeypot" aria-hidden="true"><span>Website</span><input tabIndex="-1" autoComplete="off" value={form.website} onChange={(event) => update('website', event.target.value)} /></label>
               <label className="meeting-consent"><input type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} /><span>I consent to DEKODE using these details to arrange this meeting.</span></label>
               <button type="submit" className="meeting-book-btn" disabled={status === 'booking'}>{status === 'booking' ? <><LoaderCircle className="meeting-spin" size={17} /> Booking...</> : 'Confirm meeting'}</button>

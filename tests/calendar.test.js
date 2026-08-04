@@ -120,6 +120,7 @@ test('booking rechecks availability before creating the event and attendee invit
     visitorName: 'Alex Morgan',
     visitorEmail: 'alex@example.com',
     company: 'Acme',
+    phone: '+61 421 196 363',
     projectSummary: 'Build a customer support platform.',
     startIso: '2026-08-03T09:00:00.000Z',
     visitorTimezone: 'UTC',
@@ -130,6 +131,8 @@ test('booking rechecks availability before creating the event and attendee invit
   const eventCall = calls.find((call) => call.url.includes('/events?'));
   const eventBody = JSON.parse(eventCall.options.body);
   assert.equal(eventBody.attendees[0].email, 'alex@example.com');
+  assert.match(eventBody.description, /Company: Acme/);
+  assert.match(eventBody.description, /Phone: \+61 421 196 363/);
   assert.equal(eventBody.guestsCanInviteOthers, false);
   assert.equal(calls.filter((call) => call.url.includes('freeBusy')).length, 1);
 });

@@ -603,7 +603,7 @@ export default function ChatApp({
       {
         id: Date.now() + 1,
         sender: "ai",
-        text: "Your discovery call is confirmed. Google Calendar has sent the invitation and meeting details to your email.",
+        text: "Your discovery call is confirmed. We have sent the invitation and meeting details to your email.",
       },
     ]);
     setStep("done");

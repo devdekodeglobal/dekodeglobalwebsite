@@ -1345,14 +1345,10 @@ h1, h2, h3, h4, h5, h6 {
 .meeting-calendar-header strong,
 .meeting-section-heading strong,
 .meeting-details-heading strong { color: white; font-size: 0.86rem; }
-.meeting-calendar-navigation { display: flex; align-items: center; gap: 0.3rem; }
-.meeting-calendar-navigation button { width: 38px; height: 38px; display: grid; place-items: center; padding: 0; color: rgba(255, 255, 255, 0.8); background: rgba(255, 255, 255, 0.055); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; cursor: pointer; }
+.meeting-calendar-navigation { display: flex; align-items: center; }
 .meeting-calendar-navigation select { height: 38px; min-width: 0; padding: 0 0.45rem; color: white; color-scheme: dark; background: #0e192c; border: 1px solid rgba(255, 255, 255, 0.11); border-radius: 6px; font: inherit; font-size: 0.72rem; font-weight: 600; }
-.meeting-calendar-navigation select:first-of-type { width: 94px; }
-.meeting-calendar-navigation select:last-of-type { width: 68px; }
-.meeting-calendar-navigation button:hover,
+.meeting-calendar-navigation select { width: 108px; }
 .meeting-calendar-navigation select:hover { background-color: rgba(53, 118, 193, 0.18); border-color: rgba(147, 197, 253, 0.35); }
-.meeting-calendar-navigation button:focus-visible,
 .meeting-calendar-navigation select:focus-visible { outline: 2px solid #93c5fd; outline-offset: 2px; }
 
 .meeting-calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.3rem; }
@@ -1446,6 +1442,19 @@ h1, h2, h3, h4, h5, h6 {
 .booking-summary-timezones p { grid-column: 2 / -1; margin: 0.3rem 0 0; color: rgba(255, 255, 255, 0.5); font-size: 0.62rem; line-height: 1.45; }
 .booking-summary-complete { display: flex; align-items: center; gap: 0.45rem; padding: 0.7rem; color: #c7f36b; background: rgba(199, 243, 107, 0.08); border: 1px solid rgba(199, 243, 107, 0.18); font-size: 0.72rem; font-weight: 700; }
 .meeting-mobile-summary { display: none; }
+
+@media (min-width: 768px) {
+  .meeting-scheduler.has-selected-date { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .meeting-scheduler.has-selected-date > .meeting-scheduler-heading,
+  .meeting-scheduler.has-selected-date > .meeting-availability-card,
+  .meeting-scheduler.has-selected-date > .meeting-scheduler-state,
+  .meeting-scheduler.has-selected-date > .meeting-mobile-summary,
+  .meeting-scheduler.has-selected-date > .meeting-details-stage,
+  .meeting-scheduler.has-selected-date > .meeting-scheduler-error { grid-column: 1 / -1; }
+  .meeting-scheduler.has-selected-date > .meeting-calendar { grid-column: 1; grid-row: 3; }
+  .meeting-scheduler.has-selected-date > .meeting-time-section { grid-column: 2; grid-row: 3; align-self: stretch; align-content: start; padding: 0 0 0 1rem; border-top: 0; border-left: 1px solid rgba(255, 255, 255, 0.08); }
+  .meeting-scheduler.has-selected-date .meeting-time-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; }
+}
 
 @media (max-width: 1180px) {
   .active-chat-layout {
@@ -1635,7 +1644,7 @@ h1, h2, h3, h4, h5, h6 {
   .meeting-availability-card > div + div { border-left: 0; border-top: 1px solid rgba(255, 255, 255, 0.07); }
   .meeting-calendar-header { align-items: flex-start; flex-direction: column; }
   .meeting-calendar-navigation { width: 100%; }
-  .meeting-calendar-navigation select:first-of-type { flex: 1; width: auto; }
+  .meeting-calendar-navigation select { flex: 1; width: auto; }
   .meeting-calendar-grid { gap: 0.28rem; }
   .meeting-calendar-grid button { height: auto; min-height: 40px; aspect-ratio: 1; }
   .meeting-time-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -1656,10 +1665,7 @@ h1, h2, h3, h4, h5, h6 {
   .visual-panel-toggle span { display: none; }
   .responsive-visual-panel { margin-inline: 0.5rem; }
   .meeting-scheduler { padding: 0.85rem; }
-  .meeting-calendar-navigation { gap: 0.2rem; }
-  .meeting-calendar-navigation button { width: 36px; height: 36px; }
   .meeting-calendar-navigation select { height: 36px; padding-inline: 0.3rem; font-size: 0.66rem; }
-  .meeting-calendar-navigation select:last-of-type { width: 62px; }
   .meeting-calendar-grid button { min-height: 36px; font-size: 0.7rem; }
   .meeting-time-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .booking-summary-date > span { font-size: 2.6rem; }
