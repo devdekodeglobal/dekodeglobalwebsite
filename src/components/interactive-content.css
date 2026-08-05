@@ -9,13 +9,13 @@
 .story-section {
   width: min(1180px, calc(100% - 3rem));
   margin: 0 auto;
-  padding: clamp(5rem, 9vw, 8rem) 0;
+  padding: clamp(3rem, 5vw, 4.75rem) 0;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   content-visibility: auto;
   contain-intrinsic-size: 800px;
 }
 
-.content-section-heading { max-width: 720px; margin-bottom: clamp(2rem, 5vw, 4rem); }
+.content-section-heading { max-width: 720px; margin-bottom: clamp(1.5rem, 3vw, 2.75rem); }
 .content-section-heading > span,
 .panel-index {
   display: block;
@@ -182,7 +182,7 @@
 .industry-panel > strong { margin-top: 1rem; }
 .industry-panel > strong + p { margin-top: .35rem; }
 
-.start-project-section { text-align: center; min-height: 540px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.start-project-section { text-align: center; min-height: 380px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 .conversion-glow { position: absolute; width: 520px; height: 300px; border-radius: 50%; background: rgba(53,118,193,.18); filter: blur(80px); pointer-events:none; }
 .start-project-section > *:not(.conversion-glow) { position: relative; }
 .session-summary { max-width: 680px; margin-top: 1.5rem; padding: 1rem 1.2rem; border: 1px solid rgba(255,255,255,.1); background: rgba(15,23,42,.45); border-radius: 16px; }
@@ -192,10 +192,10 @@
 .conversion-actions button { min-height: 48px; display:flex; align-items:center; gap:.5rem; border-radius:999px; padding:.7rem 1rem; border:1px solid rgba(255,255,255,.13); background:rgba(15,23,42,.55); color:white; font:inherit; font-weight:600; cursor:pointer; }
 .conversion-actions button:first-child { background: var(--color-accent-yellow); color:#041b33; border-color:transparent; }
 
-.company-info-section { padding-top: clamp(4rem, 7vw, 6rem); }
+.company-info-section { padding-top: clamp(3rem, 5vw, 4.25rem); }
 .company-info-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .company-info-block,
-.company-legal-details { padding: 1.25rem; border: 1px solid rgba(255,255,255,.1); border-radius: 8px; background: rgba(15,23,42,.38); }
+.company-legal-switcher { padding: 1.25rem; border: 1px solid rgba(255,255,255,.1); border-radius: 8px; background: rgba(15,23,42,.38); }
 .company-info-block { display: flex; flex-direction: column; align-items: flex-start; gap: .65rem; }
 .company-info-block h3 { display: flex; align-items: center; gap: .5rem; margin-bottom: .25rem; font-size: 1rem; }
 .company-info-block a { display: inline-flex; align-items: center; gap: .4rem; color: #bfdbfe; text-decoration: none; overflow-wrap: anywhere; }
@@ -203,19 +203,22 @@
 .company-info-block p strong,
 .company-info-block p span { display: block; }
 .company-info-block p strong { color: white; margin-bottom: .2rem; }
-.company-legal-details summary { min-height: 44px; display: flex; align-items: center; gap: .55rem; color: white; font-weight: 700; cursor: pointer; list-style: none; }
-.company-legal-details summary::-webkit-details-marker { display: none; }
-.company-legal-details summary span { flex: 1; }
-.company-legal-details summary > svg:first-child { color: var(--color-accent-yellow); }
-.company-legal-details[open] summary > svg:last-child { transform: rotate(90deg); }
-.company-legal-details > p { margin: .75rem 0 1rem; color: var(--color-text-muted); }
+.company-legal-switcher { grid-column: 1 / -1; }
+.company-legal-toggle { width: min(100%, 620px); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .35rem; padding: .3rem; border: 1px solid rgba(255,255,255,.1); border-radius: 999px; background: rgba(4,27,51,.42); }
+.company-legal-toggle button { min-width: 0; min-height: 44px; padding: .65rem 1rem; border: 0; border-radius: 999px; background: transparent; display: flex; align-items: center; justify-content: center; gap: .5rem; color: var(--color-text-muted); font: inherit; font-weight: 700; cursor: pointer; }
+.company-legal-toggle button svg { color: var(--color-accent-yellow); flex: 0 0 auto; }
+.company-legal-toggle button.is-active { color: white; background: rgba(53,118,193,.34); box-shadow: inset 0 0 0 1px rgba(147,197,253,.28), 0 6px 16px rgba(0,0,0,.18); }
+.company-legal-content { margin-top: 1rem; }
+.company-legal-content > h3 { font-size: 1rem; }
+.company-legal-content > p { margin: .75rem 0 1rem; color: var(--color-text-muted); }
 .company-legal-contact { display: inline-block; margin-bottom: 1rem; color: #bfdbfe; text-decoration: none; overflow-wrap: anywhere; }
-.company-legal-details > div { padding: .85rem 0; border-top: 1px solid rgba(255,255,255,.08); }
-.company-legal-details h4 { font-size: .88rem; margin-bottom: .35rem; }
-.company-legal-details div p { color: var(--color-text-muted); font-size: .86rem; line-height: 1.6; }
+.company-legal-content > div { padding: .85rem 0; border-top: 1px solid rgba(255,255,255,.08); }
+.company-legal-content h4 { font-size: .88rem; margin-bottom: .35rem; }
+.company-legal-content div p { color: var(--color-text-muted); font-size: .86rem; line-height: 1.6; }
 
 .capability-node:focus-visible, .industry-node:focus-visible, .project-rail button:focus-visible,
-.process-flow button:focus-visible, .content-chat-action:focus-visible, .conversion-actions button:focus-visible {
+.process-flow button:focus-visible, .content-chat-action:focus-visible, .conversion-actions button:focus-visible,
+.company-legal-toggle button:focus-visible {
   outline: 2px solid white; outline-offset: 3px;
 }
 
@@ -229,7 +232,7 @@
 }
 
 @media (max-width: 600px) {
-  .story-section { width: min(100% - 2rem, 1180px); padding: 4rem 0; contain-intrinsic-size: 1050px; }
+  .story-section { width: min(100% - 2rem, 1180px); padding: 2.75rem 0; contain-intrinsic-size: 760px; }
   .capability-map, .industry-network { min-height: 0; display:flex; flex-direction:column; gap:.6rem; padding:.75rem; overflow:visible; }
   .capability-map::before, .industry-network::before, .capability-core, .industry-core { display:none; }
   .capability-node, .industry-node { position:relative; inset:auto; width:100%; }
@@ -243,6 +246,8 @@
   .conversion-actions { flex-direction:column; width:100%; max-width:360px; }
   .conversion-actions button { justify-content:center; }
   .company-info-grid { grid-template-columns: 1fr; }
+  .company-legal-toggle { width: 100%; }
+  .company-legal-toggle button { padding-inline: .65rem; font-size: .82rem; }
 }
 
 @media (hover: hover) {
