@@ -22,7 +22,7 @@ import {
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phonePattern = /^\+?[0-9][0-9\s().-]{6,24}$/;
 const readableCompanyTimezone = (timezone) => (
-  ['Asia/Kolkata', 'Asia/Calcutta'].includes(timezone) ? 'India time' : getTimeZoneAbbreviation(timezone)
+  ['Asia/Kolkata', 'Asia/Calcutta'].includes(timezone) ? 'IST' : getTimeZoneAbbreviation(timezone)
 );
 
 export default function MeetingScheduler({
@@ -168,15 +168,16 @@ export default function MeetingScheduler({
     <form className={`meeting-scheduler ${activeSelectedDateKey ? 'has-selected-date' : ''}`} onSubmit={submit}>
       <header className="meeting-scheduler-heading">
         <div>
-          <span className="meeting-heading-icon"><CalendarDays size={19} /></span>
-          <span><strong>Book a discovery call</strong><small>Start with a date. We will guide you from there.</small></span>
+          <strong>Book a discovery call</strong>
+          <small>30 minutes with the DEKODE team</small>
         </div>
+        <span className="meeting-duration-chip"><i aria-hidden="true" />30 min · Video call</span>
       </header>
 
       <aside className="meeting-availability-card" aria-label="DEKODE availability and timezone information">
-        <div><CalendarDays size={16} /><span><small>Working days</small><strong>Monday - Friday</strong></span></div>
-        <div><Clock3 size={16} /><span><small>Working hours</small><strong>9:00 AM - 5:00 PM {companyTimezoneLabel}</strong></span></div>
-        <div className="meeting-timezone-copy"><Globe2 size={16} /><span><small>Times shown in</small><strong>{timezone.replaceAll('_', ' ')}</strong><em>Converted from {companyTimezone.replaceAll('_', ' ')}</em></span></div>
+        <div><CalendarDays size={14} /><strong>Mon-Fri</strong></div>
+        <div><Clock3 size={14} /><strong>9:00-17:00</strong><span>{companyTimezoneLabel}</span></div>
+        <div className="meeting-timezone-copy"><Globe2 size={14} /><span>Shown in</span><strong>{timezone.replaceAll('_', ' ')}</strong></div>
       </aside>
 
       {status === 'loading' ? (
@@ -192,7 +193,7 @@ export default function MeetingScheduler({
       ) : (
         <section className="meeting-calendar" aria-labelledby="meeting-calendar-title">
           <div className="meeting-calendar-header">
-            <div><small>Step 1</small><strong id="meeting-calendar-title">Choose a date</strong></div>
+            <div><strong id="meeting-calendar-title">Choose a date</strong></div>
           </div>
           <div className="meeting-date-rail" role="group" aria-label="Available meeting dates">
             {dateRailDays.map(({ date, dateKey }) => {
@@ -233,7 +234,7 @@ export default function MeetingScheduler({
             exit={{ opacity: 0, y: reduceMotion ? 0 : -6 }}
             transition={{ duration: reduceMotion ? 0 : 0.22 }}
           >
-            <div className="meeting-section-heading"><span><small>Step 2</small><strong id="meeting-time-title">Choose an available time</strong></span><em>{selectedDateLabel}</em></div>
+            <div className="meeting-section-heading"><span><strong id="meeting-time-title">Choose an available time</strong></span><em>{selectedDateLabel}</em></div>
             <div className="meeting-time-rail" role="group" aria-label={`Available times for ${selectedDateLabel}`}>
               {selectedDateSlots.map((slot) => (
                 <button key={slot.id} type="button" className={selectedSlot?.id === slot.id ? 'is-selected' : ''} onClick={() => selectSlot(slot)} aria-pressed={selectedSlot?.id === slot.id}>
@@ -253,7 +254,7 @@ export default function MeetingScheduler({
           transition={{ duration: reduceMotion ? 0 : 0.24 }}
         >
             <div className="meeting-details-heading" ref={detailsHeadingRef} tabIndex="-1">
-              <span><small>Steps 3 and 4</small><strong>Review and complete your details</strong></span>
+              <span><strong>Review and complete your details</strong></span>
               {selectedSlot ? (
                 <span className="meeting-selection-confirmed"><CheckCircle2 size={16} /> {selectedDateLabel}, {formatTimeInZone(selectedSlot.iso, timezone)}</span>
               ) : (

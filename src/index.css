@@ -1315,36 +1315,33 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 20px 55px rgba(0, 0, 0, 0.22);
 }
 
-.meeting-scheduler-heading > div { align-items: center; }
-.meeting-scheduler-heading > div > span:last-child { display: grid; gap: 0.18rem; }
+.meeting-scheduler-heading { align-items: center; }
+.meeting-scheduler-heading > div { display: grid; align-items: center; gap: 0.18rem; }
 .meeting-scheduler-heading strong { font-size: 1rem; letter-spacing: 0; }
 .meeting-scheduler-heading small { color: rgba(255, 255, 255, 0.58); font-size: 0.72rem; font-weight: 400; }
-.meeting-heading-icon { width: 38px; height: 38px; display: grid; place-items: center; color: #facc15; background: rgba(250, 204, 21, 0.1); border: 1px solid rgba(250, 204, 21, 0.18); border-radius: 7px; }
+.meeting-duration-chip { display: flex; align-items: center; gap: 0.35rem; padding: 0.48rem 0.72rem; color: rgba(255, 255, 255, 0.72) !important; background: rgba(255, 255, 255, 0.045); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 999px; font-size: 0.68rem !important; font-weight: 700; white-space: nowrap; }
+.meeting-duration-chip i { width: 5px; height: 5px; border-radius: 50%; background: #facc15; }
 
 .meeting-availability-card {
-  display: grid;
-  grid-template-columns: 0.8fr 1fr 1.45fr;
-  gap: 0;
-  padding: 0.7rem 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem 1.15rem;
+  padding: 0.68rem 0.8rem;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
 }
-.meeting-availability-card > div { min-width: 0; display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.2rem 0.8rem; }
-.meeting-availability-card > div + div { border-left: 1px solid rgba(255, 255, 255, 0.08); }
-.meeting-availability-card svg { flex: 0 0 auto; margin-top: 0.12rem; color: #93c5fd; }
-.meeting-availability-card span { min-width: 0; display: grid; gap: 0.15rem; }
-.meeting-availability-card small { color: rgba(255, 255, 255, 0.48); font-size: 0.62rem; text-transform: uppercase; }
-.meeting-availability-card strong { min-width: 0; color: rgba(255, 255, 255, 0.88); font-size: 0.7rem; overflow-wrap: anywhere; }
-.meeting-availability-card em { color: rgba(255, 255, 255, 0.48); font-size: 0.62rem; font-style: normal; overflow-wrap: anywhere; }
+.meeting-availability-card > div { min-width: 0; display: flex; align-items: center; gap: 0.4rem; }
+.meeting-availability-card svg { flex: 0 0 auto; color: rgba(255, 255, 255, 0.42); }
+.meeting-availability-card span { color: rgba(255, 255, 255, 0.46); font-size: 0.66rem; }
+.meeting-availability-card strong { min-width: 0; color: rgba(255, 255, 255, 0.76); font-size: 0.7rem; overflow-wrap: anywhere; }
 
 .meeting-calendar { display: grid; gap: 0.6rem; }
 .meeting-calendar-header { display: flex; align-items: center; gap: 0.75rem; }
 .meeting-calendar-header > div:first-child,
 .meeting-section-heading > span,
 .meeting-details-heading > span:first-child { display: grid; gap: 0.1rem; }
-.meeting-calendar-header small,
-.meeting-section-heading small,
-.meeting-details-heading small { color: #93c5fd; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; }
 .meeting-calendar-header strong,
 .meeting-section-heading strong,
 .meeting-details-heading strong { color: white; font-size: 0.86rem; }
@@ -1667,9 +1664,7 @@ h1, h2, h3, h4, h5, h6 {
   .meeting-mobile-summary .booking-summary { min-height: 0; }
   .meeting-mobile-summary .booking-summary-empty { min-height: 150px; }
   .meeting-mobile-summary .booking-progress-step small { font-size: 0.52rem; }
-  .meeting-availability-card { grid-template-columns: 1fr; padding-block: 0.4rem; }
-  .meeting-availability-card > div { padding: 0.45rem 0.2rem; }
-  .meeting-availability-card > div + div { border-left: 0; border-top: 1px solid rgba(255, 255, 255, 0.07); }
+  .meeting-availability-card { gap: 0.55rem 0.9rem; padding: 0.65rem 0.7rem; }
   .meeting-date-rail button { flex-basis: 58px; min-height: 70px; }
   .meeting-section-heading,
   .meeting-details-heading { align-items: flex-start; flex-direction: column; }
@@ -1677,8 +1672,11 @@ h1, h2, h3, h4, h5, h6 {
   .meeting-selection-confirmed { text-align: left; }
   .meeting-booking-fields { grid-template-columns: 1fr; }
   .meeting-booking-fields > * { grid-column: 1; }
-  .meeting-scheduler-heading { flex-direction: column; }
-  .meeting-scheduler-heading > span { text-align: left; }
+  .meeting-scheduler-heading { flex-direction: row; }
+  .meeting-scheduler-heading > span { text-align: right; }
+  .meeting-scheduler-heading { gap: 0.6rem; }
+  .meeting-scheduler-heading strong { font-size: 0.92rem; }
+  .meeting-duration-chip { padding: 0.42rem 0.58rem; font-size: 0.62rem !important; }
 }
 
 @media (max-width: 380px) {

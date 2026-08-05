@@ -93,6 +93,10 @@ test('provides one translucent back-to-top control across every DEKODE layout', 
 });
 
 test('guides booking from date to time, summary, and details', () => {
+  assert.match(meetingScheduler, /30 minutes with the DEKODE team/);
+  assert.match(meetingScheduler, /meeting-duration-chip/);
+  assert.match(meetingScheduler, /30 min · Video call/);
+  assert.doesNotMatch(meetingScheduler, /Step 1|Step 2|Steps 3 and 4/);
   assert.match(meetingScheduler, /id="meeting-calendar-title">Choose a date/);
   assert.match(meetingScheduler, /className="meeting-date-rail"/);
   assert.match(meetingScheduler, /dateRailDays\.map/);
@@ -131,9 +135,10 @@ test('guides booking from date to time, summary, and details', () => {
 });
 
 test('communicates availability, timezone conversion, progress, and mobile ordering', () => {
-  assert.match(meetingScheduler, /Monday - Friday/);
-  assert.match(meetingScheduler, /9:00 AM - 5:00 PM/);
-  assert.match(meetingScheduler, /Converted from \{companyTimezone\.replaceAll/);
+  assert.match(meetingScheduler, /Mon-Fri/);
+  assert.match(meetingScheduler, /9:00-17:00/);
+  assert.match(meetingScheduler, /Shown in/);
+  assert.match(indexCss, /\.meeting-availability-card\s*\{[^}]*display:\s*flex[^}]*border-radius:\s*10px/s);
   assert.match(bookingSummary, /Your timezone/);
   assert.match(bookingSummary, /Company timezone/);
   assert.match(bookingSummary, /progressLabels = \['Choose date', 'Choose time', 'Details', 'Confirm'\]/);
