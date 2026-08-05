@@ -81,6 +81,13 @@ test('triages first-turn company, project, ambiguous, and out-of-scope messages'
   assert.equal(classifyCompanyIntent('hello').kind, 'greeting');
 });
 
+test('routes explicit meeting requests directly to live calendar availability', () => {
+  assert.equal(classifyCompanyIntent('book a meeting').kind, 'meeting');
+  assert.equal(classifyCompanyIntent('Can I schedule a discovery call?').kind, 'meeting');
+  assert.equal(classifyCompanyIntent('What meeting times are available?').kind, 'meeting');
+  assert.equal(classifyCompanyIntent('Tell me about your services').kind, 'company');
+});
+
 test('removes unsupported markdown decoration from assistant text', () => {
   assert.equal(
     cleanAssistantText('## Services\n\n**Build:** practical `software`.'),

@@ -59,6 +59,8 @@ test('keeps the composer responsive with rotating hints and separate voice typin
   assert.match(chatApp, /className="action-pill calendar-entry-button"/);
   assert.match(chatApp, /aria-label="Book a meeting"/);
   assert.match(chatApp, /setStep\('scheduling'\)/);
+  assert.match(chatApp, /companyIntent\.kind === "meeting"/);
+  assert.match(chatApp, /handleOpenMeetingScheduler\(userMessage\)/);
   assert.match(chatApp, /> Client Portal/);
   assert.doesNotMatch(chatApp, /Access Client Portal|Access client proposal/);
   assert.equal((projectOptions.match(/label:\s*"/g) || []).length, 4);
@@ -125,6 +127,7 @@ test('guides booking from date to time, summary, and details', () => {
   assert.match(meetingScheduler, /disabled=\{!hasSlots\}/);
   assert.match(meetingScheduler, /activeSelectedDateKey && status !== 'loading'/);
   assert.match(meetingScheduler, /selectedDateSlots\.map/);
+  assert.match(meetingScheduler, /\.sort\(\(left, right\) => Date\.parse\(left\.iso\) - Date\.parse\(right\.iso\)\)/);
   assert.match(meetingScheduler, /const firstAvailableDateKey = nextSlots\.map/);
   assert.match(meetingScheduler, /if \(firstAvailableDateKey\) selectDate\(firstAvailableDateKey\)/);
   assert.match(meetingScheduler, /slots\.length > 0 && \(/);

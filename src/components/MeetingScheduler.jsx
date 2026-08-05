@@ -108,7 +108,8 @@ export default function MeetingScheduler({
     selectDate('');
     selectSlot(null);
     try {
-      const nextSlots = await provider.getAvailableSlots(undefined, timezone);
+      const nextSlots = [...await provider.getAvailableSlots(undefined, timezone)]
+        .sort((left, right) => Date.parse(left.iso) - Date.parse(right.iso));
       setSlots(nextSlots);
       onSlotsChange?.(nextSlots);
       const firstAvailableDateKey = nextSlots.map((slot) => toLocalDateKey(slot.iso)).sort()[0];
