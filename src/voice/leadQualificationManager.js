@@ -6,6 +6,7 @@ export const emptyLeadProfile = () => ({
   name: '',
   email: '',
   company: '',
+  phone: '',
   projectType: '',
   projectSummary: '',
   businessProblem: '',
@@ -21,6 +22,8 @@ export function extractLeadProfile(message, current = emptyLeadProfile()) {
   const next = { ...current };
   const email = message.match(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i)?.[0];
   if (email) next.email = email;
+  const phone = message.match(/\b(?:phone|mobile|number)(?:\s+(?:is|number))?\s*:?\s*(\+?[0-9][0-9\s().-]{6,24})/i)?.[1];
+  if (phone) next.phone = phone.trim().replace(/[.\s]+$/, '');
   const name = message.match(/\b(?:my name is|i am|i'm)\s+([a-z][a-z '-]{1,40}?)(?=\s+(?:and|at|from|with|my email)\b|[,.]|$)/i)?.[1];
   if (name) next.name = name.trim().replace(/\b\w/g, (letter) => letter.toUpperCase());
   const company = message.match(/\b(?:at|from|company is|work for)\s+([A-Z][\w&.' -]{1,50})/i)?.[1];
@@ -59,5 +62,6 @@ export function reuseAuthenticatedProfile(profile, authenticatedUser, hasConsent
     name: profile.name || authenticatedUser.name || '',
     email: profile.email || authenticatedUser.email || '',
     company: profile.company || authenticatedUser.company || '',
+    phone: profile.phone || authenticatedUser.phone || '',
   };
 }

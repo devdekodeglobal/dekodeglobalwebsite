@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CalendarDays, CheckCircle2, ChevronLeft, ChevronRight, Clock, Server, Database, Cloud, Shield, ShoppingCart, GitMerge, FileText, MessageSquare, Bot, Wrench, Layers } from 'lucide-react';
+import { CheckCircle2, Server, Database, Cloud, Shield, ShoppingCart, GitMerge, FileText, MessageSquare, Bot, Wrench, Layers } from 'lucide-react';
 import { resolveVisualMode } from '../utils/visualIntent';
+import BookingSummary from './BookingSummary.jsx';
 
 const CodeLine = ({ delay = 0, width = "100%", color = "rgba(255,255,255,0.2)" }) => (
   <motion.div 
@@ -302,125 +303,6 @@ const MobileAppAnimation = ({ level }) => {
   );
 };
 
-const toLocalDateKey = (value) => {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '';
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-};
-
-const CalendarBookingAnimation = ({ slots = [], selectedSlotId, onSelectSlot }) => {
-  const initialSlot = slots.find((slot) => slot.id === selectedSlotId) || slots[0];
-  const initialDate = initialSlot ? new Date(initialSlot.iso) : new Date();
-  const [viewDate, setViewDate] = React.useState(() => new Date(initialDate.getFullYear(), initialDate.getMonth(), 1));
-  const [selectedDateKey, setSelectedDateKey] = React.useState(() => toLocalDateKey(initialSlot?.iso));
-
-  const slotsByDate = React.useMemo(() => slots.reduce((groups, slot) => {
-    const key = toLocalDateKey(slot.iso);
-    if (!key) return groups;
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push(slot);
-    return groups;
-  }, new Map()), [slots]);
-
-  React.useEffect(() => {
-    const nextSlot = slots.find((slot) => slot.id === selectedSlotId) || slots[0];
-    if (!nextSlot) return;
-    const nextDate = new Date(nextSlot.iso);
-    setSelectedDateKey(toLocalDateKey(nextSlot.iso));
-    setViewDate(new Date(nextDate.getFullYear(), nextDate.getMonth(), 1));
-  }, [selectedSlotId, slots]);
-
-  const currentYear = new Date().getFullYear();
-  const availableYears = React.useMemo(() => {
-    const years = new Set([currentYear, currentYear + 1, currentYear + 2, viewDate.getFullYear()]);
-    slots.forEach((slot) => years.add(new Date(slot.iso).getFullYear()));
-    return [...years].filter(Number.isFinite).sort((a, b) => a - b);
-  }, [currentYear, slots, viewDate]);
-  const firstWeekday = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay();
-  const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
-  const days = Array.from({ length: 42 }, (_, index) => {
-    const day = index - firstWeekday + 1;
-    return day >= 1 && day <= daysInMonth ? day : null;
-  });
-  const visibleDatePrefix = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}`;
-  const selectedDateIsVisible = selectedDateKey.startsWith(visibleDatePrefix);
-  const visibleSlots = selectedDateIsVisible ? slotsByDate.get(selectedDateKey) || [] : [];
-  const moveMonth = (offset) => setViewDate((current) => new Date(current.getFullYear(), current.getMonth() + offset, 1));
-  const updateMonth = (month) => setViewDate((current) => new Date(current.getFullYear(), Number(month), 1));
-  const updateYear = (year) => setViewDate((current) => new Date(Number(year), current.getMonth(), 1));
-  const timeFormatter = React.useMemo(() => new Intl.DateTimeFormat(undefined, {
-    hour: 'numeric',
-    minute: '2-digit',
-  }), []);
-
-  return (
-    <div className="booking-calendar-visual">
-      <div className="booking-calendar-header">
-        <div className="booking-calendar-title">
-          <CalendarDays size={20} />
-          <strong>Choose a date</strong>
-        </div>
-        <div className="booking-calendar-navigation">
-          <button type="button" onClick={() => moveMonth(-1)} aria-label="Previous month" title="Previous month"><ChevronLeft size={16} /></button>
-          <select value={viewDate.getMonth()} onChange={(event) => updateMonth(event.target.value)} aria-label="Calendar month">
-            {Array.from({ length: 12 }, (_, month) => (
-              <option key={month} value={month}>{new Intl.DateTimeFormat(undefined, { month: 'long' }).format(new Date(2020, month, 1))}</option>
-            ))}
-          </select>
-          <select value={viewDate.getFullYear()} onChange={(event) => updateYear(event.target.value)} aria-label="Calendar year">
-            {availableYears.map((year) => <option key={year} value={year}>{year}</option>)}
-          </select>
-          <button type="button" onClick={() => moveMonth(1)} aria-label="Next month" title="Next month"><ChevronRight size={16} /></button>
-        </div>
-      </div>
-
-      <div className="booking-calendar-grid">
-        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
-          <span className="booking-calendar-weekday" key={`${day}-${index}`}>{day}</span>
-        ))}
-        {days.map((day, index) => {
-          const dateKey = day ? `${visibleDatePrefix}-${String(day).padStart(2, '0')}` : '';
-          const hasSlots = slotsByDate.has(dateKey);
-          return day ? (
-            <motion.button
-              type="button"
-              key={dateKey}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.006 * index }}
-              className={selectedDateKey === dateKey ? 'is-selected' : ''}
-              disabled={!hasSlots}
-              onClick={() => {
-                setSelectedDateKey(dateKey);
-                if (selectedSlotId && toLocalDateKey(slots.find((slot) => slot.id === selectedSlotId)?.iso) !== dateKey) {
-                  onSelectSlot?.(null);
-                }
-              }}
-              aria-label={`${day} ${new Intl.DateTimeFormat(undefined, { month: 'long' }).format(viewDate)}${hasSlots ? ', times available' : ', unavailable'}`}
-            >
-              {day}
-            </motion.button>
-          ) : <span key={`empty-${index}`} aria-hidden="true" />;
-        })}
-      </div>
-
-      <div className="booking-calendar-times" aria-live="polite">
-        <Clock size={15} />
-        {visibleSlots.length ? visibleSlots.map((slot) => (
-          <button
-            type="button"
-            key={slot.id}
-            className={selectedSlotId === slot.id ? 'is-selected' : ''}
-            onClick={() => onSelectSlot?.(slot)}
-          >
-            {timeFormatter.format(new Date(slot.iso))}
-          </button>
-        )) : <span className="booking-calendar-empty">{slots.length ? 'Select an available date' : 'Loading live availability...'}</span>}
-      </div>
-    </div>
-  );
-};
-
 const DefaultWebAnimation = ({ level }) => {
   return (
     <div className="browser-frame" style={{ width: '100%', maxWidth: '100%', height: '300px', display: 'flex', flexDirection: 'column' }}>
@@ -463,8 +345,9 @@ export default function AnimationPanel({
   level,
   messages = [],
   meetingSlots = [],
+  selectedMeetingDateKey = '',
   selectedMeetingSlotId,
-  onMeetingSlotSelect,
+  bookingComplete = false,
 }) {
   const [activeTab, setActiveTab] = React.useState('web');
 
@@ -555,10 +438,11 @@ export default function AnimationPanel({
           style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
         >
           {visualMode === 'calendar' ? (
-            <CalendarBookingAnimation
+            <BookingSummary
               slots={meetingSlots}
+              selectedDateKey={selectedMeetingDateKey}
               selectedSlotId={selectedMeetingSlotId}
-              onSelectSlot={onMeetingSlotSelect}
+              bookingComplete={bookingComplete}
             />
           ) : visualMode === 'ai' ? (
             <AIAgentAnimation level={dynamicLevel} />

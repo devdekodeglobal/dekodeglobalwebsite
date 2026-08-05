@@ -46,21 +46,23 @@ test('unknown questions are bounded to DEKODE and project discovery', async () =
 
 test('lead profile extracts contact, project, timeline, and recommendations', () => {
   const profile = extractLeadProfile(
-    'My name is Alex Morgan and my email is alex@example.com. We need an AI platform in 3 months with cloud automation.',
+    'My name is Alex Morgan and my email is alex@example.com. My phone is +61 421 196 363. We need an AI platform in 3 months with cloud automation.',
   );
   assert.equal(profile.name, 'Alex Morgan');
   assert.equal(profile.email, 'alex@example.com');
+  assert.equal(profile.phone, '+61 421 196 363');
   assert.match(profile.projectType, /AI/i);
   assert.equal(profile.timeline, '3 months');
   assert.ok(profile.recommendedServices.length > 0);
 });
 
 test('authenticated profile data is reused only after consent', () => {
-  const user = { name: 'Sam Lee', email: 'sam@example.com', company: 'Acme' };
+  const user = { name: 'Sam Lee', email: 'sam@example.com', company: 'Acme', phone: '+61 421 196 363' };
   assert.deepEqual(reuseAuthenticatedProfile(emptyLeadProfile(), user, false), emptyLeadProfile());
   const reused = reuseAuthenticatedProfile(emptyLeadProfile(), user, true);
   assert.equal(reused.email, 'sam@example.com');
   assert.equal(reused.company, 'Acme');
+  assert.equal(reused.phone, '+61 421 196 363');
 });
 
 test('mock slots are future weekday ISO values with visitor timezone labels', async () => {
@@ -83,7 +85,8 @@ test('guest enquiry form is editable and requires valid fields plus consent', ()
   assert.match(form.projectSummary, /customer support/);
   assert.ok(form.inferredFields.includes('projectSummary'));
   assert.ok(validateLeadForm(form, false).consent);
-  assert.ok(validateLeadForm({ ...form, name: 'Alex', email: 'alex@example.com' }, true).projectSummary === undefined);
+  const validForm = { ...form, name: 'Alex', email: 'alex@example.com', company: 'Acme', phone: '+61 421 196 363' };
+  assert.deepEqual(validateLeadForm(validForm, true), {});
 });
 
 test('lead payload is sanitised and mock submission never claims delivery', async () => {
@@ -91,6 +94,7 @@ test('lead payload is sanitised and mock submission never claims delivery', asyn
     name: '<Alex>',
     email: 'alex@example.com',
     company: '<Acme>',
+    phone: '+61 421 196 363',
     projectSummary: 'Build <script>alert(1)</script> an AI tool',
     interestedServices: ['Custom AI Development'],
     timeline: '3 months',
@@ -100,6 +104,7 @@ test('lead payload is sanitised and mock submission never claims delivery', asyn
   };
   const payload = prepareLeadPayload(form, '/');
   assert.equal(payload.visitorName, 'Alex');
+  assert.equal(payload.phone, '+61 421 196 363');
   assert.doesNotMatch(payload.projectSummary, /[<>]/);
   const service = new LeadNotificationService({ mode: 'mock' });
   await assert.rejects(() => service.submit(form, false), /consent/i);
