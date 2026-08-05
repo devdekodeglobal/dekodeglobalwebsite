@@ -250,8 +250,8 @@ const ProposalCFS = () => {
               <h3 style={{marginTop: 0, marginBottom: '12px', color: '#15803d', fontSize: '18px', fontWeight: '800', textAlign: 'center'}}>Global Constraints Key</h3>
               <ul style={{margin: 0, paddingLeft: '20px', fontSize: '14px', color: '#166534', lineHeight: '1.8'}}>
                 <li style={{marginBottom: '8px'}}><strong>Max 3 Colors/Model:</strong> Limits assortment redundancy per model.</li>
-                <li style={{marginBottom: '8px'}}><strong>Max 2 Units/SKU:</strong> Caps dispatch depth to control store run.</li>
-                <li style={{marginBottom: '0px'}}><strong>Min 85% Brand Uniqueness:</strong> Maintained across active store displays.</li>
+                <li style={{marginBottom: '8px'}}><strong>Brand Uniqueness:</strong> 100% ideal scenario; the algorithm prioritizes highest uniqueness first before filling the rest.</li>
+                <li style={{marginBottom: '0px'}}><strong>Max 2 Units/SKU:</strong> Caps dispatch depth to control store run.</li>
               </ul>
             </div>
           </div>

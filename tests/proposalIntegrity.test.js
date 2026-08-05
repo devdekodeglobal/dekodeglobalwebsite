@@ -13,7 +13,7 @@ test('approved proposal source is byte-for-byte unchanged', async () => {
   const hash = createHash('sha256').update(source).digest('hex')
   assert.equal(
     hash,
-    'b8447be51f3803ce43feb9fd4ef4ca8ae08067d2f4ba3f951e3dcda85d07595e',
+    'f77549220143485cbbe7a0065f20812a608fc3f09c165d2dbac9632b1dbb7156',
   )
   assert.equal(proposal.sourceChecksum, hash)
 })
@@ -56,14 +56,14 @@ test('section order and approved metadata stay pinned', () => {
 test('generated content and diagram structure match their snapshots', () => {
   assert.equal(
     proposal.contentChecksum,
-    '88e99782c7ff4d96fa75cffa845f755ec7f8901f19b634ff61f66e82b5f92bd4',
+    'd37690e9cb4c39cfa84a099c592f7a85ac814f1362e6fb0425daf3f9f0139132',
   )
   assert.equal(
     proposal.diagramStructureHash,
-    '9fd8c3210051491b612a404734c67d4f5bdac9e3c7fe4130ea3f45ca1f6c37f4',
+    '5ff3a1506c6d942f3aa5525083e25226bab40de5efb5509d8805be845e0d26d6',
   )
   assert.match(proposal.sections[3].html, /Tier 3: Substitute Cascade/)
-  assert.match(proposal.sections[3].html, /Min 85% Brand Uniqueness/)
+  assert.match(proposal.sections[3].html, /Brand Uniqueness/)
   assert.match(proposal.sections[4].html, /OptiFlow Architecture Diagram/)
   assert.match(
     proposal.sections[4].html,
