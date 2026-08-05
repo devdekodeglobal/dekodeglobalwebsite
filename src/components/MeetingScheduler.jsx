@@ -21,7 +21,6 @@ import {
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phonePattern = /^\+?[0-9][0-9\s().-]{6,24}$/;
-const weekdayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 const readableCompanyTimezone = (timezone) => (
   ['Asia/Kolkata', 'Asia/Calcutta'].includes(timezone) ? 'India time' : getTimeZoneAbbreviation(timezone)
 );
@@ -38,10 +37,6 @@ export default function MeetingScheduler({
   const [slots, setSlots] = useState([]);
   const [localSelectedDateKey, setLocalSelectedDateKey] = useState('');
   const [localSelectedSlotId, setLocalSelectedSlotId] = useState(null);
-  const [viewDate, setViewDate] = useState(() => {
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), 1);
-  });
   const [status, setStatus] = useState('loading');
   const [error, setError] = useState('');
   const [consent, setConsent] = useState(false);
@@ -70,6 +65,22 @@ export default function MeetingScheduler({
     groups.get(key).push(slot);
     return groups;
   }, new Map()), [slots]);
+  const todayKey = toLocalDateKey(new Date());
+  const dateRailDays = useMemo(() => {
+    const availableDateKeys = [...slotsByDate.keys()].sort();
+    const startDate = dateFromLocalKey(todayKey);
+    const lastDate = dateFromLocalKey(availableDateKeys.at(-1));
+    if (!startDate || !lastDate || lastDate < startDate) return [];
+
+    const days = [];
+    for (const cursor = new Date(startDate); cursor <= lastDate; cursor.setDate(cursor.getDate() + 1)) {
+      days.push({
+        date: new Date(cursor),
+        dateKey: toLocalDateKey(cursor),
+      });
+    }
+    return days;
+  }, [slotsByDate, todayKey]);
   const selectedDateSlots = slotsByDate.get(activeSelectedDateKey) || [];
   const selectedDate = dateFromLocalKey(activeSelectedDateKey);
   const selectedDateLabel = selectedDate?.toLocaleDateString(undefined, {
@@ -151,33 +162,6 @@ export default function MeetingScheduler({
     return <div className="meeting-scheduler-success"><CheckCircle2 size={30} /><strong>Discovery call booked</strong><span>A calendar invitation is on its way to your email.</span></div>;
   }
 
-  const firstWeekday = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay();
-  const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
-  const calendarCellCount = Math.ceil((firstWeekday + daysInMonth) / 7) * 7;
-  const calendarDays = Array.from({ length: calendarCellCount }, (_, index) => {
-    const day = index - firstWeekday + 1;
-    return day >= 1 && day <= daysInMonth ? day : null;
-  });
-  const visibleDatePrefix = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}`;
-  const todayKey = toLocalDateKey(new Date());
-  const monthOptions = [...new Map([
-    new Date(),
-    ...slots.map((slot) => new Date(slot.iso)),
-  ].map((date) => {
-    const monthDate = new Date(date.getFullYear(), date.getMonth(), 1);
-    const value = `${monthDate.getFullYear()}-${String(monthDate.getMonth() + 1).padStart(2, '0')}`;
-    return [value, {
-      value,
-      date: monthDate,
-      label: new Intl.DateTimeFormat(undefined, { month: 'long' }).format(monthDate),
-    }];
-  })).values()].sort((a, b) => a.date - b.date);
-  const selectedMonthValue = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}`;
-  const selectMonth = (value) => {
-    const [year, month] = value.split('-').map(Number);
-    setViewDate(new Date(year, month - 1, 1));
-  };
-
   return (
     <form className={`meeting-scheduler ${activeSelectedDateKey ? 'has-selected-date' : ''}`} onSubmit={submit}>
       <header className="meeting-scheduler-heading">
@@ -207,33 +191,25 @@ export default function MeetingScheduler({
         <section className="meeting-calendar" aria-labelledby="meeting-calendar-title">
           <div className="meeting-calendar-header">
             <div><small>Step 1</small><strong id="meeting-calendar-title">Choose a date</strong></div>
-            <div className="meeting-calendar-navigation">
-              <select value={selectedMonthValue} onChange={(event) => selectMonth(event.target.value)} aria-label="Calendar month">
-                {monthOptions.map((month) => <option key={month.value} value={month.value}>{month.label}</option>)}
-              </select>
-            </div>
           </div>
-          <div className="meeting-calendar-grid">
-            {weekdayLabels.map((day, index) => <span className="meeting-calendar-weekday" key={`${day}-${index}`}>{day}</span>)}
-            {calendarDays.map((day, index) => {
-              if (!day) return <span key={`empty-${index}`} aria-hidden="true" />;
-              const dateKey = `${visibleDatePrefix}-${String(day).padStart(2, '0')}`;
-              const date = new Date(viewDate.getFullYear(), viewDate.getMonth(), day, 12);
-              const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+          <div className="meeting-date-rail" role="group" aria-label="Available meeting dates">
+            {dateRailDays.map(({ date, dateKey }) => {
               const hasSlots = slotsByDate.has(dateKey);
-              const unavailable = isWeekend || !hasSlots;
               const fullDate = date.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
               return (
                 <button
                   type="button"
                   key={dateKey}
                   className={`${activeSelectedDateKey === dateKey ? 'is-selected' : ''} ${todayKey === dateKey ? 'is-today' : ''}`}
-                  disabled={unavailable}
+                  disabled={!hasSlots}
                   onClick={() => selectDate(dateKey)}
                   aria-label={`${fullDate}${hasSlots ? ', times available' : ', unavailable'}`}
                   aria-pressed={activeSelectedDateKey === dateKey}
+                  aria-current={todayKey === dateKey ? 'date' : undefined}
                 >
-                  {day}
+                  <small>{date.toLocaleDateString(undefined, { weekday: 'short' })}</small>
+                  <strong>{date.getDate()}</strong>
+                  <span>{date.toLocaleDateString(undefined, { month: 'short' })}</span>
                 </button>
               );
             })}
@@ -256,7 +232,7 @@ export default function MeetingScheduler({
             transition={{ duration: reduceMotion ? 0 : 0.22 }}
           >
             <div className="meeting-section-heading"><span><small>Step 2</small><strong id="meeting-time-title">Choose an available time</strong></span><em>{selectedDateLabel}</em></div>
-            <div className="meeting-time-grid">
+            <div className="meeting-time-rail" role="group" aria-label={`Available times for ${selectedDateLabel}`}>
               {selectedDateSlots.map((slot) => (
                 <button key={slot.id} type="button" className={selectedSlot?.id === slot.id ? 'is-selected' : ''} onClick={() => selectSlot(slot)} aria-pressed={selectedSlot?.id === slot.id}>
                   {formatTimeInZone(slot.iso, timezone)}
@@ -266,15 +242,6 @@ export default function MeetingScheduler({
           </motion.section>
         )}
       </AnimatePresence>
-
-      <div className="meeting-mobile-summary">
-        <BookingSummary
-          compact
-          slots={slots}
-          selectedDateKey={activeSelectedDateKey}
-          selectedSlotId={activeSelectedSlotId}
-        />
-      </div>
 
       <AnimatePresence initial={false}>
         {selectedSlot && (
@@ -290,11 +257,11 @@ export default function MeetingScheduler({
               <span className="meeting-selection-confirmed"><CheckCircle2 size={16} /> {selectedDateLabel}, {formatTimeInZone(selectedSlot.iso, timezone)}</span>
             </div>
             <div className="meeting-booking-fields">
-              <label><span>Name</span><input required value={form.name} onChange={(event) => update('name', event.target.value)} autoComplete="name" /></label>
-              <label><span>Email</span><input required type="email" value={form.email} onChange={(event) => update('email', event.target.value)} autoComplete="email" /></label>
-              <label><span>Company</span><input required value={form.company} onChange={(event) => update('company', event.target.value)} autoComplete="organization" /></label>
-              <label><span>Phone number</span><input required type="tel" value={form.phone} onChange={(event) => update('phone', event.target.value)} autoComplete="tel" inputMode="tel" /></label>
-              <label className="meeting-summary-field"><span>Project summary</span><textarea required rows="3" value={form.projectSummary} onChange={(event) => update('projectSummary', event.target.value)} /></label>
+              <label className="meeting-floating-field"><span>Name</span><input required placeholder=" " value={form.name} onChange={(event) => update('name', event.target.value)} autoComplete="name" /></label>
+              <label className="meeting-floating-field"><span>Email</span><input required type="email" placeholder=" " value={form.email} onChange={(event) => update('email', event.target.value)} autoComplete="email" /></label>
+              <label className="meeting-floating-field"><span>Company</span><input required placeholder=" " value={form.company} onChange={(event) => update('company', event.target.value)} autoComplete="organization" /></label>
+              <label className="meeting-floating-field"><span>Phone number</span><input required type="tel" placeholder=" " value={form.phone} onChange={(event) => update('phone', event.target.value)} autoComplete="tel" inputMode="tel" /></label>
+              <label className="meeting-summary-field meeting-floating-field"><span>Project summary</span><textarea required rows="3" placeholder=" " value={form.projectSummary} onChange={(event) => update('projectSummary', event.target.value)} /></label>
               <label className="meeting-honeypot" aria-hidden="true"><span>Website</span><input tabIndex="-1" autoComplete="off" value={form.website} onChange={(event) => update('website', event.target.value)} /></label>
               <label className="meeting-consent"><input type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} /><span>I consent to DEKODE using these details to arrange this meeting.</span></label>
               <button type="submit" className="meeting-book-btn" disabled={status === 'booking'}>{status === 'booking' ? <><LoaderCircle className="meeting-spin" size={17} /> Booking...</> : 'Confirm meeting'}</button>
@@ -302,6 +269,14 @@ export default function MeetingScheduler({
           </motion.div>
         )}
       </AnimatePresence>
+      <div className="meeting-mobile-summary">
+        <BookingSummary
+          compact
+          slots={slots}
+          selectedDateKey={activeSelectedDateKey}
+          selectedSlotId={activeSelectedSlotId}
+        />
+      </div>
       {error && slots.length > 0 && <p className="meeting-scheduler-error" role="alert">{error}</p>}
     </form>
   );

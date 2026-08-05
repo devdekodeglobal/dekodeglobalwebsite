@@ -94,18 +94,19 @@ test('provides one translucent back-to-top control across every DEKODE layout', 
 
 test('guides booking from date to time, summary, and details', () => {
   assert.match(meetingScheduler, /id="meeting-calendar-title">Choose a date/);
-  assert.match(meetingScheduler, /aria-label="Calendar month"/);
-  assert.doesNotMatch(meetingScheduler, /aria-label="Calendar year"/);
-  assert.doesNotMatch(meetingScheduler, /Previous month|Next month|ChevronLeft|ChevronRight/);
+  assert.match(meetingScheduler, /className="meeting-date-rail"/);
+  assert.match(meetingScheduler, /dateRailDays\.map/);
+  assert.doesNotMatch(meetingScheduler, /Calendar month|Calendar year|Previous month|Next month|ChevronLeft|ChevronRight/);
   assert.match(meetingScheduler, /className=\{`meeting-scheduler \$\{activeSelectedDateKey \? 'has-selected-date' : ''\}`\}/);
-  assert.match(indexCss, /\.meeting-scheduler\.has-selected-date\s*\{[^}]*grid-template-columns:\s*repeat\(2/);
-  assert.match(indexCss, /\.meeting-scheduler\.has-selected-date > \.meeting-calendar\s*\{[^}]*grid-column:\s*1/);
-  assert.match(indexCss, /\.meeting-scheduler\.has-selected-date > \.meeting-time-section\s*\{[^}]*grid-column:\s*2/);
-  assert.match(indexCss, /\.meeting-time-grid button\s*\{[^}]*border-radius:\s*999px[^}]*box-shadow:/);
-  assert.match(indexCss, /\.meeting-calendar-grid button\s*\{[^}]*border-radius:\s*999px[^}]*box-shadow:/);
+  assert.match(indexCss, /\.meeting-date-rail,[\s\S]*\.meeting-time-rail\s*\{[^}]*overflow-x:\s*auto/);
+  assert.match(indexCss, /\.meeting-time-rail button\s*\{[^}]*border-radius:\s*999px[^}]*box-shadow:/);
+  assert.match(indexCss, /\.meeting-date-rail button\s*\{[^}]*border-radius:\s*999px[^}]*box-shadow:/);
   assert.match(indexCss, /\.meeting-booking-fields input:not\(\[type="checkbox"\]\)\s*\{[^}]*border-radius:\s*999px/);
   assert.match(indexCss, /\.meeting-booking-fields textarea\s*\{[^}]*border-radius:\s*18px/);
-  assert.match(meetingScheduler, /disabled=\{unavailable\}/);
+  assert.match(indexCss, /\.meeting-floating-field:focus-within > span/);
+  assert.match(indexCss, /:has\(input:not\(:placeholder-shown\)\)/);
+  assert.match(meetingScheduler, /placeholder=" "/);
+  assert.match(meetingScheduler, /disabled=\{!hasSlots\}/);
   assert.match(meetingScheduler, /activeSelectedDateKey && status !== 'loading'/);
   assert.match(meetingScheduler, /selectedDateSlots\.map/);
   assert.match(meetingScheduler, /\{selectedSlot && \(/);
@@ -131,10 +132,11 @@ test('communicates availability, timezone conversion, progress, and mobile order
   assert.match(bookingSummary, /Company timezone/);
   assert.match(bookingSummary, /progressLabels = \['Choose date', 'Choose time', 'Details', 'Confirm'\]/);
   assert.match(meetingScheduler, /className="meeting-mobile-summary"/);
+  assert.ok(meetingScheduler.indexOf('className="meeting-details-stage"') < meetingScheduler.indexOf('className="meeting-mobile-summary"'));
   assert.match(indexCss, /\.meeting-mobile-summary\s*\{\s*display:\s*none/);
   assert.match(indexCss, /@media \(max-width:\s*767px\)[\s\S]*\.meeting-mobile-summary\s*\{\s*display:\s*block/s);
   assert.match(indexCss, /\.is-booking-layout \.booking-summary-panel\s*\{\s*display:\s*none/);
-  assert.ok(indexCss.indexOf('.meeting-calendar-grid button:disabled') < indexCss.indexOf('.meeting-calendar-grid button.is-today'));
+  assert.ok(indexCss.indexOf('.meeting-date-rail button:disabled') < indexCss.indexOf('.meeting-date-rail button.is-today'));
 });
 
 test('keeps booking controls accessible and motion-sensitive', () => {
@@ -143,7 +145,8 @@ test('keeps booking controls accessible and motion-sensitive', () => {
   assert.match(meetingScheduler, /requestAnimationFrame/);
   assert.match(meetingScheduler, /useReducedMotion/);
   assert.match(bookingSummary, /aria-live="polite"/);
-  assert.match(indexCss, /\.meeting-calendar-grid button:focus-visible/);
+  assert.match(indexCss, /\.meeting-date-rail button:focus-visible/);
+  assert.match(indexCss, /\.meeting-time-rail button:focus-visible/);
 });
 
 test('keeps consent aligned and resumes normal chat after booking', () => {
