@@ -109,7 +109,13 @@ test('guides booking from date to time, summary, and details', () => {
   assert.match(meetingScheduler, /disabled=\{!hasSlots\}/);
   assert.match(meetingScheduler, /activeSelectedDateKey && status !== 'loading'/);
   assert.match(meetingScheduler, /selectedDateSlots\.map/);
-  assert.match(meetingScheduler, /\{selectedSlot && \(/);
+  assert.match(meetingScheduler, /const firstAvailableDateKey = nextSlots\.map/);
+  assert.match(meetingScheduler, /if \(firstAvailableDateKey\) selectDate\(firstAvailableDateKey\)/);
+  assert.match(meetingScheduler, /slots\.length > 0 && \(/);
+  assert.match(meetingScheduler, /className=\{`meeting-details-stage \$\{selectedSlot \? 'is-unlocked' : 'is-locked'\}`\}/);
+  assert.match(meetingScheduler, /<fieldset className="meeting-booking-fields" disabled=\{!selectedSlot\}/);
+  assert.match(meetingScheduler, /Choose a time to unlock/);
+  assert.match(indexCss, /\.meeting-details-stage\.is-locked \.meeting-booking-fields\s*\{[^}]*pointer-events:\s*none/);
   assert.match(meetingScheduler, /Review and complete your details/);
   assert.doesNotMatch(meetingScheduler, /Company <small>\(optional\)<\/small>/);
   assert.match(meetingScheduler, /<span>Company<\/span><input required/);
@@ -132,7 +138,7 @@ test('communicates availability, timezone conversion, progress, and mobile order
   assert.match(bookingSummary, /Company timezone/);
   assert.match(bookingSummary, /progressLabels = \['Choose date', 'Choose time', 'Details', 'Confirm'\]/);
   assert.match(meetingScheduler, /className="meeting-mobile-summary"/);
-  assert.ok(meetingScheduler.indexOf('className="meeting-details-stage"') < meetingScheduler.indexOf('className="meeting-mobile-summary"'));
+  assert.ok(meetingScheduler.indexOf('className={`meeting-details-stage') < meetingScheduler.indexOf('className="meeting-mobile-summary"'));
   assert.match(indexCss, /\.meeting-mobile-summary\s*\{\s*display:\s*none/);
   assert.match(indexCss, /@media \(max-width:\s*767px\)[\s\S]*\.meeting-mobile-summary\s*\{\s*display:\s*block/s);
   assert.match(indexCss, /\.is-booking-layout \.booking-summary-panel\s*\{\s*display:\s*none/);

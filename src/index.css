@@ -1193,7 +1193,7 @@ h1, h2, h3, h4, h5, h6 {
 .meeting-slot-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; }
 .meeting-slot-grid button { min-height: 44px; padding: 0.55rem; color: rgba(255, 255, 255, 0.84); background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.13); border-radius: 6px; cursor: pointer; font: inherit; font-size: 0.78rem; }
 .meeting-slot-grid button:hover, .meeting-slot-grid button.is-selected { color: #08111f; background: #c7f36b; border-color: #c7f36b; }
-.meeting-booking-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; padding-top: 0.25rem; }
+.meeting-booking-fields { min-inline-size: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin: 0; padding-top: 0.25rem; border: 0; }
 .meeting-booking-fields label { display: grid; gap: 0.35rem; min-width: 0; }
 .meeting-booking-fields label > span { color: rgba(255, 255, 255, 0.72); font-size: 0.75rem; }
 .meeting-booking-fields input:not([type="checkbox"]), .meeting-booking-fields textarea { width: 100%; min-width: 0; padding: 0.7rem 0.9rem; color: white; background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.14); font: inherit; resize: vertical; }
@@ -1417,6 +1417,11 @@ h1, h2, h3, h4, h5, h6 {
 
 .meeting-selection-confirmed { display: flex !important; grid-auto-flow: column; align-items: center; gap: 0.35rem !important; color: #c7f36b; font-size: 0.67rem; text-align: right; }
 .meeting-selection-confirmed svg { flex: 0 0 auto; }
+.meeting-details-locked { display: flex; align-items: center; gap: 0.35rem; color: rgba(255, 255, 255, 0.48); font-size: 0.67rem; }
+.meeting-details-stage.is-locked .meeting-booking-fields { filter: blur(0.6px); pointer-events: none; }
+.meeting-details-stage.is-locked .meeting-booking-fields input,
+.meeting-details-stage.is-locked .meeting-booking-fields textarea,
+.meeting-details-stage.is-locked .meeting-book-btn { cursor: not-allowed; }
 .meeting-booking-fields { padding: 0.85rem; background: #0b1425; border-top: 1px solid rgba(255, 255, 255, 0.07); border-radius: 18px; }
 .meeting-floating-field { position: relative; display: block !important; }
 .meeting-floating-field > span { position: absolute; z-index: 1; top: 50%; left: 1rem; color: rgba(255, 255, 255, 0.55); line-height: 1; pointer-events: none; transform: translateY(-50%); transition: top 0.18s ease, color 0.18s ease, font-size 0.18s ease; }

@@ -111,6 +111,8 @@ export default function MeetingScheduler({
       const nextSlots = await provider.getAvailableSlots(undefined, timezone);
       setSlots(nextSlots);
       onSlotsChange?.(nextSlots);
+      const firstAvailableDateKey = nextSlots.map((slot) => toLocalDateKey(slot.iso)).sort()[0];
+      if (firstAvailableDateKey) selectDate(firstAvailableDateKey);
       setStatus(nextSlots.length ? 'ready' : 'empty');
     } catch (nextError) {
       setSlots([]);
@@ -243,20 +245,22 @@ export default function MeetingScheduler({
         )}
       </AnimatePresence>
 
-      <AnimatePresence initial={false}>
-        {selectedSlot && (
-          <motion.div
-            className="meeting-details-stage"
-            initial={{ opacity: 0, y: reduceMotion ? 0 : 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.24 }}
-          >
+      {slots.length > 0 && (
+        <motion.div
+          className={`meeting-details-stage ${selectedSlot ? 'is-unlocked' : 'is-locked'}`}
+          initial={{ opacity: 0, y: reduceMotion ? 0 : 12 }}
+          animate={{ opacity: selectedSlot ? 1 : 0.58, y: 0 }}
+          transition={{ duration: reduceMotion ? 0 : 0.24 }}
+        >
             <div className="meeting-details-heading" ref={detailsHeadingRef} tabIndex="-1">
               <span><small>Steps 3 and 4</small><strong>Review and complete your details</strong></span>
-              <span className="meeting-selection-confirmed"><CheckCircle2 size={16} /> {selectedDateLabel}, {formatTimeInZone(selectedSlot.iso, timezone)}</span>
+              {selectedSlot ? (
+                <span className="meeting-selection-confirmed"><CheckCircle2 size={16} /> {selectedDateLabel}, {formatTimeInZone(selectedSlot.iso, timezone)}</span>
+              ) : (
+                <span className="meeting-details-locked"><Clock3 size={15} /> Choose a time to unlock</span>
+              )}
             </div>
-            <div className="meeting-booking-fields">
+            <fieldset className="meeting-booking-fields" disabled={!selectedSlot} aria-disabled={!selectedSlot}>
               <label className="meeting-floating-field"><span>Name</span><input required placeholder=" " value={form.name} onChange={(event) => update('name', event.target.value)} autoComplete="name" /></label>
               <label className="meeting-floating-field"><span>Email</span><input required type="email" placeholder=" " value={form.email} onChange={(event) => update('email', event.target.value)} autoComplete="email" /></label>
               <label className="meeting-floating-field"><span>Company</span><input required placeholder=" " value={form.company} onChange={(event) => update('company', event.target.value)} autoComplete="organization" /></label>
@@ -265,10 +269,9 @@ export default function MeetingScheduler({
               <label className="meeting-honeypot" aria-hidden="true"><span>Website</span><input tabIndex="-1" autoComplete="off" value={form.website} onChange={(event) => update('website', event.target.value)} /></label>
               <label className="meeting-consent"><input type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} /><span>I consent to DEKODE using these details to arrange this meeting.</span></label>
               <button type="submit" className="meeting-book-btn" disabled={status === 'booking'}>{status === 'booking' ? <><LoaderCircle className="meeting-spin" size={17} /> Booking...</> : 'Confirm meeting'}</button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </fieldset>
+        </motion.div>
+      )}
       <div className="meeting-mobile-summary">
         <BookingSummary
           compact
