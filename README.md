@@ -28,7 +28,7 @@ VITE_DEKODE_VOICE_ENABLED=true
 VITE_VOICE_PROVIDER=browser
 VITE_VOICE_FALLBACK_ENABLED=true
 VITE_MOCK_MEETING_SLOTS_ENABLED=true
-VITE_COMPANY_TIMEZONE=Australia/Melbourne
+VITE_COMPANY_TIMEZONE=Asia/Kolkata
 VITE_LEAD_NOTIFICATION_MODE=mock
 VITE_LEAD_NOTIFICATION_ENDPOINT=/api/leads
 ```
@@ -69,20 +69,22 @@ The text and voice experiences share the same server-side Google Calendar integr
 Set these server-only values in Vercel and `.env.local`:
 
 ```env
-GOOGLE_CALENDAR_ID=yuvraj.sharma@dekodeglobal.com
+GOOGLE_CALENDAR_ID=contactus@dekodeglobal.com
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 GOOGLE_REFRESH_TOKEN=
-GOOGLE_CALENDAR_TIMEZONE=Australia/Melbourne
+GOOGLE_CALENDAR_TIMEZONE=Asia/Kolkata
 GOOGLE_CALENDAR_WORKDAY_START=09:00
 GOOGLE_CALENDAR_WORKDAY_END=17:00
 GOOGLE_CALENDAR_MEETING_DURATION_MINUTES=30
 GOOGLE_CALENDAR_BUFFER_MINUTES=15
-GOOGLE_CALENDAR_MINIMUM_NOTICE_HOURS=24
+GOOGLE_CALENDAR_MINIMUM_NOTICE_HOURS=0
+GOOGLE_CALENDAR_DAYS_TO_SEARCH=31
+GOOGLE_CALENDAR_MAXIMUM_SLOTS=250
 VITE_MEETING_PROVIDER=calendar
 ```
 
-Enable the Google Calendar API in the Google Cloud project and generate the refresh token with a Google Calendar OAuth scope. Keep all four `GOOGLE_*` credentials server-side. To transfer scheduling later, authorize `contactus@dekodeglobal.com`, then replace `GOOGLE_CALENDAR_ID` and `GOOGLE_REFRESH_TOKEN` in Vercel and redeploy.
+Enable the Google Calendar API in the Google Cloud project and generate the refresh token while signed in as `contactus@dekodeglobal.com`, with a Google Calendar OAuth scope. Keep all four `GOOGLE_*` credentials server-side, then redeploy after setting them in Vercel.
 
 ## Mock meeting slots
 

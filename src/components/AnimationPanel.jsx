@@ -1,6 +1,8 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Settings, CheckCircle2, Server, Database, Cloud, Shield, ShoppingCart, CreditCard, GitMerge, FileText, MessageSquare, Bot, Wrench, Layers } from 'lucide-react';
+import { CheckCircle2, Server, Database, Cloud, Shield, ShoppingCart, GitMerge, FileText, MessageSquare, Bot, Wrench, Layers } from 'lucide-react';
+import { resolveVisualMode } from '../utils/visualIntent';
+import BookingSummary from './BookingSummary.jsx';
 
 const CodeLine = ({ delay = 0, width = "100%", color = "rgba(255,255,255,0.2)" }) => (
   <motion.div 
@@ -8,26 +10,6 @@ const CodeLine = ({ delay = 0, width = "100%", color = "rgba(255,255,255,0.2)" }
     animate={{ width, opacity: 1 }}
     transition={{ delay, duration: 0.5 }}
     style={{ height: '6px', background: color, borderRadius: '3px', marginBottom: '8px' }}
-  />
-);
-
-const FloatingBlock = ({ delay = 0, yOffset = -20 }) => (
-  <motion.div
-    initial={{ y: yOffset, opacity: 0 }}
-    animate={{ y: 0, opacity: 1 }}
-    transition={{ delay, type: "spring", stiffness: 100, damping: 10 }}
-    style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '8px', padding: '10px', backdropFilter: 'blur(4px)', border: '1px solid rgba(255,255,255,0.1)' }}
-  >
-    <CodeLine delay={delay + 0.2} width="80%" />
-    <CodeLine delay={delay + 0.3} width="40%" />
-  </motion.div>
-);
-
-const Spinner = () => (
-  <motion.div
-    animate={{ rotate: 360 }}
-    transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-    style={{ width: '24px', height: '24px', border: '3px solid rgba(255,255,255,0.1)', borderTopColor: 'var(--color-accent-yellow)', borderRadius: '50%', margin: '0 auto' }}
   />
 );
 
@@ -358,25 +340,23 @@ const DefaultWebAnimation = ({ level }) => {
   );
 };
 
-export default function AnimationPanel({ projectType, level, messages = [] }) {
+export default function AnimationPanel({
+  projectType,
+  level,
+  messages = [],
+  meetingSlots = [],
+  selectedMeetingDateKey = '',
+  selectedMeetingSlotId,
+  bookingComplete = false,
+}) {
   const [activeTab, setActiveTab] = React.useState('web');
 
   React.useEffect(() => {
     if (!messages || messages.length === 0) return;
     
-    // Scan messages from newest to oldest to auto-switch tab based on keywords
-    for (let i = messages.length - 1; i >= 0; i--) {
-      const msg = String(messages[i].text || "").toLowerCase();
-      if (msg.includes('web') || msg.includes('site') || msg.includes('browser') || msg.includes('desktop') || msg.includes('portal')) {
-        setActiveTab('web');
-        break;
-      }
-      if (msg.includes('mobile') || msg.includes('app') || msg.includes('phone') || msg.includes('ios') || msg.includes('android')) {
-        setActiveTab('mobile');
-        break;
-      }
-    }
-  }, [messages]);
+    const inferredMode = resolveVisualMode(projectType, messages);
+    if (inferredMode === 'web' || inferredMode === 'mobile') setActiveTab(inferredMode);
+  }, [messages, projectType]);
 
   React.useEffect(() => {
     setActiveTab('web'); // Reset to default when projectType changes
@@ -387,6 +367,12 @@ export default function AnimationPanel({ projectType, level, messages = [] }) {
   }
 
   const isMobileAndWeb = projectType === 'Mobile & Web';
+  const inferredMode = resolveVisualMode(projectType, messages);
+  const visualMode = isMobileAndWeb && ['web', 'mobile'].includes(inferredMode)
+    ? activeTab
+    : inferredMode;
+  const userTurnCount = messages.filter((message) => message.sender === 'user').length;
+  const dynamicLevel = Math.max(level, Math.min(4, userTurnCount + 1));
 
   return (
     <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -444,25 +430,30 @@ export default function AnimationPanel({ projectType, level, messages = [] }) {
 
       <AnimatePresence mode="wait">
         <motion.div
-          key={isMobileAndWeb ? `${projectType}-${activeTab}` : projectType}
+          key={`${projectType}-${visualMode}`}
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.4 }}
           style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
         >
-          {projectType.includes('AI') ? (
-            <AIAgentAnimation level={level} />
-          ) : projectType.includes('Cloud') ? (
-            <CloudInfraAnimation level={level} />
-          ) : projectType.includes('E-commerce') ? (
-            <EcommerceAnimation level={level} />
-          ) : isMobileAndWeb ? (
-            activeTab === 'mobile' ? <MobileAppAnimation level={level} /> : <DefaultWebAnimation level={level} />
-          ) : projectType.includes('Mobile') ? (
-            <MobileAppAnimation level={level} />
+          {visualMode === 'calendar' ? (
+            <BookingSummary
+              slots={meetingSlots}
+              selectedDateKey={selectedMeetingDateKey}
+              selectedSlotId={selectedMeetingSlotId}
+              bookingComplete={bookingComplete}
+            />
+          ) : visualMode === 'ai' ? (
+            <AIAgentAnimation level={dynamicLevel} />
+          ) : visualMode === 'cloud' ? (
+            <CloudInfraAnimation level={dynamicLevel} />
+          ) : visualMode === 'ecommerce' ? (
+            <EcommerceAnimation level={dynamicLevel} />
+          ) : visualMode === 'mobile' ? (
+            <MobileAppAnimation level={dynamicLevel} />
           ) : (
-            <DefaultWebAnimation level={level} />
+            <DefaultWebAnimation level={dynamicLevel} />
           )}
         </motion.div>
       </AnimatePresence>

@@ -3,7 +3,7 @@ export class CalendarBookingService {
     this.endpoint = endpoint;
   }
 
-  async book({ slot, name, email, company = '', projectSummary, timezone, consent, website = '' }) {
+  async book({ slot, name, email, company, phone, projectSummary, timezone, consent, website = '' }) {
     if (!consent) throw new Error('Please confirm consent before booking.');
     const response = await fetch(this.endpoint, {
       method: 'POST',
@@ -12,6 +12,7 @@ export class CalendarBookingService {
         visitorName: name,
         visitorEmail: email,
         company,
+        phone,
         projectSummary,
         startIso: slot?.iso,
         timezone,

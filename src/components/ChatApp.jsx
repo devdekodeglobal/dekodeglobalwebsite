@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Send,
   CheckCircle2,
   Bot,
   Mic,
+  CalendarDays,
   ChevronDown,
   LockKeyhole,
   X,
@@ -48,6 +49,7 @@ import {
   subscribeToContentChat,
   subscribeToVoiceOpen,
 } from "../content/ContentToChatBridge";
+import { toLocalDateKey } from "../utils/calendarPresentation";
 
 function getTimeAwareGreeting(date = new Date()) {
   const hour = date.getHours();
@@ -92,6 +94,9 @@ export default function ChatApp({
     tone: "neutral",
   });
   const [companyPanel, setCompanyPanel] = useState(null);
+  const [meetingSlots, setMeetingSlots] = useState([]);
+  const [selectedMeetingDateKey, setSelectedMeetingDateKey] = useState("");
+  const [selectedMeetingSlotId, setSelectedMeetingSlotId] = useState(null);
   const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const [isVisualPanelExpanded, setIsVisualPanelExpanded] = useState(false);
   const [isCompactLayout, setIsCompactLayout] = useState(
@@ -282,6 +287,42 @@ export default function ChatApp({
     startConversation(option);
   };
 
+  const handleOpenMeetingScheduler = () => {
+    setCompanyPanel(null);
+    setProjectType('Discovery Call');
+    setGatheredTags(['Meeting']);
+    setMeetingSlots([]);
+    setSelectedMeetingDateKey("");
+    setSelectedMeetingSlotId(null);
+    setMessages((current) => [
+      ...current,
+      {
+        id: Date.now(),
+        sender: 'ai',
+        text: 'Choose an available date below. We will guide you through the time and details next.',
+      },
+    ]);
+    setStep('scheduling');
+  };
+
+  const handleMeetingSlotsChange = useCallback((nextSlots) => {
+    setMeetingSlots(nextSlots);
+    setSelectedMeetingDateKey((currentKey) => (
+      nextSlots.some((slot) => toLocalDateKey(slot.iso) === currentKey) ? currentKey : ""
+    ));
+    setSelectedMeetingSlotId((currentId) => (
+      nextSlots.some((slot) => slot.id === currentId) ? currentId : null
+    ));
+  }, []);
+
+  const handleMeetingSlotSelect = useCallback((slot) => {
+    setSelectedMeetingSlotId(slot?.id || null);
+  }, []);
+
+  const handleMeetingDateSelect = useCallback((dateKey) => {
+    setSelectedMeetingDateKey(dateKey || "");
+  }, []);
+
   const handleCompanyPrompt = async (userMessage) => {
     if (!userMessage.trim() || isTyping) return;
 
@@ -304,7 +345,7 @@ export default function ChatApp({
       ...prev,
       { id: Date.now(), sender: "user", text: userMessage },
     ]);
-    if (step === "centered") setStep("company");
+    if (step === "centered" || step === "done") setStep("company");
     companyContextRef.current = rememberCompanyTurn(
       companyContextRef.current,
       fallbackResponse.topic,
@@ -391,7 +432,7 @@ export default function ChatApp({
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
-    if (step === "scheduling" || step === "done" || isTyping) return;
+    if (step === "scheduling" || isTyping) return;
     if (isListening) {
       speechProviderRef.current?.stop();
       setIsListening(false);
@@ -408,6 +449,11 @@ export default function ChatApp({
 
     if (proposalContext) {
       handleProposalPrompt(userMessage);
+      return;
+    }
+
+    if (step === "done") {
+      handleCompanyPrompt(userMessage);
       return;
     }
 
@@ -557,7 +603,7 @@ export default function ChatApp({
       {
         id: Date.now() + 1,
         sender: "ai",
-        text: "Your discovery call is confirmed. Google Calendar has sent the invitation and meeting details to your email.",
+        text: "Your discovery call is confirmed. We have sent the invitation and meeting details to your email.",
       },
     ]);
     setStep("done");
@@ -749,16 +795,29 @@ export default function ChatApp({
     if (step === "gathering_audience") return 1;
     if (step === "gathering_features") return 2;
     if (step === "gathering_timeline") return 3;
+    if (step === "custom_discovery_problem") return 1;
+    if (step === "custom_discovery_platform") return 2;
+    if (step === "custom_discovery_complexity") return 3;
     if (step === "scheduling" || step === "done") return 4;
     return 0;
   };
+
+  const showDiscoveryProgress = [
+    "gathering_audience",
+    "gathering_features",
+    "gathering_timeline",
+    "custom_discovery_problem",
+    "custom_discovery_platform",
+    "custom_discovery_complexity",
+  ].includes(step);
+  const isBookingExperience = projectType === "Discovery Call" && ["scheduling", "done"].includes(step);
 
   const renderAnimationCard = (classNameExt = "") => (
     <motion.div
       initial={{ x: 100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ delay: 0.3, duration: 0.6, type: "spring", damping: 20 }}
-      className={`floating-animation-panel ${classNameExt} ${isVisualPanelExpanded ? "visual-panel-expanded" : "visual-panel-collapsed"}`}
+      className={`floating-animation-panel ${classNameExt} ${isBookingExperience ? "booking-summary-panel" : ""} ${isVisualPanelExpanded ? "visual-panel-expanded" : "visual-panel-collapsed"}`}
     >
       <div className="anim-header">
         <span className="anim-title">
@@ -770,7 +829,7 @@ export default function ChatApp({
               verticalAlign: "text-bottom",
             }}
           />
-          {companyPanel ? "Company Knowledge" : "Building Context"}
+          {companyPanel ? "Company Knowledge" : isBookingExperience ? "Booking Summary" : "Building Context"}
         </span>
         <div className="anim-header-actions">
           <div className="anim-window-dots" aria-hidden="true">
@@ -795,7 +854,7 @@ export default function ChatApp({
       </div>
 
       {/* Requirement Tags & Progress Bar */}
-      <div
+      {!isBookingExperience && <div
         className="anim-body-container"
         style={{
           padding: "1rem",
@@ -818,7 +877,7 @@ export default function ChatApp({
         ) : (
           <>
             {/* Progress Tracker */}
-            <div
+            {showDiscoveryProgress && <div
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -862,7 +921,7 @@ export default function ChatApp({
                   {num}
                 </div>
               ))}
-            </div>
+            </div>}
 
             {/* Tag Chips */}
             <div
@@ -892,7 +951,7 @@ export default function ChatApp({
             </div>
           </>
         )}
-      </div>
+      </div>}
 
       <div
         className="anim-content"
@@ -911,6 +970,10 @@ export default function ChatApp({
               projectType={projectType}
               level={getAnimationLevel()}
               messages={messages}
+              meetingSlots={meetingSlots}
+              selectedMeetingDateKey={selectedMeetingDateKey}
+              selectedMeetingSlotId={selectedMeetingSlotId}
+              bookingComplete={step === "done"}
             />
           )}
         </div>
@@ -925,14 +988,27 @@ export default function ChatApp({
       <a className="brand-logo" href={import.meta.env.BASE_URL || "/"} aria-label="Go to DEKODE home">
         DEKODE
       </a>
-      {onOpenProposalAccess && !proposalContext && (
-        <button
-          type="button"
-          className="action-pill proposal-entry-button client-portal-top-right"
-          onClick={onOpenProposalAccess}
-        >
-          <LockKeyhole size={15} /> Client Portal
-        </button>
+      {!proposalContext && (
+        <div className="top-right-actions">
+          <button
+            type="button"
+            className="action-pill calendar-entry-button"
+            onClick={handleOpenMeetingScheduler}
+            aria-label="Book a meeting"
+            title="Book a meeting"
+          >
+            <CalendarDays size={18} strokeWidth={2.5} />
+          </button>
+          {onOpenProposalAccess && (
+            <button
+              type="button"
+              className="action-pill proposal-entry-button client-portal-top-right"
+              onClick={onOpenProposalAccess}
+            >
+              <LockKeyhole size={15} /> Client Portal
+            </button>
+          )}
+        </div>
       )}
       {proposalContext && (
         <div className="proposal-context-bar">
@@ -1012,7 +1088,7 @@ export default function ChatApp({
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="active-chat-layout"
+            className={`active-chat-layout ${isBookingExperience ? "is-booking-layout" : ""}`}
           >
             <div className="chat-section">
               <div className="chat-scroll-area" ref={scrollRef}>
@@ -1136,6 +1212,11 @@ export default function ChatApp({
                     <MeetingScheduler
                       projectSummary={messages.filter((message) => message.sender === "user").map((message) => message.text).join(" ").slice(0, 2000)}
                       onBooked={handleMeetingBooked}
+                      selectedDateKey={selectedMeetingDateKey}
+                      onDateSelect={handleMeetingDateSelect}
+                      selectedSlotId={selectedMeetingSlotId}
+                      onSlotSelect={handleMeetingSlotSelect}
+                      onSlotsChange={handleMeetingSlotsChange}
                     />
                   </motion.div>
                 )}
@@ -1166,18 +1247,15 @@ export default function ChatApp({
                   >
                     {renderDekodeVoiceButton()}
                     {renderComposerInput({
-                      readOnly: step === "scheduling" || step === "done",
+                      readOnly: step === "scheduling",
                     })}
-                    {renderVoiceTypingButton(
-                      step === "scheduling" || step === "done",
-                    )}
+                    {renderVoiceTypingButton(step === "scheduling")}
                     <button
                       type="submit"
                       className={`chat-submit-btn ${isSending ? "shake-anim" : ""}`}
                       disabled={
                         !inputValue.trim() ||
                         step === "scheduling" ||
-                        step === "done" ||
                         isTyping
                       }
                       aria-label="Send message"

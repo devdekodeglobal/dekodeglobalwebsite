@@ -7,6 +7,12 @@ import {
   Cloud,
   Code2,
   Layers3,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Scale,
+  ShieldCheck,
   Sparkles,
   Workflow,
 } from 'lucide-react';
@@ -216,6 +222,64 @@ function MeetingPanel({ onSelect }) {
   );
 }
 
+function ContactPanel({ onSelect }) {
+  const contactItems = [
+    { label: 'Email', value: knowledge.contact.email, Icon: Mail },
+    { label: 'Australia', value: knowledge.contact.phoneLabels[0], Icon: Phone },
+    { label: 'India', value: knowledge.contact.phoneLabels[1], Icon: Phone },
+    { label: 'WhatsApp', value: knowledge.contact.phoneLabels[0], Icon: MessageCircle },
+  ];
+
+  return (
+    <motion.div variants={stagger} initial="hidden" animate="show" className="knowledge-card-grid contact-panel-grid">
+      {contactItems.map(({ label, value, Icon }) => (
+        <PanelButton key={label} prompt={label === 'Email' ? 'How can I contact DEKODE?' : `Tell me about the DEKODE ${label} contact`} onSelect={onSelect}>
+          <Icon size={18} />
+          <span><strong>{label}</strong><small>{value}</small></span>
+        </PanelButton>
+      ))}
+    </motion.div>
+  );
+}
+
+function LocationPanel({ onSelect }) {
+  return (
+    <motion.div variants={stagger} initial="hidden" animate="show" className="why-panel location-panel">
+      {knowledge.contact.locations.map((location) => (
+        <PanelButton key={location.country} prompt={`Tell me about your ${location.country} location`} onSelect={onSelect}>
+          <MapPin size={18} />
+          <span><strong>{location.country}</strong><small>{location.address}</small></span>
+        </PanelButton>
+      ))}
+      <motion.p variants={itemMotion} className="knowledge-panel-note">{knowledge.contact.operatingModel}</motion.p>
+    </motion.div>
+  );
+}
+
+function LegalPanel({ onSelect, type }) {
+  const document = knowledge.legal[type];
+  const Icon = type === 'privacy' ? ShieldCheck : Scale;
+  return (
+    <motion.div variants={stagger} initial="hidden" animate="show" className="legal-knowledge-panel">
+      <motion.div variants={itemMotion} className="legal-panel-heading">
+        <Icon size={22} />
+        <span><strong>{document.title}</strong><small>{document.summary}</small></span>
+      </motion.div>
+      <div className="legal-topic-list">
+        {document.sections.map((section, index) => (
+          <PanelButton key={section.title} prompt={`Explain DEKODE's ${section.title} ${type === 'privacy' ? 'privacy policy' : 'terms'}`} onSelect={onSelect}>
+            <span className="timeline-index">{String(index + 1).padStart(2, '0')}</span>
+            <span>{section.title}</span>
+          </PanelButton>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+const PrivacyPanel = (props) => <LegalPanel {...props} type="privacy" />;
+const TermsPanel = (props) => <LegalPanel {...props} type="terms" />;
+
 const panels = {
   overview: OverviewPanel,
   services: ServicesPanel,
@@ -226,6 +290,10 @@ const panels = {
   ai: AiPanel,
   recommendations: RecommendationsPanel,
   meeting: MeetingPanel,
+  contact: ContactPanel,
+  location: LocationPanel,
+  privacy: PrivacyPanel,
+  terms: TermsPanel,
 };
 
 export default function CompanyKnowledgePanel({ panel = 'overview', onSelect }) {
