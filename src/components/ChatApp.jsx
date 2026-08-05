@@ -50,6 +50,7 @@ import {
   subscribeToVoiceOpen,
 } from "../content/ContentToChatBridge";
 import { toLocalDateKey } from "../utils/calendarPresentation";
+import { cleanAssistantText } from "../utils/assistantText";
 
 function getTimeAwareGreeting(date = new Date()) {
   const hour = date.getHours();
@@ -241,9 +242,20 @@ export default function ChatApp({
       setIsTyping(false);
       setMessages((prev) => [
         ...prev,
-        { id: Date.now(), sender: "ai", text, ...metadata },
+        { id: Date.now(), sender: "ai", text: cleanAssistantText(text), ...metadata },
       ]);
     }, delay);
+  };
+
+  const respondWithoutProject = (userMessage, responseText) => {
+    setMessages((prev) => [
+      ...prev,
+      { id: Date.now(), sender: "user", text: userMessage },
+      { id: Date.now() + 1, sender: "ai", text: responseText },
+    ]);
+    setStep("triage");
+    setProjectType(null);
+    setCompanyPanel(null);
   };
 
   const startConversation = (initialMessage, preserveHistory = false) => {
@@ -366,7 +378,7 @@ export default function ChatApp({
         {
           id: Date.now(),
           sender: "ai",
-          text: result.answer,
+          text: cleanAssistantText(result.answer),
           companyTopic: fallbackResponse.topic,
           suggestions: fallbackResponse.suggestions,
         },
@@ -377,7 +389,7 @@ export default function ChatApp({
         {
           id: Date.now(),
           sender: "ai",
-          text: fallbackResponse.text,
+          text: cleanAssistantText(fallbackResponse.text),
           companyTopic: fallbackResponse.topic,
           suggestions: fallbackResponse.suggestions,
         },
@@ -408,7 +420,7 @@ export default function ChatApp({
         {
           id: Date.now(),
           sender: "ai",
-          text: result.answer,
+          text: cleanAssistantText(result.answer),
           proposalSource: result.source,
           clarificationQuestion: result.canRequestClarification
             ? userMessage
@@ -452,11 +464,6 @@ export default function ChatApp({
       return;
     }
 
-    if (step === "done") {
-      handleCompanyPrompt(userMessage);
-      return;
-    }
-
     const companyIntent = classifyCompanyIntent(
       userMessage,
       companyContextRef.current,
@@ -471,13 +478,40 @@ export default function ChatApp({
       return;
     }
 
-    if (step === "centered") {
+    const needsIntentRouting = ["centered", "triage", "company", "done"].includes(step);
+
+    if (needsIntentRouting && companyIntent.kind === "out_of_scope") {
+      respondWithoutProject(
+        userMessage,
+        "I’m focused on DEKODE’s company information, services, and helping shape digital project ideas. I can’t reliably answer that topic, but I can explain what DEKODE does or help you explore something you want to build.",
+      );
+      return;
+    }
+
+    if (needsIntentRouting && (companyIntent.kind === "greeting" || companyIntent.kind === "ambiguous")) {
+      respondWithoutProject(
+        userMessage,
+        companyIntent.kind === "greeting"
+          ? "Hello! Are you here to learn about DEKODE and our services, or would you like help shaping something to build?"
+          : "I want to make sure I understand. Are you asking about DEKODE and our services, or do you have an idea you’d like to build?",
+      );
+      return;
+    }
+
+    if (step === "centered" || step === "triage" || step === "done") {
       startConversation(userMessage);
       return;
     }
 
     if (step === "company") {
-      startConversation(userMessage, true);
+      if (companyIntent.kind === "project") {
+        startConversation(userMessage, true);
+      } else {
+        respondWithoutProject(
+          userMessage,
+          "Could you clarify whether you want information about DEKODE or help planning a project?",
+        );
+      }
       return;
     }
 
@@ -775,7 +809,7 @@ export default function ChatApp({
     setMessages((prev) => [
       ...prev,
       { id: turnId, sender: "user", text: userText, source: "voice" },
-      { id: turnId + 1, sender: "ai", text: assistantText, source: "voice" },
+      { id: turnId + 1, sender: "ai", text: cleanAssistantText(assistantText), source: "voice" },
     ]);
     if (step === "centered") setStep("company");
     setCompanyPanel(response);
@@ -811,6 +845,7 @@ export default function ChatApp({
     "custom_discovery_complexity",
   ].includes(step);
   const isBookingExperience = projectType === "Discovery Call" && ["scheduling", "done"].includes(step);
+  const hasSupportingVisual = Boolean(companyPanel || projectType);
 
   const renderAnimationCard = (classNameExt = "") => (
     <motion.div
@@ -1274,7 +1309,7 @@ export default function ChatApp({
               </div>
             </div>
 
-            {renderAnimationCard('responsive-visual-panel')}
+            {hasSupportingVisual && renderAnimationCard('responsive-visual-panel')}
           </motion.div>
         )}
       </AnimatePresence>

@@ -47,6 +47,36 @@ test('answers known knowledge gaps without calling Gemini', async () => {
   }
 });
 
+test('keeps clearly unrelated questions outside Gemini and project discovery', async () => {
+  const originalFetch = global.fetch;
+  const originalKey = process.env.GEMINI_API_KEY;
+  let fetchCalls = 0;
+  global.fetch = async () => {
+    fetchCalls += 1;
+    throw new Error('Gemini should not be called for out-of-scope questions');
+  };
+  process.env.GEMINI_API_KEY = 'test-key';
+
+  try {
+    const response = makeResponse();
+    await handler(
+      {
+        method: 'POST',
+        headers: { 'x-forwarded-for': 'scope-test' },
+        body: { question: 'What is the capital of France?' },
+      },
+      response,
+    );
+    assert.equal(response.statusCode, 200);
+    assert.match(response.body.answer, /focused on DEKODE/i);
+    assert.equal(fetchCalls, 0);
+  } finally {
+    global.fetch = originalFetch;
+    if (originalKey === undefined) delete process.env.GEMINI_API_KEY;
+    else process.env.GEMINI_API_KEY = originalKey;
+  }
+});
+
 test('answers verified location and legal questions without calling Gemini', async () => {
   const originalFetch = global.fetch;
   const originalKey = process.env.GEMINI_API_KEY;

@@ -9,6 +9,8 @@ const backToTop = await readFile(new URL('../src/components/BackToTopButton.jsx'
 const app = await readFile(new URL('../src/App.jsx', import.meta.url), 'utf8');
 const projectOptions = await readFile(new URL('../src/config/projectOptions.js', import.meta.url), 'utf8');
 const animationPanel = await readFile(new URL('../src/components/AnimationPanel.jsx', import.meta.url), 'utf8');
+const interactiveContent = await readFile(new URL('../src/components/InteractiveContentSections.jsx', import.meta.url), 'utf8');
+const interactiveStyles = await readFile(new URL('../src/components/interactive-content.css', import.meta.url), 'utf8');
 const meetingScheduler = await readFile(new URL('../src/components/MeetingScheduler.jsx', import.meta.url), 'utf8');
 const bookingSummary = await readFile(new URL('../src/components/BookingSummary.jsx', import.meta.url), 'utf8');
 
@@ -66,6 +68,16 @@ test('keeps the composer responsive with rotating hints and separate voice typin
   assert.match(indexCss, /\.proposal-entry-button\s*\{[^}]*white-space:\s*nowrap/s);
   assert.match(indexCss, /\.chat-mic-btn\s*\{[^}]*width:\s*44px[^}]*height:\s*44px/s);
   assert.match(indexCss, /\.contact-panel-grid \.knowledge-panel-button span,[\s\S]*overflow-wrap:\s*anywhere/);
+});
+
+test('switches legal documents in one shared panel and tightens story spacing', () => {
+  assert.match(interactiveContent, /activeLegalDocument/);
+  assert.match(interactiveContent, /role="tablist"/);
+  assert.match(interactiveContent, /role="tabpanel"/);
+  assert.doesNotMatch(interactiveContent, /<details/);
+  assert.match(interactiveStyles, /\.company-legal-toggle/);
+  assert.match(interactiveStyles, /padding: clamp\(3rem, 5vw, 4\.75rem\) 0/);
+  assert.match(interactiveStyles, /min-height: 380px/);
 });
 
 test('pauses rotating hints for active voice typing states', () => {
@@ -163,7 +175,8 @@ test('keeps booking controls accessible and motion-sensitive', () => {
 test('keeps consent aligned and resumes normal chat after booking', () => {
   assert.match(indexCss, /\.meeting-consent\s*\{[^}]*align-items:\s*center/);
   assert.match(indexCss, /\.meeting-consent input\s*\{[^}]*margin:\s*0/);
-  assert.match(chatApp, /if \(step === "done"\) \{\s*handleCompanyPrompt\(userMessage\);\s*return;/);
+  assert.match(chatApp, /const needsIntentRouting = \["centered", "triage", "company", "done"\]\.includes\(step\)/);
+  assert.match(chatApp, /step === "centered" \|\| step === "triage" \|\| step === "done"/);
   assert.match(chatApp, /readOnly:\s*step === "scheduling"/);
   assert.doesNotMatch(chatApp, /readOnly:\s*step === "scheduling" \|\| step === "done"/);
   assert.match(chatApp, /if \(step === "centered" \|\| step === "done"\) setStep\("company"\)/);
