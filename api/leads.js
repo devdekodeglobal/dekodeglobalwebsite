@@ -12,6 +12,8 @@ function validate(payload) {
   const errors = [];
   if (!payload.visitorName || sanitize(payload.visitorName, 120).length < 2) errors.push('A valid name is required.');
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(sanitize(payload.visitorEmail, 254))) errors.push('A valid email is required.');
+  if (!payload.company || sanitize(payload.company, 160).length < 2) errors.push('A company is required.');
+  if (!/^\+?[0-9][0-9\s().-]{6,24}$/.test(sanitize(payload.phone, 30))) errors.push('A valid phone number is required.');
   if (!payload.projectSummary || sanitize(payload.projectSummary).length < 4) errors.push('A project summary is required.');
   return errors;
 }
@@ -29,6 +31,7 @@ export default async function handler(request, response) {
     visitorName: sanitize(payload.visitorName, 120),
     visitorEmail: sanitize(payload.visitorEmail, 254),
     company: sanitize(payload.company, 160),
+    phone: sanitize(payload.phone, 30),
     projectSummary: sanitize(payload.projectSummary),
     services: Array.isArray(payload.services) ? payload.services.slice(0, 10).map((item) => sanitize(item, 120)) : [],
     timeline: sanitize(payload.timeline, 160),

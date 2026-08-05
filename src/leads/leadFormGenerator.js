@@ -3,6 +3,7 @@ export function generateLeadForm(profile, selectedSlot = null) {
     name: profile.name || '',
     email: profile.email || '',
     company: profile.company || '',
+    phone: profile.phone || '',
     projectType: profile.projectType || '',
     interestedServices: profile.recommendedServices || [],
     projectSummary: profile.projectSummary || '',
@@ -24,6 +25,8 @@ export function validateLeadForm(form, consent) {
   const errors = {};
   if (!form.name.trim()) errors.name = 'Name is required.';
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = 'Enter a valid email.';
+  if (form.company.trim().length < 2) errors.company = 'Company is required.';
+  if (!/^\+?[0-9][0-9\s().-]{6,24}$/.test(form.phone.trim())) errors.phone = 'Enter a valid phone number.';
   if (!form.projectSummary.trim()) errors.projectSummary = 'Add a short project summary.';
   if (!consent) errors.consent = 'Consent is required before submission.';
   return errors;

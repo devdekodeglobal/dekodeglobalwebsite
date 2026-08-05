@@ -6,6 +6,7 @@ const fields = [
   ['name', 'Name', 'text'],
   ['email', 'Email', 'email'],
   ['company', 'Company', 'text'],
+  ['phone', 'Phone number', 'tel'],
   ['projectType', 'Project type', 'text'],
   ['timeline', 'Timeline', 'text'],
   ['budgetRange', 'Budget range (optional)', 'text'],

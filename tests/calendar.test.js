@@ -8,6 +8,11 @@ import {
   readCalendarConfig,
   removeBusySlots,
 } from '../api/_calendar/googleCalendar.js';
+import {
+  dateFromLocalKey,
+  formatTimeInZone,
+  toLocalDateKey,
+} from '../src/utils/calendarPresentation.js';
 
 const config = {
   calendarId: 'calendar@example.com',
@@ -36,6 +41,9 @@ test('calendar configuration remains server-only and uses safe defaults', async 
   assert.equal(parsed.calendarId, 'private@example.com');
   assert.equal(parsed.meetingMinutes, 30);
   assert.equal(parsed.bufferMinutes, 15);
+  assert.equal(parsed.minimumNoticeHours, 0);
+  assert.equal(parsed.daysToSearch, 31);
+  assert.equal(parsed.maximumSlots, 250);
 
   const [example, scheduler] = await Promise.all([
     readFile(new URL('../.env.example', import.meta.url), 'utf8'),
@@ -44,6 +52,14 @@ test('calendar configuration remains server-only and uses safe defaults', async 
   assert.match(example, /GOOGLE_CLIENT_SECRET=/);
   assert.doesNotMatch(example, /GOOGLE_CLIENT_SECRET=\S+/);
   assert.doesNotMatch(scheduler, /GOOGLE_CLIENT_SECRET|GOOGLE_REFRESH_TOKEN/);
+});
+
+test('calendar presentation groups local dates and formats existing slots without changing them', () => {
+  const iso = '2026-08-03T09:00:00.000Z';
+  assert.equal(toLocalDateKey(iso), toLocalDateKey(new Date(iso)));
+  assert.equal(dateFromLocalKey('2026-08-18').getDate(), 18);
+  assert.match(formatTimeInZone(iso, 'Asia/Kolkata'), /2:30/);
+  assert.equal(iso, '2026-08-03T09:00:00.000Z');
 });
 
 test('candidate slots follow business hours and busy intervals remove buffered conflicts', () => {
@@ -59,6 +75,34 @@ test('candidate slots follow business hours and busy intervals remove buffered c
   }], 15);
   assert.ok(available.every((slot) => slot.start.toISOString() !== '2026-08-03T09:00:00.000Z'));
   assert.ok(available.every((slot) => slot.start.toISOString() !== '2026-08-03T09:45:00.000Z'));
+});
+
+test('same-day booking keeps future slots available when no notice period is configured', () => {
+  const candidates = generateCandidateSlots(config, new Date('2026-08-03T10:00:00.000Z'));
+
+  assert.equal(candidates[0].start.toISOString(), '2026-08-03T10:30:00.000Z');
+  assert.ok(candidates.every((slot) => slot.start.getTime() >= new Date('2026-08-03T10:00:00.000Z').getTime()));
+});
+
+test('Kolkata availability keeps today bookable and starts the next business day at 9 AM', () => {
+  const kolkataConfig = {
+    ...config,
+    timezone: 'Asia/Kolkata',
+    workdayEnd: '17:00',
+    daysToSearch: 2,
+  };
+  const candidates = generateCandidateSlots(kolkataConfig, new Date('2026-08-05T10:00:00.000Z'));
+  const localSlots = candidates.map((slot) => ({
+    date: new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit',
+    }).format(slot.start),
+    time: new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit', hour12: false,
+    }).format(slot.start),
+  }));
+
+  assert.ok(localSlots.some((slot) => slot.date === '2026-08-05'));
+  assert.equal(localSlots.find((slot) => slot.date === '2026-08-06').time, '09:00');
 });
 
 test('availability reads free-busy data and returns visitor-timezone labels', async () => {
@@ -97,6 +141,7 @@ test('booking rechecks availability before creating the event and attendee invit
     visitorName: 'Alex Morgan',
     visitorEmail: 'alex@example.com',
     company: 'Acme',
+    phone: '+61 421 196 363',
     projectSummary: 'Build a customer support platform.',
     startIso: '2026-08-03T09:00:00.000Z',
     visitorTimezone: 'UTC',
@@ -107,6 +152,8 @@ test('booking rechecks availability before creating the event and attendee invit
   const eventCall = calls.find((call) => call.url.includes('/events?'));
   const eventBody = JSON.parse(eventCall.options.body);
   assert.equal(eventBody.attendees[0].email, 'alex@example.com');
+  assert.match(eventBody.description, /Company: Acme/);
+  assert.match(eventBody.description, /Phone: \+61 421 196 363/);
   assert.equal(eventBody.guestsCanInviteOthers, false);
   assert.equal(calls.filter((call) => call.url.includes('freeBusy')).length, 1);
 });

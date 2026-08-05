@@ -54,6 +54,8 @@ import {
   subscribeToContentChat,
   subscribeToVoiceOpen,
 } from "../content/ContentToChatBridge";
+import { toLocalDateKey } from "../utils/calendarPresentation";
+import { cleanAssistantText } from "../utils/assistantText";
 
 function getTimeAwareGreeting(date = new Date()) {
   const hour = date.getHours();
@@ -118,6 +120,7 @@ export default function ChatApp({
   });
   const [companyPanel, setCompanyPanel] = useState(null);
   const [meetingSlots, setMeetingSlots] = useState([]);
+  const [selectedMeetingDateKey, setSelectedMeetingDateKey] = useState("");
   const [selectedMeetingSlotId, setSelectedMeetingSlotId] = useState(null);
   const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const [isVisualPanelExpanded, setIsVisualPanelExpanded] = useState(false);
@@ -263,9 +266,20 @@ export default function ChatApp({
       setIsTyping(false);
       setMessages((prev) => [
         ...prev,
-        { id: Date.now(), sender: "ai", text, ...metadata },
+        { id: Date.now(), sender: "ai", text: cleanAssistantText(text), ...metadata },
       ]);
     }, delay);
+  };
+
+  const respondWithoutProject = (userMessage, responseText) => {
+    setMessages((prev) => [
+      ...prev,
+      { id: Date.now(), sender: "user", text: userMessage },
+      { id: Date.now() + 1, sender: "ai", text: responseText },
+    ]);
+    setStep("triage");
+    setProjectType(null);
+    setCompanyPanel(null);
   };
 
   const startConversation = (initialMessage, preserveHistory = false) => {
@@ -309,18 +323,21 @@ export default function ChatApp({
     startConversation(option);
   };
 
-  const handleOpenMeetingScheduler = () => {
+  const handleOpenMeetingScheduler = (requestedByUser = '') => {
+    const userMessage = typeof requestedByUser === 'string' ? requestedByUser.trim() : '';
     setCompanyPanel(null);
     setProjectType('Discovery Call');
     setGatheredTags(['Meeting']);
     setMeetingSlots([]);
+    setSelectedMeetingDateKey("");
     setSelectedMeetingSlotId(null);
     setMessages((current) => [
       ...current,
+      ...(userMessage ? [{ id: Date.now(), sender: 'user', text: userMessage }] : []),
       {
-        id: Date.now(),
+        id: Date.now() + 1,
         sender: 'ai',
-        text: 'Choose an available time below, then add your details to book a discovery call with DEKODE.',
+        text: 'Here is our live calendar availability. Choose a date and time that works for you.',
       },
     ]);
     setStep('scheduling');
@@ -328,6 +345,9 @@ export default function ChatApp({
 
   const handleMeetingSlotsChange = useCallback((nextSlots) => {
     setMeetingSlots(nextSlots);
+    setSelectedMeetingDateKey((currentKey) => (
+      nextSlots.some((slot) => toLocalDateKey(slot.iso) === currentKey) ? currentKey : ""
+    ));
     setSelectedMeetingSlotId((currentId) => (
       nextSlots.some((slot) => slot.id === currentId) ? currentId : null
     ));
@@ -335,6 +355,10 @@ export default function ChatApp({
 
   const handleMeetingSlotSelect = useCallback((slot) => {
     setSelectedMeetingSlotId(slot?.id || null);
+  }, []);
+
+  const handleMeetingDateSelect = useCallback((dateKey) => {
+    setSelectedMeetingDateKey(dateKey || "");
   }, []);
 
   const handleCompanyPrompt = async (userMessage) => {
@@ -359,7 +383,7 @@ export default function ChatApp({
       ...prev,
       { id: Date.now(), sender: "user", text: userMessage },
     ]);
-    if (step === "centered") setStep("company");
+    if (step === "centered" || step === "done") setStep("company");
     companyContextRef.current = rememberCompanyTurn(
       companyContextRef.current,
       fallbackResponse.topic,
@@ -380,7 +404,7 @@ export default function ChatApp({
         {
           id: Date.now(),
           sender: "ai",
-          text: result.answer,
+          text: cleanAssistantText(result.answer),
           companyTopic: fallbackResponse.topic,
           suggestions: fallbackResponse.suggestions,
         },
@@ -391,7 +415,7 @@ export default function ChatApp({
         {
           id: Date.now(),
           sender: "ai",
-          text: fallbackResponse.text,
+          text: cleanAssistantText(fallbackResponse.text),
           companyTopic: fallbackResponse.topic,
           suggestions: fallbackResponse.suggestions,
         },
@@ -422,7 +446,7 @@ export default function ChatApp({
         {
           id: Date.now(),
           sender: "ai",
-          text: result.answer,
+          text: cleanAssistantText(result.answer),
           proposalSource: result.source,
           clarificationQuestion: result.canRequestClarification
             ? userMessage
@@ -446,7 +470,7 @@ export default function ChatApp({
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
-    if (step === "scheduling" || step === "done" || isTyping) return;
+    if (step === "scheduling" || isTyping) return;
     if (isListening) {
       speechProviderRef.current?.stop();
       setIsListening(false);
@@ -470,6 +494,10 @@ export default function ChatApp({
       userMessage,
       companyContextRef.current,
     );
+    if (companyIntent.kind === "meeting") {
+      handleOpenMeetingScheduler(userMessage);
+      return;
+    }
     const isCompanyInformationQuestion =
       companyIntent.isCompanyRelated ||
       /\b(price|pricing|cost|budget|quote|timeline|deadline|portfolio|case stud(?:y|ies))\b/i.test(
@@ -480,13 +508,40 @@ export default function ChatApp({
       return;
     }
 
-    if (step === "centered") {
+    const needsIntentRouting = ["centered", "triage", "company", "done"].includes(step);
+
+    if (needsIntentRouting && companyIntent.kind === "out_of_scope") {
+      respondWithoutProject(
+        userMessage,
+        "I’m focused on DEKODE’s company information, services, and helping shape digital project ideas. I can’t reliably answer that topic, but I can explain what DEKODE does or help you explore something you want to build.",
+      );
+      return;
+    }
+
+    if (needsIntentRouting && (companyIntent.kind === "greeting" || companyIntent.kind === "ambiguous")) {
+      respondWithoutProject(
+        userMessage,
+        companyIntent.kind === "greeting"
+          ? "Hello! Are you here to learn about DEKODE and our services, or would you like help shaping something to build?"
+          : "I want to make sure I understand. Are you asking about DEKODE and our services, or do you have an idea you’d like to build?",
+      );
+      return;
+    }
+
+    if (step === "centered" || step === "triage" || step === "done") {
       startConversation(userMessage);
       return;
     }
 
     if (step === "company") {
-      startConversation(userMessage, true);
+      if (companyIntent.kind === "project") {
+        startConversation(userMessage, true);
+      } else {
+        respondWithoutProject(
+          userMessage,
+          "Could you clarify whether you want information about DEKODE or help planning a project?",
+        );
+      }
       return;
     }
 
@@ -612,7 +667,7 @@ export default function ChatApp({
       {
         id: Date.now() + 1,
         sender: "ai",
-        text: "Your discovery call is confirmed. Google Calendar has sent the invitation and meeting details to your email.",
+        text: "Your discovery call is confirmed. We have sent the invitation and meeting details to your email.",
       },
     ]);
     setStep("done");
@@ -784,7 +839,7 @@ export default function ChatApp({
     setMessages((prev) => [
       ...prev,
       { id: turnId, sender: "user", text: userText, source: "voice" },
-      { id: turnId + 1, sender: "ai", text: assistantText, source: "voice" },
+      { id: turnId + 1, sender: "ai", text: cleanAssistantText(assistantText), source: "voice" },
     ]);
     if (step === "centered") setStep("company");
     setCompanyPanel(response);
@@ -819,13 +874,15 @@ export default function ChatApp({
     "custom_discovery_platform",
     "custom_discovery_complexity",
   ].includes(step);
+  const isBookingExperience = projectType === "Discovery Call" && ["scheduling", "done"].includes(step);
+  const hasSupportingVisual = Boolean(companyPanel || projectType);
 
   const renderAnimationCard = (classNameExt = "") => (
     <motion.div
       initial={{ x: 100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ delay: 0.3, duration: 0.6, type: "spring", damping: 20 }}
-      className={`floating-animation-panel ${classNameExt} ${isVisualPanelExpanded ? "visual-panel-expanded" : "visual-panel-collapsed"}`}
+      className={`floating-animation-panel ${classNameExt} ${isBookingExperience ? "booking-summary-panel" : ""} ${isVisualPanelExpanded ? "visual-panel-expanded" : "visual-panel-collapsed"}`}
     >
       <div className="anim-header">
         <span className="anim-title">
@@ -837,7 +894,7 @@ export default function ChatApp({
               verticalAlign: "text-bottom",
             }}
           />
-          {companyPanel ? "Company Knowledge" : "Building Context"}
+          {companyPanel ? "Company Knowledge" : isBookingExperience ? "Booking Summary" : "Building Context"}
         </span>
         <div className="anim-header-actions">
           <div className="anim-window-dots" aria-hidden="true">
@@ -862,7 +919,7 @@ export default function ChatApp({
       </div>
 
       {/* Requirement Tags & Progress Bar */}
-      <div
+      {!isBookingExperience && <div
         className="anim-body-container"
         style={{
           padding: "1rem",
@@ -959,7 +1016,7 @@ export default function ChatApp({
             </div>
           </>
         )}
-      </div>
+      </div>}
 
       <div
         className="anim-content"
@@ -979,8 +1036,9 @@ export default function ChatApp({
               level={getAnimationLevel()}
               messages={messages}
               meetingSlots={meetingSlots}
+              selectedMeetingDateKey={selectedMeetingDateKey}
               selectedMeetingSlotId={selectedMeetingSlotId}
-              onMeetingSlotSelect={handleMeetingSlotSelect}
+              bookingComplete={step === "done"}
             />
           )}
         </div>
@@ -1104,7 +1162,7 @@ export default function ChatApp({
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="active-chat-layout"
+            className={`active-chat-layout ${isBookingExperience ? "is-booking-layout" : ""}`}
           >
             <div className="chat-section">
               <div className="chat-scroll-area" ref={scrollRef}>
@@ -1228,6 +1286,8 @@ export default function ChatApp({
                     <MeetingScheduler
                       projectSummary={messages.filter((message) => message.sender === "user").map((message) => message.text).join(" ").slice(0, 2000)}
                       onBooked={handleMeetingBooked}
+                      selectedDateKey={selectedMeetingDateKey}
+                      onDateSelect={handleMeetingDateSelect}
                       selectedSlotId={selectedMeetingSlotId}
                       onSlotSelect={handleMeetingSlotSelect}
                       onSlotsChange={handleMeetingSlotsChange}
@@ -1261,18 +1321,15 @@ export default function ChatApp({
                   >
                     {renderDekodeVoiceButton()}
                     {renderComposerInput({
-                      readOnly: step === "scheduling" || step === "done",
+                      readOnly: step === "scheduling",
                     })}
-                    {renderVoiceTypingButton(
-                      step === "scheduling" || step === "done",
-                    )}
+                    {renderVoiceTypingButton(step === "scheduling")}
                     <button
                       type="submit"
                       className={`chat-submit-btn ${isSending ? "shake-anim" : ""}`}
                       disabled={
                         !inputValue.trim() ||
                         step === "scheduling" ||
-                        step === "done" ||
                         isTyping
                       }
                       aria-label="Send message"
@@ -1291,7 +1348,7 @@ export default function ChatApp({
               </div>
             </div>
 
-            {renderAnimationCard('responsive-visual-panel')}
+            {hasSupportingVisual && renderAnimationCard('responsive-visual-panel')}
           </motion.div>
         )}
       </AnimatePresence>

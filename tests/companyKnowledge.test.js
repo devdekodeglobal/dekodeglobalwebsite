@@ -9,6 +9,7 @@ import {
 import { getPanelForTopic } from '../src/knowledge/visualPanelMapper.js';
 import { loadCompanyKnowledge } from '../src/knowledge/companyKnowledgeLoader.js';
 import { resolveVisualMode } from '../src/utils/visualIntent.js';
+import { cleanAssistantText } from '../src/utils/assistantText.js';
 
 test('classifies representative company questions without capturing general chat', () => {
   const companyQuestions = [
@@ -65,6 +66,33 @@ test('maps each knowledge topic to its intended visual panel', () => {
   assert.equal(getPanelForTopic('location'), 'location');
   assert.equal(getPanelForTopic('privacy'), 'privacy');
   assert.equal(getPanelForTopic('terms'), 'terms');
+});
+
+test('triages first-turn company, project, ambiguous, and out-of-scope messages', () => {
+  const services = classifyCompanyIntent('services');
+  assert.equal(services.kind, 'company');
+  assert.equal(services.topic, 'services');
+
+  assert.equal(classifyCompanyIntent('I need a mobile app').kind, 'project');
+  assert.equal(classifyCompanyIntent('mobile app').kind, 'ambiguous');
+  assert.equal(classifyCompanyIntent('Tell me a joke').kind, 'out_of_scope');
+  assert.equal(classifyCompanyIntent('What is the capital of France?').kind, 'out_of_scope');
+  assert.equal(classifyCompanyIntent('What should I build for my team?').kind, 'project');
+  assert.equal(classifyCompanyIntent('hello').kind, 'greeting');
+});
+
+test('routes explicit meeting requests directly to live calendar availability', () => {
+  assert.equal(classifyCompanyIntent('book a meeting').kind, 'meeting');
+  assert.equal(classifyCompanyIntent('Can I schedule a discovery call?').kind, 'meeting');
+  assert.equal(classifyCompanyIntent('What meeting times are available?').kind, 'meeting');
+  assert.equal(classifyCompanyIntent('Tell me about your services').kind, 'company');
+});
+
+test('removes unsupported markdown decoration from assistant text', () => {
+  assert.equal(
+    cleanAssistantText('## Services\n\n**Build:** practical `software`.'),
+    'Services\n\nBuild: practical software.',
+  );
 });
 
 test('answers verified contact, location, privacy, and terms questions', () => {

@@ -229,6 +229,7 @@ export default function DekodeVoiceSession({ onClose, onSwitchToText, onTurn, on
             name: form.name,
             email: form.email,
             company: form.company,
+            phone: form.phone,
             projectSummary: form.projectSummary,
             timezone: form.timezone,
             consent,
@@ -312,7 +313,7 @@ export default function DekodeVoiceSession({ onClose, onSwitchToText, onTurn, on
           <div className="voice-ended">
             <ShieldCheck size={46} />
             <h3>{submissionResult?.booked ? 'Discovery call booked' : submissionResult?.delivered ? 'Enquiry submitted' : 'Enquiry prepared in development mode'}</h3>
-            <p>{submissionResult?.booked ? 'Google Calendar sent the invitation and meeting details to your email.' : submissionResult?.delivered ? 'The DEKODE team has received your request.' : 'No email or booking was sent. The mock service validated and prepared the request safely.'}</p>
+            <p>{submissionResult?.booked ? 'We have sent the invitation and meeting details to your email.' : submissionResult?.delivered ? 'The DEKODE team has received your request.' : 'No email or booking was sent. The mock service validated and prepared the request safely.'}</p>
             <button type="button" className="voice-primary-btn" onClick={onClose}>Return to chat</button>
           </div>
         ) : state === VOICE_STATES.ENDED ? (

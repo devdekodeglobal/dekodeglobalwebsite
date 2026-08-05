@@ -58,7 +58,7 @@ export default function InteractiveContentSections() {
   const [activeProject, setActiveProject] = useState(content.selectedWork[0].id);
   const [activeStage, setActiveStage] = useState(content.deliveryProcess[0].id);
   const [activeIndustry, setActiveIndustry] = useState(content.industries[0].id);
-  const [openLegalDocument, setOpenLegalDocument] = useState(null);
+  const [activeLegalDocument, setActiveLegalDocument] = useState("privacy");
   const [sessionSummary, setSessionSummary] = useState("");
 
   useEffect(() => subscribeToSessionSummary(setSessionSummary), []);
@@ -272,29 +272,45 @@ export default function InteractiveContentSections() {
             ))}
           </section>
 
-          {[
-            ['privacy', ShieldCheck],
-            ['terms', Scale],
-          ].map(([type, Icon]) => {
-            const document = companyKnowledge.legal[type];
-            return (
-              <details className="company-legal-details" key={type} open={openLegalDocument === type}>
-                <summary onClick={(event) => { event.preventDefault(); setOpenLegalDocument((current) => current === type ? null : type); }}>
-                  <Icon size={18} /><span>{document.title}</span><ArrowUpRight size={15} />
-                </summary>
-                <p>{document.summary}</p>
-                {document.contactEmail && (
-                  <a className="company-legal-contact" href={`mailto:${document.contactEmail}`}>Privacy enquiries: {document.contactEmail}</a>
-                )}
-                {document.sections.map((section) => (
-                  <div key={section.title}>
-                    <h4>{section.title}</h4>
-                    <p>{section.summary}</p>
-                  </div>
-                ))}
-              </details>
-            );
-          })}
+          <section className="company-legal-switcher">
+            <div className="company-legal-toggle" role="tablist" aria-label="DEKODE legal information">
+              {[
+                ['privacy', ShieldCheck],
+                ['terms', Scale],
+              ].map(([type, Icon]) => {
+                const document = companyKnowledge.legal[type];
+                const isActive = activeLegalDocument === type;
+                return (
+                  <button
+                    type="button"
+                    role="tab"
+                    key={type}
+                    className={isActive ? "is-active" : ""}
+                    aria-selected={isActive}
+                    aria-controls="company-legal-content"
+                    onClick={() => setActiveLegalDocument(type)}
+                  >
+                    <Icon size={18} /><span>{document.title}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <article id="company-legal-content" className="company-legal-content" role="tabpanel">
+              <h3>{companyKnowledge.legal[activeLegalDocument].title}</h3>
+              <p>{companyKnowledge.legal[activeLegalDocument].summary}</p>
+              {companyKnowledge.legal[activeLegalDocument].contactEmail && (
+                <a className="company-legal-contact" href={`mailto:${companyKnowledge.legal[activeLegalDocument].contactEmail}`}>
+                  Privacy enquiries: {companyKnowledge.legal[activeLegalDocument].contactEmail}
+                </a>
+              )}
+              {companyKnowledge.legal[activeLegalDocument].sections.map((section) => (
+                <div key={section.title}>
+                  <h4>{section.title}</h4>
+                  <p>{section.summary}</p>
+                </div>
+              ))}
+            </article>
+          </section>
         </div>
       </motion.section>
     </main>
