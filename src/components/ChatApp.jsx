@@ -299,7 +299,8 @@ export default function ChatApp({
     startConversation(option);
   };
 
-  const handleOpenMeetingScheduler = () => {
+  const handleOpenMeetingScheduler = (requestedByUser = '') => {
+    const userMessage = typeof requestedByUser === 'string' ? requestedByUser.trim() : '';
     setCompanyPanel(null);
     setProjectType('Discovery Call');
     setGatheredTags(['Meeting']);
@@ -308,10 +309,11 @@ export default function ChatApp({
     setSelectedMeetingSlotId(null);
     setMessages((current) => [
       ...current,
+      ...(userMessage ? [{ id: Date.now(), sender: 'user', text: userMessage }] : []),
       {
-        id: Date.now(),
+        id: Date.now() + 1,
         sender: 'ai',
-        text: 'Choose an available date below. We will guide you through the time and details next.',
+        text: 'Here is our live calendar availability. Choose a date and time that works for you.',
       },
     ]);
     setStep('scheduling');
@@ -468,6 +470,10 @@ export default function ChatApp({
       userMessage,
       companyContextRef.current,
     );
+    if (companyIntent.kind === "meeting") {
+      handleOpenMeetingScheduler(userMessage);
+      return;
+    }
     const isCompanyInformationQuestion =
       companyIntent.isCompanyRelated ||
       /\b(price|pricing|cost|budget|quote|timeline|deadline|portfolio|case stud(?:y|ies))\b/i.test(

@@ -8,6 +8,11 @@ const OUT_OF_SCOPE_PATTERNS = [
 
 const GREETING_PATTERNS = [/^(hello|hi|hey|thanks|thank you)\b[.!?\s]*$/i];
 
+const MEETING_REQUEST_PATTERNS = [
+  /\b(book|schedule|arrange|set up)\b.{0,24}\b(meeting|call|consultation|discovery call)\b/i,
+  /\b(meeting|call|consultation|discovery call)\b.{0,24}\b(availability|available|slot|time|book|schedule)\b/i,
+];
+
 const PROJECT_REQUEST_PATTERNS = [
   /\b(i|we)\s+(want|need|would like|are looking)\b/i,
   /\b(build|create|develop|design)\s+(me|us|my|our)\b/i,
@@ -36,6 +41,9 @@ export function classifyCompanyIntent(message, context = {}) {
   if (!text) return { isCompanyRelated: false, topic: null, kind: 'ambiguous' };
   if (GREETING_PATTERNS.some((pattern) => pattern.test(text))) {
     return { isCompanyRelated: false, topic: null, kind: 'greeting' };
+  }
+  if (MEETING_REQUEST_PATTERNS.some((pattern) => pattern.test(text))) {
+    return { isCompanyRelated: false, topic: 'meeting', kind: 'meeting' };
   }
   if (OUT_OF_SCOPE_PATTERNS.some((pattern) => pattern.test(text))) {
     return { isCompanyRelated: false, topic: null, kind: 'out_of_scope' };

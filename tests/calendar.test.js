@@ -84,6 +84,27 @@ test('same-day booking keeps future slots available when no notice period is con
   assert.ok(candidates.every((slot) => slot.start.getTime() >= new Date('2026-08-03T10:00:00.000Z').getTime()));
 });
 
+test('Kolkata availability keeps today bookable and starts the next business day at 9 AM', () => {
+  const kolkataConfig = {
+    ...config,
+    timezone: 'Asia/Kolkata',
+    workdayEnd: '17:00',
+    daysToSearch: 2,
+  };
+  const candidates = generateCandidateSlots(kolkataConfig, new Date('2026-08-05T10:00:00.000Z'));
+  const localSlots = candidates.map((slot) => ({
+    date: new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit',
+    }).format(slot.start),
+    time: new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit', hour12: false,
+    }).format(slot.start),
+  }));
+
+  assert.ok(localSlots.some((slot) => slot.date === '2026-08-05'));
+  assert.equal(localSlots.find((slot) => slot.date === '2026-08-06').time, '09:00');
+});
+
 test('availability reads free-busy data and returns visitor-timezone labels', async () => {
   const calls = [];
   const fetchImpl = async (url, options) => {
