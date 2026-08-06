@@ -89,7 +89,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 2.5, ease: 'easeInOut' }}
+            transition={{ duration: 3.5, ease: 'easeInOut' }}
             style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(251, 146, 60, 0.4) 0%, rgba(147, 51, 234, 0.25) 40%, rgba(30, 27, 75, 0.6) 100%)', zIndex: 0 }}
           />
         )}
@@ -99,7 +99,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 2.5, ease: 'easeInOut' }}
+            transition={{ duration: 3.5, ease: 'easeInOut' }}
             style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 10%, rgba(186, 230, 253, 0.5) 0%, rgba(56, 189, 248, 0.15) 55%, transparent 85%)', zIndex: 0 }}
           />
         )}
@@ -109,7 +109,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 2.5, ease: 'easeInOut' }}
+            transition={{ duration: 3.5, ease: 'easeInOut' }}
             style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(225, 29, 72, 0.4) 0%, rgba(147, 51, 234, 0.3) 50%, rgba(30, 27, 75, 0.2) 100%)', zIndex: 0 }}
           />
         )}
@@ -119,7 +119,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 2.5, ease: 'easeInOut' }}
+            transition={{ duration: 3.5, ease: 'easeInOut' }}
             style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(3, 7, 18, 0.95) 0%, rgba(15, 23, 42, 0.9) 60%, rgba(30, 27, 75, 0.8) 100%)', zIndex: 0 }}
           />
         )}
@@ -185,7 +185,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
             }}
             exit={{ opacity: 0 }}
             transition={{ 
-              opacity: { duration: 2.5, ease: 'easeInOut' },
+              opacity: { duration: 3.5, ease: 'easeInOut' },
               y: { duration: 60, repeat: Infinity, ease: 'linear' }
             }}
             style={{ position: 'absolute', inset: -40, zIndex: 1 }}
@@ -218,7 +218,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 2 }}
+            transition={{ duration: 2.8 }}
             style={{ position: 'absolute', inset: 0, zIndex: 1.5 }}
           >
             {sparkles.map(sp => (
@@ -261,9 +261,9 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
           scale: targetState.body.scale,
         }}
         transition={{
-          x: { type: 'tween', duration: 5, ease: 'linear' },
-          y: { type: 'tween', duration: 5, ease: (timeOfDay === 'morning' || timeOfDay === 'evening') ? 'easeIn' : 'easeOut' },
-          scale: { type: 'tween', duration: 5, ease: 'easeInOut' }
+          x: { type: 'tween', duration: 7, ease: 'linear' },
+          y: { type: 'tween', duration: 7, ease: (timeOfDay === 'morning' || timeOfDay === 'evening') ? 'easeIn' : 'easeOut' },
+          scale: { type: 'tween', duration: 7, ease: 'easeInOut' }
         }}
         style={{ zIndex: 2 }}
       >
@@ -272,7 +272,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
           style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           initial={false}
           animate={{ opacity: targetState.sunOpacity }}
-          transition={{ duration: 2, ease: 'easeInOut' }}
+          transition={{ duration: 2.8, ease: 'easeInOut' }}
         >
           <div className="sun-core" />
           <div className="sun-glow-ring" />
@@ -283,7 +283,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
           style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           initial={false}
           animate={{ opacity: targetState.moonOpacity }}
-          transition={{ duration: 2, ease: 'easeInOut' }}
+          transition={{ duration: 2.8, ease: 'easeInOut' }}
         >
           <div className="moon-core">
             <div className="moon-crater crater-1" />
