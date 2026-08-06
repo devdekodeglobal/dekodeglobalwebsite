@@ -57,12 +57,14 @@ import {
 import { toLocalDateKey } from "../utils/calendarPresentation";
 import { cleanAssistantText } from "../utils/assistantText";
 
-function getTimeAwareGreeting(date = new Date()) {
-  const hour = date.getHours();
-  if (hour >= 5 && hour < 12) return "Good morning, ready to shape something new?";
-  if (hour >= 12 && hour < 17) return "Good afternoon, let's warm up a bright idea.";
-  if (hour >= 17 && hour < 21) return "Good evening, let's turn today's spark into a plan.";
-  return "Good night, let's capture the idea before it slips away.";
+function getTimeAwareGreeting(timeStr = "morning") {
+  switch (timeStr) {
+    case "morning": return "Good morning, ready to shape something new?";
+    case "noon": return "Good afternoon, let's warm up a bright idea.";
+    case "evening": return "Good evening, let's turn today's spark into a plan.";
+    case "night": return "Good night, let's capture the idea before it slips away.";
+    default: return "Hello, ready to shape something new?";
+  }
 }
 
 const PROJECT_OPTION_ROWS = [
@@ -95,29 +97,29 @@ export default function ChatApp({
   const TIMES_OF_DAY = useMemo(() => ["morning", "noon", "evening", "night"], []);
   const timeOfDay = TIMES_OF_DAY[timeOfDayIndex];
 
-  // Animate to current time on load, then monitor real time
+  // Demo mode: Animate automatically every 10 seconds for recording
   useEffect(() => {
-    const getCurrentIdx = () => {
-      const hour = new Date().getHours();
-      if (hour >= 5 && hour < 11) return 0;
-      if (hour >= 11 && hour < 17) return 1;
-      if (hour >= 17 && hour < 21) return 2;
-      return 3;
-    };
+    // Start at current time on load (but from previous state for animation)
+    const hour = new Date().getHours();
+    let currentIdx;
+    if (hour >= 5 && hour < 11) currentIdx = 0;
+    else if (hour >= 11 && hour < 17) currentIdx = 1;
+    else if (hour >= 17 && hour < 21) currentIdx = 2;
+    else currentIdx = 3;
 
     // Trigger the initial arrival animation
     const initialTimer = setTimeout(() => {
-      setTimeOfDayIndex(getCurrentIdx());
+      setTimeOfDayIndex(currentIdx);
     }, 500);
 
-    // Check the real time every minute so it naturally changes if they leave the tab open
-    const realTimeChecker = setInterval(() => {
-      setTimeOfDayIndex(getCurrentIdx());
-    }, 60000);
+    // Cycle every 10 seconds for the demo
+    const cycleTimer = setInterval(() => {
+      setTimeOfDayIndex((prev) => (prev + 1) % 4);
+    }, 10000);
 
     return () => {
       clearTimeout(initialTimer);
-      clearInterval(realTimeChecker);
+      clearInterval(cycleTimer);
     };
   }, []);
 
@@ -129,7 +131,7 @@ export default function ChatApp({
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [voiceStatus, setVoiceStatus] = useState("");
   const [voiceTypingState, setVoiceTypingState] = useState("idle");
-  const heroGreeting = useMemo(() => getTimeAwareGreeting(), []);
+  const heroGreeting = useMemo(() => getTimeAwareGreeting(timeOfDay), [timeOfDay]);
 
   // States: 'centered' (hero), 'active' (chatting)
   const [step, setStep] = useState("centered");

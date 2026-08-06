@@ -261,9 +261,9 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
           scale: targetState.body.scale,
         }}
         transition={{
-          x: { type: 'tween', duration: 5, ease: 'linear' },
-          y: { type: 'tween', duration: 5, ease: (timeOfDay === 'morning' || timeOfDay === 'evening') ? 'easeIn' : 'easeOut' },
-          scale: { type: 'tween', duration: 5, ease: 'easeInOut' }
+          x: { type: 'tween', duration: 2.5, ease: 'linear' },
+          y: { type: 'tween', duration: 2.5, ease: (timeOfDay === 'morning' || timeOfDay === 'evening') ? 'easeIn' : 'easeOut' },
+          scale: { type: 'tween', duration: 2.5, ease: 'easeInOut' }
         }}
         style={{ zIndex: 2 }}
       >
