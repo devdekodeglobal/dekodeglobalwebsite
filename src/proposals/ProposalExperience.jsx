@@ -86,7 +86,7 @@ export default function ProposalExperience({ proposal, onExit }) {
         activePath !== 'all' && !element.classList.contains(activePath),
       )
     })
-  }, [activeIndex, activePath, section.navigationLabel])
+  }, [activeIndex, activePath, proposal.sections, section.navigationLabel])
 
   useEffect(() => {
     const tabs = mobileTabsRef.current
@@ -96,7 +96,7 @@ export default function ProposalExperience({ proposal, onExit }) {
 
     const centeredLeft = activeStep.offsetLeft - (tabs.clientWidth - activeStep.clientWidth) / 2
     tabs.scrollTo({ left: Math.max(0, centeredLeft), behavior: 'auto' })
-  }, [activeIndex])
+  }, [activeIndex, proposal.sections])
 
   const handleApprovedContentClick = (event) => {
     const navigationButton = event.target.closest('.sidebar-nav-btn')

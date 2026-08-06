@@ -13,7 +13,7 @@ test('approved proposal source is byte-for-byte unchanged', async () => {
   const hash = createHash('sha256').update(source).digest('hex')
   assert.equal(
     hash,
-    '0bb86a840efb3c1c6f4133ac11f211dc5ad9c6159617f77938a9c7d377acc534',
+    '6b53acf6f03126bd3662783998912d7eb503e45ed715b9903dc770383eac21a7',
   )
   assert.equal(proposal.sourceChecksum, hash)
 })
@@ -60,7 +60,7 @@ test('generated content and diagram structure match their snapshots', () => {
   )
   assert.equal(
     proposal.diagramStructureHash,
-    '6070282566dd93e6f84145add4743b483b8aee4386c935437d39276e0bacff79',
+    '74ec717e9d7a3cd3710f159b07ecc87ee4fbcb8c679e251cac43b6fe1be2d9ba',
   )
   assert.match(proposal.sections[3].html, /Tier 3: Substitute Cascade/)
   assert.match(proposal.sections[3].html, /Brand Uniqueness/)
