@@ -82,21 +82,43 @@ export default function ChatApp({
   const [messages, setMessages] = useState([]);
   const [timeOfDayIndex, setTimeOfDayIndex] = useState(() => {
     const hour = new Date().getHours();
-    if (hour >= 5 && hour < 11) return 0; // morning
-    if (hour >= 11 && hour < 17) return 1; // noon
-    if (hour >= 17 && hour < 21) return 2; // evening
-    return 3; // night
+    let currentIdx;
+    if (hour >= 5 && hour < 11) currentIdx = 0; // morning
+    else if (hour >= 11 && hour < 17) currentIdx = 1; // noon
+    else if (hour >= 17 && hour < 21) currentIdx = 2; // evening
+    else currentIdx = 3; // night
+    
+    // Start at the previous state so we can animate into the current one on load
+    return (currentIdx - 1 + 4) % 4;
   });
 
   const TIMES_OF_DAY = useMemo(() => ["morning", "noon", "evening", "night"], []);
   const timeOfDay = TIMES_OF_DAY[timeOfDayIndex];
 
-  // Automatic time-of-day cycle every 30 seconds
+  // Animate to current time on load, then monitor real time
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeOfDayIndex((prev) => (prev + 1) % 4);
-    }, 30000);
-    return () => clearInterval(timer);
+    const getCurrentIdx = () => {
+      const hour = new Date().getHours();
+      if (hour >= 5 && hour < 11) return 0;
+      if (hour >= 11 && hour < 17) return 1;
+      if (hour >= 17 && hour < 21) return 2;
+      return 3;
+    };
+
+    // Trigger the initial arrival animation
+    const initialTimer = setTimeout(() => {
+      setTimeOfDayIndex(getCurrentIdx());
+    }, 500);
+
+    // Check the real time every minute so it naturally changes if they leave the tab open
+    const realTimeChecker = setInterval(() => {
+      setTimeOfDayIndex(getCurrentIdx());
+    }, 60000);
+
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(realTimeChecker);
+    };
   }, []);
 
   const [inputValue, setInputValue] = useState("");

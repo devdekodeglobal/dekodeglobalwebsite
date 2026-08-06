@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function HeroScenery({ timeOfDay = 'noon' }) {
@@ -6,6 +6,29 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
   const isEvening = timeOfDay === 'evening';
   const isMorning = timeOfDay === 'morning';
   const isAfternoon = timeOfDay === 'noon';
+
+  // Responsive layout state to adjust celestial positions for mobile screens
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia("(max-width: 768px)").matches
+  );
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 768px)");
+    const updateLayoutMode = (event) => setIsMobile(event.matches);
+    // Add event listener (using addEventListener for modern browser support)
+    if (media.addEventListener) {
+      media.addEventListener("change", updateLayoutMode);
+    } else {
+      media.addListener(updateLayoutMode);
+    }
+    return () => {
+      if (media.removeEventListener) {
+        media.removeEventListener("change", updateLayoutMode);
+      } else {
+        media.removeListener(updateLayoutMode);
+      }
+    };
+  }, []);
 
   // Generate static twinkling stars with a subtle parallax-ready grouping
   const stars = useMemo(() => Array.from({ length: 220 }).map((_, i) => ({
@@ -29,25 +52,25 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
   })), []);
 
   // Celestial Positions mapped across the 4 stages
-  // Raised the dawn/dusk positions to ~45/135 degrees so they sit beautifully above the chat UI
+  // Adjust dawn/dusk positions based on device size so they sit beautifully above the chat UI
   const celestialConfig = {
     morning: {
-      body: { x: '25vw', y: '32vh', scale: 1 },
+      body: { x: isMobile ? '15vw' : '25vw', y: isMobile ? '20vh' : '32vh', scale: 1 },
       sunOpacity: 0.9,
       moonOpacity: 0,
     },
     noon: {
-      body: { x: '50vw', y: '12vh', scale: 1.1 },
+      body: { x: '50vw', y: isMobile ? '10vh' : '12vh', scale: 1.1 },
       sunOpacity: 1,
       moonOpacity: 0,
     },
     evening: {
-      body: { x: '75vw', y: '32vh', scale: 1.15 },
+      body: { x: isMobile ? '85vw' : '75vw', y: isMobile ? '20vh' : '32vh', scale: 1.15 },
       sunOpacity: 1,
       moonOpacity: 0,
     },
     night: {
-      body: { x: '50vw', y: '20vh', scale: 1 },
+      body: { x: '50vw', y: isMobile ? '12vh' : '20vh', scale: 1 },
       sunOpacity: 0,
       moonOpacity: 1,
     }
@@ -237,7 +260,11 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
           y: `calc(${targetState.body.y} - 55px)`,
           scale: targetState.body.scale,
         }}
-        transition={{ type: 'spring', damping: 35, stiffness: 20, mass: 1 }}
+        transition={{
+          x: { type: 'tween', duration: 5, ease: 'linear' },
+          y: { type: 'tween', duration: 5, ease: (timeOfDay === 'morning' || timeOfDay === 'evening') ? 'easeIn' : 'easeOut' },
+          scale: { type: 'tween', duration: 5, ease: 'easeInOut' }
+        }}
         style={{ zIndex: 2 }}
       >
         {/* Sun Visuals */}
