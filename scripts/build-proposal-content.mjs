@@ -11,7 +11,7 @@ const projectRoot = resolve(fileURLToPath(new URL('..', import.meta.url)))
 const sourcePath = resolve(projectRoot, 'api/_proposal/source/ProposalCFS.jsx')
 const outputPath = resolve(projectRoot, 'api/_proposal/generatedContent.js')
 const expectedSourceHash =
-  '0bb86a840efb3c1c6f4133ac11f211dc5ad9c6159617f77938a9c7d377acc534'
+  '6b53acf6f03126bd3662783998912d7eb503e45ed715b9903dc770383eac21a7'
 
 const source = await readFile(sourcePath, 'utf8')
 const sourceHash = createHash('sha256').update(source).digest('hex')

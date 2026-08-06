@@ -122,7 +122,7 @@ export function generateAudienceResponse(userMessage, context) {
   return "Got it! Are there any specific features you absolutely must have (like user accounts, payments, or real-time chat)?";
 }
 
-export function generateTimelineResponse(userMessage, context) {
+export function generateTimelineResponse(userMessage, _context) {
   const tone = detectTone(userMessage);
   
   if (tone === 'uncertain') {

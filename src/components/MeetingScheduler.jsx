@@ -42,6 +42,7 @@ export default function MeetingScheduler({
   const [consent, setConsent] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', company: '', phone: '', projectSummary, website: '' });
   const timeSectionRef = useRef(null);
+  const timeRailRef = useRef(null);
   const detailsHeadingRef = useRef(null);
   const reduceMotion = useReducedMotion();
   const timezone = useMemo(() => Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC', []);
@@ -130,6 +131,10 @@ export default function MeetingScheduler({
     const frame = requestAnimationFrame(() => timeSectionRef.current?.focus({ preventScroll: true }));
     return () => cancelAnimationFrame(frame);
   }, [activeSelectedDateKey, selectedSlot]);
+
+  useEffect(() => {
+    timeRailRef.current?.scrollTo({ left: 0, behavior: 'auto' });
+  }, [activeSelectedDateKey]);
 
   useEffect(() => {
     if (!selectedSlot || !detailsHeadingRef.current) return;
@@ -236,7 +241,7 @@ export default function MeetingScheduler({
             transition={{ duration: reduceMotion ? 0 : 0.22 }}
           >
             <div className="meeting-section-heading"><span><strong id="meeting-time-title">Choose an available time</strong></span><em>{selectedDateLabel}</em></div>
-            <div className="meeting-time-rail" role="group" aria-label={`Available times for ${selectedDateLabel}`}>
+            <div ref={timeRailRef} className="meeting-time-rail" role="group" aria-label={`Available times for ${selectedDateLabel}`}>
               {selectedDateSlots.map((slot) => (
                 <button key={slot.id} type="button" className={selectedSlot?.id === slot.id ? 'is-selected' : ''} onClick={() => selectSlot(slot)} aria-pressed={selectedSlot?.id === slot.id}>
                   {formatTimeInZone(slot.iso, timezone)}
