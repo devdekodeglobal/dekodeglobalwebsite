@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
   CalendarDays,
@@ -132,8 +132,8 @@ export default function MeetingScheduler({
     return () => cancelAnimationFrame(frame);
   }, [activeSelectedDateKey, selectedSlot]);
 
-  useEffect(() => {
-    timeRailRef.current?.scrollTo({ left: 0, behavior: 'auto' });
+  useLayoutEffect(() => {
+    if (timeRailRef.current) timeRailRef.current.scrollLeft = 0;
   }, [activeSelectedDateKey]);
 
   useEffect(() => {
@@ -230,7 +230,7 @@ export default function MeetingScheduler({
       <AnimatePresence initial={false}>
         {activeSelectedDateKey && status !== 'loading' && (
           <motion.section
-            key={activeSelectedDateKey}
+            key="meeting-time-section"
             className="meeting-time-section"
             ref={timeSectionRef}
             tabIndex="-1"

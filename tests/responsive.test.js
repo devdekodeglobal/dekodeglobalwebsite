@@ -128,6 +128,9 @@ test('guides booking from date to time, summary, and details', () => {
   assert.match(meetingScheduler, /activeSelectedDateKey && status !== 'loading'/);
   assert.match(meetingScheduler, /selectedDateSlots\.map/);
   assert.match(meetingScheduler, /\.sort\(\(left, right\) => Date\.parse\(left\.iso\) - Date\.parse\(right\.iso\)\)/);
+  assert.match(meetingScheduler, /useLayoutEffect\(\(\) => \{[\s\S]*timeRailRef\.current\.scrollLeft = 0;[\s\S]*\}, \[activeSelectedDateKey\]\)/);
+  assert.match(meetingScheduler, /key="meeting-time-section"/);
+  assert.doesNotMatch(meetingScheduler, /key=\{activeSelectedDateKey\}/);
   assert.match(meetingScheduler, /const firstAvailableDateKey = nextSlots\.map/);
   assert.match(meetingScheduler, /if \(firstAvailableDateKey\) selectDate\(firstAvailableDateKey\)/);
   assert.match(meetingScheduler, /slots\.length > 0 && \(/);
