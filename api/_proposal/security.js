@@ -8,9 +8,9 @@ import {
 
 const PASSWORD_SALT = 'dekode-cfs-access-v1'
 const PASSWORD_HASH =
-  'f423ec88d9d0369cc0fb449151a994f5bbf44945dba0fde9d42ba8a166d8f475'
+  '6b5ef702147306acc5c879041d18373ac55ac548a22a7e6f001277751aaba63e'
 const EXTENDED_PASSWORD_HASH = 
-  'a815bd17bf5b316984c9d96404c9d3d411286de1e7ed7f44e327f181b216850d'
+  '0a91f44db697c62fbc4b95585cf619e3d6545f3e49e57d2fdf5fbc512df58cea'
 const SESSION_TTL_SECONDS = 60 * 60 * 2
 const COOKIE_NAME = 'dekode_proposal_session'
 const attempts = new Map()
