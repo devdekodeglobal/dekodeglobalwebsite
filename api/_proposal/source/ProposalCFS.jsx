@@ -88,7 +88,7 @@ const ProposalCFS = () => {
             Prototype
           </button>
           <button 
-            className={`sidebar-nav-btn ${view === 'logic' ? 'active' : ''}`}
+            className={`sidebar-nav-btn completed-step ${view === 'logic' ? 'active' : ''}`}
             onClick={() => setView('logic')}
           >
             Allocation Logic Flow
