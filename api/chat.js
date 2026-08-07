@@ -3,6 +3,10 @@ import { isLikelyGibberish } from '../src/utils/messageQuality.js';
 import { getKnowledgeGapResponse } from '../src/knowledge/knowledgeGapResponse.js';
 import { classifyCompanyIntent, generateCompanyResponse } from '../src/knowledge/index.js';
 import { cleanAssistantText } from '../src/utils/assistantText.js';
+import {
+  isVertexCloudRunConfigured,
+  requestVertexCloudRun,
+} from './_chat/vertexCloudRun.js';
 
 const MAX_QUESTION_LENGTH = 1_200;
 const MAX_HISTORY_MESSAGES = 6;
@@ -11,6 +15,8 @@ const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 20;
 const RETRYABLE_STATUSES = new Set([408, 429, 500, 502, 503, 504]);
 const rateLimit = new Map();
+
+export const config = { maxDuration: 60 };
 
 const systemInstruction = `You are DEKODE's helpful website assistant. Answer the visitor's question directly, using only the supplied public DEKODE knowledge.
 
@@ -97,16 +103,6 @@ export default async function handler(request, response) {
     });
   }
 
-  const allKeys = [
-    process.env.GEMINI_API_KEY,
-    process.env.GEMINI_API_KEY_2,
-    process.env.GEMINI_API_KEY_3,
-  ].filter(Boolean);
-
-  if (allKeys.length === 0) return response.status(503).json({ ok: false, error: 'The AI assistant is not configured yet.' });
-
-  const apiKey = allKeys[Math.floor(Math.random() * allKeys.length)];
-
   const history = Array.isArray(request.body?.history) ? request.body.history : [];
   const verifiedIntent = classifyCompanyIntent(question);
   if (verifiedIntent.kind === 'out_of_scope') {
@@ -133,6 +129,32 @@ export default async function handler(request, response) {
       sources: matches.map(({ id, label }) => ({ id, label })),
     });
   }
+
+  if (isVertexCloudRunConfigured()) {
+    try {
+      const result = await requestVertexCloudRun(request, { question, history });
+      return response.status(200).json({
+        ok: true,
+        answer: cleanAssistantText(result.answer),
+        sources: result.sources || [],
+        model: result.model,
+        retrievalMode: result.retrievalMode,
+        provider: 'vertex-ai',
+      });
+    } catch (error) {
+      console.error('[DEKODE Chat] Vertex Cloud Run request failed.', error?.message);
+    }
+  }
+
+  const allKeys = [
+    process.env.GEMINI_API_KEY,
+    process.env.GEMINI_API_KEY_2,
+    process.env.GEMINI_API_KEY_3,
+  ].filter(Boolean);
+  if (allKeys.length === 0) {
+    return response.status(503).json({ ok: false, error: 'The AI assistant is temporarily unavailable.' });
+  }
+  const apiKey = allKeys[Math.floor(Math.random() * allKeys.length)];
 
   const primaryModel = process.env.GEMINI_MODEL || 'gemini-3.5-flash';
   const fallbackModel = process.env.GEMINI_FALLBACK_MODEL || 'gemini-3.5-flash-lite';

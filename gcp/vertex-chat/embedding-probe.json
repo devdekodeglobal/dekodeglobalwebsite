@@ -1,0 +1,12 @@
+{
+  "instances": [
+    {
+      "content": "Where are DEKODE offices located?",
+      "task_type": "RETRIEVAL_QUERY"
+    }
+  ],
+  "parameters": {
+    "autoTruncate": false,
+    "outputDimensionality": 768
+  }
+}

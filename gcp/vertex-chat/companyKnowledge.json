@@ -1,0 +1,522 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "repository": "website/DEKODE",
+    "files": [
+      "src/pages/About.jsx",
+      "src/pages/Services.jsx",
+      "src/pages/Home.jsx",
+      "src/components/DeliveryFlow.jsx",
+      "src/pages/FoodManufacture.jsx",
+      "src/pages/PrimarySchool.jsx",
+      "src/pages/Contact.jsx",
+      "src/pages/PrivacyPolicy.jsx",
+      "src/pages/TermsOfService.jsx"
+    ],
+    "generatedAt": "build-time"
+  },
+  "company": {
+    "name": "DEKODE",
+    "about": "DEKODE helps businesses and communities modernise their systems, adopt AI with confidence, and build digital products that teams actually want to use. We handle the complexity so you don’t have to: from strategy and architecture through to build, security, and long-term support.",
+    "mission": "We make technology work for the people who use it.",
+    "origin": "We started DEKODE because we kept seeing the same problem: businesses that knew they needed to evolve but couldn’t find a partner that made the process feel manageable. The big IT firms were too expensive, too impersonal, and spoke a language most teams couldn’t follow. Meanwhile, the technology gap kept growing. We believed there was a better way. Practical technology, delivered simply, at a price that respects your budget. No jargon. No bloated scopes. No disappearing after launch. That belief still drives everything we do.",
+    "vision": "DEKODE is building toward becoming a trusted global technology partner for businesses navigating that shift. Our goal is simple: make digital transformation and AI adoption accessible, affordable, and genuinely useful for the people it’s meant to serve.",
+    "belief": "Progress only counts when it reaches everyone."
+  },
+  "services": [
+    {
+      "id": "ai-strategy",
+      "name": "AI Strategy & Consulting",
+      "summary": "Most businesses know AI matters. Fewer know where to start. We help you cut through the noise, identify the use cases that will actually move the needle, and build a roadmap grounded in your real data, workflows, and goals. Not hype.",
+      "capabilities": [
+        "AI readiness assessment and opportunity mapping",
+        "Use case selection, ROI logic, and prioritisation",
+        "Data and workflow review to determine what's needed to make AI work",
+        "Responsible AI guidance covering privacy, safety, and governance",
+        "Vendor-neutral tool and platform recommendations"
+      ],
+      "audience": "Businesses exploring AI for the first time, or those who’ve tried and need a clearer direction."
+    },
+    {
+      "id": "custom-ai",
+      "name": "Custom AI Development",
+      "summary": "Build AI that fits your business. Not the other way around. Off-the-shelf AI rarely solves the specific problems your team faces every day. We design and develop custom AI solutions, from machine learning models to generative AI features, that plug directly into your operations and deliver measurable results.",
+      "capabilities": [
+        "Custom AI and machine learning development",
+        "Generative AI solutions tailored to your workflows",
+        "Internal copilots, intelligent search, and knowledge systems",
+        "AI-powered support, sales enablement, and operations tools",
+        "From proof-of-concept to production-grade deployment"
+      ],
+      "audience": "Businesses with a specific problem or idea that needs purpose-built AI to solve it."
+    },
+    {
+      "id": "web-mobile",
+      "name": "Web & Mobile Development",
+      "summary": "Build apps and interfaces that people actually want to use. A powerful system means nothing if your team can’t navigate it. We design and develop web apps, mobile apps, dashboards, and internal tools with user experience at the centre, so adoption happens naturally, not by force.",
+      "capabilities": [
+        "Web application development",
+        "iOS and Android mobile apps",
+        "UX/UI design: user journeys, wireframes, prototypes, and design systems",
+        "Dashboards and internal portals for operations, visibility, and decision-making",
+        "Rapid prototyping through to production-ready delivery"
+      ],
+      "audience": "Businesses building a new digital product, or modernising existing tools that teams have outgrown."
+    },
+    {
+      "id": "ecommerce",
+      "name": "AI-Powered E-Commerce Development",
+      "summary": "Smarter shopping experiences that convert and scale. E-commerce is no longer just a storefront. It’s a system of recommendations, personalisation, search intelligence, and automation. We build e-commerce platforms with AI woven in from the ground up, so your customers get better experiences and your operations run leaner.",
+      "capabilities": [
+        "AI-powered e-commerce platform development",
+        "Personalised product recommendations and intelligent search",
+        "Automated inventory, pricing, and fulfilment workflows",
+        "Performance and UX optimisation",
+        "Scalable architecture built for growth"
+      ],
+      "audience": "Retailers and brands launching or upgrading their online presence with AI-driven competitive advantage."
+    },
+    {
+      "id": "integrations",
+      "name": "Integrations & Automation",
+      "summary": "Connect your tools. Automate the repetitive work. Free your team to focus. Most businesses run on a patchwork of systems that don’t talk to each other. We connect your stack, build custom integrations, and automate the manual processes that slow your team down, so information flows cleanly and work gets done faster.",
+      "capabilities": [
+        "Payment gateway integrations",
+        "Chat, text, and email integrations",
+        "Custom API development and third-party connections",
+        "DevOps pipelines and CI/CD setup",
+        "Business process automation across operations, finance, and support"
+      ],
+      "audience": "Businesses drowning in manual workflows, disconnected platforms, or fragile integrations that keep breaking."
+    },
+    {
+      "id": "cloud-it",
+      "name": "Cloud, Managed IT & Security",
+      "summary": "Secure, scalable foundations, with someone watching the systems so you don’t have to. Everything we build runs on infrastructure that’s designed for reliability, cost efficiency, and long-term maintainability. We handle cloud strategy, migration, day-to-day IT management, and security hardening as one connected service. Not separate line items from separate teams.",
+      "capabilities": [
+        "Cloud consulting and migration across AWS, Azure, and Google Cloud Platform",
+        "Infrastructure architecture, monitoring, and incident readiness",
+        "Identity and access management, data protection, and encryption",
+        "Security posture reviews, threat modelling, and risk reduction",
+        "Ongoing managed IT support, patching, and performance optimisation"
+      ],
+      "audience": "Businesses that need their systems to be stable, secure, and professionally managed, without building a full in-house IT team."
+    }
+  ],
+  "solutionAreas": [
+    {
+      "id": "ai-strategy",
+      "name": "AI Strategy & Consulting",
+      "serviceId": "ai-strategy",
+      "summary": "DEKODE helps teams assess AI readiness, identify useful opportunities, prioritise use cases, review data and workflows, and build a responsible, vendor-neutral AI roadmap."
+    },
+    {
+      "id": "generative-ai",
+      "name": "Generative AI",
+      "serviceId": "custom-ai",
+      "summary": "DEKODE builds generative AI solutions tailored to business workflows, including internal copilots, intelligent search, knowledge systems, and AI-powered support and operations tools."
+    },
+    {
+      "id": "agentic-ai",
+      "name": "Agentic AI",
+      "serviceId": "custom-ai",
+      "summary": "DEKODE designs AI agents for defined business workflows, connecting them to approved tools, APIs, and knowledge while accounting for permissions, human oversight, privacy, safety, and governance."
+    },
+    {
+      "id": "predictive-ai",
+      "name": "Predictive AI",
+      "serviceId": "custom-ai",
+      "summary": "DEKODE develops custom machine learning solutions that use relevant business data to support forecasting, prioritisation, and better operational decisions. The right approach depends on the use case and data readiness."
+    },
+    {
+      "id": "analytical-ai",
+      "name": "Analytical AI",
+      "serviceId": "custom-ai",
+      "summary": "DEKODE applies AI and machine learning to business data to surface useful patterns and decision support, delivered through practical workflows, dashboards, or internal tools."
+    },
+    {
+      "id": "mobile-app",
+      "name": "Mobile App",
+      "serviceId": "web-mobile",
+      "summary": "DEKODE designs and develops iOS and Android mobile apps with user journeys, prototypes, accessible interfaces, integrations, security, and production-ready delivery."
+    },
+    {
+      "id": "web-app",
+      "name": "Web App",
+      "serviceId": "web-mobile",
+      "summary": "DEKODE builds web applications, dashboards, and internal portals around real user workflows, from UX and rapid prototyping through secure production delivery."
+    },
+    {
+      "id": "cloud-solutions",
+      "name": "Cloud Solutions",
+      "serviceId": "cloud-it",
+      "summary": "DEKODE provides cloud strategy, architecture, migration, monitoring, security hardening, and ongoing optimisation across AWS, Azure, and Google Cloud Platform."
+    },
+    {
+      "id": "process-automation",
+      "name": "Process Automation",
+      "serviceId": "integrations",
+      "summary": "DEKODE automates repetitive business processes across operations, finance, and support, connecting the required systems so information moves cleanly and teams spend less time on manual work."
+    },
+    {
+      "id": "systems-integration",
+      "name": "Systems Integration",
+      "serviceId": "integrations",
+      "summary": "DEKODE connects business systems through custom APIs and third-party integrations, including payment, chat, text, and email services, with reliable data flows and maintainable delivery."
+    },
+    {
+      "id": "ecommerce",
+      "name": "E-commerce",
+      "serviceId": "ecommerce",
+      "summary": "DEKODE builds scalable e-commerce platforms with intelligent search, personalised recommendations, inventory and fulfilment automation, payment integrations, and performance-focused user experiences."
+    }
+  ],
+  "industries": [
+    "education",
+    "healthcare",
+    "finance",
+    "accounting",
+    "legal",
+    "food and agriculture",
+    "retail"
+  ],
+  "technologies": [
+    "AWS",
+    "Azure",
+    "Google Cloud Platform"
+  ],
+  "capabilities": [
+    "AI readiness assessment and opportunity mapping",
+    "Use case selection, ROI logic, and prioritisation",
+    "Data and workflow review to determine what's needed to make AI work",
+    "Responsible AI guidance covering privacy, safety, and governance",
+    "Vendor-neutral tool and platform recommendations",
+    "Custom AI and machine learning development",
+    "Generative AI solutions tailored to your workflows",
+    "Internal copilots, intelligent search, and knowledge systems",
+    "AI-powered support, sales enablement, and operations tools",
+    "From proof-of-concept to production-grade deployment",
+    "Web application development",
+    "iOS and Android mobile apps",
+    "UX/UI design: user journeys, wireframes, prototypes, and design systems",
+    "Dashboards and internal portals for operations, visibility, and decision-making",
+    "Rapid prototyping through to production-ready delivery",
+    "AI-powered e-commerce platform development",
+    "Personalised product recommendations and intelligent search",
+    "Automated inventory, pricing, and fulfilment workflows",
+    "Performance and UX optimisation",
+    "Scalable architecture built for growth",
+    "Payment gateway integrations",
+    "Chat, text, and email integrations",
+    "Custom API development and third-party connections",
+    "DevOps pipelines and CI/CD setup",
+    "Business process automation across operations, finance, and support",
+    "Cloud consulting and migration across AWS, Azure, and Google Cloud Platform",
+    "Infrastructure architecture, monitoring, and incident readiness",
+    "Identity and access management, data protection, and encryption",
+    "Security posture reviews, threat modelling, and risk reduction",
+    "Ongoing managed IT support, patching, and performance optimisation"
+  ],
+  "whyChooseUs": [
+    {
+      "name": "Simple",
+      "description": "We communicate in plain language, keep scope focused, and prioritise what actually moves your business forward."
+    },
+    {
+      "name": "Transparent",
+      "description": "You'll always know what we're building, what it costs, and how we'll measure success. No surprises."
+    },
+    {
+      "name": "Accountable",
+      "description": "We own the outcome, not just the output. If something isn't working, we fix it."
+    },
+    {
+      "name": "Reliable",
+      "description": "Security and stability aren't afterthoughts. They're built into every system from day one, with ongoing support to keep things running."
+    }
+  ],
+  "values": [
+    {
+      "name": "Practical AI, not hype",
+      "description": "Focused on outcomes your team can actually use"
+    },
+    {
+      "name": "UI that drives adoption",
+      "description": "Interfaces built for clarity, speed, and real workflows"
+    },
+    {
+      "name": "Simple by default",
+      "description": "Clear communication, clean scope, no jargon"
+    },
+    {
+      "name": "Security-first",
+      "description": "Governance and protection embedded from day one"
+    },
+    {
+      "name": "Sustainable foundations",
+      "description": "Maintainable systems and cost-aware infrastructure"
+    },
+    {
+      "name": "Long-term partner mindset",
+      "description": "Build it, run it, improve it"
+    }
+  ],
+  "caseStudies": [
+    {
+      "id": "food-manufacturing",
+      "name": "Food Manufacturing Company",
+      "industry": "Food Manufacturing",
+      "platform": "Microsoft Azure",
+      "challenge": "Followed a traditional paper-based management system that constantly led to operational and management inefficiencies resulting in depleting business profitability and sustainability.",
+      "solution": "Designed and developed digital Production Management System that increased productivity by 20% in Phase 1.",
+      "outcome": "By replacing paper-based information management with an electronic information capture and production management system, the client reduced manual effort and associated costs by 20% in Phase 1 and gained faster operational feedback.",
+      "sourceReference": "DEKODE/src/pages/FoodManufacture.jsx"
+    },
+    {
+      "id": "primary-school",
+      "name": "Primary School",
+      "industry": "Education",
+      "platform": "Amazon Web Services",
+      "challenge": "Followed a manual paper-based management and administration system that constantly led them to lose a lot of useful data and gradually saw in a decline in the safety of the school.",
+      "solution": "Provided a fully automated management software called “AttendMe”.",
+      "outcome": "The automated AttendMe system reduced administrative overhead, improved access to records and compliance reporting, and supported a safer environment for children.",
+      "sourceReference": "DEKODE/src/pages/PrimarySchool.jsx"
+    }
+  ],
+  "developmentProcess": [
+    {
+      "name": "Discover",
+      "description": "Align on goals, users, constraints, workflows, and actionable quick wins."
+    },
+    {
+      "name": "Design",
+      "description": "Define solution architecture, UI/UX flows, delivery plan, and success measures."
+    },
+    {
+      "name": "Build",
+      "description": "Implement, integrate, test, and document logic so it’s production-ready."
+    },
+    {
+      "name": "Secure",
+      "description": "Embed privacy, access control, IT governance, and hardening from day one."
+    },
+    {
+      "name": "Run & Optimise",
+      "description": "Support what we ship, monitor system performance, iterate, and optimise."
+    }
+  ],
+  "contact": {
+    "email": "contactus@dekodeglobal.com",
+    "phone": "+61421196363",
+    "phones": [
+      "+61421196363",
+      "+918882848489"
+    ],
+    "phoneLabels": [
+      "+61 421 196 363",
+      "+91 88828 48489"
+    ],
+    "whatsapp": "61421196363",
+    "locations": [
+      {
+        "country": "Australia",
+        "address": "DEKODE - Little Collins Street, Melbourne, Vic 3000"
+      },
+      {
+        "country": "India",
+        "address": "DEKODE Global LLP - Janak Puri, New Delhi 110058"
+      }
+    ],
+    "operatingModel": "DEKODE operates across Australia and India, delivering remotely and on-site depending on what the project needs. Our team is distributed, responsive, and built to work across time zones."
+  },
+  "legal": {
+    "privacy": {
+      "title": "Privacy Policy",
+      "contactEmail": "pm@dekodeglobal.com",
+      "summary": "At DEKODE Consultancy, we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, and safeguard your data.",
+      "sections": [
+        {
+          "title": "Information We Collect",
+          "summary": "We may collect the following types of information when you interact with our services: Contact Information: Name, email address, phone number, and company details provided through forms or direct communication. Usage Data: Information about how you interact with our website, including IP addresses, browser types, and pages visited, collected via analytics tools. Project Data: Information relevant to the execution and delivery of consulting and development services."
+        },
+        {
+          "title": "How We Use Your Information",
+          "summary": "We use the collected information for the following purposes: To provide, operate, and maintain our services. To communicate with you, including responding to inquiries and providing project updates. To improve our website and services through analyzing user behavior. To comply with legal obligations and enforce our terms."
+        },
+        {
+          "title": "Data Security",
+          "summary": "As a technology consultancy focused on secure foundations, we take data security seriously. We implement robust, industry-standard security measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction. We emphasize \"Security-first\" principles in all our operations."
+        },
+        {
+          "title": "Sharing Your Information",
+          "summary": "We do not sell, trade, or rent your personal identification information to others. We may share generic aggregated demographic information not linked to any personal identification information with our business partners. We may use third-party service providers to help us operate our business, provided they adhere to strict confidentiality agreements."
+        },
+        {
+          "title": "Your Rights",
+          "summary": "Depending on your location, you may have the right to access, correct, or delete your personal data. If you wish to exercise these rights or have any questions about our privacy practices, please contact us using the details below."
+        }
+      ]
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "summary": "Welcome to DEKODE Consultancy. Please read these Terms of Service carefully before using our website or engaging our services.",
+      "sections": [
+        {
+          "title": "Acceptance of Terms",
+          "summary": "By accessing this website, we assume you accept these terms and conditions. Do not continue to use DEKODE Consultancy's website if you do not agree to take all of the terms and conditions stated on this page."
+        },
+        {
+          "title": "Services and Warranties",
+          "summary": "DEKODE Consultancy provides AI consultancy, custom AI development, web and mobile application development, and cloud/IT security services. While we strive for excellence and \"practical delivery, not hype\", all software and services are provided \"as is\" and \"as available\". We do not warrant that our services will completely eliminate all operational risks or precisely guarantee specific ROI outcomes unless explicitly detailed in a separate, formal Statement of Work (SOW) agreement."
+        },
+        {
+          "title": "Intellectual Property",
+          "summary": "Unless otherwise stated, DEKODE Consultancy and/or its licensors own the intellectual property rights for all material on DEKODE Consultancy. All intellectual property rights are reserved. You may access this from DEKODE Consultancy for your own personal use subjected to restrictions set in these terms and conditions."
+        },
+        {
+          "title": "Limitations of Liability",
+          "summary": "In no event shall DEKODE Consultancy, nor any of its officers, directors, and employees, be held liable for anything arising out of or in any way connected with your use of this website, whether such liability is under contract. DEKODE Consultancy shall not be held liable for any indirect, consequential, or special liability arising out of or in any way related to your use of this Website."
+        },
+        {
+          "title": "Revisions and Errata",
+          "summary": "The materials appearing on DEKODE Consultancy's website could include technical, typographical, or photographic errors. DEKODE Consultancy does not warrant that any of the materials on its website are accurate, complete, or current. DEKODE Consultancy may make changes to the materials contained on its website at any time without notice."
+        },
+        {
+          "title": "Governing Law",
+          "summary": "These terms and conditions are governed by and construed in accordance with the laws of Australia and you irrevocably submit to the exclusive jurisdiction of the courts in that State or location."
+        }
+      ]
+    }
+  },
+  "faqs": [
+    {
+      "question": "What does DEKODE do?",
+      "answer": "DEKODE combines AI consultancy, solution development, infrastructure, security, and long-term support to deliver practical systems teams can adopt."
+    },
+    {
+      "question": "Who does DEKODE work with?",
+      "answer": "DEKODE partners with small and medium businesses across education, healthcare, finance, accounting, legal, food and agriculture, retail."
+    },
+    {
+      "question": "How does DEKODE deliver projects?",
+      "answer": "DEKODE follows five stages: Discover, Design, Build, Secure, Run & Optimise."
+    }
+  ],
+  "aliases": {
+    "ai": [
+      "artificial intelligence",
+      "machine learning",
+      "ml",
+      "generative ai",
+      "genai",
+      "llm",
+      "copilot",
+      "agent",
+      "agents"
+    ],
+    "services": [
+      "service",
+      "offer",
+      "offering",
+      "solutions",
+      "build",
+      "capabilities"
+    ],
+    "industries": [
+      "industry",
+      "industries",
+      "sector",
+      "sectors",
+      "clients",
+      "customers",
+      "work with"
+    ],
+    "technologies": [
+      "technology",
+      "technologies",
+      "tech",
+      "tech stack",
+      "stack",
+      "platforms",
+      "tools"
+    ],
+    "process": [
+      "process",
+      "method",
+      "methodology",
+      "workflow",
+      "delivery",
+      "how you work",
+      "approach"
+    ],
+    "why": [
+      "why choose",
+      "different",
+      "difference",
+      "values",
+      "culture",
+      "principles"
+    ],
+    "caseStudies": [
+      "case study",
+      "case studies",
+      "success story",
+      "success stories",
+      "portfolio",
+      "past work",
+      "projects",
+      "clients",
+      "food manufacturing",
+      "primary school",
+      "attendme"
+    ],
+    "company": [
+      "dekode",
+      "company",
+      "business",
+      "who are you",
+      "about you",
+      "what do you do"
+    ],
+    "contact": [
+      "contact",
+      "contact us",
+      "email",
+      "phone",
+      "whatsapp",
+      "get in touch",
+      "reach you"
+    ],
+    "location": [
+      "location",
+      "locations",
+      "located",
+      "address",
+      "office",
+      "offices",
+      "where is",
+      "where are you",
+      "where are you based",
+      "headquarters",
+      "hq"
+    ],
+    "privacy": [
+      "privacy",
+      "privacy policy",
+      "personal data",
+      "data protection",
+      "data security",
+      "my data"
+    ],
+    "terms": [
+      "terms",
+      "terms and conditions",
+      "terms of service",
+      "conditions",
+      "legal",
+      "liability",
+      "intellectual property",
+      "governing law"
+    ]
+  }
+}

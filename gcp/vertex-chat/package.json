@@ -1,0 +1,15 @@
+{
+  "name": "dekode-vertex-chat-milestone",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "index:build": "node build-embedding-index.mjs",
+    "evaluate": "node evaluate.mjs",
+    "test": "node retrieval.test.mjs"
+  }
+}
