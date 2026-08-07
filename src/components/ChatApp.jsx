@@ -59,10 +59,10 @@ import { cleanAssistantText } from "../utils/assistantText";
 
 function getTimeAwareGreeting(date = new Date()) {
   const hour = date.getHours();
-  if (hour >= 5 && hour < 12) return "Good morning, ready to shape something new?";
-  if (hour >= 12 && hour < 17) return "Good afternoon, let's warm up a bright idea.";
-  if (hour >= 17 && hour < 21) return "Good evening, let's turn today's spark into a plan.";
-  return "Good night, let's capture the idea before it slips away.";
+  if (hour >= 5 && hour < 12) return "Starting the day off right. What are we building?";
+  if (hour >= 12 && hour < 17) return "Midday check-in. Ready to keep the momentum going?";
+  if (hour >= 17 && hour < 21) return "Winding down the day. Let's review our progress.";
+  return "Working late? Let's get things done.";
 }
 
 const PROJECT_OPTION_ROWS = [
