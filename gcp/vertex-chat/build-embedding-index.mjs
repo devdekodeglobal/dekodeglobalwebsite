@@ -8,9 +8,13 @@ const DIMENSIONS = Number(process.env.EMBEDDING_DIMENSIONS || 768);
 const BATCH_SIZE = Number(process.env.EMBEDDING_BATCH_SIZE || 5);
 const BATCH_DELAY_MS = Number(process.env.EMBEDDING_BATCH_DELAY_MS || 15_000);
 const ACCESS_TOKEN = process.env.GOOGLE_OAUTH_ACCESS_TOKEN;
+const DEFER_REBUILD = process.env.EMBEDDING_DEFER_REBUILD === 'true';
+const REBUILD_IDS = new Set(String(process.env.EMBEDDING_REBUILD_IDS || '')
+  .split(',')
+  .map((id) => id.trim())
+  .filter(Boolean));
 const RETRY_DELAYS_MS = [5_000, 10_000, 20_000, 30_000, 60_000];
 
-if (!ACCESS_TOKEN) throw new Error('GOOGLE_OAUTH_ACCESS_TOKEN is required.');
 if (!Number.isInteger(BATCH_SIZE) || BATCH_SIZE < 1 || BATCH_SIZE > 5) {
   throw new Error('EMBEDDING_BATCH_SIZE must be between 1 and 5.');
 }
@@ -52,14 +56,38 @@ async function embed(contents) {
   throw new Error('EMBEDDING_RETRY_EXHAUSTED');
 }
 
-const vectors = [];
-for (let offset = 0; offset < documents.length; offset += BATCH_SIZE) {
+let existingVectors = new Map();
+if (REBUILD_IDS.size) {
+  const existingIndex = JSON.parse(await fs.readFile('document-embeddings.json', 'utf8'));
+  existingVectors = new Map(existingIndex.vectors.map((item) => [item.id, item.values]));
+  const unknownIds = [...REBUILD_IDS].filter((id) => !documents.some((document) => document.id === id));
+  if (unknownIds.length) throw new Error(`UNKNOWN_REBUILD_IDS_${unknownIds.join('_')}`);
+}
+
+const documentsToEmbed = REBUILD_IDS.size
+  ? documents.filter((document) => REBUILD_IDS.has(document.id))
+  : documents;
+if (!DEFER_REBUILD && documentsToEmbed.length && !ACCESS_TOKEN) {
+  throw new Error('GOOGLE_OAUTH_ACCESS_TOKEN is required.');
+}
+const rebuiltVectors = new Map();
+for (let offset = 0; !DEFER_REBUILD && offset < documentsToEmbed.length; offset += BATCH_SIZE) {
   if (offset > 0) await new Promise((resolve) => setTimeout(resolve, BATCH_DELAY_MS));
-  const batch = documents.slice(offset, offset + BATCH_SIZE);
+  const batch = documentsToEmbed.slice(offset, offset + BATCH_SIZE);
   const embeddings = await embed(batch.map((document) => `${document.label}\n${document.text}`));
   batch.forEach((document, index) => {
-    vectors.push({ id: document.id, values: embeddings[index] });
+    rebuiltVectors.set(document.id, embeddings[index]);
   });
+}
+
+const vectors = documents
+  .filter((document) => !(DEFER_REBUILD && REBUILD_IDS.has(document.id)))
+  .map((document) => ({
+    id: document.id,
+    values: rebuiltVectors.get(document.id) || existingVectors.get(document.id),
+  }));
+if (vectors.some((item) => !Array.isArray(item.values) || item.values.length !== DIMENSIONS)) {
+  throw new Error('INCREMENTAL_INDEX_INCOMPLETE');
 }
 
 const index = {
@@ -70,6 +98,7 @@ const index = {
   dimensions: DIMENSIONS,
   documentCount: documents.length,
   documentDigest: documentDigest(),
+  pendingDocumentIds: DEFER_REBUILD ? [...REBUILD_IDS] : [],
   vectors,
 };
 
@@ -79,5 +108,6 @@ console.log(JSON.stringify({
   model: index.model,
   dimensions: index.dimensions,
   documents: index.documentCount,
+  pendingDocuments: index.pendingDocumentIds.length,
   digest: index.documentDigest,
 }, null, 2));

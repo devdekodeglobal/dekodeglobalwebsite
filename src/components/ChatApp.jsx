@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback, Suspense } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Canvas } from "@react-three/fiber";
 import {
   Send,
   CheckCircle2,
@@ -10,14 +9,11 @@ import {
   ChevronDown,
   LockKeyhole,
   X,
-  Sun,
-  Moon,
 } from "lucide-react";
 import AnimationPanel from "./AnimationPanel";
 import CompanyKnowledgePanel from "./CompanyKnowledgePanel";
 import ParticleBackground from "./ParticleBackground";
-import TypewriterText from "./TypewriterText";
-import HeroRobotModel from "./HeroRobotModel";
+import TypewriterText, { FormattedText } from "./TypewriterText";
 import HeroScenery from "./HeroScenery";
 import DekodeVoiceEntry from "./voice/DekodeVoiceEntry";
 import DekodeVoiceSession from "./voice/DekodeVoiceSession";
@@ -25,27 +21,12 @@ import MeetingScheduler from "./MeetingScheduler";
 import { voiceConfig } from "../voice/config";
 import { BrowserSpeechToTextProvider } from "../voice/providers/browserSpeechToTextProvider";
 import { placeholderInterval, placeholderMessages } from "./chatComposerConfig";
-import {
-  findProjectOption,
-  PROJECT_OPTIONS,
-} from "../config/projectOptions";
-import {
-  extractDomain,
-  detectTone,
-  extractTag,
-  getTypingDelay,
-  generateAudienceResponse,
-  generateTimelineResponse,
-  isTooVague,
-  detectPlatform,
-  generateCustomPlatformQuestion,
-  generateCustomComplexityQuestion,
-} from "../utils/chatIntelligence";
-import { getIntakeClarification } from "../utils/messageQuality";
+import { PROJECT_OPTIONS } from "../config/projectOptions";
 import {
   classifyCompanyIntent,
   createCompanyConversationContext,
   generateCompanyResponse,
+  generateProjectResponse,
   leaveCompanyConversation,
   rememberCompanyTurn,
 } from "../knowledge";
@@ -135,11 +116,6 @@ export default function ChatApp({
   const [step, setStep] = useState("centered");
   const [projectType, setProjectType] = useState(null);
   const [gatheredTags, setGatheredTags] = useState([]);
-  const [chatContext, setChatContext] = useState({
-    projectType: null,
-    domain: null,
-    tone: "neutral",
-  });
   const [companyPanel, setCompanyPanel] = useState(null);
   const [meetingSlots, setMeetingSlots] = useState([]);
   const [selectedMeetingDateKey, setSelectedMeetingDateKey] = useState("");
@@ -281,18 +257,6 @@ export default function ChatApp({
       );
   }, []);
 
-  const simulateAiTyping = (text, metadata = {}) => {
-    setIsTyping(true);
-    const delay = getTypingDelay(text);
-    setTimeout(() => {
-      setIsTyping(false);
-      setMessages((prev) => [
-        ...prev,
-        { id: Date.now(), sender: "ai", text: cleanAssistantText(text), ...metadata },
-      ]);
-    }, delay);
-  };
-
   const respondWithoutProject = (userMessage, responseText) => {
     setMessages((prev) => [
       ...prev,
@@ -304,41 +268,64 @@ export default function ChatApp({
     setCompanyPanel(null);
   };
 
-  const startConversation = (initialMessage, preserveHistory = false) => {
+  const handleProjectPrompt = async (initialMessage, preserveHistory = true) => {
+    if (!initialMessage.trim() || isTyping) return;
+
+    const fallbackResponse = generateProjectResponse(initialMessage);
     const userEntry = { id: Date.now(), sender: "user", text: initialMessage };
+    const history = preserveHistory
+      ? messages.slice(-6).map((message) => ({
+        role: message.sender === "ai" ? "model" : "user",
+        text: message.text,
+      }))
+      : [];
+
     setMessages((prev) =>
       preserveHistory ? [...prev, userEntry] : [userEntry],
     );
-    setCompanyPanel(null);
+    setCompanyPanel(fallbackResponse);
     companyContextRef.current = leaveCompanyConversation(
       companyContextRef.current,
     );
+    setProjectType(fallbackResponse.projectType);
+    setGatheredTags([fallbackResponse.projectType]);
+    setStep("project");
+    setIsTyping(true);
 
-    const matchedOption = findProjectOption(initialMessage);
-    const finalProjectType = matchedOption?.label || "Custom Project";
-
-    setProjectType(finalProjectType);
-    setGatheredTags([finalProjectType]);
-    setChatContext((prev) => ({ ...prev, projectType: finalProjectType }));
-
-    if (finalProjectType === "Custom Project") {
-      setStep("custom_discovery_problem");
-      if (isTooVague(initialMessage)) {
-        simulateAiTyping(
-          "That sounds interesting! Could you describe it in a bit more detail? What's the core problem you're trying to solve?",
-        );
-      } else {
-        const prefix = initialMessage.split(" ").slice(0, 4).join(" ");
-        simulateAiTyping(
-          `A ${prefix}... that sounds unique! To help us plan the right architecture, what is the core problem this project solves?`,
-        );
-      }
-      return;
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ question: initialMessage, history }),
+      });
+      const result = await response.json();
+      if (!response.ok || !result.answer) throw new Error(result.error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          sender: "ai",
+          text: cleanAssistantText(result.answer),
+          companyTopic: fallbackResponse.topic,
+        },
+      ]);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          sender: "ai",
+          text: cleanAssistantText(fallbackResponse.text),
+          companyTopic: fallbackResponse.topic,
+        },
+      ]);
+    } finally {
+      setIsTyping(false);
     }
+  };
 
-    setStep("gathering_audience");
-
-    simulateAiTyping(matchedOption.openingQuestion);
+  const startConversation = (initialMessage, preserveHistory = false) => {
+    handleProjectPrompt(initialMessage, preserveHistory);
   };
 
   const handleOptionSelect = (option) => {
@@ -531,8 +518,9 @@ export default function ChatApp({
     }
 
     const needsIntentRouting = ["centered", "triage", "company", "done"].includes(step);
+    const rejectsOutOfScope = [...(needsIntentRouting ? [step] : []), "project"].includes(step);
 
-    if (needsIntentRouting && companyIntent.kind === "out_of_scope") {
+    if (rejectsOutOfScope && companyIntent.kind === "out_of_scope") {
       respondWithoutProject(
         userMessage,
         "I’m focused on DEKODE’s company information, services, and helping shape digital project ideas. I can’t reliably answer that topic, but I can explain what DEKODE does or help you explore something you want to build.",
@@ -567,119 +555,13 @@ export default function ChatApp({
       return;
     }
 
-    setCompanyPanel(null);
-    companyContextRef.current = leaveCompanyConversation(
-      companyContextRef.current,
-    );
-    setMessages((prev) => [
-      ...prev,
-      { id: Date.now(), sender: "user", text: userMessage },
-    ]);
-
-    const intakeClarification = getIntakeClarification(step, userMessage);
-    if (intakeClarification) {
-      simulateAiTyping(intakeClarification);
+    if (step === "project") {
+      handleProjectPrompt(userMessage);
       return;
     }
 
-    // Custom Project Flow
-    if (step === "custom_discovery_problem") {
-      setChatContext((prev) => ({ ...prev, coreProblem: userMessage }));
-      setStep("custom_discovery_platform");
-      simulateAiTyping(generateCustomPlatformQuestion(userMessage));
-      setGatheredTags((prev) => [
-        ...prev,
-        extractTag(userMessage, "Problem Defined"),
-      ]);
-      return;
-    } else if (step === "custom_discovery_platform") {
-      const platform = detectPlatform(userMessage);
-      setChatContext((prev) => ({ ...prev, platform }));
-      setStep("custom_discovery_complexity");
-      simulateAiTyping(
-        generateCustomComplexityQuestion(userMessage, {
-          ...chatContext,
-          platform,
-        }),
-      );
-      setGatheredTags((prev) => [
-        ...prev,
-        extractTag(userMessage, "Platform Defined"),
-      ]);
-      return;
-    } else if (step === "custom_discovery_complexity") {
-      setStep("gathering_timeline");
-      simulateAiTyping(
-        "This is taking shape nicely. Last question — do you have a target timeline or launch deadline in mind for this?",
-      );
-      setGatheredTags((prev) => [
-        ...prev,
-        extractTag(userMessage, "Scope Defined"),
-      ]);
-      return;
-    }
-
-    // Standard State machine for gathering requirements
-    if (step === "gathering_audience") {
-      setStep("gathering_features");
-
-      const domain = extractDomain(userMessage);
-      const tone = detectTone(userMessage);
-      const newContext = {
-        ...chatContext,
-        domain: domain || chatContext.domain,
-        tone,
-      };
-      setChatContext(newContext);
-
-      const nextQuestion = generateAudienceResponse(userMessage, newContext);
-      const tagText = extractTag(userMessage, "Audience Defined");
-
-      setGatheredTags((prev) => [...prev, tagText]);
-      simulateAiTyping(nextQuestion);
-    } else if (step === "gathering_features") {
-      setStep("gathering_timeline");
-
-      let nextQuestion =
-        "Perfect. And do you have a specific timeline or deadline in mind for launching this?";
-      let defaultTag = "Core Features";
-      if (projectType === "Agentic AI") {
-        nextQuestion =
-          "Perfect. What's your ideal timeline for getting a prototype of this agent up and running?";
-        defaultTag = "Tools Integrated";
-      } else if (projectType.includes("AI")) {
-        nextQuestion =
-          "Perfect. What's your ideal timeline for validating the first AI pilot or prototype?";
-        defaultTag = "AI Requirements";
-      } else if (
-        projectType === "Process Automation" ||
-        projectType === "Systems Integration"
-      ) {
-        nextQuestion =
-          "Perfect. When would you like the first workflow or integration to be live?";
-        defaultTag = "Systems Defined";
-      } else if (projectType === "Cloud Solutions") {
-        nextQuestion =
-          "Perfect. When would you like to reach the first cloud delivery milestone?";
-        defaultTag = "Cloud Requirements";
-      } else if (projectType.includes("E-commerce")) {
-        nextQuestion = "Perfect. When are you aiming to launch the store?";
-        defaultTag = "Store Features";
-      }
-
-      const tagText = extractTag(userMessage, defaultTag);
-
-      setGatheredTags((prev) => [...prev, tagText]);
-      simulateAiTyping(nextQuestion);
-    } else if (step === "gathering_timeline") {
-      setStep("scheduling");
-
-      const tagText = extractTag(userMessage, "Timeline Set");
-      const nextQuestion = generateTimelineResponse(userMessage, chatContext);
-
-      setGatheredTags((prev) => [...prev, tagText]);
-      simulateAiTyping(nextQuestion);
-    }
+    // Unexpected legacy states are folded back into the dynamic project conversation.
+    handleProjectPrompt(userMessage);
   };
 
   const handleMeetingBooked = (_result, slot) => {
@@ -878,24 +760,10 @@ export default function ChatApp({
 
   const getAnimationLevel = () => {
     if (step === "centered") return 0;
-    if (step === "gathering_audience") return 1;
-    if (step === "gathering_features") return 2;
-    if (step === "gathering_timeline") return 3;
-    if (step === "custom_discovery_problem") return 1;
-    if (step === "custom_discovery_platform") return 2;
-    if (step === "custom_discovery_complexity") return 3;
     if (step === "scheduling" || step === "done") return 4;
     return 0;
   };
 
-  const showDiscoveryProgress = [
-    "gathering_audience",
-    "gathering_features",
-    "gathering_timeline",
-    "custom_discovery_problem",
-    "custom_discovery_platform",
-    "custom_discovery_complexity",
-  ].includes(step);
   const isBookingExperience = projectType === "Discovery Call" && ["scheduling", "done"].includes(step);
   const hasSupportingVisual = Boolean(companyPanel || projectType);
 
@@ -963,53 +831,6 @@ export default function ChatApp({
           </motion.div>
         ) : (
           <>
-            {/* Progress Tracker */}
-            {showDiscoveryProgress && <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                position: "relative",
-              }}
-            >
-              <div
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: 0,
-                  right: 0,
-                  height: "2px",
-                  background: "rgba(255,255,255,0.1)",
-                  zIndex: 0,
-                }}
-              />
-              {[1, 2, 3, 4].map((num) => (
-                <div
-                  key={num}
-                  className="step-dot"
-                  style={{
-                    width: "20px",
-                    height: "20px",
-                    borderRadius: "50%",
-                    background:
-                      getAnimationLevel() >= num
-                        ? "var(--color-brand-blue)"
-                        : "#0f172a",
-                    border: `2px solid ${getAnimationLevel() >= num ? "var(--color-brand-blue)" : "rgba(255,255,255,0.2)"}`,
-                    color: "white",
-                    fontSize: "10px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    zIndex: 1,
-                    transition: "all 0.3s ease",
-                  }}
-                >
-                  {num}
-                </div>
-              ))}
-            </div>}
-
             {/* Tag Chips */}
             <div
               className="tags-container"
@@ -1206,7 +1027,7 @@ export default function ChatApp({
                           idx === messages.length - 1 ? (
                             <TypewriterText text={msg.text} delay={30} />
                           ) : (
-                            msg.text
+                            <FormattedText text={msg.text} />
                           )
                         ) : (
                           msg.text

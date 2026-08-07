@@ -17,6 +17,13 @@ const findSolutionArea = (message) => {
   });
 };
 
+const findPortfolioProject = (message) => {
+  const input = normalise(message);
+  return (knowledge.portfolioProjects || []).find((project) =>
+    input.includes(normalise(project.name)),
+  );
+};
+
 const topicTerms = Object.fromEntries(
   Object.entries(knowledge.aliases).map(([topic, aliases]) => [
     topic,
@@ -39,11 +46,16 @@ export function findTopic(message) {
     return terms.some((term) => term.length > 3 && input.includes(term));
   });
   const solutionArea = findSolutionArea(message);
+  const portfolioProject = findPortfolioProject(message);
+
+  if (portfolioProject) {
+    return { topic: 'caseStudies', service, solutionArea, portfolioProject };
+  }
 
   if ((service || solutionArea) && (!best.topic || best.score <= 1)) {
     return { topic: 'services', service, solutionArea };
   }
-  return { ...best, service, solutionArea };
+  return { ...best, service, solutionArea, portfolioProject };
 }
 
 export function findNamedOffering(message) {
@@ -57,3 +69,4 @@ export function findNamedOffering(message) {
 }
 
 export { findSolutionArea };
+export { findPortfolioProject };

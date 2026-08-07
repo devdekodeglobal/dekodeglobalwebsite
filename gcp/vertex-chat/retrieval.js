@@ -95,6 +95,15 @@ export function buildDocuments() {
     ));
   }
 
+  for (const project of companyKnowledge.portfolioProjects || []) {
+    documents.push(createDocument(
+      `portfolio-${project.id}`,
+      `${project.name} portfolio project`,
+      project.description,
+      [project.name, 'portfolio', 'project example', 'previous work'],
+    ));
+  }
+
   for (const [key, policy] of Object.entries(companyKnowledge.legal || {})) {
     documents.push(createDocument(
       `legal-${key}`,
@@ -163,9 +172,14 @@ export function createHybridRetriever({
         }
         const vectors = new Map((precomputedIndex.vectors || [])
           .map((item) => [item.id, item.values]));
-        const isComplete = documents.every((document) => Array.isArray(vectors.get(document.id)));
-        if (!isComplete || vectors.size !== documents.length) {
-          throw new Error('PRECOMPUTED_INDEX_INCOMPLETE');
+        const missingDocuments = documents.filter((document) => !Array.isArray(vectors.get(document.id)));
+        for (let offset = 0; offset < missingDocuments.length; offset += batchSize) {
+          const batch = missingDocuments.slice(offset, offset + batchSize);
+          const contents = batch.map((document) => `${document.label}\n${document.text}`);
+          const missingVectors = embedMany
+            ? await embedMany(contents, 'RETRIEVAL_DOCUMENT')
+            : await Promise.all(contents.map((content) => embed(content, 'RETRIEVAL_DOCUMENT')));
+          batch.forEach((document, index) => vectors.set(document.id, missingVectors[index]));
         }
         return documents.map((document) => ({ id: document.id, vector: vectors.get(document.id) }));
       }

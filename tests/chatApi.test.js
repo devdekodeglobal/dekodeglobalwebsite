@@ -224,3 +224,70 @@ test('switches to the fallback model after repeated capacity errors', async () =
     else process.env.GEMINI_FALLBACK_MODEL = originalFallbackModel;
   }
 });
+
+test('keeps an explicit website request grounded when AI providers are unavailable', async () => {
+  const originalFetch = global.fetch;
+  const originalEnvironment = new Map([
+    ['VERTEX_CLOUD_RUN_URL', process.env.VERTEX_CLOUD_RUN_URL],
+    ['GEMINI_API_KEY', process.env.GEMINI_API_KEY],
+    ['GEMINI_API_KEY_2', process.env.GEMINI_API_KEY_2],
+    ['GEMINI_API_KEY_3', process.env.GEMINI_API_KEY_3],
+  ]);
+  global.fetch = async () => {
+    throw new Error('No provider should be called');
+  };
+  delete process.env.VERTEX_CLOUD_RUN_URL;
+  delete process.env.GEMINI_API_KEY;
+  delete process.env.GEMINI_API_KEY_2;
+  delete process.env.GEMINI_API_KEY_3;
+
+  try {
+    const response = makeResponse();
+    await handler(
+      {
+        method: 'POST',
+        headers: { 'x-forwarded-for': 'website-fallback-test' },
+        body: { question: 'I wnat to creat a webiste for my business' },
+      },
+      response,
+    );
+    assert.equal(response.statusCode, 200);
+    assert.match(response.body.answer, /website, understood/i);
+    assert.match(response.body.answer, /what should the website help visitors do/i);
+    assert.doesNotMatch(response.body.answer, /mobile app \(iOS\/Android\)|web application, or both/i);
+  } finally {
+    global.fetch = originalFetch;
+    for (const [key, value] of originalEnvironment) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test('answers CHAUFFR directly from verified portfolio knowledge', async () => {
+  const originalFetch = global.fetch;
+  let fetchCalls = 0;
+  global.fetch = async () => {
+    fetchCalls += 1;
+    throw new Error('A verified portfolio answer should not call a model');
+  };
+
+  try {
+    const response = makeResponse();
+    await handler(
+      {
+        method: 'POST',
+        headers: { 'x-forwarded-for': 'chauffr-knowledge-test' },
+        body: { question: 'What did DEKODE build for CHAUFFR?' },
+      },
+      response,
+    );
+    assert.equal(response.statusCode, 200);
+    assert.match(response.body.answer, /Android and iOS devices/i);
+    assert.match(response.body.answer, /integrated web portal/i);
+    assert.equal(response.body.sources[0].id, 'portfolio-chauffr');
+    assert.equal(fetchCalls, 0);
+  } finally {
+    global.fetch = originalFetch;
+  }
+});

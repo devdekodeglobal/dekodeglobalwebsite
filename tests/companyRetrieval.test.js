@@ -51,3 +51,10 @@ test('retrieves verified location and legal documents for Gemini grounding', () 
   assert.ok(termsMatches.some((match) => match.id === 'terms-of-service'));
   assert.match(privacyMatches.find((match) => match.id === 'privacy-policy').text, /pm@dekodeglobal\.com/);
 });
+
+test('retrieves CHAUFFR from the old-site portfolio catalogue', () => {
+  const { matches, context } = formatKnowledgeContext('Tell me about CHAUFFR');
+  assert.equal(matches[0]?.id, 'portfolio-chauffr');
+  assert.match(context, /Android and iOS devices/i);
+  assert.match(context, /integrated web portal/i);
+});

@@ -19,6 +19,13 @@ function findLegalSection(document, message) {
 function responseForTopic(topic, message, detectedService, detectedSolutionArea) {
   const service = detectedService || findNamedOffering(message);
   const solutionArea = detectedSolutionArea || findSolutionArea(message);
+  const portfolioProject = knowledge.portfolioProjects?.find((project) =>
+    message.toLowerCase().includes(project.name.toLowerCase()),
+  );
+
+  if (portfolioProject) {
+    return `${portfolioProject.name} is part of DEKODE's verified portfolio. ${portfolioProject.description}`;
+  }
 
   if (solutionArea) {
     const parentService = knowledge.services.find((item) => item.id === solutionArea.serviceId);

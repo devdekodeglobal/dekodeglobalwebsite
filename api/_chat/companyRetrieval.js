@@ -46,6 +46,16 @@ function makeDocuments() {
         text: `${area.name}: ${area.summary}\nRelated DEKODE service: ${service?.name || 'DEKODE services'}.`,
       };
     }),
+    ...(companyKnowledge.caseStudies || []).map((study) => ({
+      id: `case-${study.id}`,
+      label: `${study.name} case study`,
+      text: `Industry: ${study.industry}. Platform: ${study.platform}. Challenge: ${study.challenge}\nSolution: ${study.solution}\nOutcome: ${study.outcome}`,
+    })),
+    ...(companyKnowledge.portfolioProjects || []).map((project) => ({
+      id: `portfolio-${project.id}`,
+      label: `${project.name} portfolio project`,
+      text: project.description,
+    })),
     {
       id: 'industries',
       label: 'Industries',

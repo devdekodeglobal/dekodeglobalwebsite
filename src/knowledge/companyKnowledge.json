@@ -9,7 +9,10 @@
       "src/components/DeliveryFlow.jsx",
       "src/pages/Contact.jsx",
       "src/pages/PrivacyPolicy.jsx",
-      "src/pages/TermsOfService.jsx"
+      "src/pages/TermsOfService.jsx",
+      "src/pages/FoodManufacture.jsx",
+      "src/pages/PrimarySchool.jsx",
+      "src/components/PortfolioShowcase.jsx"
     ],
     "generatedAt": "build-time"
   },
@@ -257,6 +260,66 @@
     {
       "name": "Long-term partner mindset",
       "description": "Build it, run it, improve it"
+    }
+  ],
+  "caseStudies": [
+    {
+      "id": "food-manufacturing",
+      "name": "Food Manufacturing Company",
+      "industry": "Food Manufacturing",
+      "platform": "Microsoft Azure",
+      "challenge": "Followed a traditional paper-based management system that constantly led to operational and management inefficiencies resulting in depleting business profitability and sustainability.",
+      "solution": "Designed and developed digital Production Management System that increased productivity by 20% in Phase 1.",
+      "outcome": "By eliminating paper-based information management and moving to an Electronic Information Capturing and Production Management System, Beston reduced the manual efforts and associated costs by 20% in Phase 1 . Further, the information database will provide Beston with a rich source of information to find and test areas of operational improvement in future. The electronic system provides instant feedback which enables management to measure the impact and propose improvements along the way.",
+      "sourceReference": "DEKODE/src/pages/FoodManufacture.jsx"
+    },
+    {
+      "id": "primary-school",
+      "name": "Primary School",
+      "industry": "Educational Institution",
+      "platform": "Cloud, Amazon Web Services",
+      "challenge": "Followed a manual paper-based management and administration system that constantly led them to lose a lot of useful data and gradually saw in a decline in the safety of the school.",
+      "solution": "Provided a fully automated management software called “AttendMe”.",
+      "outcome": "By adopting an automated system, Stella Maris noticed a decline in the administrative overheads and eliminated the unnecessary time and energy spent maintaining records on paper. Through their information capturing system, Stella Maris was also able to archive, locate and report compliance to the authorities. This helped release a lot of administrative workload. By working with DEKODE, Stella Maris was able to smoothen their operations, further providing a safer environment for children and helping parents release any of their worries. Stella Maris looks forward to working with DEKODE to maintain its data management systems.",
+      "sourceReference": "DEKODE/src/pages/PrimarySchool.jsx"
+    }
+  ],
+  "portfolioProjects": [
+    {
+      "id": "attendme",
+      "name": "AttendMe",
+      "description": "AttendMe helps you record the movement of all children, staff and visitors as they arrive or leave your premises. This system also records and reports incidents where children require medical care.",
+      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
+    },
+    {
+      "id": "chauffr",
+      "name": "CHAUFFR",
+      "description": "CHAUFFR is a mobile app that helps chauffeurs receive and manage bookings on the go. We designed and developed a mobile app for Android and iOS devices and an integrated web portal.",
+      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
+    },
+    {
+      "id": "smart-loan-helper",
+      "name": "Smart Loan Helper",
+      "description": "Smart Loan Helper unifies various home loan calculators for home buyers looking to buy their first home, investment property or refinance. The app enables buyers to perform, record and access various mortgage calculations, determine borrowing capacity, repayments, stamp duty and much more. We created the iOS and Android version of the app for Smart Money Solutions, an independent mortgage broker in Australia.",
+      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
+    },
+    {
+      "id": "smartbroker",
+      "name": "SmartBroker",
+      "description": "SmartBroker is a Melbourne-based start-up that aims to provide a simple platform for mortgage brokers and their clients to manage their relationships on the go. We designed and delivered a web and iOS SmartBroker app.",
+      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
+    },
+    {
+      "id": "recycled-market",
+      "name": "Recycled Market",
+      "description": "Recycled Market is an online market for products made from recycled products. We designed and developed a browser-independent responsive web portal with integrated CMS.",
+      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
+    },
+    {
+      "id": "estrado",
+      "name": "Estrado",
+      "description": "Estrado is a smart point of sale solution start-up in Melbourne, Australia. The tech start-up aims to relieve retailers of the traditional clunky and unattractive systems that are far from being integrated into the modern digital world. We designed and developed an iPad based Point of Sale system and a web based management console for the retailers.",
+      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
     }
   ],
   "developmentProcess": [

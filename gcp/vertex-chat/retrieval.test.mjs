@@ -75,3 +75,24 @@ test('precomputed document embeddings avoid rebuilding the corpus at runtime', a
   assert.equal(batchCalls, 0);
   assert.equal(matches[0].id, 'company-about');
 });
+
+test('precomputed indexes lazily embed only newly added corpus documents', async () => {
+  const missing = documents.slice(-2);
+  const batchSizes = [];
+  const precomputedIndex = {
+    documentDigest: documentDigest(),
+    vectors: documents.slice(0, -2).map((document) => ({ id: document.id, values: [0, 1] })),
+  };
+  const retrieve = createHybridRetriever({
+    precomputedIndex,
+    embed: async () => [1, 0],
+    embedMany: async (contents) => {
+      batchSizes.push(contents.length);
+      return contents.map(() => [1, 0]);
+    },
+    semanticThreshold: 0,
+  });
+
+  await retrieve(missing[0].label);
+  assert.deepEqual(batchSizes, [2]);
+});

@@ -89,10 +89,10 @@ test('routes explicit meeting requests directly to live calendar availability', 
   assert.equal(classifyCompanyIntent('Tell me about your services').kind, 'company');
 });
 
-test('removes unsupported markdown decoration from assistant text', () => {
+test('keeps safe bold headings while removing unsupported markdown', () => {
   assert.equal(
     cleanAssistantText('## Services\n\n**Build:** practical `software`.'),
-    'Services\n\nBuild: practical software.',
+    '**Services**\n\n**Build:** practical software.',
   );
 });
 
@@ -152,6 +152,24 @@ test('generates evidence-bound responses and suggestions from loaded knowledge',
 
 test('loads the generated knowledge object once', () => {
   assert.strictEqual(loadCompanyKnowledge(), loadCompanyKnowledge());
+});
+
+test('keeps the two approved old-site case studies in the knowledge corpus', () => {
+  const knowledge = loadCompanyKnowledge();
+  assert.deepEqual(
+    knowledge.caseStudies.map((study) => study.id),
+    ['food-manufacturing', 'primary-school'],
+  );
+  assert.doesNotMatch(JSON.stringify(knowledge.caseStudies), /chauffr/i);
+});
+
+test('answers CHAUFFR questions from portfolio knowledge without adding it to case studies', () => {
+  const intent = classifyCompanyIntent('Tell me about CHAUFFR');
+  const response = generateCompanyResponse('Tell me about CHAUFFR', intent);
+  assert.equal(intent.kind, 'company');
+  assert.equal(intent.topic, 'caseStudies');
+  assert.match(response.text, /Android and iOS devices/i);
+  assert.match(response.text, /integrated web portal/i);
 });
 
 test('answers unsupported company facts directly instead of returning an overview', () => {

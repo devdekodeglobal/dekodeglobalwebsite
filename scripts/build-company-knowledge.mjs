@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sourceRoot = resolve(projectRoot, '..', 'Dekode');
 const outputFile = resolve(projectRoot, 'src', 'knowledge', 'companyKnowledge.json');
+const vertexOutputFile = resolve(projectRoot, 'gcp', 'vertex-chat', 'companyKnowledge.json');
 const optional = process.argv.includes('--optional');
 
 const sourceFiles = {
@@ -15,6 +16,9 @@ const sourceFiles = {
   contact: resolve(sourceRoot, 'src', 'pages', 'Contact.jsx'),
   privacy: resolve(sourceRoot, 'src', 'pages', 'PrivacyPolicy.jsx'),
   terms: resolve(sourceRoot, 'src', 'pages', 'TermsOfService.jsx'),
+  foodManufacturing: resolve(sourceRoot, 'src', 'pages', 'FoodManufacture.jsx'),
+  primarySchool: resolve(sourceRoot, 'src', 'pages', 'PrimarySchool.jsx'),
+  portfolio: resolve(sourceRoot, 'src', 'components', 'PortfolioShowcase.jsx'),
 };
 
 const missingSourceFiles = [];
@@ -131,6 +135,39 @@ const extractPrinciples = () => {
   )].map(([, name, description]) => ({ name: clean(name), description: clean(description) }));
 };
 
+const extractCaseStudy = ({ id, sourceKey, outcomeSection, sourceReference }) => {
+  const source = entries[sourceKey];
+  const outcomeBlock = matchRaw(source, outcomeSection, `${id} case-study outcome`);
+  return {
+    id,
+    name: matchOne(source, /<h1[^>]*>([\s\S]*?)<\/h1>/, `${id} name`),
+    industry: matchOne(source, /<h3>Industry<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/, `${id} industry`),
+    platform: matchOne(source, /<h3>Solution Platform<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/, `${id} platform`),
+    challenge: matchOne(source, /<h3>Challenge<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/, `${id} challenge`),
+    solution: matchOne(source, /<h3>Solution<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/, `${id} solution`),
+    outcome: [...outcomeBlock.matchAll(/<p>([\s\S]*?)<\/p>/g)]
+      .map((match) => clean(match[1]))
+      .join(' '),
+    sourceReference,
+  };
+};
+
+const extractPortfolioProjects = () => {
+  const block = matchRaw(entries.portfolio, /const projects = \[([\s\S]*?)\n  \];/, 'portfolio projects');
+  const projects = [...block.matchAll(
+    /\{\s*id:\s*\d+,[\s\S]*?title:\s*'([^']+)'[\s\S]*?paragraphs:\s*\[([\s\S]*?)\]\s*\}/g,
+  )].map(([, name, paragraphs]) => ({
+    id: clean(name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+    name: clean(name),
+    description: [...paragraphs.matchAll(/'([^']+)'/g)]
+      .map((match) => clean(match[1]))
+      .join(' '),
+    sourceReference: 'DEKODE/src/components/PortfolioShowcase.jsx',
+  }));
+  if (projects.length !== 6) throw new Error(`Expected 6 portfolio projects, found ${projects.length}`);
+  return projects;
+};
+
 const extractLegalSections = (source, expectedCount, label) => {
   const sections = [...source.matchAll(
     /<section className="[^"]*"[\s\S]*?<h2[^>]*>([\s\S]*?)<\/h2>([\s\S]*?)<\/section>/g,
@@ -164,6 +201,21 @@ const services = extractServices();
 const developmentProcess = extractProcess();
 const whyChooseUs = extractDifferences();
 const values = extractPrinciples();
+const caseStudies = [
+  extractCaseStudy({
+    id: 'food-manufacturing',
+    sourceKey: 'foodManufacturing',
+    outcomeSection: /<section className="fm-outcomes-section[^"]*">([\s\S]*?)<\/section>/,
+    sourceReference: 'DEKODE/src/pages/FoodManufacture.jsx',
+  }),
+  extractCaseStudy({
+    id: 'primary-school',
+    sourceKey: 'primarySchool',
+    outcomeSection: /<section className="ps-help-section[^"]*">([\s\S]*?)<\/section>/,
+    sourceReference: 'DEKODE/src/pages/PrimarySchool.jsx',
+  }),
+];
+const portfolioProjects = extractPortfolioProjects();
 const solutionAreas = [
   {
     id: 'ai-strategy',
@@ -276,6 +328,8 @@ const knowledge = {
   capabilities: [...new Set(services.flatMap((service) => service.capabilities))],
   whyChooseUs,
   values,
+  caseStudies,
+  portfolioProjects,
   developmentProcess,
   contact: {
     email: entries.contact.match(/mailto:([^"]+)/)?.[1] || null,
@@ -344,5 +398,9 @@ const knowledge = {
 };
 
 await mkdir(dirname(outputFile), { recursive: true });
-await writeFile(outputFile, `${JSON.stringify(knowledge, null, 2)}\n`, 'utf8');
-console.log(`Generated ${outputFile} from ${knowledge.source.files.length} DEKODE source files.`);
+const serializedKnowledge = `${JSON.stringify(knowledge, null, 2)}\n`;
+await Promise.all([
+  writeFile(outputFile, serializedKnowledge, 'utf8'),
+  writeFile(vertexOutputFile, serializedKnowledge, 'utf8'),
+]);
+console.log(`Generated synchronized website and Vertex knowledge from ${knowledge.source.files.length} DEKODE source files.`);

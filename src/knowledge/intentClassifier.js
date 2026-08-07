@@ -1,4 +1,5 @@
 import { findTopic } from './knowledgeIndex.js';
+import { isProjectRequest } from './projectResponseGenerator.js';
 
 const OUT_OF_SCOPE_PATTERNS = [
   /\b(tell|write|make).{0,12}\b(joke|poem|story|code)\b/i,
@@ -11,15 +12,6 @@ const GREETING_PATTERNS = [/^(hello|hi|hey|thanks|thank you)\b[.!?\s]*$/i];
 const MEETING_REQUEST_PATTERNS = [
   /\b(book|schedule|arrange|set up)\b.{0,24}\b(meeting|call|consultation|discovery call)\b/i,
   /\b(meeting|call|consultation|discovery call)\b.{0,24}\b(availability|available|slot|time|book|schedule)\b/i,
-];
-
-const PROJECT_REQUEST_PATTERNS = [
-  /\b(i|we)\s+(want|need|would like|are looking)\b/i,
-  /\b(build|create|develop|design)\s+(me|us|my|our)\b/i,
-  /\bhelp\s+(me|us)\s+(build|create|develop|design)\b/i,
-  /\bmy\s+(app|application|website|platform|project|idea)\b/i,
-  /\bwhat\s+(?:should|could|can)\s+(?:i|we)\s+(?:build|create)\b/i,
-  /\b(project|product|app|website)\s+idea\b/i,
 ];
 
 const CLEAR_EXTERNAL_QUESTION = /^(who|what|when|where|why|how)\b/i;
@@ -49,7 +41,7 @@ export function classifyCompanyIntent(message, context = {}) {
   if (OUT_OF_SCOPE_PATTERNS.some((pattern) => pattern.test(text))) {
     return { isCompanyRelated: false, topic: null, kind: 'out_of_scope' };
   }
-  if (PROJECT_REQUEST_PATTERNS.some((pattern) => pattern.test(text))) {
+  if (isProjectRequest(text)) {
     return { isCompanyRelated: false, topic: null, kind: 'project' };
   }
 
@@ -58,12 +50,13 @@ export function classifyCompanyIntent(message, context = {}) {
   const asksAboutSolution =
     Boolean(match.solutionArea) &&
     /\b(what is|tell me about|do you|can you|offer|provide|help with|explain)\b/i.test(text);
+  const asksAboutPortfolio = Boolean(match.portfolioProject);
   const contextualFollowUp =
     context.isCompanyConversation &&
     (match.score > 0 || /^(what about|how about|and|also|tell me more|why|how|which|do you|can you)\b/i.test(text));
 
   const isShortCompanyTopic = SHORT_COMPANY_TOPICS.test(text);
-  const isCompanyRelated = hasCompanyCue || asksAboutSolution || contextualFollowUp || isShortCompanyTopic;
+  const isCompanyRelated = hasCompanyCue || asksAboutSolution || asksAboutPortfolio || contextualFollowUp || isShortCompanyTopic;
 
   if (!isCompanyRelated && !match.topic && CLEAR_EXTERNAL_QUESTION.test(text)) {
     return { isCompanyRelated: false, topic: null, kind: 'out_of_scope' };
@@ -75,5 +68,6 @@ export function classifyCompanyIntent(message, context = {}) {
     topic: match.topic || (contextualFollowUp ? context.lastTopic : null) || 'company',
     service: match.service,
     solutionArea: match.solutionArea,
+    portfolioProject: match.portfolioProject,
   };
 }

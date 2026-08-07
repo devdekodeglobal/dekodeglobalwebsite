@@ -10,6 +10,7 @@ const PANEL_BY_TOPIC = {
   location: 'location',
   privacy: 'privacy',
   terms: 'terms',
+  caseStudies: 'services',
 };
 
 export function getPanelForTopic(topic) {

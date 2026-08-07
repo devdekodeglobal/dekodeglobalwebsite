@@ -187,8 +187,7 @@ test('keeps consent aligned and resumes normal chat after booking', () => {
   assert.doesNotMatch(chatApp, /Google Calendar has sent the invitation/);
 });
 
-test('shows numbered progress only during staged discovery questions', () => {
-  assert.match(chatApp, /const showDiscoveryProgress = \[/);
-  assert.match(chatApp, /\{showDiscoveryProgress && <div/);
-  assert.doesNotMatch(chatApp, /showDiscoveryProgress[^;]*"scheduling"/s);
+test('removes obsolete numbered progress from dynamic project conversations', () => {
+  assert.doesNotMatch(chatApp, /showDiscoveryProgress/);
+  assert.doesNotMatch(chatApp, /className="step-dot"/);
 });
