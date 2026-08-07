@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import handler from '../api/chat.js';
+import handler, { isGroundedVertexResult } from '../api/chat.js';
 
 function makeResponse() {
   return {
@@ -262,6 +262,12 @@ test('keeps an explicit website request grounded when AI providers are unavailab
       else process.env[key] = value;
     }
   }
+});
+
+test('rejects an ungrounded Vertex response for an explicit website request', async () => {
+  assert.equal(isGroundedVertexResult({ sources: [] }, 'project'), false);
+  assert.equal(isGroundedVertexResult({ sources: [{ id: 'service-web-mobile' }] }, 'project'), true);
+  assert.equal(isGroundedVertexResult({ sources: [] }, 'company'), true);
 });
 
 test('answers CHAUFFR directly from verified portfolio knowledge', async () => {

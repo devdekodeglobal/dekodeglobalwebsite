@@ -29,6 +29,10 @@ const VERIFIED_TOPIC_SOURCES = {
 
 export const config = { maxDuration: 60 };
 
+export function isGroundedVertexResult(result, intentKind) {
+  return intentKind !== 'project' || Boolean(result?.sources?.length);
+}
+
 const systemInstruction = `You are DEKODE's intelligent website consultant. Use only the supplied public DEKODE knowledge for claims about DEKODE, but reason carefully about the visitor's own idea or problem.
 
 First infer what the visitor means, allowing for ordinary misspellings and informal wording. Preserve every explicit fact they already gave you. If they say website, web app, mobile app, AI solution, automation, or another clear format, never ask them to choose that format again.
@@ -173,6 +177,15 @@ export default async function handler(request, response) {
   if (isVertexCloudRunConfigured()) {
     try {
       const result = await requestVertexCloudRun(request, { question, history });
+      if (!isGroundedVertexResult(result, verifiedIntent.kind)) {
+        console.warn('[DEKODE Chat] Vertex returned no grounded project sources; using verified project fallback.');
+        return response.status(200).json({
+          ok: true,
+          answer: projectFallback.text,
+          sources: matches.map(({ id, label }) => ({ id, label })),
+          provider: 'verified-fallback',
+        });
+      }
       return response.status(200).json({
         ok: true,
         answer: cleanAssistantText(result.answer),
