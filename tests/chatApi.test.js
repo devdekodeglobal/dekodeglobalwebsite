@@ -100,6 +100,9 @@ test('answers verified location and legal questions without calling Gemini', asy
     assert.equal(locationResponse.statusCode, 200);
     assert.match(locationResponse.body.answer, /Little Collins Street/);
     assert.match(locationResponse.body.answer, /Janak Puri/);
+    assert.deepEqual(locationResponse.body.sources, [
+      { id: 'locations', label: 'DEKODE locations' },
+    ]);
 
     const legalResponse = makeResponse();
     await handler(
@@ -112,6 +115,9 @@ test('answers verified location and legal questions without calling Gemini', asy
     );
     assert.equal(legalResponse.statusCode, 200);
     assert.match(legalResponse.body.answer, /^Governing Law/m);
+    assert.deepEqual(legalResponse.body.sources, [
+      { id: 'terms-of-service', label: 'Terms of Service' },
+    ]);
     assert.equal(fetchCalls, 0);
   } finally {
     global.fetch = originalFetch;

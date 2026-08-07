@@ -15,6 +15,12 @@ const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 20;
 const RETRYABLE_STATUSES = new Set([408, 429, 500, 502, 503, 504]);
 const rateLimit = new Map();
+const VERIFIED_TOPIC_SOURCES = {
+  contact: [{ id: 'contact', label: 'Contact' }],
+  location: [{ id: 'locations', label: 'DEKODE locations' }],
+  privacy: [{ id: 'privacy-policy', label: 'Privacy Policy' }],
+  terms: [{ id: 'terms-of-service', label: 'Terms of Service' }],
+};
 
 export const config = { maxDuration: 60 };
 
@@ -126,7 +132,7 @@ export default async function handler(request, response) {
     return response.status(200).json({
       ok: true,
       answer: generateCompanyResponse(question, verifiedIntent).text,
-      sources: matches.map(({ id, label }) => ({ id, label })),
+      sources: VERIFIED_TOPIC_SOURCES[verifiedIntent.topic],
     });
   }
 
