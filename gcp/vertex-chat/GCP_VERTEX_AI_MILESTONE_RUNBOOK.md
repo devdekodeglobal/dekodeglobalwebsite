@@ -1111,3 +1111,23 @@ the normal 60-second request timeout.
 The first CLI preview build was blocked by Vercel because upstream `HEAD` used a
 teammate email not linked to the Vercel Git account. The integration commit uses
 the repository's configured Yuvraj Git identity before the final redeploy.
+
+### 13.7 Public Preview Evidence
+
+Final public Preview:
+`https://dekodeglobalwebsite-7m7efj4tl-yuuvi.vercel.app`
+
+Vercel deployment: `dpl_CwP9Pt5W4Qs7bNagMy4G9vEWkKRc` (READY)
+
+The final live check asked:
+`How do you take a project from idea to ongoing support?`
+
+The response identified `provider: vertex-ai`, `model: gemini-2.5-flash`, and
+`retrievalMode: hybrid`. It answered with DEKODE's five stages and cited the
+process overview, delivery FAQ, and relevant stage documents. A narrow intent
+rule was added after the first preview revealed that natural "How do you..."
+delivery phrasing could otherwise be mistaken for an external question.
+
+Only focused demo checks were run after deployment to conserve free-trial
+credits. The historical full-suite result remains 33/34; it was not rerun and
+must not be presented as a newly measured 34/34.

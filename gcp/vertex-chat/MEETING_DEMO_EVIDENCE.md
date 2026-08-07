@@ -17,7 +17,8 @@
 | Lexical baseline, full 34 cases | 29/34 (85.3%) |
 | Hybrid endpoint, full 34 cases | 33/34 (97.1%) |
 | Previously failing delivery case after corpus fix | PASS |
-| Local unit tests | 5/5 PASS |
+| Local Vertex retrieval tests | 6/6 PASS |
+| Focused website chat and knowledge tests | 31/31 PASS |
 | Authenticated health | HTTP 200 |
 | Unauthenticated health | HTTP 403 |
 
@@ -52,7 +53,19 @@ for release gates or meaningful retrieval changes.
 
 ## Important Boundary
 
-The Cloud Run service is a private backend endpoint, not a public presentation
-URL. The current website chat is not yet wired to this service. A production
-integration should call it through an authenticated server-side adapter, never
-from browser code with long-lived credentials.
+Cloud Run remains a private backend endpoint. The public Vercel Preview calls it
+through short-lived Vercel OIDC and GCP Workload Identity Federation credentials;
+the browser never receives Google credentials or a direct Cloud Run token.
+
+Public meeting preview:
+`https://dekodeglobalwebsite-7m7efj4tl-yuuvi.vercel.app`
+
+Final live evidence on 2026-08-07:
+
+- Homepage returned HTTP 200.
+- A natural first-turn delivery question returned `provider: vertex-ai`.
+- The response used `gemini-2.5-flash` with `retrievalMode: hybrid`.
+- It retrieved `process-overview`, `faq-3`, and the relevant delivery stages.
+- A contextual follow-up correctly explained post-launch Run & Optimise support.
+- An explicit unrelated political question was handled outside Vertex with no
+  DEKODE sources.
