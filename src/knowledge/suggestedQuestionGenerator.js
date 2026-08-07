@@ -6,6 +6,7 @@ const questions = {
   technologies: ['Learn about AI', 'Our Services', 'Development Process'],
   process: ['Our Services', 'Why Choose DEKODE', 'Industries'],
   why: ['Our Services', 'Industries', 'Development Process'],
+  caseStudies: ['Our Services', 'Development Process', 'Why Choose DEKODE'],
   contact: ['Our Services', 'Why Choose DEKODE', 'Development Process'],
   location: ['Contact DEKODE', 'Privacy Policy', 'Terms & Conditions'],
   privacy: ['Contact DEKODE', 'DEKODE Locations', 'Terms & Conditions'],

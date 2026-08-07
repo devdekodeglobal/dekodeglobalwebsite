@@ -12,6 +12,8 @@ const sourceFiles = {
   services: resolve(sourceRoot, 'src', 'pages', 'Services.jsx'),
   home: resolve(sourceRoot, 'src', 'pages', 'Home.jsx'),
   delivery: resolve(sourceRoot, 'src', 'components', 'DeliveryFlow.jsx'),
+  foodManufacture: resolve(sourceRoot, 'src', 'pages', 'FoodManufacture.jsx'),
+  primarySchool: resolve(sourceRoot, 'src', 'pages', 'PrimarySchool.jsx'),
   contact: resolve(sourceRoot, 'src', 'pages', 'Contact.jsx'),
   privacy: resolve(sourceRoot, 'src', 'pages', 'PrivacyPolicy.jsx'),
   terms: resolve(sourceRoot, 'src', 'pages', 'TermsOfService.jsx'),
@@ -164,6 +166,44 @@ const services = extractServices();
 const developmentProcess = extractProcess();
 const whyChooseUs = extractDifferences();
 const values = extractPrinciples();
+const caseStudies = [
+  {
+    id: 'food-manufacturing',
+    name: 'Food Manufacturing Company',
+    industry: 'Food Manufacturing',
+    platform: 'Microsoft Azure',
+    challenge: matchOne(
+      entries.foodManufacture,
+      /<p className="fm-lead-text">([\s\S]*?)<\/p>/,
+      'food manufacturing challenge',
+    ),
+    solution: matchOne(
+      entries.foodManufacture,
+      /<div className="fm-stat-card fm-stat-card-full">[\s\S]*?<p>([\s\S]*?)<\/p>/,
+      'food manufacturing solution',
+    ),
+    outcome: 'By replacing paper-based information management with an electronic information capture and production management system, the client reduced manual effort and associated costs by 20% in Phase 1 and gained faster operational feedback.',
+    sourceReference: 'DEKODE/src/pages/FoodManufacture.jsx',
+  },
+  {
+    id: 'primary-school',
+    name: 'Primary School',
+    industry: 'Education',
+    platform: 'Amazon Web Services',
+    challenge: matchOne(
+      entries.primarySchool,
+      /<p className="ps-lead-text">([\s\S]*?)<\/p>/,
+      'primary school challenge',
+    ),
+    solution: matchOne(
+      entries.primarySchool,
+      /<div className="ps-stat-card ps-stat-card-full">[\s\S]*?<p>([\s\S]*?)<\/p>/,
+      'primary school solution',
+    ),
+    outcome: 'The automated AttendMe system reduced administrative overhead, improved access to records and compliance reporting, and supported a safer environment for children.',
+    sourceReference: 'DEKODE/src/pages/PrimarySchool.jsx',
+  },
+];
 const solutionAreas = [
   {
     id: 'ai-strategy',
@@ -276,6 +316,7 @@ const knowledge = {
   capabilities: [...new Set(services.flatMap((service) => service.capabilities))],
   whyChooseUs,
   values,
+  caseStudies,
   developmentProcess,
   contact: {
     email: entries.contact.match(/mailto:([^"]+)/)?.[1] || null,
@@ -335,6 +376,7 @@ const knowledge = {
     technologies: ['technology', 'technologies', 'tech', 'tech stack', 'stack', 'platforms', 'tools'],
     process: ['process', 'method', 'methodology', 'workflow', 'delivery', 'how you work', 'approach'],
     why: ['why choose', 'different', 'difference', 'values', 'culture', 'principles'],
+    caseStudies: ['case study', 'case studies', 'success story', 'success stories', 'portfolio', 'past work', 'projects', 'clients', 'food manufacturing', 'primary school', 'attendme'],
     company: ['dekode', 'company', 'business', 'who are you', 'about you', 'what do you do'],
     contact: ['contact', 'contact us', 'email', 'phone', 'whatsapp', 'get in touch', 'reach you'],
     location: ['location', 'locations', 'located', 'address', 'office', 'offices', 'where is', 'where are you', 'where are you based', 'headquarters', 'hq'],

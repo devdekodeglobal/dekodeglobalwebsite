@@ -64,6 +64,18 @@ function makeDocuments() {
         .join('\n'),
     },
     {
+      id: 'case-study-catalogue',
+      label: 'DEKODE case studies',
+      text: `Published DEKODE success stories:\n${companyKnowledge.caseStudies
+        .map((study) => `${study.name} (${study.industry}): ${study.solution} Outcome: ${study.outcome}`)
+        .join('\n')}`,
+    },
+    ...companyKnowledge.caseStudies.map((study) => ({
+      id: `case-study-${study.id}`,
+      label: `${study.name} case study`,
+      text: `${study.name}\nIndustry: ${study.industry}\nPlatform: ${study.platform}\nChallenge: ${study.challenge}\nSolution: ${study.solution}\nOutcome: ${study.outcome}`,
+    })),
+    {
       id: 'values',
       label: 'How DEKODE works',
       text: companyKnowledge.values

@@ -6,6 +6,7 @@ const PANEL_BY_TOPIC = {
   technologies: 'technologies',
   process: 'process',
   why: 'why',
+  caseStudies: 'overview',
   contact: 'contact',
   location: 'location',
   privacy: 'privacy',

@@ -51,3 +51,14 @@ test('retrieves verified location and legal documents for Gemini grounding', () 
   assert.ok(termsMatches.some((match) => match.id === 'terms-of-service'));
   assert.match(privacyMatches.find((match) => match.id === 'privacy-policy').text, /pm@dekodeglobal\.com/);
 });
+
+test('retrieves only verified published case studies for project evidence', () => {
+  const broadMatches = retrieveCompanyKnowledge('Show me DEKODE case studies and past work');
+  const foodMatches = retrieveCompanyKnowledge('What did DEKODE build for food manufacturing?');
+  const schoolMatches = retrieveCompanyKnowledge('Tell me about the AttendMe primary school project');
+
+  assert.ok(broadMatches.some((match) => match.id === 'case-study-catalogue'));
+  assert.ok(foodMatches.some((match) => match.id === 'case-study-food-manufacturing'));
+  assert.ok(schoolMatches.some((match) => match.id === 'case-study-primary-school'));
+  assert.doesNotMatch(broadMatches.map((match) => match.text).join('\n'), /CHAUFFR/i);
+});

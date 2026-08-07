@@ -78,7 +78,7 @@ test('switches legal documents in one shared panel and tightens story spacing', 
   assert.match(interactiveContent, /role="tabpanel"/);
   assert.doesNotMatch(interactiveContent, /<details/);
   assert.match(interactiveStyles, /\.company-legal-toggle/);
-  assert.match(interactiveStyles, /padding: clamp\(3rem, 5vw, 4\.75rem\) 0/);
+  assert.match(interactiveStyles, /padding: clamp\(3rem, 6vw, 5\.5rem\) 0/);
   assert.match(interactiveStyles, /min-height: 380px/);
 });
 
