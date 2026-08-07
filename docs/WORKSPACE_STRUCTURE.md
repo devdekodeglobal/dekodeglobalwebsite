@@ -26,7 +26,7 @@ Federation.
 ## Git worktrees
 
 `dekodeglobalwebsite-vertex-evaluation` is a Git worktree for the
-`vertex-evaluation-semantic-retrieval` branch. A worktree is a second checkout of
+`vertex-ai-integration` branch. A worktree is a second checkout of
 the same repository, not a second product or repository.
 
 Keep worktrees as sibling folders. Do not copy or move a worktree inside

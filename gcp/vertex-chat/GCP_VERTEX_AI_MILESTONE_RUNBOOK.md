@@ -656,7 +656,7 @@ Phase 2 began on 7 August 2026.
 The work was placed on the dedicated Git branch:
 
 ```text
-vertex-evaluation-semantic-retrieval
+vertex-ai-integration
 ```
 
 A linked worktree was created at:
