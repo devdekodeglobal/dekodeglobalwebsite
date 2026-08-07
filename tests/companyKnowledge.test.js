@@ -17,6 +17,7 @@ test('classifies representative company questions without capturing general chat
     'What services do you provide?',
     'What industries do you work in?',
     'What technologies do you use?',
+    'How do you take a project from idea to ongoing support?',
     'Do you build AI agents?',
     'Tell me about predictive AI',
     'Can you help with process automation?',
