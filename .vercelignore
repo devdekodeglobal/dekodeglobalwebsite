@@ -1,0 +1,10 @@
+# Cloud Run is deployed separately from gcp/vertex-chat.
+gcp
+
+# Development and internal evidence are not required by the website runtime.
+tests
+docs
+coverage
+
+# Local transfer packages must never be part of a website deployment.
+*.zip
