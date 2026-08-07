@@ -13,11 +13,11 @@ const sourceFiles = {
   services: resolve(sourceRoot, 'src', 'pages', 'Services.jsx'),
   home: resolve(sourceRoot, 'src', 'pages', 'Home.jsx'),
   delivery: resolve(sourceRoot, 'src', 'components', 'DeliveryFlow.jsx'),
+  foodManufacture: resolve(sourceRoot, 'src', 'pages', 'FoodManufacture.jsx'),
+  primarySchool: resolve(sourceRoot, 'src', 'pages', 'PrimarySchool.jsx'),
   contact: resolve(sourceRoot, 'src', 'pages', 'Contact.jsx'),
   privacy: resolve(sourceRoot, 'src', 'pages', 'PrivacyPolicy.jsx'),
   terms: resolve(sourceRoot, 'src', 'pages', 'TermsOfService.jsx'),
-  foodManufacturing: resolve(sourceRoot, 'src', 'pages', 'FoodManufacture.jsx'),
-  primarySchool: resolve(sourceRoot, 'src', 'pages', 'PrimarySchool.jsx'),
   portfolio: resolve(sourceRoot, 'src', 'components', 'PortfolioShowcase.jsx'),
 };
 
@@ -204,7 +204,7 @@ const values = extractPrinciples();
 const caseStudies = [
   extractCaseStudy({
     id: 'food-manufacturing',
-    sourceKey: 'foodManufacturing',
+    sourceKey: 'foodManufacture',
     outcomeSection: /<section className="fm-outcomes-section[^"]*">([\s\S]*?)<\/section>/,
     sourceReference: 'DEKODE/src/pages/FoodManufacture.jsx',
   }),
@@ -389,6 +389,7 @@ const knowledge = {
     technologies: ['technology', 'technologies', 'tech', 'tech stack', 'stack', 'platforms', 'tools'],
     process: ['process', 'method', 'methodology', 'workflow', 'delivery', 'how you work', 'approach'],
     why: ['why choose', 'different', 'difference', 'values', 'culture', 'principles'],
+    caseStudies: ['case study', 'case studies', 'success story', 'success stories', 'portfolio', 'past work', 'projects', 'clients', 'food manufacturing', 'primary school', 'attendme'],
     company: ['dekode', 'company', 'business', 'who are you', 'about you', 'what do you do'],
     contact: ['contact', 'contact us', 'email', 'phone', 'whatsapp', 'get in touch', 'reach you'],
     location: ['location', 'locations', 'located', 'address', 'office', 'offices', 'where is', 'where are you', 'where are you based', 'headquarters', 'hq'],

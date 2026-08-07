@@ -212,3 +212,16 @@ test('answers each new solution area with its specific approved knowledge', () =
     assert.match(response.text, expected, question);
   }
 });
+
+test('answers published case-study questions without inventing portfolio work', () => {
+  const broadIntent = classifyCompanyIntent('What case studies do you have?');
+  const broadResponse = generateCompanyResponse('What case studies do you have?', broadIntent);
+  const foodIntent = classifyCompanyIntent('What did you build for food manufacturing?');
+  const foodResponse = generateCompanyResponse('What did you build for food manufacturing?', foodIntent);
+
+  assert.equal(broadIntent.topic, 'caseStudies');
+  assert.match(broadResponse.text, /Food Manufacturing Company/);
+  assert.match(broadResponse.text, /Primary School/);
+  assert.doesNotMatch(broadResponse.text, /CHAUFFR/i);
+  assert.match(foodResponse.text, /20% in Phase 1/);
+});

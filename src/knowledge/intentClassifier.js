@@ -18,16 +18,17 @@ const CLEAR_EXTERNAL_QUESTION = /^(who|what|when|where|why|how)\b/i;
 
 const COMPANY_CUES = [
   /\bdekode\b/i,
-  /\b(your|the)\s+(company|business|services?|capabilities|team|culture|values?|technolog(?:y|ies)|stack|process|clients?|industr(?:y|ies)|locations?|address|privacy|terms|polic(?:y|ies))\b/i,
+  /\b(your|the)\s+(company|business|services?|capabilities|team|culture|values?|technolog(?:y|ies)|stack|process|clients?|industr(?:y|ies)|projects?|work|case studies|success stories|locations?|address|privacy|terms|polic(?:y|ies))\b/i,
   /\b(who are you|what do you do|why (?:should i )?choose you|how do you work)\b/i,
   /\bhow do you\s+(?:approach|deliver|manage|run|support|take)\b/i,
   /\b(do|can)\s+you\s+(build|provide|offer|support|work|help|develop|design)\b/i,
   /\bwhat\s+(?:services?|solutions?|industries|technologies)\s+do\s+you\b/i,
   /\b(where are you|where (?:is|are).{0,20}(?:office|located|based)|office address|headquarters|privacy policy|terms (?:and conditions|of service))\b/i,
   /\b(contact us|contact information|email address|phone number|company location)\b/i,
+  /\b(what (?:have|has) you built|work have you done|show me your work|case stud(?:y|ies)|success stor(?:y|ies)|past projects?)\b/i,
 ];
 
-const SHORT_COMPANY_TOPICS = /^(about|company|services?|capabilities|industr(?:y|ies)|technolog(?:y|ies)|tech stack|process|contact|location|locations|privacy|privacy policy|terms|terms and conditions|terms of service|why dekode)$/i;
+const SHORT_COMPANY_TOPICS = /^(about|company|services?|capabilities|industr(?:y|ies)|technolog(?:y|ies)|tech stack|process|case studies|success stories|portfolio|past work|contact|location|locations|privacy|privacy policy|terms|terms and conditions|terms of service|why dekode)$/i;
 
 export function classifyCompanyIntent(message, context = {}) {
   const text = message.trim();

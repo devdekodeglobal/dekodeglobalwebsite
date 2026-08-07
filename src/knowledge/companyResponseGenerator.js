@@ -54,6 +54,18 @@ function responseForTopic(topic, message, detectedService, detectedSolutionArea)
       return `DEKODE chooses technology around the problem, with reliability, security, and maintainability in mind.\n\nThe platforms explicitly named in our company profile are:\n${bullets(knowledge.technologies)}\n\nWe also build with AI, machine learning, generative AI, APIs, mobile and web technologies. The public profile does not list a more detailed framework-by-framework stack.`;
     case 'process':
       return `DEKODE uses a simple, risk-reducing delivery flow:\n\n${bullets(knowledge.developmentProcess.map((step) => `${step.name}: ${step.description}`))}\n\nThe aim is clear scope, security from day one, and support after launch.`;
+    case 'caseStudies': {
+      const namedStudy = knowledge.caseStudies.find((item) => {
+        const input = message.toLowerCase();
+        return input.includes(item.name.toLowerCase()) ||
+          input.includes(item.id.replaceAll('-', ' ')) ||
+          item.id === 'primary-school' && input.includes('attendme');
+      });
+      if (namedStudy) {
+        return `${namedStudy.name} is a published DEKODE case study in ${namedStudy.industry}.\n\nChallenge: ${namedStudy.challenge}\n\nSolution: ${namedStudy.solution}\n\nOutcome: ${namedStudy.outcome}`;
+      }
+      return `DEKODE currently presents two published success stories:\n\n${bullets(knowledge.caseStudies.map((item) => `${item.name} (${item.industry}): ${item.outcome}`))}\n\nThese are the case studies confirmed in the public company information.`;
+    }
     case 'why':
       return `DEKODE is built around practical delivery, clear communication, and long-term accountability.\n\nWhat makes us different:\n${bullets(knowledge.whyChooseUs.map((item) => `${item.name}: ${item.description}`))}\n\nWe focus on useful outcomes, not technology hype.`;
     case 'contact':

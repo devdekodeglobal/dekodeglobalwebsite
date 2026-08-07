@@ -7,11 +7,11 @@
       "src/pages/Services.jsx",
       "src/pages/Home.jsx",
       "src/components/DeliveryFlow.jsx",
+      "src/pages/FoodManufacture.jsx",
+      "src/pages/PrimarySchool.jsx",
       "src/pages/Contact.jsx",
       "src/pages/PrivacyPolicy.jsx",
       "src/pages/TermsOfService.jsx",
-      "src/pages/FoodManufacture.jsx",
-      "src/pages/PrimarySchool.jsx",
       "src/components/PortfolioShowcase.jsx"
     ],
     "generatedAt": "build-time"
@@ -495,6 +495,19 @@
       "values",
       "culture",
       "principles"
+    ],
+    "caseStudies": [
+      "case study",
+      "case studies",
+      "success story",
+      "success stories",
+      "portfolio",
+      "past work",
+      "projects",
+      "clients",
+      "food manufacturing",
+      "primary school",
+      "attendme"
     ],
     "company": [
       "dekode",

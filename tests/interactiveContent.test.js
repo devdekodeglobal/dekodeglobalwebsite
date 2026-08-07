@@ -24,17 +24,24 @@ test("content actions bridge into the existing composer without auto-send", () =
 
 test("all requested story sections and state controls are present", () => {
   for (const label of [
-    "What DEKODE builds",
-    "Selected work",
-    "How DEKODE works",
-    "Industries and solutions",
-    "Have an idea?",
+    "Start a project",
+    "companyKnowledge.company.belief",
+    "companyKnowledge.company.about",
+    "The DEKODE standard",
+    "Capabilities",
+    "Success stories",
+    "Methodology",
+    'eyebrow="Services"',
     "Contact, locations and policies",
   ]) assert.match(sections, new RegExp(label.replace(/[?]/g, "\\?")));
   assert.match(sections, /activeCapability/);
   assert.match(sections, /activeProject/);
   assert.match(sections, /activeStage/);
   assert.match(sections, /activeIndustry/);
+  assert.ok(sections.indexOf('Start a project') < sections.indexOf('Capabilities'));
+  assert.ok(sections.indexOf('Capabilities') < sections.indexOf('Success stories'));
+  assert.ok(sections.indexOf('Success stories') < sections.indexOf('Methodology'));
+  assert.doesNotMatch(sections, /Built for adoption, not applause/);
 });
 
 test("structured content is sourced and responsive fallbacks are available", () => {
@@ -44,6 +51,7 @@ test("structured content is sourced and responsive fallbacks are available", () 
   assert.doesNotMatch(content, /CHAUFFR/);
   assert.match(content, /deliveryProcess:/);
   assert.match(content, /industries:/);
+  assert.doesNotMatch(content, /CHAUFFR/);
   assert.match(sections, /companyKnowledge\.legal/);
   assert.match(sections, /companyKnowledge\.contact\.locations/);
   assert.match(sections, /role="tablist"/);
