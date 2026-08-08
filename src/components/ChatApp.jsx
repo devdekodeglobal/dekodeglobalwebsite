@@ -80,39 +80,33 @@ export default function ChatApp({
   isProposalChatOpen = false,
 }) {
   const [messages, setMessages] = useState([]);
-  const [timeOfDayIndex, setTimeOfDayIndex] = useState(() => {
-    const hour = new Date().getHours();
-    let currentIdx;
-    if (hour >= 5 && hour < 11) currentIdx = 0; // morning
-    else if (hour >= 11 && hour < 17) currentIdx = 1; // noon
-    else if (hour >= 17 && hour < 21) currentIdx = 2; // evening
-    else currentIdx = 3; // night
-    
-    // Start at the previous state so we can animate into the current one on load
-    return (currentIdx - 1 + 4) % 4;
+  const [realTime, setRealTime] = useState(() => {
+    // Start 6 hours in the past to trigger the entrance animation
+    const d = new Date();
+    d.setHours(d.getHours() - 6);
+    return d;
   });
 
   const TIMES_OF_DAY = useMemo(() => ["morning", "noon", "evening", "night"], []);
-  const timeOfDay = TIMES_OF_DAY[timeOfDayIndex];
+  
+  const timeOfDay = useMemo(() => {
+    const hour = realTime.getHours();
+    if (hour >= 5 && hour < 11) return "morning";
+    if (hour >= 11 && hour < 17) return "noon";
+    if (hour >= 17 && hour < 21) return "evening";
+    return "night";
+  }, [realTime]);
 
   // Animate to current time on load, then monitor real time
   useEffect(() => {
-    const getCurrentIdx = () => {
-      const hour = new Date().getHours();
-      if (hour >= 5 && hour < 11) return 0;
-      if (hour >= 11 && hour < 17) return 1;
-      if (hour >= 17 && hour < 21) return 2;
-      return 3;
-    };
-
-    // Trigger the initial arrival animation
+    // Trigger the initial arrival animation after the page settles (starts quickly)
     const initialTimer = setTimeout(() => {
-      setTimeOfDayIndex(getCurrentIdx());
-    }, 500);
+      setRealTime(new Date());
+    }, 600);
 
     // Check the real time every minute so it naturally changes if they leave the tab open
     const realTimeChecker = setInterval(() => {
-      setTimeOfDayIndex(getCurrentIdx());
+      setRealTime(new Date());
     }, 60000);
 
     return () => {
@@ -1078,7 +1072,10 @@ export default function ChatApp({
       <ParticleBackground timeOfDay={timeOfDay} />
       
       {step === "centered" && (
-        <HeroScenery timeOfDay={timeOfDay} />
+        <HeroScenery 
+          timeOfDay={timeOfDay} 
+          realTime={realTime}
+        />
       )}
 
       <a className="brand-logo" href={import.meta.env.BASE_URL || "/"} aria-label="Go to DEKODE home">

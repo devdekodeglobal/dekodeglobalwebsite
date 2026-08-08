@@ -1,7 +1,10 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function HeroScenery({ timeOfDay = 'noon' }) {
+export default function HeroScenery({ 
+  timeOfDay = 'noon',
+  realTime = new Date()
+}) {
   const isNight = timeOfDay === 'night';
   const isEvening = timeOfDay === 'evening';
   const isMorning = timeOfDay === 'morning';
@@ -51,32 +54,53 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
     delay: Math.random() * 5,
   })), []);
 
-  // Celestial Positions mapped across the 4 stages
-  // Adjust dawn/dusk positions based on device size so they sit beautifully above the chat UI
-  const celestialConfig = {
-    morning: {
-      body: { x: isMobile ? '15vw' : '25vw', y: isMobile ? '20vh' : '32vh', scale: 1 },
-      sunOpacity: 0.9,
-      moonOpacity: 0,
-    },
-    noon: {
-      body: { x: '50vw', y: isMobile ? '10vh' : '12vh', scale: 1.1 },
-      sunOpacity: 1,
-      moonOpacity: 0,
-    },
-    evening: {
-      body: { x: isMobile ? '85vw' : '75vw', y: isMobile ? '20vh' : '32vh', scale: 1.15 },
-      sunOpacity: 1,
-      moonOpacity: 0,
-    },
-    night: {
-      body: { x: '50vw', y: isMobile ? '12vh' : '20vh', scale: 1 },
-      sunOpacity: 0,
-      moonOpacity: 1,
+
+
+  const getContinuousCelestialState = () => {
+    const hours = realTime.getHours();
+    const minutes = realTime.getMinutes();
+    const decimalTime = hours + minutes / 60; // 0.0 to 24.0
+
+    // Day is 6:00 (6.0) to 18:00 (18.0)
+    const isDaytime = decimalTime >= 6 && decimalTime < 18;
+    
+    // Map progress from 0 to 1 across the day or night arc
+    let progress;
+    if (isDaytime) {
+      progress = (decimalTime - 6) / 12; // 0 at 6am, 0.5 at noon, 1 at 6pm
+    } else {
+      let nightTime = decimalTime >= 18 ? decimalTime : decimalTime + 24;
+      progress = (nightTime - 18) / 12; // 0 at 6pm, 0.5 at midnight, 1 at 6am
     }
+
+    // Extreme boundaries based on screen size
+    const leftX = isMobile ? 15 : 25;
+    const rightX = isMobile ? 85 : 75;
+    
+    // Y heights
+    const edgeY = isMobile ? 20 : 32;
+    const peakDayY = isMobile ? 10 : 12;
+    const peakNightY = isMobile ? 12 : 20;
+
+    // Linear interpolation for X (moves from left to right)
+    const currentX = leftX + (rightX - leftX) * progress;
+
+    // Parabolic interpolation for Y (arcs upward then downward)
+    const peakY = isDaytime ? peakDayY : peakNightY;
+    const a = (edgeY - peakY) / 0.25; 
+    const currentY = a * Math.pow(progress - 0.5, 2) + peakY;
+
+    // Subtle scale changes
+    const scale = isDaytime ? 1 + (0.15 * Math.sin(progress * Math.PI)) : 1;
+
+    return {
+      body: { x: `${currentX}vw`, y: `${currentY}vh`, scale },
+      sunOpacity: isDaytime ? (progress < 0.1 || progress > 0.9 ? 0.9 : 1) : 0,
+      moonOpacity: isDaytime ? 0 : 1,
+    };
   };
 
-  const targetState = celestialConfig[timeOfDay] || celestialConfig.noon;
+  const targetState = getContinuousCelestialState();
 
   return (
     <div className="hero-scenery-wrapper minimalist-sky" aria-hidden="true" style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
@@ -89,8 +113,8 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 3.5, ease: 'easeInOut' }}
-            style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(251, 146, 60, 0.4) 0%, rgba(147, 51, 234, 0.25) 40%, rgba(30, 27, 75, 0.6) 100%)', zIndex: 0 }}
+            transition={{ duration: 7, ease: 'easeInOut' }}
+            style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(251, 146, 60, 0.4) 0%, rgba(147, 51, 234, 0.25) 40%, rgba(30, 27, 75, 0.6) 100%)', zIndex: 0, willChange: 'opacity' }}
           />
         )}
         {isAfternoon && (
@@ -99,8 +123,8 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 3.5, ease: 'easeInOut' }}
-            style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 10%, rgba(186, 230, 253, 0.5) 0%, rgba(56, 189, 248, 0.15) 55%, transparent 85%)', zIndex: 0 }}
+            transition={{ duration: 7, ease: 'easeInOut' }}
+            style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 10%, rgba(186, 230, 253, 0.5) 0%, rgba(56, 189, 248, 0.15) 55%, transparent 85%)', zIndex: 0, willChange: 'opacity' }}
           />
         )}
         {isEvening && (
@@ -109,8 +133,8 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 3.5, ease: 'easeInOut' }}
-            style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(225, 29, 72, 0.4) 0%, rgba(147, 51, 234, 0.3) 50%, rgba(30, 27, 75, 0.2) 100%)', zIndex: 0 }}
+            transition={{ duration: 7, ease: 'easeInOut' }}
+            style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(225, 29, 72, 0.4) 0%, rgba(147, 51, 234, 0.3) 50%, rgba(30, 27, 75, 0.2) 100%)', zIndex: 0, willChange: 'opacity' }}
           />
         )}
         {isNight && (
@@ -119,8 +143,8 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 3.5, ease: 'easeInOut' }}
-            style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(3, 7, 18, 0.95) 0%, rgba(15, 23, 42, 0.9) 60%, rgba(30, 27, 75, 0.8) 100%)', zIndex: 0 }}
+            transition={{ duration: 7, ease: 'easeInOut' }}
+            style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(3, 7, 18, 0.95) 0%, rgba(15, 23, 42, 0.9) 60%, rgba(30, 27, 75, 0.8) 100%)', zIndex: 0, willChange: 'opacity' }}
           />
         )}
       </AnimatePresence>
@@ -265,7 +289,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
           y: { type: 'tween', duration: 7, ease: (timeOfDay === 'morning' || timeOfDay === 'evening') ? 'easeIn' : 'easeOut' },
           scale: { type: 'tween', duration: 7, ease: 'easeInOut' }
         }}
-        style={{ zIndex: 2 }}
+        style={{ zIndex: 2, willChange: 'transform' }}
       >
         {/* Sun Visuals */}
         <motion.div
