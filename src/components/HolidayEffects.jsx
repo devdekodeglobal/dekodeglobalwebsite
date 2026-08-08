@@ -117,12 +117,17 @@ const styles = `
   .css-mascot-container {
     position: absolute;
     bottom: 5vh;
-    left: 50%;
-    transform: translateX(-50%);
+    right: 5vw;
+    transform: scale(0.6);
+    transform-origin: bottom right;
     width: 250px;
     height: 350px;
     z-index: 5;
-    animation: gentle-bob 3s ease-in-out infinite alternate;
+    animation: gentle-bob-mascot 3s ease-in-out infinite alternate;
+  }
+  @keyframes gentle-bob-mascot {
+    0% { transform: scale(0.6) translateY(0); }
+    100% { transform: scale(0.6) translateY(-15px); }
   }
   .css-mushroom {
     position: absolute;
@@ -402,58 +407,135 @@ const styles = `
 
   .mothers-day-ground {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 15vh;
-    background: radial-gradient(ellipse at 50% 120%, #4a2228 30%, #2a1118 60%, transparent 80%);
-    z-index: 4;
-  }
-  
-  .mothers-day-fog {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 35vh;
-    background: linear-gradient(to top, rgba(251, 207, 232, 0.35), transparent);
-    z-index: 6;
-    animation: fog-drift 8s ease-in-out infinite alternate;
-    pointer-events: none;
-  }
-  
-  .mothers-day-fog::after {
-    content: '';
-    position: absolute;
-    bottom: -10vh;
+    bottom: -15vh;
     left: -10vw;
     width: 120vw;
-    height: 30vh;
-    background: radial-gradient(ellipse at 50% 50%, rgba(244, 114, 182, 0.4) 0%, transparent 60%);
-    filter: blur(25px);
-    animation: fog-shift 12s ease-in-out infinite alternate;
-  }
-  
-  @keyframes fog-drift {
-    0% { transform: translateY(5px); opacity: 0.7; }
-    100% { transform: translateY(-5px); opacity: 1; }
-  }
-  @keyframes fog-shift {
-    0% { transform: translateX(-30px); }
-    100% { transform: translateX(30px); }
+    height: 35vh;
+    background: linear-gradient(to bottom, #752033 0%, #4a2228 40%, #2a1118 100%);
+    border-radius: 50% 50% 0 0;
+    z-index: 4;
   }
 
   .bg-cherry-tree {
     position: absolute;
-    bottom: 12vh;
+    bottom: 5vh;
     width: clamp(180px, 25vw, 300px);
     height: clamp(180px, 25vw, 300px);
-    opacity: 0.6;
-    z-index: 2;
+    opacity: 0.85;
+    z-index: 2; /* Important: trees go behind the solid ground (z-index 4) */
     filter: drop-shadow(0 10px 10px rgba(0,0,0,0.2));
   }
-  .tree-left { left: 5%; transform: scaleX(-1); }
-  .tree-right { right: 5%; }
+  .tree-left { left: 2%; transform: scaleX(-1); }
+  .tree-right { right: 2%; }
+  .tree-left-back { left: 15%; bottom: 4vh; transform: scale(0.6) scaleX(-1); opacity: 0.5; z-index: 1; filter: blur(2px); }
+  .tree-right-back { right: 18%; bottom: 3vh; transform: scale(0.7); opacity: 0.6; z-index: 1; filter: blur(1.5px); }
+
+  /* Easter Scene */
+  .easter-ground {
+    position: absolute;
+    bottom: -15vh;
+    left: -10vw;
+    width: 120vw;
+    height: 35vh;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(244, 114, 182, 0.9) 0%, transparent 50%),
+      radial-gradient(circle at 80% 40%, rgba(56, 189, 248, 0.9) 0%, transparent 50%),
+      radial-gradient(circle at 50% 70%, rgba(167, 139, 250, 0.9) 0%, transparent 50%),
+      radial-gradient(circle at 35% 80%, rgba(253, 224, 71, 0.9) 0%, transparent 50%),
+      linear-gradient(to bottom, #4ade80 0%, #16a34a 100%);
+    background-size: 200% 200%;
+    border-radius: 50% 50% 0 0;
+    z-index: 4;
+    box-shadow: inset 0 20px 50px rgba(255, 255, 255, 0.6);
+    animation: mesh-shift 10s ease-in-out infinite alternate, floor-hue-shift 15s linear infinite;
+  }
+  @keyframes mesh-shift {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+  }
+  @keyframes floor-hue-shift {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+  }
+  .easter-bunny {
+    position: absolute;
+    bottom: 6vh;
+    right: 15vw;
+    z-index: 5;
+    animation: bunny-hop 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) infinite alternate;
+    transform-origin: bottom center;
+    transform: scale(0.75);
+  }
+  @keyframes bunny-hop {
+    0% { transform: translateY(0) scale(0.75) scaleY(0.9) scaleX(1.1); }
+    100% { transform: translateY(-30px) scale(0.75) scaleY(1.05) scaleX(0.95); }
+  }
+  .aurora-egg {
+    animation: aurora-glow 4s ease-in-out infinite alternate;
+  }
+  @keyframes aurora-glow {
+    0% { filter: drop-shadow(0 0 10px #f472b6) drop-shadow(0 0 20px #a855f7) hue-rotate(0deg); }
+    100% { filter: drop-shadow(0 0 20px #38bdf8) drop-shadow(0 0 40px #2dd4bf) hue-rotate(90deg); }
+  }
+  .scattered-egg {
+    position: absolute;
+    z-index: 5;
+    animation: gentle-bob 4s ease-in-out infinite alternate;
+  }
+
+  /* Thanksgiving Scene */
+  .thanksgiving-ground {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 15vh;
+    background: #0f0a0a;
+    z-index: 4;
+  }
+  .autumn-ember {
+    position: absolute;
+    border-radius: 50%;
+    z-index: 3;
+    animation: ember-float linear infinite;
+  }
+  @keyframes ember-float {
+    0% { transform: translateY(10vh) scale(0); opacity: 0; }
+    20% { opacity: 1; transform: translateY(0vh) scale(1.5); }
+    100% { transform: translateY(-80vh) scale(0.5); opacity: 0; }
+  }
+  .thanksgiving-sun {
+    position: absolute;
+    bottom: 5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60vw;
+    height: 60vw;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fcd34d 0%, #f59e0b 30%, #ea580c 60%, transparent 80%);
+    filter: blur(40px);
+    z-index: 1;
+    animation: sun-pulse 6s ease-in-out infinite alternate;
+  }
+  @keyframes sun-pulse {
+    0% { opacity: 0.8; }
+    100% { opacity: 1; filter: blur(30px); }
+  }
+  .windmill-blade {
+    transform-origin: 50px 50px;
+    animation: windmill-spin 30s linear infinite;
+  }
+  @keyframes windmill-spin {
+    100% { transform: rotate(360deg); }
+  }
+  .turkey-feather {
+    transform-origin: 100px 150px;
+    animation: feather-fan 4s ease-in-out infinite alternate;
+  }
+  @keyframes feather-fan {
+    0% { transform: rotate(calc(var(--base-rot) * 0.7)); }
+    100% { transform: rotate(calc(var(--base-rot) * 1.3)); }
+  }
 
   /* Dussehra Scene */
   body:has(.dussehra-sky) .sun-core,
@@ -561,10 +643,16 @@ const styles = `
   .mother-child-container {
     position: absolute;
     bottom: 8vh;
-    left: 50%;
-    transform: translateX(-50%);
+    right: 5vw;
+    transform: scale(0.6);
+    transform-origin: bottom right;
     z-index: 5;
-    animation: gentle-bob 6s ease-in-out infinite alternate;
+    animation: gentle-bob-mother 6s ease-in-out infinite alternate;
+  }
+  
+  @keyframes gentle-bob-mother {
+    0% { transform: scale(0.6) translateY(0); }
+    100% { transform: scale(0.6) translateY(-10px); }
   }
   
   /* Christmas Scene */
@@ -730,6 +818,155 @@ const styles = `
 
 export default function HolidayEffects({ holidayId = null, holidayName = "" }) {
   const renderScene = () => {
+    if (holidayId === 'easter') {
+      return (
+        <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+          {/* Sunny Glow */}
+          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 100%, rgba(253, 224, 71, 0.2) 0%, transparent 60%)', zIndex: 1 }} />
+          
+          {/* Solid Curved Grass Ground */}
+          <div className="easter-ground" />
+          
+          {/* Easter Bunny & Basket */}
+          <div className="easter-bunny">
+            <svg width="200" height="250" viewBox="0 0 150 200" style={{ filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.2))' }}>
+              {/* Bunny Ears */}
+              <ellipse cx="60" cy="50" rx="15" ry="40" fill="#ffffff" transform="rotate(-15 60 50)" />
+              <ellipse cx="60" cy="50" rx="7" ry="30" fill="#fbcfe8" transform="rotate(-15 60 50)" />
+              <ellipse cx="90" cy="50" rx="15" ry="40" fill="#ffffff" transform="rotate(15 90 50)" />
+              <ellipse cx="90" cy="50" rx="7" ry="30" fill="#fbcfe8" transform="rotate(15 90 50)" />
+              
+              {/* Bunny Body */}
+              <ellipse cx="75" cy="150" rx="45" ry="50" fill="#ffffff" />
+              <ellipse cx="75" cy="155" rx="30" ry="40" fill="#f1f5f9" />
+              
+              {/* Bunny Head */}
+              <circle cx="75" cy="90" r="35" fill="#ffffff" />
+              
+              {/* Face */}
+              <g>
+                {/* Left Eye */}
+                <circle cx="60" cy="85" r="6.5" fill="#0f172a" />
+                <circle cx="58" cy="82" r="2.5" fill="#ffffff" />
+                <circle cx="63" cy="87" r="1" fill="#ffffff" />
+                {/* Right Eye */}
+                <circle cx="90" cy="85" r="6.5" fill="#0f172a" />
+                <circle cx="88" cy="82" r="2.5" fill="#ffffff" />
+                <circle cx="93" cy="87" r="1" fill="#ffffff" />
+                {/* Blush */}
+                <ellipse cx="50" cy="92" rx="7" ry="4" fill="#fbcfe8" opacity="0.8" />
+                <ellipse cx="100" cy="92" rx="7" ry="4" fill="#fbcfe8" opacity="0.8" />
+              </g>
+              <ellipse cx="75" cy="95" rx="5" ry="3" fill="#f472b6" />
+              <path d="M 75 99 Q 65 105 75 110 Q 85 105 75 99 Z" fill="#ffffff" />
+              
+              {/* Easter Basket */}
+              <path d="M 20 160 Q 20 180 40 190 L 110 190 Q 130 180 130 160 Z" fill="#b45309" />
+              <path d="M 20 160 Q 75 120 130 160" fill="none" stroke="#b45309" strokeWidth="8" />
+              
+              {/* Easter Eggs (Designer) */}
+              <g transform="rotate(-20 45 165)">
+                <ellipse cx="45" cy="165" rx="12" ry="16" fill="#f472b6" />
+                <path d="M 33 160 Q 45 165 57 160" fill="none" stroke="#ffffff" strokeWidth="2" />
+                <circle cx="45" cy="172" r="2" fill="#ffffff" />
+              </g>
+              <g>
+                <ellipse cx="70" cy="160" rx="12" ry="16" fill="#38bdf8" />
+                <path d="M 58 160 Q 70 170 82 160" fill="none" stroke="#fde047" strokeWidth="3" />
+                <path d="M 58 155 Q 70 165 82 155" fill="none" stroke="#ffffff" strokeWidth="1" strokeDasharray="2 2" />
+              </g>
+              <g transform="rotate(20 95 165)">
+                <ellipse cx="95" cy="165" rx="12" ry="16" fill="#fde047" />
+                <path d="M 83 165 L 107 165" fill="none" stroke="#a78bfa" strokeWidth="4" />
+                <path d="M 83 160 L 107 160" fill="none" stroke="#ffffff" strokeWidth="1" />
+                <path d="M 83 170 L 107 170" fill="none" stroke="#ffffff" strokeWidth="1" />
+              </g>
+              <g transform="rotate(-10 55 175)">
+                <ellipse cx="55" cy="175" rx="10" ry="14" fill="#a78bfa" />
+                <circle cx="55" cy="170" r="3" fill="#fde047" />
+                <circle cx="50" cy="178" r="2" fill="#fde047" />
+                <circle cx="60" cy="178" r="2" fill="#fde047" />
+              </g>
+              <g transform="rotate(10 85 175)">
+                <ellipse cx="85" cy="175" rx="10" ry="14" fill="#4ade80" />
+                <path d="M 75 175 Q 85 185 95 175" fill="none" stroke="#ffffff" strokeWidth="2" />
+                <path d="M 75 170 L 95 170" fill="none" stroke="#f472b6" strokeWidth="1.5" strokeDasharray="2 2" />
+              </g>
+            </svg>
+          </div>
+        </div>
+      );
+    }
+
+    if (holidayId === 'thanksgiving') {
+      const Ember = ({ size, color, delay, duration, left }) => (
+        <div className="autumn-ember" style={{ 
+          width: size, height: size, background: color, left, 
+          animationDelay: delay, animationDuration: duration, 
+          boxShadow: `0 0 10px ${color}`
+        }} />
+      );
+
+      return (
+        <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+          {/* Majestic Sunset Sun */}
+          <div className="thanksgiving-sun" />
+          
+          {/* Solid Black Silhouette Ground */}
+          <div className="thanksgiving-ground" />
+          
+          {/* Glowing Upward Embers */}
+          <Ember size="4px" color="#fef08a" left="15vw" delay="0s" duration="5s" />
+          <Ember size="6px" color="#f59e0b" left="30vw" delay="2s" duration="7s" />
+          <Ember size="5px" color="#ea580c" left="45vw" delay="4s" duration="6s" />
+          <Ember size="8px" color="#ef4444" left="60vw" delay="1s" duration="8s" />
+          <Ember size="4px" color="#fef08a" left="75vw" delay="5s" duration="6s" />
+          <Ember size="6px" color="#f59e0b" left="90vw" delay="3s" duration="9s" />
+          <Ember size="7px" color="#ea580c" left="25vw" delay="6s" duration="10s" />
+          <Ember size="5px" color="#ef4444" left="80vw" delay="7s" duration="7s" />
+          
+          {/* Silhouette Windmill */}
+          <div style={{ position: 'absolute', bottom: '5vh', left: '15vw', zIndex: 5 }}>
+            <svg width="150" height="200" viewBox="0 0 100 200">
+              <path d="M 40 200 L 60 200 L 55 50 L 45 50 Z" fill="#0f0a0a" />
+              <g className="windmill-blade">
+                <rect x="48" y="5" width="4" height="90" fill="#0f0a0a" />
+                <rect x="5" y="48" width="90" height="4" fill="#0f0a0a" />
+                <path d="M 52 10 L 70 10 L 70 45 L 52 45 Z" fill="#0f0a0a" opacity="0.9" />
+                <path d="M 10 52 L 10 70 L 45 70 L 45 52 Z" fill="#0f0a0a" opacity="0.9" />
+                <path d="M 48 90 L 30 90 L 30 55 L 48 55 Z" fill="#0f0a0a" opacity="0.9" />
+                <path d="M 90 48 L 90 30 L 55 30 L 55 48 Z" fill="#0f0a0a" opacity="0.9" />
+              </g>
+            </svg>
+          </div>
+          
+          {/* Majestic Turkey Silhouette */}
+          <div style={{ position: 'absolute', bottom: '5vh', right: '20vw', zIndex: 5 }}>
+            <svg width="200" height="200" viewBox="0 0 200 200">
+              {/* Feathers */}
+              {[...Array(9)].map((_, i) => {
+                const rot = -60 + (i * 15);
+                return (
+                  <ellipse 
+                    key={i} 
+                    cx="100" cy="150" rx="15" ry="70" 
+                    fill="#0f0a0a" 
+                    className="turkey-feather"
+                    style={{ '--base-rot': `${rot}deg` }}
+                  />
+                );
+              })}
+              {/* Turkey Body & Head */}
+              <ellipse cx="100" cy="150" rx="35" ry="30" fill="#0f0a0a" />
+              <path d="M 90 130 C 70 100, 60 90, 70 70 C 80 50, 95 60, 95 80 C 95 100, 110 130, 100 150 Z" fill="#0f0a0a" />
+              <circle cx="75" cy="65" r="3" fill="#ea580c" /> {/* Glowing Eye */}
+              <path d="M 65 75 L 55 80 L 68 82 Z" fill="#0f0a0a" /> {/* Beak */}
+            </svg>
+          </div>
+        </div>
+      );
+    }
+
     if (holidayId === 'halloween') {
       return (
         <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
@@ -1072,6 +1309,8 @@ export default function HolidayEffects({ holidayId = null, holidayName = "" }) {
           <div className="mothers-day-glow" />
 
           {/* Background Cherry Blossom Trees */}
+          <BgTree className="tree-left-back" />
+          <BgTree className="tree-right-back" />
           <BgTree className="tree-left" />
           <BgTree className="tree-right" />
 
@@ -1109,8 +1348,7 @@ export default function HolidayEffects({ holidayId = null, holidayName = "" }) {
             </svg>
           </div>
 
-          {/* Beautiful Soft Fog */}
-          <div className="mothers-day-fog" />
+
 
           {/* Gentle Magical Sparkles */}
           <div className="soft-sparkle" style={{ top: '30%', left: '20%', animationDelay: '0s' }} />

@@ -6,6 +6,8 @@ export const HOLIDAYS = [
   { id: 'mothers_day', name: 'Mother\'s Day' },
   { id: 'dussehra', name: 'Dussehra' },
   { id: 'diwali', name: 'Diwali' },
+  { id: 'easter', name: 'Easter' },
   { id: 'halloween', name: 'Halloween' },
+  { id: 'thanksgiving', name: 'Thanksgiving' },
   { id: 'christmas', name: 'Christmas Day' },
 ];
