@@ -297,3 +297,34 @@ test('answers CHAUFFR directly from verified portfolio knowledge', async () => {
     global.fetch = originalFetch;
   }
 });
+
+test('answers reviewed delivery, Beston, and BRIDGE questions without provider drift', async () => {
+  const originalFetch = global.fetch;
+  let fetchCalls = 0;
+  global.fetch = async () => {
+    fetchCalls += 1;
+    throw new Error('Verified named knowledge should not call a model');
+  };
+
+  try {
+    const cases = [
+      ['What happens during discovery?', /Align on goals, users, constraints, workflows/i],
+      ['How did DEKODE help Beston?', /reduced the manual efforts and associated costs by 20%/i],
+      ['What is BRIDGE?', /Connecting Australian and Indian businesses/i],
+    ];
+    for (const [question, expected] of cases) {
+      const response = makeResponse();
+      await handler({
+        method: 'POST',
+        headers: { 'x-forwarded-for': `review-${question}` },
+        body: { question },
+      }, response);
+      assert.equal(response.statusCode, 200, question);
+      assert.match(response.body.answer, expected, question);
+      assert.equal(response.body.provider, 'verified-knowledge', question);
+    }
+    assert.equal(fetchCalls, 0);
+  } finally {
+    global.fetch = originalFetch;
+  }
+});

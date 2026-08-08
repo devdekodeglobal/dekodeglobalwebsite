@@ -225,3 +225,18 @@ test('answers published case-study questions without inventing portfolio work', 
   assert.doesNotMatch(broadResponse.text, /CHAUFFR/i);
   assert.match(foodResponse.text, /20% in Phase 1/);
 });
+
+test('answers the three verified knowledge questions from live review', () => {
+  const cases = [
+    ['What happens during discovery?', 'process', /Align on goals, users, constraints, workflows/i],
+    ['How did DEKODE help Beston?', 'caseStudies', /reduced the manual efforts and associated costs by 20%/i],
+    ['What is BRIDGE?', 'initiatives', /Connecting Australian and Indian businesses/i],
+  ];
+
+  for (const [question, topic, expected] of cases) {
+    const intent = classifyCompanyIntent(question);
+    assert.equal(intent.kind, 'company', question);
+    assert.equal(intent.topic, topic, question);
+    assert.match(generateCompanyResponse(question, intent).text, expected, question);
+  }
+});

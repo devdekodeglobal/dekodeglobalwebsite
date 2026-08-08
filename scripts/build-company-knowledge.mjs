@@ -19,6 +19,7 @@ const sourceFiles = {
   privacy: resolve(sourceRoot, 'src', 'pages', 'PrivacyPolicy.jsx'),
   terms: resolve(sourceRoot, 'src', 'pages', 'TermsOfService.jsx'),
   portfolio: resolve(sourceRoot, 'src', 'components', 'PortfolioShowcase.jsx'),
+  bridge: resolve(sourceRoot, 'src', 'components', 'BridgeTeaser.jsx'),
 };
 
 const missingSourceFiles = [];
@@ -135,7 +136,7 @@ const extractPrinciples = () => {
   )].map(([, name, description]) => ({ name: clean(name), description: clean(description) }));
 };
 
-const extractCaseStudy = ({ id, sourceKey, outcomeSection, sourceReference }) => {
+const extractCaseStudy = ({ id, sourceKey, outcomeSection, sourceReference, aliases = [] }) => {
   const source = entries[sourceKey];
   const outcomeBlock = matchRaw(source, outcomeSection, `${id} case-study outcome`);
   return {
@@ -148,8 +149,31 @@ const extractCaseStudy = ({ id, sourceKey, outcomeSection, sourceReference }) =>
     outcome: [...outcomeBlock.matchAll(/<p>([\s\S]*?)<\/p>/g)]
       .map((match) => clean(match[1]))
       .join(' '),
+    aliases,
     sourceReference,
   };
+};
+
+const extractInitiatives = () => {
+  const source = entries.bridge;
+  const regions = [...source.matchAll(
+    /<h3>([\s\S]*?)<\/h3>\s*<p>([\s\S]*?)<\/p>/g,
+  )].map(([, name, description]) => ({
+    name: clean(name),
+    description: clean(description),
+  }));
+  return [{
+    id: 'bridge',
+    name: 'BRIDGE',
+    title: matchOne(source, /<h2 className="bridge-title">([\s\S]*?)<\/h2>/, 'BRIDGE title'),
+    status: matchOne(source, /<div className="bridge-badge">([\s\S]*?)<\/div>/, 'BRIDGE status'),
+    summary: matchOne(source, /<p className="bridge-subtitle">([\s\S]*?)<\/p>/, 'BRIDGE summary'),
+    regions,
+    pillars: [...source.matchAll(/<div className="pillar">([\s\S]*?)<\/div>/g)]
+      .map((match) => clean(match[1])),
+    aliases: ['BRIDGE Initiative', 'Australia India bridge'],
+    sourceReference: 'DEKODE/src/components/BridgeTeaser.jsx',
+  }];
 };
 
 const extractPortfolioProjects = () => {
@@ -207,6 +231,7 @@ const caseStudies = [
     sourceKey: 'foodManufacture',
     outcomeSection: /<section className="fm-outcomes-section[^"]*">([\s\S]*?)<\/section>/,
     sourceReference: 'DEKODE/src/pages/FoodManufacture.jsx',
+    aliases: ['Beston'],
   }),
   extractCaseStudy({
     id: 'primary-school',
@@ -216,6 +241,7 @@ const caseStudies = [
   }),
 ];
 const portfolioProjects = extractPortfolioProjects();
+const initiatives = extractInitiatives();
 const solutionAreas = [
   {
     id: 'ai-strategy',
@@ -330,6 +356,7 @@ const knowledge = {
   values,
   caseStudies,
   portfolioProjects,
+  initiatives,
   developmentProcess,
   contact: {
     email: entries.contact.match(/mailto:([^"]+)/)?.[1] || null,
@@ -389,7 +416,8 @@ const knowledge = {
     technologies: ['technology', 'technologies', 'tech', 'tech stack', 'stack', 'platforms', 'tools'],
     process: ['process', 'method', 'methodology', 'workflow', 'delivery', 'how you work', 'approach'],
     why: ['why choose', 'different', 'difference', 'values', 'culture', 'principles'],
-    caseStudies: ['case study', 'case studies', 'success story', 'success stories', 'portfolio', 'past work', 'projects', 'clients', 'food manufacturing', 'primary school', 'attendme'],
+    caseStudies: ['case study', 'case studies', 'success story', 'success stories', 'portfolio', 'past work', 'projects', 'clients', 'food manufacturing', 'beston', 'primary school', 'attendme'],
+    initiatives: ['initiative', 'initiatives', 'bridge', 'bridge initiative', 'australia india bridge'],
     company: ['dekode', 'company', 'business', 'who are you', 'about you', 'what do you do'],
     contact: ['contact', 'contact us', 'email', 'phone', 'whatsapp', 'get in touch', 'reach you'],
     location: ['location', 'locations', 'located', 'address', 'office', 'offices', 'where is', 'where are you', 'where are you based', 'headquarters', 'hq'],

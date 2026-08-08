@@ -16,6 +16,12 @@ test('lexical aliases find location and meeting documents', () => {
   assert.equal(retrieveLexical('Can I schedule a discovery call?')[0].id, 'contact');
 });
 
+test('lexical retrieval grounds reviewed delivery, Beston, and BRIDGE questions', () => {
+  assert.equal(retrieveLexical('What happens during discovery?')[0].id, 'process-discover');
+  assert.equal(retrieveLexical('How did DEKODE help Beston?')[0].id, 'case-food-manufacturing');
+  assert.equal(retrieveLexical('What is BRIDGE?')[0].id, 'initiative-bridge');
+});
+
 test('hybrid retrieval can recover a semantic paraphrase with no lexical match', async () => {
   const target = documents.find((document) => document.id === 'contact');
   const embed = async (text, task) => {

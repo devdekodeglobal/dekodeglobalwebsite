@@ -170,6 +170,23 @@ export default async function handler(request, response) {
     });
   }
 
+  const verifiedEntitySource = verifiedIntent.caseStudy
+    ? { id: `case-study-${verifiedIntent.caseStudy.id}`, label: `${verifiedIntent.caseStudy.name} case study` }
+    : verifiedIntent.initiative
+      ? { id: `initiative-${verifiedIntent.initiative.id}`, label: verifiedIntent.initiative.title }
+      : verifiedIntent.developmentStep
+        ? { id: `process-${verifiedIntent.developmentStep.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, label: `${verifiedIntent.developmentStep.name} delivery stage` }
+        : null;
+
+  if (verifiedEntitySource) {
+    return response.status(200).json({
+      ok: true,
+      answer: generateCompanyResponse(question, verifiedIntent).text,
+      sources: [verifiedEntitySource],
+      provider: 'verified-knowledge',
+    });
+  }
+
   const projectFallback = verifiedIntent.kind === 'project'
     ? generateProjectResponse(question)
     : null;

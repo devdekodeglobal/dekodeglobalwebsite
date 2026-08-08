@@ -11,6 +11,7 @@ const PANEL_BY_TOPIC = {
   privacy: 'privacy',
   terms: 'terms',
   caseStudies: 'services',
+  initiatives: 'overview',
 };
 
 export function getPanelForTopic(topic) {

@@ -1131,3 +1131,29 @@ delivery phrasing could otherwise be mistaken for an external question.
 Only focused demo checks were run after deployment to conserve free-trial
 credits. The historical full-suite result remains 33/34; it was not rerun and
 must not be presented as a newly measured 34/34.
+## 14. Live Knowledge Review: Discovery, Beston, and BRIDGE
+
+Three live-preview questions exposed different knowledge-routing gaps:
+
+| Question | Incorrect behaviour | Root cause | Correction |
+| --- | --- | --- | --- |
+| `What happens during discovery?` | Rejected as outside DEKODE | The classifier did not recognise a named delivery stage without an explicit DEKODE cue | Delivery stages are now structured entities; `discovery` resolves to the approved Discover stage |
+| `How did DEKODE help Beston?` | Said the relationship could not be confirmed | The case study used the generic title `Food Manufacturing Company`; Beston existed only inside its outcome text | `Beston` is now a verified alias of the food-manufacturing case study |
+| `What is BRIDGE?` | Rejected as outside DEKODE | `BridgeTeaser.jsx` was not part of the generated knowledge corpus | BRIDGE is now generated as a structured DEKODE initiative from the old website source |
+
+The fix is entity-based rather than three hard-coded answers. Named delivery
+stages, case-study aliases, and published initiatives are recognised by the
+frontend intent classifier, deterministic verified-answer path, Vercel
+retrieval, and Cloud Run retrieval.
+
+The Vertex corpus now contains 43 documents. The embedding manifest matches the
+new corpus digest and marks nine documents for lazy embedding, avoiding a full
+credit-consuming rebuild during development. The exact three questions are
+permanent regression cases.
+
+Verification after the change:
+
+- focused and combined chat/knowledge/Vertex suite: 73/73 passing
+- Vercel production build: passing
+- lint: passing with the pre-existing unused `timeOfDay` warning
+- Cloud Run deployment: still required before the updated Vertex corpus is live

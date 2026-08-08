@@ -69,3 +69,9 @@ test('retrieves only verified published case studies for project evidence', () =
   assert.ok(schoolMatches.some((match) => match.id === 'case-study-primary-school'));
   assert.doesNotMatch(broadMatches.map((match) => match.text).join('\n'), /CHAUFFR/i);
 });
+
+test('retrieves reviewed delivery, Beston, and BRIDGE evidence', () => {
+  assert.equal(retrieveCompanyKnowledge('What happens during discovery?')[0]?.id, 'process-discover');
+  assert.equal(retrieveCompanyKnowledge('How did DEKODE help Beston?')[0]?.id, 'case-study-food-manufacturing');
+  assert.equal(retrieveCompanyKnowledge('What is BRIDGE?')[0]?.id, 'initiative-bridge');
+});

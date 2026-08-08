@@ -24,6 +24,33 @@ const findPortfolioProject = (message) => {
   );
 };
 
+const findCaseStudy = (message) => {
+  const input = normalise(message);
+  return (knowledge.caseStudies || []).find((study) =>
+    [study.name, study.id.replaceAll('-', ' '), ...(study.aliases || [])]
+      .map(normalise)
+      .some((term) => term && input.includes(term)),
+  );
+};
+
+const findInitiative = (message) => {
+  const input = normalise(message);
+  return (knowledge.initiatives || []).find((initiative) =>
+    [initiative.name, initiative.title, ...(initiative.aliases || [])]
+      .map(normalise)
+      .some((term) => term && input.includes(term)),
+  );
+};
+
+const findDevelopmentStep = (message) => {
+  const input = normalise(message);
+  return (knowledge.developmentProcess || []).find((step) => {
+    const name = normalise(step.name);
+    const terms = name === 'discover' ? ['discover', 'discovery'] : [name];
+    return terms.some((term) => new RegExp(`\\b${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(input));
+  });
+};
+
 const topicTerms = Object.fromEntries(
   Object.entries(knowledge.aliases).map(([topic, aliases]) => [
     topic,
@@ -47,15 +74,27 @@ export function findTopic(message) {
   });
   const solutionArea = findSolutionArea(message);
   const portfolioProject = findPortfolioProject(message);
+  const caseStudy = findCaseStudy(message);
+  const initiative = findInitiative(message);
+  const developmentStep = findDevelopmentStep(message);
 
   if (portfolioProject) {
-    return { topic: 'caseStudies', service, solutionArea, portfolioProject };
+    return { topic: 'caseStudies', service, solutionArea, portfolioProject, caseStudy, initiative, developmentStep };
+  }
+  if (caseStudy) {
+    return { topic: 'caseStudies', service, solutionArea, portfolioProject, caseStudy, initiative, developmentStep };
+  }
+  if (initiative) {
+    return { topic: 'initiatives', service, solutionArea, portfolioProject, caseStudy, initiative, developmentStep };
+  }
+  if (developmentStep) {
+    return { topic: 'process', service, solutionArea, portfolioProject, caseStudy, initiative, developmentStep };
   }
 
   if ((service || solutionArea) && (!best.topic || best.score <= 1)) {
     return { topic: 'services', service, solutionArea };
   }
-  return { ...best, service, solutionArea, portfolioProject };
+  return { ...best, service, solutionArea, portfolioProject, caseStudy, initiative, developmentStep };
 }
 
 export function findNamedOffering(message) {
@@ -70,3 +109,4 @@ export function findNamedOffering(message) {
 
 export { findSolutionArea };
 export { findPortfolioProject };
+export { findCaseStudy, findInitiative, findDevelopmentStep };

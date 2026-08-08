@@ -16,12 +16,19 @@ function findLegalSection(document, message) {
   });
 }
 
-function responseForTopic(topic, message, detectedService, detectedSolutionArea) {
+function responseForTopic(topic, message, detectedService, detectedSolutionArea, detectedCaseStudy, detectedInitiative, detectedDevelopmentStep) {
   const service = detectedService || findNamedOffering(message);
   const solutionArea = detectedSolutionArea || findSolutionArea(message);
   const portfolioProject = knowledge.portfolioProjects?.find((project) =>
     message.toLowerCase().includes(project.name.toLowerCase()),
   );
+
+  if (detectedInitiative) {
+    const regions = detectedInitiative.regions
+      .map((region) => `${region.name}: ${region.description}`)
+      .join('\n');
+    return `${detectedInitiative.title} is a DEKODE initiative currently marked ${detectedInitiative.status.toLowerCase()}. ${detectedInitiative.summary}\n\n${regions}\n\nIts published pillars are ${detectedInitiative.pillars.join(', ')}.`;
+  }
 
   if (portfolioProject) {
     return `${portfolioProject.name} is part of DEKODE's verified portfolio. ${portfolioProject.description}`;
@@ -53,12 +60,16 @@ function responseForTopic(topic, message, detectedService, detectedSolutionArea)
     case 'technologies':
       return `DEKODE chooses technology around the problem, with reliability, security, and maintainability in mind.\n\nThe platforms explicitly named in our company profile are:\n${bullets(knowledge.technologies)}\n\nWe also build with AI, machine learning, generative AI, APIs, mobile and web technologies. The public profile does not list a more detailed framework-by-framework stack.`;
     case 'process':
+      if (detectedDevelopmentStep) {
+        return `${detectedDevelopmentStep.name} is one of the five stages in DEKODE's delivery process. ${detectedDevelopmentStep.description}`;
+      }
       return `DEKODE uses a simple, risk-reducing delivery flow:\n\n${bullets(knowledge.developmentProcess.map((step) => `${step.name}: ${step.description}`))}\n\nThe aim is clear scope, security from day one, and support after launch.`;
     case 'caseStudies': {
-      const namedStudy = knowledge.caseStudies.find((item) => {
+      const namedStudy = detectedCaseStudy || knowledge.caseStudies.find((item) => {
         const input = message.toLowerCase();
         return input.includes(item.name.toLowerCase()) ||
           input.includes(item.id.replaceAll('-', ' ')) ||
+          item.aliases?.some((alias) => input.includes(alias.toLowerCase())) ||
           item.id === 'primary-school' && input.includes('attendme');
       });
       if (namedStudy) {
@@ -91,7 +102,15 @@ function responseForTopic(topic, message, detectedService, detectedSolutionArea)
 export function generateCompanyResponse(message, intent) {
   const topic = intent.topic || 'company';
   const text = getKnowledgeGapResponse(message) ||
-    responseForTopic(topic, message, intent.service, intent.solutionArea);
+    responseForTopic(
+      topic,
+      message,
+      intent.service,
+      intent.solutionArea,
+      intent.caseStudy,
+      intent.initiative,
+      intent.developmentStep,
+    );
   return {
     text,
     topic,

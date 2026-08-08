@@ -51,6 +51,12 @@ function makeDocuments() {
       label: `${project.name} portfolio project`,
       text: project.description,
     })),
+    ...(companyKnowledge.initiatives || []).map((initiative) => ({
+      id: `initiative-${initiative.id}`,
+      label: initiative.title,
+      text: `${initiative.status}. ${initiative.summary}\n${initiative.regions.map((region) => `${region.name}: ${region.description}`).join('\n')}\nPillars: ${initiative.pillars.join(', ')}. Aliases: ${(initiative.aliases || []).join(', ')}.`,
+      aliases: initiative.aliases || [],
+    })),
     {
       id: 'industries',
       label: 'Industries',
@@ -68,6 +74,12 @@ function makeDocuments() {
         .map((step) => `${step.name}: ${step.description}`)
         .join('\n'),
     },
+    ...companyKnowledge.developmentProcess.map((step) => ({
+      id: `process-${normalise(step.name).replace(/[^a-z0-9]+/g, '-')}`,
+      label: `${step.name} delivery stage`,
+      text: step.description,
+      aliases: step.name === 'Discover' ? ['discover', 'discovery'] : [step.name],
+    })),
     {
       id: 'case-study-catalogue',
       label: 'DEKODE case studies',
@@ -78,7 +90,8 @@ function makeDocuments() {
     ...companyKnowledge.caseStudies.map((study) => ({
       id: `case-study-${study.id}`,
       label: `${study.name} case study`,
-      text: `${study.name}\nIndustry: ${study.industry}\nPlatform: ${study.platform}\nChallenge: ${study.challenge}\nSolution: ${study.solution}\nOutcome: ${study.outcome}`,
+      text: `${study.name}\nKnown as: ${(study.aliases || []).join(', ')}\nIndustry: ${study.industry}\nPlatform: ${study.platform}\nChallenge: ${study.challenge}\nSolution: ${study.solution}\nOutcome: ${study.outcome}`,
+      aliases: study.aliases || [],
     })),
     {
       id: 'values',
@@ -122,7 +135,8 @@ function makeDocuments() {
 
   return documents.map((document) => ({
     ...document,
-    terms: tokenize(`${document.label} ${document.text}`),
+    aliases: document.aliases || [],
+    terms: tokenize(`${document.label} ${document.text} ${(document.aliases || []).join(' ')}`),
   }));
 }
 
@@ -136,7 +150,8 @@ export function retrieveCompanyKnowledge(question, limit = 5) {
     .map((document) => {
       const overlap = queryTerms.filter((term) => document.terms.includes(term)).length;
       const nameBonus = query.includes(normalise(document.label)) ? 3 : 0;
-      return { ...document, score: overlap + nameBonus };
+      const aliasBonus = document.aliases.some((alias) => query.includes(normalise(alias))) ? 3 : 0;
+      return { ...document, score: overlap + nameBonus + aliasBonus };
     })
     .filter((document) => document.score > 0)
     .sort((left, right) => right.score - left.score || left.text.length - right.text.length)

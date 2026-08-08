@@ -12,7 +12,8 @@
       "src/pages/Contact.jsx",
       "src/pages/PrivacyPolicy.jsx",
       "src/pages/TermsOfService.jsx",
-      "src/components/PortfolioShowcase.jsx"
+      "src/components/PortfolioShowcase.jsx",
+      "src/components/BridgeTeaser.jsx"
     ],
     "generatedAt": "build-time"
   },
@@ -271,6 +272,9 @@
       "challenge": "Followed a traditional paper-based management system that constantly led to operational and management inefficiencies resulting in depleting business profitability and sustainability.",
       "solution": "Designed and developed digital Production Management System that increased productivity by 20% in Phase 1.",
       "outcome": "By eliminating paper-based information management and moving to an Electronic Information Capturing and Production Management System, Beston reduced the manual efforts and associated costs by 20% in Phase 1 . Further, the information database will provide Beston with a rich source of information to find and test areas of operational improvement in future. The electronic system provides instant feedback which enables management to measure the impact and propose improvements along the way.",
+      "aliases": [
+        "Beston"
+      ],
       "sourceReference": "DEKODE/src/pages/FoodManufacture.jsx"
     },
     {
@@ -281,6 +285,7 @@
       "challenge": "Followed a manual paper-based management and administration system that constantly led them to lose a lot of useful data and gradually saw in a decline in the safety of the school.",
       "solution": "Provided a fully automated management software called “AttendMe”.",
       "outcome": "By adopting an automated system, Stella Maris noticed a decline in the administrative overheads and eliminated the unnecessary time and energy spent maintaining records on paper. Through their information capturing system, Stella Maris was also able to archive, locate and report compliance to the authorities. This helped release a lot of administrative workload. By working with DEKODE, Stella Maris was able to smoothen their operations, further providing a safer environment for children and helping parents release any of their worries. Stella Maris looks forward to working with DEKODE to maintain its data management systems.",
+      "aliases": [],
       "sourceReference": "DEKODE/src/pages/PrimarySchool.jsx"
     }
   ],
@@ -320,6 +325,38 @@
       "name": "Estrado",
       "description": "Estrado is a smart point of sale solution start-up in Melbourne, Australia. The tech start-up aims to relieve retailers of the traditional clunky and unattractive systems that are far from being integrated into the modern digital world. We designed and developed an iPad based Point of Sale system and a web based management console for the retailers.",
       "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
+    }
+  ],
+  "initiatives": [
+    {
+      "id": "bridge",
+      "name": "BRIDGE",
+      "title": "The BRIDGE Initiative",
+      "status": "COMING SOON",
+      "summary": "Connecting Australian and Indian businesses through technology, talent, and strategic partnership — to build, scale, and grow together.",
+      "regions": [
+        {
+          "name": "Australia",
+          "description": "Market insight, strategic direction, and local product management."
+        },
+        {
+          "name": "India",
+          "description": "Engineering depth, rapid scaling, and technical excellence."
+        }
+      ],
+      "pillars": [
+        "Partnerships",
+        "Resourcing & Staffing",
+        "Product Development",
+        "Cross-Skilling",
+        "R&D Collaboration",
+        "Talent Exchange"
+      ],
+      "aliases": [
+        "BRIDGE Initiative",
+        "Australia India bridge"
+      ],
+      "sourceReference": "DEKODE/src/components/BridgeTeaser.jsx"
     }
   ],
   "developmentProcess": [
@@ -506,8 +543,16 @@
       "projects",
       "clients",
       "food manufacturing",
+      "beston",
       "primary school",
       "attendme"
+    ],
+    "initiatives": [
+      "initiative",
+      "initiatives",
+      "bridge",
+      "bridge initiative",
+      "australia india bridge"
     ],
     "company": [
       "dekode",

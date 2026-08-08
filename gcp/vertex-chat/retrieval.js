@@ -78,11 +78,12 @@ export function buildDocuments() {
   ));
 
   for (const step of companyKnowledge.developmentProcess || []) {
+    const stepAliases = step.name === 'Discover' ? ['discover', 'discovery'] : [step.name];
     documents.push(createDocument(
       `process-${normalize(step.name).replace(/[^a-z0-9]+/g, '-')}`,
       `${step.name} delivery stage`,
       step.description,
-      companyKnowledge.aliases?.process,
+      stepAliases,
     ));
   }
 
@@ -90,8 +91,17 @@ export function buildDocuments() {
     documents.push(createDocument(
       `case-${study.id}`,
       `${study.name} case study`,
-      `Industry: ${study.industry}. Platform: ${study.platform}. Challenge: ${study.challenge}\nSolution: ${study.solution}\nOutcome: ${study.outcome}`,
-      companyKnowledge.aliases?.caseStudies,
+      `Known as: ${join(study.aliases)}. Industry: ${study.industry}. Platform: ${study.platform}. Challenge: ${study.challenge}\nSolution: ${study.solution}\nOutcome: ${study.outcome}`,
+      [...(companyKnowledge.aliases?.caseStudies || []), ...(study.aliases || [])],
+    ));
+  }
+
+  for (const initiative of companyKnowledge.initiatives || []) {
+    documents.push(createDocument(
+      `initiative-${initiative.id}`,
+      initiative.title,
+      `${initiative.status}. ${initiative.summary}\n${initiative.regions.map((region) => `${region.name}: ${region.description}`).join('\n')}\nPillars: ${join(initiative.pillars)}.`,
+      [...(companyKnowledge.aliases?.initiatives || []), ...(initiative.aliases || [])],
     ));
   }
 
