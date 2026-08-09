@@ -63,3 +63,17 @@ test("structured content is sourced and responsive fallbacks are available", () 
   assert.match(css, /content-visibility:\s*auto/);
 }
 );
+
+test("mobile STAR content uses a cylindrical carousel and compact actions", () => {
+  assert.match(sections, /className="star-cylinder-stage"/);
+  assert.match(sections, /drag=\{shouldReduceMotion \? false : "x"\}/);
+  assert.match(sections, /onDragEnd=\{handleStarDragEnd\}/);
+  assert.match(sections, /ArrowLeft/);
+  assert.match(sections, /ArrowRight/);
+  assert.match(sections, /star-carousel-status/);
+  assert.match(css, /perspective:\s*900px/);
+  assert.match(css, /transform-style:\s*preserve-3d/);
+  assert.match(css, /rotateY\(calc\(var\(--star-position\) \* 90deg\)\) translateZ\(148px\)/);
+  assert.match(css, /\.conversion-actions\s*\{[^}]*width:\s*min\(100% - 1\.5rem, 19rem\)/s);
+  assert.match(css, /\.capability-switcher,[\s\S]*flex-wrap:\s*wrap;[\s\S]*overflow:\s*visible/);
+});

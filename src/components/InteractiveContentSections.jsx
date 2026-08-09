@@ -78,6 +78,7 @@ function SectionHeading({ eyebrow, title, description, compact = false }) {
 
 export default function InteractiveContentSections() {
   const shouldReduceMotion = useReducedMotion();
+  const [starRotation, setStarRotation] = useState(0);
   const [activeCapability, setActiveCapability] = useState(content.capabilities[0].id);
   const [activeProject, setActiveProject] = useState(content.selectedWork[0].id);
   const [activeStage, setActiveStage] = useState(content.deliveryProcess[0].id);
@@ -92,6 +93,18 @@ export default function InteractiveContentSections() {
   const stage = content.deliveryProcess.find((item) => item.id === activeStage);
   const industry = content.industries.find((item) => item.id === activeIndustry);
   const ProjectIcon = caseStudyIcons[project.id];
+  const starItems = companyKnowledge.whyChooseUs;
+  const activeStar = ((starRotation % starItems.length) + starItems.length) % starItems.length;
+
+  const rotateStar = (direction) => {
+    setStarRotation((current) => current + direction);
+  };
+
+  const handleStarDragEnd = (_event, info) => {
+    const intent = info.offset.x + info.velocity.x * 0.12;
+    if (Math.abs(intent) < 42) return;
+    rotateStar(intent < 0 ? 1 : -1);
+  };
 
   return (
     <main className="interactive-story" aria-label="Explore DEKODE">
@@ -158,17 +171,52 @@ export default function InteractiveContentSections() {
           title="Simple enough to understand. Strong enough to rely on."
           description="Four principles guide how we communicate, deliver and stay accountable."
         />
-        <div className="star-principles" aria-label="DEKODE STAR principles">
-          {companyKnowledge.whyChooseUs.map((item, index) => (
-            <article key={item.name}>
-              <span className="star-letter" aria-hidden="true">{item.name[0]}</span>
-              <div>
-                <span className="star-index">0{index + 1}</span>
-                <h3>{item.name}</h3>
-                <p>{item.description}</p>
-              </div>
-            </article>
-          ))}
+        <div
+          className="star-principles"
+          aria-label="DEKODE STAR principles"
+          onKeyDown={(event) => {
+            if (event.key === "ArrowLeft") rotateStar(-1);
+            if (event.key === "ArrowRight") rotateStar(1);
+          }}
+        >
+          <motion.div
+            className="star-cylinder-stage"
+            drag={shouldReduceMotion ? false : "x"}
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.08}
+            onDragEnd={handleStarDragEnd}
+            animate={{ rotateY: shouldReduceMotion ? 0 : starRotation * -90 }}
+            transition={{ type: "spring", stiffness: 165, damping: 23 }}
+          >
+            {starItems.map((item, index) => (
+              <article
+                key={item.name}
+                className={index === activeStar ? "is-active" : ""}
+                style={{ "--star-position": index }}
+              >
+                <div className="star-card-mark" aria-hidden="true">
+                  <span className="star-letter">{item.name[0]}</span>
+                  <span className="star-index">0{index + 1}</span>
+                </div>
+                <div className="star-card-copy">
+                  <h3>{item.name}</h3>
+                  <p>{item.description}</p>
+                </div>
+              </article>
+            ))}
+          </motion.div>
+          <div className="star-carousel-status" aria-label={`STAR principle ${activeStar + 1} of ${starItems.length}`}>
+            {starItems.map((item, index) => (
+              <button
+                type="button"
+                key={item.name}
+                className={index === activeStar ? "is-active" : ""}
+                aria-label={`Show ${item.name}`}
+                aria-current={index === activeStar ? "true" : undefined}
+                onClick={() => setStarRotation(index)}
+              />
+            ))}
+          </div>
         </div>
       </motion.section>
 

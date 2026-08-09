@@ -172,6 +172,7 @@
 /* STAR */
 .star-section { position: relative; }
 .star-principles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.star-cylinder-stage { display: contents; }
 
 .star-principles article {
   min-width: 0;
@@ -192,6 +193,8 @@
 .star-principles article:nth-child(3) .star-letter { color: var(--story-green); }
 .star-principles article:nth-child(4) .star-letter { color: var(--story-coral); }
 
+.star-card-mark { display: flex; align-items: flex-end; gap: .4rem; }
+
 .star-letter {
   color: var(--story-yellow);
   font-family: var(--font-heading);
@@ -203,6 +206,7 @@
 .star-index { color: rgba(255,255,255,.45); font-size: 0.65rem; }
 .star-principles h3 { margin-top: 0.25rem; font-size: 0.95rem; }
 .star-principles p { margin-top: 0.45rem; color: var(--story-muted); font-size: 0.78rem; line-height: 1.5; }
+.star-carousel-status { display: none; }
 
 /* Capabilities */
 .capabilities-section { background: transparent; }
@@ -450,27 +454,99 @@
   .start-project-copy > p,
   .content-section-heading p { font-size: .88rem; }
   .conversion-actions { grid-template-columns: 1fr; }
+  .conversion-actions {
+    width: min(100% - 1.5rem, 19rem);
+    justify-self: center;
+  }
   .conversion-actions button { min-height: 48px; }
   .company-statement-section { align-items: flex-start; text-align: left; gap: .75rem; }
   .company-belief { font-size: 1.2rem; }
   .company-about { font-size: .86rem; line-height: 1.65; }
-  .star-principles { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: .35rem; }
-  .star-principles article { flex: 0 0 84%; min-height: 190px; scroll-snap-align: start; }
+  .star-section { overflow: hidden; }
+  .star-principles {
+    position: relative;
+    width: calc(100% + 1.25rem);
+    height: 260px;
+    margin-left: -.625rem;
+    display: block;
+    perspective: 900px;
+    perspective-origin: 50% 44%;
+    touch-action: pan-y;
+  }
+  .star-cylinder-stage {
+    position: absolute;
+    inset: 0;
+    display: block;
+    transform-style: preserve-3d;
+    cursor: grab;
+  }
+  .star-cylinder-stage:active { cursor: grabbing; }
+  .star-principles article {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    width: min(calc(100vw - 3.25rem), 292px);
+    min-height: 208px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.3rem;
+    padding: 1.25rem;
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 8px;
+    background: #0b2239;
+    box-shadow: 0 18px 38px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.06);
+    backface-visibility: hidden;
+    transform: translateX(-50%) rotateY(calc(var(--star-position) * 90deg)) translateZ(148px);
+    transition: opacity .25s ease, border-color .25s ease, box-shadow .25s ease;
+  }
+  .star-principles article.is-active {
+    border-color: rgba(254,182,17,.58);
+    box-shadow: 0 20px 44px rgba(0,0,0,.38), inset 0 3px 0 var(--story-yellow);
+  }
+  .star-card-mark { justify-content: space-between; align-items: flex-start; }
+  .star-letter { font-size: 3.8rem; line-height: .85; }
+  .star-index {
+    padding: .28rem .48rem;
+    border: 1px solid var(--story-border);
+    border-radius: 999px;
+    color: rgba(255,255,255,.72);
+  }
+  .star-principles h3 { font-size: 1.05rem; }
+  .star-principles p { max-width: 240px; font-size: .8rem; }
+  .star-carousel-status {
+    position: absolute;
+    left: 50%;
+    bottom: 13px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: .42rem;
+    transform: translateX(-50%);
+  }
+  .star-carousel-status button {
+    width: 6px;
+    height: 6px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255,255,255,.28);
+    cursor: pointer;
+    transition: width .2s ease, background-color .2s ease;
+  }
+  .star-carousel-status button.is-active { width: 22px; background: var(--story-yellow); }
+  .star-carousel-status button:focus-visible { outline: 2px solid white; outline-offset: 3px; }
   .capability-switcher,
   .industry-switcher {
-    width: calc(100% + .625rem);
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    padding: 0 3rem .35rem 0;
-    -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 34px), transparent 100%);
-    mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 34px), transparent 100%);
+    width: 100%;
+    flex-wrap: wrap;
+    overflow: visible;
+    padding: 0;
   }
   .capability-switcher button,
   .industry-switcher button {
     min-height: 36px;
-    flex: 0 0 auto;
-    scroll-snap-align: start;
+    flex: 0 1 auto;
     padding: .38rem .65rem;
     font-size: .69rem;
   }
@@ -491,9 +567,9 @@
   .case-study-media img { min-height: 220px; }
   .case-study-copy dl > div { grid-template-columns: 72px 1fr; }
   .methodology-layout { grid-template-columns: 1fr; }
-  .methodology-rail { grid-template-columns: repeat(5, minmax(76px, 1fr)); overflow-x: auto; padding-bottom: .35rem; }
-  .methodology-rail::before { left: 38px; right: 38px; top: 15px; bottom: auto; width: auto; height: 1px; }
-  .methodology-rail button { min-width: 76px; min-height: 65px; grid-template-columns: 1fr; justify-items: center; align-content: start; gap: .3rem; text-align: center; }
+  .methodology-rail { grid-template-columns: repeat(5, minmax(0, 1fr)); overflow: visible; padding-bottom: 0; }
+  .methodology-rail::before { left: 10%; right: 10%; top: 15px; bottom: auto; width: auto; height: 1px; }
+  .methodology-rail button { min-width: 0; min-height: 65px; grid-template-columns: 1fr; justify-items: center; align-content: start; gap: .3rem; text-align: center; }
   .methodology-rail button strong { font-size: .68rem; }
   .methodology-detail { min-height: 260px; }
   .industry-detail { grid-template-columns: 1fr; }
@@ -517,4 +593,8 @@
   .capability-switcher,
   .industry-switcher,
   .methodology-rail { scroll-behavior: auto; }
+
+  .star-cylinder-stage { transform: none !important; }
+  .star-principles article { display: none; transform: translateX(-50%); }
+  .star-principles article.is-active { display: flex; }
 }
