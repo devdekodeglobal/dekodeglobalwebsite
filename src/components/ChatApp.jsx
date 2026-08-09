@@ -27,6 +27,7 @@ import {
   createCompanyConversationContext,
   generateCompanyResponse,
   generateProjectResponse,
+  getSensitiveRequestRefusal,
   leaveCompanyConversation,
   rememberCompanyTurn,
 } from "../knowledge";
@@ -505,6 +506,10 @@ export default function ChatApp({
     );
     if (companyIntent.kind === "meeting") {
       handleOpenMeetingScheduler(userMessage);
+      return;
+    }
+    if (companyIntent.kind === "unsafe") {
+      respondWithoutProject(userMessage, getSensitiveRequestRefusal(userMessage));
       return;
     }
     const isCompanyInformationQuestion =

@@ -1156,4 +1156,48 @@ Verification after the change:
 - focused and combined chat/knowledge/Vertex suite: 73/73 passing
 - Vercel production build: passing
 - lint: passing with the pre-existing unused `timeOfDay` warning
-- Cloud Run deployment: still required before the updated Vertex corpus is live
+- Cloud Run revision `dekode-vertex-chat-00009-wr2`: deployed with 43 indexed
+  documents and serving 100 percent of traffic
+
+## 15. Messy-Input Routing And Safety Review
+
+A broader manual question set revealed that semantic retrieval alone cannot
+repair a message that is routed incorrectly before retrieval. Short informal
+phrases and misspellings such as `calander`, `bussiness`, `mob app`, and
+`ecomerce` were reaching generic project clarification instead of the calendar
+or the relevant verified service.
+
+The website now applies one canonical visitor-message normalizer before meeting
+classification, project focus detection, company topic matching, and local
+retrieval. Cloud Run applies the same important corrections before hybrid
+retrieval. The model still handles open-ended project conversation; deterministic
+paths are reserved for UI actions, verified facts, approved pricing guidance,
+and safety boundaries.
+
+Corrections covered by permanent regression cases:
+
+- calendar and informal meeting phrases open the live scheduler, including
+  `i need calander booking`, `i want meet`, `want to talk`, and `book`
+- `need ai for my bussiness` connects AI Strategy & Consulting with Custom AI
+  Development
+- `can u make mob app` resolves to Mobile App and Web & Mobile Development
+- `do u make ecomerce?` resolves to E-commerce and its approved service
+- `tell price` returns the approved variable-scope pricing explanation
+- account intrusion, credential theft, secret disclosure, and private-data
+  requests receive explicit refusals before any model call
+- defensive questions about protecting accounts or API keys remain allowed
+- primary-school platform questions return the published `Cloud, Amazon Web
+  Services` field instead of repeating the whole case study
+- `Why was DEKODE started?` returns the approved origin text exactly, without
+  model-added founder claims
+
+Verification on 9 August 2026:
+
+- focused chat, intent, project, and Vertex retrieval suite: 49/49 passing
+- Vercel production build: passing
+- corpus/index integrity: 43 documents, matching digest, 34 stored vectors
+- lint: passing with the pre-existing unused `timeOfDay` warning
+- full inherited suite still contains unrelated proposal snapshot and local
+  proposal-secret failures; none of the protected proposal files were changed
+- commit, Vercel preview deployment, and Cloud Run redeployment remain pending
+  approval for this review batch

@@ -1,6 +1,6 @@
 import http from 'node:http';
 import embeddingIndex from './document-embeddings.json' with { type: 'json' };
-import { createHybridRetriever } from './retrieval.js';
+import { createHybridRetriever, normalize } from './retrieval.js';
 
 const PROJECT_ID = process.env.GOOGLE_CLOUD_PROJECT || 'dekode-ai-dev';
 const LOCATION = process.env.GOOGLE_CLOUD_LOCATION || 'global';
@@ -19,8 +19,20 @@ let accessTokenCache;
 const PROJECT_TERMS = /\b(website|webiste|wesbite|web\s*site|web app|mobile app|ios|android|e-?commerce|online store|ai|agent|copilot|automation|automate|manual workflow|integration|cloud|migration|infrastructure)\b/i;
 
 function buildRetrievalQuestion(question) {
-  if (!PROJECT_TERMS.test(question)) return question;
-  return `${question}\nProject context: match this request to DEKODE's relevant web, mobile, AI, automation, integration, e-commerce, or cloud delivery capability.`;
+  const normalizedQuestion = normalize(question);
+  if (!PROJECT_TERMS.test(normalizedQuestion)) return normalizedQuestion;
+  return `${normalizedQuestion}\nProject context: match this request to DEKODE's relevant web, mobile, AI, automation, integration, e-commerce, or cloud delivery capability.`;
+}
+
+function sensitiveRequestRefusal(question) {
+  const text = normalize(question);
+  if (/\b(reveal|show|share|give|send|leak|expose|tell)\b.{0,32}\b(api[ -]?keys?|access tokens?|refresh tokens?|passwords?|credentials?|private keys?|secrets?)\b|\b(what is|can i have|i need|i want)\b.{0,24}\b(your\s+)?(api[ -]?key|access token|password|credential|private key|secret)\b/i.test(text)) {
+    return "I can’t reveal or help obtain API keys, passwords, access tokens, private keys, or other secrets.";
+  }
+  if (/\b(can|could|would|will)\s+you\b.{0,24}\b(hack|break into|take over|bypass)\b.{0,32}\b(account|login|authentication|website|system)\b|^(?:please\s+)?\b(hack|break into|take over|bypass)\b.{0,32}\b(account|login|authentication|website|system)\b|\b(help|teach|show|tell)\b.{0,24}\b(hack|break into|steal|phish)\b.{0,30}\b(account|credentials?|passwords?)\b/i.test(text)) {
+    return "I can’t help hack accounts, steal credentials, bypass authentication, or gain unauthorised access. I can help with defensive security or account-recovery guidance.";
+  }
+  return null;
 }
 
 if (embeddingIndex.model !== EMBEDDING_MODEL_ID
@@ -187,6 +199,11 @@ const server = http.createServer(async (request, response) => {
     const body = await readJson(request);
     const question = String(body.question || '').trim().slice(0, MAX_QUESTION_LENGTH);
     if (!question) return sendJson(response, 400, { ok: false, error: 'A question is required.' });
+
+    const safetyAnswer = sensitiveRequestRefusal(question);
+    if (safetyAnswer && isChat) {
+      return sendJson(response, 200, { ok: true, answer: safetyAnswer, sources: [], retrievalMode: 'safety-policy' });
+    }
 
     const matches = await retrieve(buildRetrievalQuestion(question));
     if (isRetrievalEvaluation) {

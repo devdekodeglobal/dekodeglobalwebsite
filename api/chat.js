@@ -6,6 +6,7 @@ import {
   classifyCompanyIntent,
   generateCompanyResponse,
   generateProjectResponse,
+  getSensitiveRequestRefusal,
 } from '../src/knowledge/index.js';
 import { cleanAssistantText } from '../src/utils/assistantText.js';
 import {
@@ -25,6 +26,7 @@ const VERIFIED_TOPIC_SOURCES = {
   location: [{ id: 'locations', label: 'DEKODE locations' }],
   privacy: [{ id: 'privacy-policy', label: 'Privacy Policy' }],
   terms: [{ id: 'terms-of-service', label: 'Terms of Service' }],
+  origin: [{ id: 'company-overview', label: 'About DEKODE' }],
 };
 
 export const config = { maxDuration: 60 };
@@ -130,6 +132,15 @@ export default async function handler(request, response) {
 
   const history = Array.isArray(request.body?.history) ? request.body.history : [];
   const verifiedIntent = classifyCompanyIntent(question);
+  const sensitiveRefusal = getSensitiveRequestRefusal(question);
+  if (sensitiveRefusal) {
+    return response.status(200).json({
+      ok: true,
+      answer: sensitiveRefusal,
+      sources: [],
+      provider: 'safety-policy',
+    });
+  }
   if (verifiedIntent.kind === 'out_of_scope') {
     return response.status(200).json({
       ok: true,
@@ -150,11 +161,23 @@ export default async function handler(request, response) {
     });
   }
 
-  if (['contact', 'location', 'privacy', 'terms'].includes(verifiedIntent.topic)) {
+  if (['contact', 'location', 'privacy', 'terms', 'origin'].includes(verifiedIntent.topic)) {
     return response.status(200).json({
       ok: true,
       answer: generateCompanyResponse(question, verifiedIntent).text,
       sources: VERIFIED_TOPIC_SOURCES[verifiedIntent.topic],
+    });
+  }
+
+  if (verifiedIntent.kind === 'company' && (verifiedIntent.solutionArea || verifiedIntent.service)) {
+    const source = verifiedIntent.solutionArea
+      ? { id: `solution-${verifiedIntent.solutionArea.id}`, label: verifiedIntent.solutionArea.name }
+      : { id: `service-${verifiedIntent.service.id}`, label: verifiedIntent.service.name };
+    return response.status(200).json({
+      ok: true,
+      answer: generateCompanyResponse(question, verifiedIntent).text,
+      sources: [source],
+      provider: 'verified-knowledge',
     });
   }
 

@@ -1,5 +1,7 @@
 import { findTopic } from './knowledgeIndex.js';
+import { normalizeVisitorMessage } from './messageNormalization.js';
 import { isProjectRequest } from './projectResponseGenerator.js';
+import { getSensitiveRequestRefusal } from './safetyResponse.js';
 
 const OUT_OF_SCOPE_PATTERNS = [
   /\b(tell|write|make).{0,12}\b(joke|poem|story|code)\b/i,
@@ -10,8 +12,16 @@ const OUT_OF_SCOPE_PATTERNS = [
 const GREETING_PATTERNS = [/^(hello|hi|hey|thanks|thank you)\b[.!?\s]*$/i];
 
 const MEETING_REQUEST_PATTERNS = [
-  /\b(book|schedule|arrange|set up)\b.{0,24}\b(meeting|call|consultation|discovery call)\b/i,
-  /\b(meeting|call|consultation|discovery call)\b.{0,24}\b(availability|available|slot|time|book|schedule)\b/i,
+  /^(?:please\s+)?(?:book|meet|meeting|calendar|booking)$/i,
+  /\b(calendar|booking)\b/i,
+  /\b(book|schedule|arrange|set up)\b.{0,28}\b(meet|meeting|call|consultation|discovery call)\b/i,
+  /\b(want|need|like|can i|could i)\b.{0,28}\b(meet|meeting|call|talk)\b/i,
+  /\b(meet|meeting|call|consultation|discovery call|talk)\b.{0,28}\b(someone|team|availability|available|slot|time|book|schedule)\b/i,
+];
+
+const ORIGIN_PATTERNS = [
+  /\bwhy\b.{0,32}\b(dekode|company|you)\b.{0,28}\b(start|started|found|founded|create|created|begin|began)\b/i,
+  /\bwhy\b.{0,32}\b(start|started|found|founded|create|created)\b.{0,28}\b(dekode|company|you)\b/i,
 ];
 
 const CLEAR_EXTERNAL_QUESTION = /^(who|what|when|where|why|how)\b/i;
@@ -31,7 +41,7 @@ const COMPANY_CUES = [
 const SHORT_COMPANY_TOPICS = /^(about|company|services?|capabilities|industr(?:y|ies)|technolog(?:y|ies)|tech stack|process|case studies|success stories|portfolio|past work|contact|location|locations|privacy|privacy policy|terms|terms and conditions|terms of service|why dekode)$/i;
 
 export function classifyCompanyIntent(message, context = {}) {
-  const text = message.trim();
+  const text = normalizeVisitorMessage(message);
   if (!text) return { isCompanyRelated: false, topic: null, kind: 'ambiguous' };
   if (GREETING_PATTERNS.some((pattern) => pattern.test(text))) {
     return { isCompanyRelated: false, topic: null, kind: 'greeting' };
@@ -39,11 +49,17 @@ export function classifyCompanyIntent(message, context = {}) {
   if (MEETING_REQUEST_PATTERNS.some((pattern) => pattern.test(text))) {
     return { isCompanyRelated: false, topic: 'meeting', kind: 'meeting' };
   }
+  if (getSensitiveRequestRefusal(text)) {
+    return { isCompanyRelated: false, topic: null, kind: 'unsafe' };
+  }
   if (OUT_OF_SCOPE_PATTERNS.some((pattern) => pattern.test(text))) {
     return { isCompanyRelated: false, topic: null, kind: 'out_of_scope' };
   }
   if (isProjectRequest(text)) {
     return { isCompanyRelated: false, topic: null, kind: 'project' };
+  }
+  if (ORIGIN_PATTERNS.some((pattern) => pattern.test(text))) {
+    return { isCompanyRelated: true, topic: 'origin', kind: 'company' };
   }
 
   const match = findTopic(text);

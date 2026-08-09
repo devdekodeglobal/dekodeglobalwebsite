@@ -12,6 +12,11 @@ const join = (items = []) => items.filter(Boolean).join(', ');
 
 export const normalize = (value) => String(value ?? '')
   .toLowerCase()
+  .replace(/\bcalanders?\b|\bcalenders?\b/g, 'calendar')
+  .replace(/\bbussiness(?:es)?\b/g, 'business')
+  .replace(/\bmob\s+apps?\b/g, 'mobile app')
+  .replace(/\be[\s-]?comm?erce\b/g, 'ecommerce')
+  .replace(/\bu\b/g, 'you')
   .replace(/[^a-z0-9\s+&-]/g, ' ')
   .replace(/\s+/g, ' ')
   .trim();

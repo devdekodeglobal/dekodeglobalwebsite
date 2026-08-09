@@ -1,4 +1,5 @@
 import { loadCompanyKnowledge } from './companyKnowledgeLoader.js';
+import { normalizeVisitorMessage } from './messageNormalization.js';
 
 const knowledge = loadCompanyKnowledge();
 
@@ -19,7 +20,7 @@ const PROJECT_FOCUSES = [
     projectType: 'Mobile App',
     serviceId: 'web-mobile',
     solutionId: 'mobile-app',
-    terms: ['mobile app', 'ios app', 'android app', 'iphone app', 'phone app'],
+    terms: ['mobile app', 'mob app', 'ios app', 'android app', 'iphone app', 'phone app'],
     heading: 'A mobile app, understood.',
     question: 'Who will use the app, and what is the one task they should be able to complete with the least friction?',
   },
@@ -29,7 +30,7 @@ const PROJECT_FOCUSES = [
     projectType: 'E-commerce',
     serviceId: 'ecommerce',
     solutionId: 'ecommerce',
-    terms: ['ecommerce', 'e-commerce', 'online store', 'online shop', 'marketplace', 'shopping platform'],
+    terms: ['ecommerce', 'e-commerce', 'ecomerce', 'online store', 'online shop', 'marketplace', 'shopping platform'],
     heading: 'An e-commerce build, understood.',
     question: 'Are you launching a new store or improving an existing one, and where is the biggest friction today: discovery, checkout, fulfilment, or retention?',
   },
@@ -58,7 +59,8 @@ const PROJECT_FOCUSES = [
     label: 'AI solution',
     projectType: 'AI Automation',
     serviceId: 'custom-ai',
-    terms: ['artificial intelligence', 'generative ai', 'gen ai', 'genai', 'ai agent', 'copilot', 'chatbot', 'machine learning', 'predictive model'],
+    supportingServiceIds: ['ai-strategy'],
+    terms: ['ai', 'artificial intelligence', 'generative ai', 'gen ai', 'genai', 'ai agent', 'copilot', 'chatbot', 'machine learning', 'predictive model'],
     heading: 'An AI solution, understood.',
     question: 'Which business task should the AI improve, and what approved data, documents, or systems can it use?',
   },
@@ -72,12 +74,6 @@ const PROJECT_FOCUSES = [
     question: 'What runs today, and which concern matters most: reliability, security, cost, migration risk, or scale?',
   },
 ];
-
-const normalise = (value) => String(value ?? '')
-  .toLowerCase()
-  .replace(/[^a-z0-9\s'-]/g, ' ')
-  .replace(/\s+/g, ' ')
-  .trim();
 
 function editDistance(left, right) {
   const previous = Array.from({ length: right.length + 1 }, (_, index) => index);
@@ -108,16 +104,16 @@ function containsTerm(input, term) {
 }
 
 export function detectProjectFocus(message) {
-  const input = normalise(message);
+  const input = normalizeVisitorMessage(message);
   return PROJECT_FOCUSES.find((focus) => focus.terms.some((term) => {
-    const normalisedTerm = normalise(term);
+    const normalisedTerm = normalizeVisitorMessage(term);
     return containsTerm(input, normalisedTerm) || containsNearWord(input, normalisedTerm);
   })) || null;
 }
 
 export function isProjectRequest(message) {
-  const input = normalise(message);
-  const asksForOwnBuild = /\b(build|create|develop|design)\s+(me|us|my|our)\b/i.test(input);
+  const input = normalizeVisitorMessage(message);
+  const asksForOwnBuild = /\b(build|create|develop|design|make)\s+(me|us|my|our)\b/i.test(input);
   if (/^(can|could|do|does|would)\s+you\b/i.test(input) && !asksForOwnBuild) return false;
   return asksForOwnBuild
     || /\b(i|we)\s+(want|wnat|need|would like|are looking|struggle|have a problem)\b/i.test(input)
@@ -130,8 +126,10 @@ export function isProjectRequest(message) {
 export function buildProjectRetrievalQuery(message) {
   const focus = detectProjectFocus(message);
   if (!focus) return message;
-  const service = knowledge.services.find((item) => item.id === focus.serviceId);
-  return `${message}\nRelevant intent: ${focus.label}. Relevant DEKODE capability: ${service?.name || focus.projectType}.`;
+  const services = [focus.serviceId, ...(focus.supportingServiceIds || [])]
+    .map((id) => knowledge.services.find((item) => item.id === id))
+    .filter(Boolean);
+  return `${message}\nRelevant intent: ${focus.label}. Relevant DEKODE capabilities: ${services.map((service) => service.name).join(' and ') || focus.projectType}.`;
 }
 
 export function generateProjectResponse(message) {
@@ -147,7 +145,12 @@ export function generateProjectResponse(message) {
 
   const service = knowledge.services.find((item) => item.id === focus.serviceId);
   const solution = knowledge.solutionAreas.find((item) => item.id === focus.solutionId);
-  const evidence = solution?.summary || service?.summary || 'DEKODE takes practical digital projects from discovery through secure production delivery.';
+  const strategyService = focus.id === 'ai'
+    ? knowledge.services.find((item) => item.id === 'ai-strategy')
+    : null;
+  const evidence = strategyService
+    ? `DEKODE combines ${strategyService.name} to identify the right use case and roadmap with ${service.name} to design and deliver a solution around your real workflows and data.`
+    : solution?.summary || service?.summary || 'DEKODE takes practical digital projects from discovery through secure production delivery.';
   return {
     text: `**${focus.heading}**\n\n${evidence}\n\n${focus.question}`,
     projectType: focus.projectType,

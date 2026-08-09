@@ -4,6 +4,7 @@ import {
   createHybridRetriever,
   documentDigest,
   documents,
+  normalize,
   retrieveLexical,
 } from './retrieval.js';
 
@@ -20,6 +21,14 @@ test('lexical retrieval grounds reviewed delivery, Beston, and BRIDGE questions'
   assert.equal(retrieveLexical('What happens during discovery?')[0].id, 'process-discover');
   assert.equal(retrieveLexical('How did DEKODE help Beston?')[0].id, 'case-food-manufacturing');
   assert.equal(retrieveLexical('What is BRIDGE?')[0].id, 'initiative-bridge');
+});
+
+test('normalizes common shorthand before Vertex retrieval', () => {
+  assert.equal(normalize('need ai for my bussiness'), 'need ai for my business');
+  assert.equal(normalize('can u make mob app'), 'can you make mobile app');
+  assert.equal(normalize('do u make ecomerce?'), 'do you make ecommerce');
+  assert.ok(retrieveLexical('can u make mob app').some((match) => match.id === 'solution-mobile-app'));
+  assert.ok(retrieveLexical('do u make ecomerce?').some((match) => match.id === 'solution-ecommerce'));
 });
 
 test('hybrid retrieval can recover a semantic paraphrase with no lexical match', async () => {

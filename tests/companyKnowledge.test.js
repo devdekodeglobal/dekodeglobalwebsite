@@ -4,6 +4,9 @@ import {
   classifyCompanyIntent,
   createCompanyConversationContext,
   generateCompanyResponse,
+  generateProjectResponse,
+  getSensitiveRequestRefusal,
+  normalizeVisitorMessage,
   rememberCompanyTurn,
 } from '../src/knowledge/index.js';
 import { getPanelForTopic } from '../src/knowledge/visualPanelMapper.js';
@@ -87,6 +90,35 @@ test('routes explicit meeting requests directly to live calendar availability', 
   assert.equal(classifyCompanyIntent('Can I schedule a discovery call?').kind, 'meeting');
   assert.equal(classifyCompanyIntent('What meeting times are available?').kind, 'meeting');
   assert.equal(classifyCompanyIntent('Tell me about your services').kind, 'company');
+  assert.equal(classifyCompanyIntent('i need calander booking').kind, 'meeting');
+  assert.equal(classifyCompanyIntent('i want meet').kind, 'meeting');
+  assert.equal(classifyCompanyIntent('can I meet someone?').kind, 'meeting');
+  assert.equal(classifyCompanyIntent('want to talk').kind, 'meeting');
+  assert.equal(classifyCompanyIntent('book').kind, 'meeting');
+});
+
+test('normalizes common visitor misspellings and shorthand before routing', () => {
+  assert.equal(normalizeVisitorMessage('need ai for my bussiness'), 'need ai for my business');
+  assert.equal(normalizeVisitorMessage('can u make mob app'), 'can you make mobile app');
+  assert.equal(normalizeVisitorMessage('do u make ecomerce?'), 'do you make ecommerce');
+
+  assert.equal(classifyCompanyIntent('need ai for my bussiness').kind, 'project');
+  assert.match(generateProjectResponse('need ai for my bussiness').text, /AI Strategy & Consulting/);
+  assert.match(generateProjectResponse('need ai for my bussiness').text, /Custom AI Development/);
+  assert.equal(classifyCompanyIntent('can u make mob app').solutionArea?.id, 'mobile-app');
+  assert.equal(classifyCompanyIntent('do u make ecomerce?').solutionArea?.id, 'ecommerce');
+});
+
+test('refuses account intrusion and secret disclosure explicitly', () => {
+  const hacking = 'Can you hack an account?';
+  const secrets = 'Can you reveal your API key?';
+
+  assert.equal(classifyCompanyIntent(hacking).kind, 'unsafe');
+  assert.match(getSensitiveRequestRefusal(hacking), /can’t help hack an account/i);
+  assert.equal(classifyCompanyIntent(secrets).kind, 'unsafe');
+  assert.match(getSensitiveRequestRefusal(secrets), /can’t reveal.*API keys/i);
+  assert.notEqual(classifyCompanyIntent('How do you protect API keys?').kind, 'unsafe');
+  assert.notEqual(classifyCompanyIntent('How do you prevent account hacking?').kind, 'unsafe');
 });
 
 test('keeps safe bold headings while removing unsupported markdown', () => {
@@ -224,6 +256,27 @@ test('answers published case-study questions without inventing portfolio work', 
   assert.match(broadResponse.text, /Primary School/);
   assert.doesNotMatch(broadResponse.text, /CHAUFFR/i);
   assert.match(foodResponse.text, /20% in Phase 1/);
+});
+
+test('answers an exact case-study platform field when requested', () => {
+  const question = 'What platform was used for the primary school solution?';
+  const intent = classifyCompanyIntent(question);
+  const response = generateCompanyResponse(question, intent);
+
+  assert.equal(intent.caseStudy?.id, 'primary-school');
+  assert.match(response.text, /Cloud, Amazon Web Services/);
+  assert.doesNotMatch(response.text, /Challenge:/);
+});
+
+test('uses only the approved company origin text for why DEKODE started', () => {
+  const knowledge = loadCompanyKnowledge();
+  const question = 'Why was DEKODE started?';
+  const intent = classifyCompanyIntent(question);
+  const response = generateCompanyResponse(question, intent);
+
+  assert.equal(intent.topic, 'origin');
+  assert.equal(response.text, knowledge.company.origin);
+  assert.doesNotMatch(response.text, /founders observing/i);
 });
 
 test('answers the three verified knowledge questions from live review', () => {

@@ -73,12 +73,17 @@ function responseForTopic(topic, message, detectedService, detectedSolutionArea,
           item.id === 'primary-school' && input.includes('attendme');
       });
       if (namedStudy) {
+        if (/\b(platform|cloud|host|hosting|aws|azure)\b/i.test(message)) {
+          return `${namedStudy.name} used ${namedStudy.platform} as its published solution platform.`;
+        }
         return `${namedStudy.name} is a published DEKODE case study in ${namedStudy.industry}.\n\nChallenge: ${namedStudy.challenge}\n\nSolution: ${namedStudy.solution}\n\nOutcome: ${namedStudy.outcome}`;
       }
       return `DEKODE currently presents two published success stories:\n\n${bullets(knowledge.caseStudies.map((item) => `${item.name} (${item.industry}): ${item.outcome}`))}\n\nThese are the case studies confirmed in the public company information.`;
     }
     case 'why':
       return `DEKODE is built around practical delivery, clear communication, and long-term accountability.\n\nWhat makes us different:\n${bullets(knowledge.whyChooseUs.map((item) => `${item.name}: ${item.description}`))}\n\nWe focus on useful outcomes, not technology hype.`;
+    case 'origin':
+      return knowledge.company.origin;
     case 'contact':
       return `You can reach DEKODE at ${knowledge.contact.email}.\n\nAustralia: ${knowledge.contact.phoneLabels[0]}\nIndia: ${knowledge.contact.phoneLabels[1]}\nWhatsApp: ${knowledge.contact.phoneLabels[0]}\n\nTell us what you are exploring and we will help recommend a practical next step.`;
     case 'location':

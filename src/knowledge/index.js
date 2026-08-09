@@ -1,4 +1,6 @@
 export { classifyCompanyIntent } from './intentClassifier.js';
+export { normalizeVisitorMessage } from './messageNormalization.js';
+export { getSensitiveRequestRefusal } from './safetyResponse.js';
 export { generateCompanyResponse } from './companyResponseGenerator.js';
 export {
   buildProjectRetrievalQuery,
