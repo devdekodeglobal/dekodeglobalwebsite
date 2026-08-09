@@ -1,6 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import handler, { isGroundedVertexResult } from '../api/chat.js';
+import handler, {
+  extractModelCandidate,
+  isCompleteModelCandidate,
+  isGroundedVertexResult,
+} from '../api/chat.js';
 
 function makeResponse() {
   return {
@@ -268,6 +272,59 @@ test('rejects an ungrounded Vertex response for an explicit website request', as
   assert.equal(isGroundedVertexResult({ sources: [] }, 'project'), false);
   assert.equal(isGroundedVertexResult({ sources: [{ id: 'service-web-mobile' }] }, 'project'), true);
   assert.equal(isGroundedVertexResult({ sources: [] }, 'company'), true);
+});
+
+test('rejects visibly incomplete model candidates', () => {
+  const incomplete = extractModelCandidate({
+    candidates: [{
+      finishReason: 'MAX_TOKENS',
+      content: { parts: [{ text: 'DEKODE can help you build this. DEK' }] },
+    }],
+  });
+  assert.equal(isCompleteModelCandidate(incomplete), false);
+  assert.equal(isCompleteModelCandidate({ answer: 'Complete answer.', finishReason: 'STOP' }), true);
+});
+
+test('keeps art and donation follow-ups inside the active website project', async () => {
+  const originalEnvironment = new Map([
+    ['VERTEX_CLOUD_RUN_URL', process.env.VERTEX_CLOUD_RUN_URL],
+    ['GEMINI_API_KEY', process.env.GEMINI_API_KEY],
+    ['GEMINI_API_KEY_2', process.env.GEMINI_API_KEY_2],
+    ['GEMINI_API_KEY_3', process.env.GEMINI_API_KEY_3],
+  ]);
+  delete process.env.VERTEX_CLOUD_RUN_URL;
+  delete process.env.GEMINI_API_KEY;
+  delete process.env.GEMINI_API_KEY_2;
+  delete process.env.GEMINI_API_KEY_3;
+  const history = [
+    { role: 'user', text: 'I want to build a website' },
+    { role: 'model', text: 'What should the website help visitors do?' },
+    { role: 'user', text: 'I want to show art on my website.' },
+    { role: 'model', text: 'Do you have any other goals?' },
+  ];
+
+  try {
+    for (const [index, question] of [
+      'yes, they can donate for the art work.',
+      'yes',
+    ].entries()) {
+      const response = makeResponse();
+      await handler({
+        method: 'POST',
+        headers: { 'x-forwarded-for': `project-follow-up-${index}` },
+        body: { question, history },
+      }, response);
+      assert.equal(response.statusCode, 200);
+      assert.equal(response.body.provider, 'verified-fallback');
+      assert.match(response.body.answer, /website/i);
+      assert.doesNotMatch(response.body.answer, /can't confirm|approved public information/i);
+    }
+  } finally {
+    for (const [key, value] of originalEnvironment) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
 });
 
 test('answers CHAUFFR directly from verified portfolio knowledge', async () => {

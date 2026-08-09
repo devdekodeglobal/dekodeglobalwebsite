@@ -23,6 +23,7 @@ import { BrowserSpeechToTextProvider } from "../voice/providers/browserSpeechToT
 import { placeholderInterval, placeholderMessages } from "./chatComposerConfig";
 import { PROJECT_OPTIONS } from "../config/projectOptions";
 import {
+  buildProjectConversationQuery,
   classifyCompanyIntent,
   createCompanyConversationContext,
   generateCompanyResponse,
@@ -272,7 +273,6 @@ export default function ChatApp({
   const handleProjectPrompt = async (initialMessage, preserveHistory = true) => {
     if (!initialMessage.trim() || isTyping) return;
 
-    const fallbackResponse = generateProjectResponse(initialMessage);
     const userEntry = { id: Date.now(), sender: "user", text: initialMessage };
     const history = preserveHistory
       ? messages.slice(-6).map((message) => ({
@@ -280,11 +280,14 @@ export default function ChatApp({
         text: message.text,
       }))
       : [];
+    const fallbackResponse = generateProjectResponse(
+      buildProjectConversationQuery(initialMessage, history),
+    );
 
     setMessages((prev) =>
       preserveHistory ? [...prev, userEntry] : [userEntry],
     );
-    setCompanyPanel(fallbackResponse);
+    setCompanyPanel(null);
     companyContextRef.current = leaveCompanyConversation(
       companyContextRef.current,
     );
@@ -480,7 +483,7 @@ export default function ChatApp({
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
-    if (step === "scheduling" || isTyping) return;
+    if (isTyping) return;
     if (isListening) {
       speechProviderRef.current?.stop();
       setIsListening(false);
@@ -522,7 +525,7 @@ export default function ChatApp({
       return;
     }
 
-    const needsIntentRouting = ["centered", "triage", "company", "done"].includes(step);
+    const needsIntentRouting = ["centered", "triage", "company", "scheduling", "done"].includes(step);
     const rejectsOutOfScope = [...(needsIntentRouting ? [step] : []), "project"].includes(step);
 
     if (rejectsOutOfScope && companyIntent.kind === "out_of_scope") {
@@ -543,7 +546,7 @@ export default function ChatApp({
       return;
     }
 
-    if (step === "centered" || step === "triage" || step === "done") {
+    if (step === "centered" || step === "triage" || step === "scheduling" || step === "done") {
       startConversation(userMessage);
       return;
     }
@@ -766,7 +769,7 @@ export default function ChatApp({
   const getAnimationLevel = () => {
     if (step === "centered") return 0;
     if (step === "scheduling" || step === "done") return 4;
-    return 0;
+    return 1;
   };
 
   const isBookingExperience = projectType === "Discovery Call" && ["scheduling", "done"].includes(step);
@@ -1168,16 +1171,13 @@ export default function ChatApp({
                     onSubmit={handleSendMessage}
                   >
                     {renderDekodeVoiceButton()}
-                    {renderComposerInput({
-                      readOnly: step === "scheduling",
-                    })}
-                    {renderVoiceTypingButton(step === "scheduling")}
+                    {renderComposerInput()}
+                    {renderVoiceTypingButton(isTyping)}
                     <button
                       type="submit"
                       className={`chat-submit-btn ${isSending ? "shake-anim" : ""}`}
                       disabled={
                         !inputValue.trim() ||
-                        step === "scheduling" ||
                         isTyping
                       }
                       aria-label="Send message"

@@ -9,6 +9,12 @@ export {
   isProjectRequest,
 } from './projectResponseGenerator.js';
 export {
+  buildProjectConversationQuery,
+  cleanProjectHistory,
+  hasProjectConversation,
+  isProjectContinuation,
+} from './projectConversation.js';
+export {
   createCompanyConversationContext,
   rememberCompanyTurn,
   leaveCompanyConversation,

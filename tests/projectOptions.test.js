@@ -9,6 +9,11 @@ import {
   generateProjectResponse,
   isProjectRequest,
 } from '../src/knowledge/projectResponseGenerator.js';
+import {
+  buildProjectConversationQuery,
+  isProjectContinuation,
+} from '../src/knowledge/projectConversation.js';
+import { resolveVisualFeatures, resolveVisualMode } from '../src/utils/visualIntent.js';
 
 const EXPECTED_LABELS = [
   'AI Strategy',
@@ -56,4 +61,30 @@ test('recognises a shared operational problem as a project conversation', () => 
 
 test('keeps capability questions in the company-information route', () => {
   assert.equal(isProjectRequest('Can you build websites?'), false);
+});
+
+test('preserves a project brief across short conversational follow-ups', () => {
+  const history = [
+    { role: 'user', text: 'I want to build a website' },
+    { role: 'model', text: 'What should visitors do there?' },
+    { role: 'user', text: 'I want to show art on my website.' },
+    { role: 'model', text: 'Should visitors only view the art?' },
+  ];
+  assert.equal(isProjectContinuation('yes, they can donate for the art work.', history, 'out_of_scope'), true);
+  assert.equal(isProjectContinuation('yes', history, 'ambiguous'), true);
+  assert.match(buildProjectConversationQuery('yes', history), /show art on my website/i);
+});
+
+test('does not absorb a clear company-information switch into project context', () => {
+  const history = [{ role: 'user', text: 'I want to build a website' }];
+  assert.equal(isProjectContinuation('Where is DEKODE located?', history, 'company'), false);
+});
+
+test('builds the supporting visual from accumulated visitor requirements', () => {
+  const messages = [
+    { sender: 'user', text: 'I want to build a website to show art.' },
+    { sender: 'user', text: 'Visitors can donate for the artwork.' },
+  ];
+  assert.equal(resolveVisualMode('Web App', messages), 'journey');
+  assert.deepEqual(resolveVisualFeatures(messages), ['Gallery', 'Donations']);
 });

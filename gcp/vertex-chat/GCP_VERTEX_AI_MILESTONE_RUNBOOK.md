@@ -1201,3 +1201,37 @@ Verification on 9 August 2026:
   proposal-secret failures; none of the protected proposal files were changed
 - commit, Vercel preview deployment, and Cloud Run redeployment remain pending
   approval for this review batch
+
+## 16. Multi-Turn Project Context And Complete Responses
+
+The website-art-donation conversation exposed two architectural failures. The
+Vercel API and Cloud Run received recent chat history, but retrieval and intent
+routing considered only the latest message. Short continuations such as `yes`
+or `they can donate` therefore lost the active website project and could be
+rejected as unsupported. Cloud Run also returned candidate text without checking
+Vertex's finish reason, allowing a `MAX_TOKENS` response to appear as a finished
+sentence.
+
+The correction builds a bounded project brief from recent user turns and uses
+that brief for intent continuity and retrieval while preserving the original
+conversation for Gemini. Explicit company, meeting, safety, and unrelated-topic
+switches still leave project mode. Vertex responses must now finish with `STOP`;
+token-limited candidates are retried once with a larger output budget and are
+never sent to the browser as complete answers. The Gemini fallback applies the
+same completion check.
+
+The booking interface no longer disables the composer while availability is
+open, so visitors can resume conversation without completing a booking. Project
+visuals now derive their mode and visible requirements from recent user turns;
+the reference art-and-donation conversation produces a visitor journey showing
+Gallery and Donations rather than a fixed generic website frame.
+
+Local verification:
+
+- project-context and visual-intent regressions: passing
+- chat API routing and incomplete-candidate regressions: passing
+- booking interaction regressions: passing
+- Vercel production bundle: passing
+- Cloud Run server syntax check: passing
+- deployment remains pending; no live Vertex credits were consumed during this
+  local correction pass

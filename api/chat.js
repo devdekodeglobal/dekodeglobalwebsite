@@ -3,10 +3,12 @@ import { isLikelyGibberish } from '../src/utils/messageQuality.js';
 import { getKnowledgeGapResponse } from '../src/knowledge/knowledgeGapResponse.js';
 import {
   buildProjectRetrievalQuery,
+  buildProjectConversationQuery,
   classifyCompanyIntent,
   generateCompanyResponse,
   generateProjectResponse,
   getSensitiveRequestRefusal,
+  isProjectContinuation,
 } from '../src/knowledge/index.js';
 import { cleanAssistantText } from '../src/utils/assistantText.js';
 import {
@@ -89,11 +91,20 @@ function buildContents(question, history, context) {
   ];
 }
 
-function extractAnswer(payload) {
-  return cleanAssistantText(payload?.candidates?.[0]?.content?.parts
+export function extractModelCandidate(payload) {
+  const candidate = payload?.candidates?.[0];
+  return {
+    answer: cleanAssistantText(candidate?.content?.parts
     ?.map((part) => part.text || '')
     .join('')
-    .trim());
+    .trim()),
+    finishReason: candidate?.finishReason || '',
+  };
+}
+
+export function isCompleteModelCandidate(candidate) {
+  return Boolean(candidate?.answer)
+    && (!candidate.finishReason || candidate.finishReason === 'STOP');
 }
 
 const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -132,6 +143,11 @@ export default async function handler(request, response) {
 
   const history = Array.isArray(request.body?.history) ? request.body.history : [];
   const verifiedIntent = classifyCompanyIntent(question);
+  const continuesProject = isProjectContinuation(question, history, verifiedIntent.kind);
+  const effectiveIntentKind = continuesProject ? 'project' : verifiedIntent.kind;
+  const contextualQuestion = effectiveIntentKind === 'project'
+    ? buildProjectConversationQuery(question, history)
+    : question;
   const sensitiveRefusal = getSensitiveRequestRefusal(question);
   if (sensitiveRefusal) {
     return response.status(200).json({
@@ -141,15 +157,15 @@ export default async function handler(request, response) {
       provider: 'safety-policy',
     });
   }
-  if (verifiedIntent.kind === 'out_of_scope') {
+  if (effectiveIntentKind === 'out_of_scope') {
     return response.status(200).json({
       ok: true,
       answer: "I’m focused on DEKODE’s company information, services, and helping shape digital project ideas. That question is outside the information I can answer reliably, but I can explain what DEKODE does or help you explore something you want to build.",
       sources: [],
     });
   }
-  const retrievalQuestion = verifiedIntent.kind === 'project'
-    ? buildProjectRetrievalQuery(question)
+  const retrievalQuestion = effectiveIntentKind === 'project'
+    ? buildProjectRetrievalQuery(contextualQuestion)
     : question;
   const { matches, context } = formatKnowledgeContext(retrievalQuestion);
   const knowledgeGapAnswer = getKnowledgeGapResponse(question);
@@ -210,14 +226,14 @@ export default async function handler(request, response) {
     });
   }
 
-  const projectFallback = verifiedIntent.kind === 'project'
-    ? generateProjectResponse(question)
+  const projectFallback = effectiveIntentKind === 'project'
+    ? generateProjectResponse(contextualQuestion)
     : null;
 
   if (isVertexCloudRunConfigured()) {
     try {
-      const result = await requestVertexCloudRun(request, { question, history });
-      if (!isGroundedVertexResult(result, verifiedIntent.kind)) {
+      const result = await requestVertexCloudRun(request, { question, history, retrievalQuestion });
+      if (!isGroundedVertexResult(result, effectiveIntentKind)) {
         console.warn('[DEKODE Chat] Vertex returned no grounded project sources; using verified project fallback.');
         return response.status(200).json({
           ok: true,
@@ -276,16 +292,20 @@ export default async function handler(request, response) {
         const payload = await geminiResponse.json();
 
         if (geminiResponse.ok) {
-          const answer = extractAnswer(payload);
-          if (answer) {
+          const candidate = extractModelCandidate(payload);
+          if (isCompleteModelCandidate(candidate)) {
             return response.status(200).json({
               ok: true,
-              answer,
+              answer: candidate.answer,
               sources: matches.map(({ id, label }) => ({ id, label })),
               model,
             });
           }
-          lastFailure = { model, status: 502, providerStatus: 'EMPTY_RESPONSE' };
+          lastFailure = {
+            model,
+            status: 502,
+            providerStatus: candidate.finishReason || 'EMPTY_RESPONSE',
+          };
         } else {
           lastFailure = {
             model,

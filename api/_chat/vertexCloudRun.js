@@ -87,7 +87,8 @@ export async function requestVertexCloudRun(request, payload) {
     signal: AbortSignal.timeout(55_000),
   });
   const result = await response.json().catch(() => ({}));
-  if (!response.ok || !result.answer) {
+  const finishReason = String(result.finishReason || 'STOP');
+  if (!response.ok || !result.answer || result.complete === false || finishReason !== 'STOP') {
     throw new Error(`VERTEX_CLOUD_RUN_${response.status}_${result.error || 'INVALID_RESPONSE'}`);
   }
   return result;
