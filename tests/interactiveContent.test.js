@@ -75,11 +75,13 @@ test("mobile content uses cover flow and centered stacked-card navigation", () =
   assert.match(sections, /stacked-card-rail/g);
   assert.match(sections, /syncRailSelection/);
   assert.doesNotMatch(sections, /Current stage|CheckCircle2/);
+  assert.doesNotMatch(sections, /Selected capability|Sparkles|capability-detail-mark/);
   assert.match(css, /perspective:\s*1200px/);
   assert.match(css, /transform-style:\s*preserve-3d/);
   assert.match(css, /\.star-principles article\.is-next[^}]*rotateY\(-48deg\)/s);
   assert.match(css, /\.conversion-actions\s*\{[^}]*width:\s*min\(100% - 1\.5rem, 19rem\)/s);
-  assert.match(css, /\.story-section\s*\{[^}]*text-align:\s*center/s);
+  assert.match(css, /\.story-section\s*\{[^}]*text-align:\s*left/s);
+  assert.match(css, /\.star-section \.content-section-heading\s*\{[^}]*text-align:\s*center/s);
   assert.match(css, /\.stacked-card-rail\s*\{[^}]*overflow-x:\s*auto[^}]*scroll-snap-type:\s*x mandatory/s);
-  assert.match(css, /\.methodology-detail\s*\{[^}]*align-items:\s*center[^}]*border-top:\s*3px solid/s);
+  assert.match(css, /\.methodology-detail\s*\{[^}]*align-items:\s*flex-start[^}]*border-top:\s*3px solid/s);
 });

@@ -12,7 +12,6 @@ import {
   Scale,
   School,
   ShieldCheck,
-  Sparkles,
 } from "lucide-react";
 import foodManufacturingImage from "../assets/case-study-food-manufacturing.jpg";
 import primarySchoolImage from "../assets/case-study-primary-school.jpg";
@@ -289,9 +288,7 @@ export default function InteractiveContentSections() {
           initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="capability-detail-mark" aria-hidden="true"><Sparkles size={24} /></div>
           <div className="capability-detail-copy">
-            <span>Selected capability</span>
             <h3>{capability.title}</h3>
             <p>{capability.fullDescription}</p>
             <strong>{capability.value}</strong>
