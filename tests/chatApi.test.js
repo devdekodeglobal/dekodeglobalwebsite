@@ -257,7 +257,7 @@ test('keeps an explicit website request grounded when AI providers are unavailab
     );
     assert.equal(response.statusCode, 200);
     assert.match(response.body.answer, /website, understood/i);
-    assert.match(response.body.answer, /what should the website help visitors do/i);
+    assert.match(response.body.answer, /what business outcome should this project improve first/i);
     assert.doesNotMatch(response.body.answer, /mobile app \(iOS\/Android\)|web application, or both/i);
   } finally {
     global.fetch = originalFetch;
@@ -446,6 +446,54 @@ test('grounds a misspelled AI-business request in both verified AI capabilities'
     assert.equal(response.body.provider, 'verified-fallback');
   } finally {
     global.fetch = originalFetch;
+    for (const [key, value] of environment) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test('carries project memory across stateless requests and returns the existing booking action', async () => {
+  const environment = new Map([
+    ['VERTEX_CLOUD_RUN_URL', process.env.VERTEX_CLOUD_RUN_URL],
+    ['GEMINI_API_KEY', process.env.GEMINI_API_KEY],
+    ['GEMINI_API_KEY_2', process.env.GEMINI_API_KEY_2],
+    ['GEMINI_API_KEY_3', process.env.GEMINI_API_KEY_3],
+  ]);
+  for (const key of environment.keys()) delete process.env[key];
+  let conversation;
+  let lastActions = [];
+
+  try {
+    const exchanges = [
+      ['I need a website for independent artists.', /\?$/],
+      ['Collectors will use it to discover and support the artists.', /\?$/],
+      ['It is a new build and it must accept donations.', null],
+    ];
+    const discoveryAnswers = [];
+    for (const [index, [question, expectedQuestion]] of exchanges.entries()) {
+      const response = makeResponse();
+      await handler({
+        method: 'POST',
+        headers: { 'x-forwarded-for': `memory-api-${index}` },
+        body: { question, conversation },
+      }, response);
+      assert.equal(response.statusCode, 200);
+      conversation = response.body.conversation;
+      lastActions = response.body.actions;
+      assert.ok(conversation?.sessionId);
+      if (expectedQuestion) {
+        assert.match(response.body.answer, expectedQuestion);
+        assert.deepEqual(response.body.actions, []);
+        discoveryAnswers.push(response.body.answer.split('\n').at(-1));
+      }
+    }
+    assert.equal(new Set(discoveryAnswers).size, discoveryAnswers.length);
+    assert.equal(conversation.state, 'booking_suggested');
+    assert.deepEqual(lastActions, [{ type: 'open_booking', label: 'View available times' }]);
+    assert.match(conversation.summary, /independent artists/i);
+    assert.deepEqual(conversation.booking, { suggested: true, declined: false, initiated: false });
+  } finally {
     for (const [key, value] of environment) {
       if (value === undefined) delete process.env[key];
       else process.env[key] = value;

@@ -23,13 +23,19 @@ import { BrowserSpeechToTextProvider } from "../voice/providers/browserSpeechToT
 import { placeholderInterval, placeholderMessages } from "./chatComposerConfig";
 import { PROJECT_OPTIONS } from "../config/projectOptions";
 import {
+  beginConversationTurn,
+  buildConversationDirective,
   buildProjectConversationQuery,
   classifyCompanyIntent,
+  createConversationMemory,
+  completeConversationTurn,
+  enforceConversationDirective,
   createCompanyConversationContext,
   generateCompanyResponse,
   generateProjectResponse,
   getSensitiveRequestRefusal,
   leaveCompanyConversation,
+  markBookingInitiated,
   rememberCompanyTurn,
 } from "../knowledge";
 import {
@@ -63,6 +69,7 @@ export default function ChatApp({
   isProposalChatOpen = false,
 }) {
   const [messages, setMessages] = useState([]);
+  const [conversationMemory, setConversationMemory] = useState(() => createConversationMemory());
   const [timeOfDayIndex, setTimeOfDayIndex] = useState(() => {
     const hour = new Date().getHours();
     let currentIdx;
@@ -260,6 +267,10 @@ export default function ChatApp({
   }, []);
 
   const respondWithoutProject = (userMessage, responseText) => {
+    const intent = classifyCompanyIntent(userMessage, companyContextRef.current);
+    const turn = beginConversationTurn(conversationMemory, userMessage, intent.kind);
+    const directive = buildConversationDirective(turn);
+    setConversationMemory(completeConversationTurn(turn, responseText, directive));
     setMessages((prev) => [
       ...prev,
       { id: Date.now(), sender: "user", text: userMessage },
@@ -274,15 +285,14 @@ export default function ChatApp({
     if (!initialMessage.trim() || isTyping) return;
 
     const userEntry = { id: Date.now(), sender: "user", text: initialMessage };
-    const history = preserveHistory
-      ? messages.slice(-6).map((message) => ({
-        role: message.sender === "ai" ? "model" : "user",
-        text: message.text,
-      }))
-      : [];
+    const requestConversation = preserveHistory ? conversationMemory : createConversationMemory();
+    const history = requestConversation.recentMessages;
     const fallbackResponse = generateProjectResponse(
       buildProjectConversationQuery(initialMessage, history),
     );
+    const fallbackTurn = beginConversationTurn(requestConversation, initialMessage, "project");
+    const fallbackDirective = buildConversationDirective(fallbackTurn);
+    const controlledFallbackText = enforceConversationDirective(fallbackResponse.text, fallbackDirective);
 
     setMessages((prev) =>
       preserveHistory ? [...prev, userEntry] : [userEntry],
@@ -300,10 +310,11 @@ export default function ChatApp({
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ question: initialMessage, history }),
+        body: JSON.stringify({ question: initialMessage, conversation: requestConversation }),
       });
       const result = await response.json();
       if (!response.ok || !result.answer) throw new Error(result.error);
+      if (result.conversation) setConversationMemory(result.conversation);
       setMessages((prev) => [
         ...prev,
         {
@@ -311,16 +322,23 @@ export default function ChatApp({
           sender: "ai",
           text: cleanAssistantText(result.answer),
           companyTopic: fallbackResponse.topic,
+          actions: result.actions || [],
         },
       ]);
     } catch {
+      setConversationMemory(completeConversationTurn(
+        fallbackTurn,
+        controlledFallbackText,
+        fallbackDirective,
+      ));
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now(),
           sender: "ai",
-          text: cleanAssistantText(fallbackResponse.text),
+          text: cleanAssistantText(controlledFallbackText),
           companyTopic: fallbackResponse.topic,
+          actions: fallbackDirective.action ? [fallbackDirective.action] : [],
         },
       ]);
     } finally {
@@ -344,6 +362,11 @@ export default function ChatApp({
     setMeetingSlots([]);
     setSelectedMeetingDateKey("");
     setSelectedMeetingSlotId(null);
+    setConversationMemory((current) => {
+      const next = markBookingInitiated(current);
+      console.info('[DEKODE Chat] booking initiated', next.sessionId.slice(0, 12));
+      return next;
+    });
     setMessages((current) => [
       ...current,
       ...(userMessage ? [{ id: Date.now(), sender: 'user', text: userMessage }] : []),
@@ -386,11 +409,8 @@ export default function ChatApp({
       isCompanyRelated: true,
       topic: intent.topic || companyContextRef.current.lastTopic || "company",
     });
-
-    const history = messages.slice(-6).map((message) => ({
-      role: message.sender === "ai" ? "model" : "user",
-      text: message.text,
-    }));
+    const fallbackTurn = beginConversationTurn(conversationMemory, userMessage, intent.kind);
+    const fallbackDirective = buildConversationDirective(fallbackTurn);
 
     setMessages((prev) => [
       ...prev,
@@ -408,10 +428,11 @@ export default function ChatApp({
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ question: userMessage, history }),
+        body: JSON.stringify({ question: userMessage, conversation: conversationMemory }),
       });
       const result = await response.json();
       if (!response.ok || !result.answer) throw new Error(result.error);
+      if (result.conversation) setConversationMemory(result.conversation);
       setMessages((prev) => [
         ...prev,
         {
@@ -420,9 +441,15 @@ export default function ChatApp({
           text: cleanAssistantText(result.answer),
           companyTopic: fallbackResponse.topic,
           suggestions: fallbackResponse.suggestions,
+          actions: result.actions || [],
         },
       ]);
     } catch {
+      setConversationMemory(completeConversationTurn(
+        fallbackTurn,
+        fallbackResponse.text,
+        fallbackDirective,
+      ));
       setMessages((prev) => [
         ...prev,
         {
@@ -546,8 +573,13 @@ export default function ChatApp({
       return;
     }
 
-    if (step === "centered" || step === "triage" || step === "scheduling" || step === "done") {
+    if (step === "centered" || step === "triage") {
       startConversation(userMessage);
+      return;
+    }
+
+    if (step === "scheduling" || step === "done") {
+      startConversation(userMessage, true);
       return;
     }
 
@@ -890,6 +922,7 @@ export default function ChatApp({
               selectedMeetingDateKey={selectedMeetingDateKey}
               selectedMeetingSlotId={selectedMeetingSlotId}
               bookingComplete={step === "done"}
+              conversationSummary={conversationMemory.summary}
             />
           )}
         </div>
@@ -1057,6 +1090,28 @@ export default function ChatApp({
                                 disabled={isTyping}
                               >
                                 {suggestion.label}
+                              </button>
+                            ))}
+                          </motion.div>
+                        )}
+                        {msg.sender === "ai" && msg.actions?.length > 0 && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="company-suggestion-chips"
+                          >
+                            {msg.actions.map((action) => (
+                              <button
+                                key={`${action.type}-${action.label}`}
+                                type="button"
+                                onClick={() => {
+                                  if (action.type === "open_booking") handleOpenMeetingScheduler();
+                                }}
+                                disabled={isTyping}
+                              >
+                                <CalendarDays size={15} aria-hidden="true" />
+                                {action.label}
                               </button>
                             ))}
                           </motion.div>

@@ -382,6 +382,7 @@ export default function AnimationPanel({
   selectedMeetingDateKey = '',
   selectedMeetingSlotId,
   bookingComplete = false,
+  conversationSummary = '',
 }) {
   const [activeTab, setActiveTab] = React.useState('web');
 
@@ -402,7 +403,10 @@ export default function AnimationPanel({
 
   const isMobileAndWeb = projectType === 'Mobile & Web';
   const inferredMode = resolveVisualMode(projectType, messages);
-  const visualFeatures = resolveVisualFeatures(messages);
+  const visualFeatures = resolveVisualFeatures([
+    ...messages,
+    ...(conversationSummary ? [{ sender: 'user', text: conversationSummary }] : []),
+  ]);
   const visualMode = isMobileAndWeb && ['web', 'mobile'].includes(inferredMode)
     ? activeTab
     : inferredMode;

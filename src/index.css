@@ -1368,6 +1368,9 @@ h1, h2, h3, h4, h5, h6 {
   cursor: pointer;
   min-height: 42px;
   overflow-wrap: anywhere;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .company-suggestion-chips button:hover {

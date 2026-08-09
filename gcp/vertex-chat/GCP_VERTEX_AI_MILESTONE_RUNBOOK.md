@@ -1073,9 +1073,10 @@ company questions use the Vertex Cloud Run adapter first. If that request is
 temporarily unavailable, the existing server-side Gemini-key path remains a
 controlled fallback when its environment variables are present.
 
-The adapter forwards the six most recent bounded conversation messages. Cloud
-Run includes that history before the current grounded question, while retrieved
-DEKODE knowledge remains the only approved factual source.
+The adapter forwards a structured, bounded conversation summary plus the eight
+most recent bounded messages. Cloud Run includes that state before the current
+grounded question, while retrieved DEKODE knowledge remains the only approved
+factual source.
 
 ### 13.5 Persistent Semantic Index
 
@@ -1235,3 +1236,60 @@ Local verification:
 - Cloud Run server syntax check: passing
 - deployment remains pending; no live Vertex credits were consumed during this
   local correction pass
+
+## 17. Bounded Conversation Memory And Project Qualification
+
+Long project conversations previously depended on six raw messages. That
+limited prompt size, but once an early requirement left the window it no longer
+influenced intent, retrieval, the visual panel, or the next question. There was
+also no deterministic project state, so the model could repeat discovery,
+continue consulting indefinitely, or mention booking at the wrong time.
+
+The production conversation contract is now a sanitized envelope returned by
+the Vercel API and carried by the browser for the current tab. Cloud Run remains
+stateless. The envelope contains:
+
+- a random per-tab session ID
+- an explicit state and safe turn counters
+- structured project type, objective, users, stage, timeline, integrations,
+  constraints, and confirmed requirements
+- discovery fields already covered
+- booking suggested, declined, and initiated flags
+- at most eight recent messages of at most 500 characters each
+- a deterministic summary capped at 1,600 characters
+
+The state machine distinguishes informational questions, project intent,
+requirement discovery, sufficient qualification, booking suggestion, booking
+decline, and booking initiation. A normal project receives two to four useful,
+non-repeating discovery questions. A sufficiently detailed first message can
+qualify immediately. Qualification returns a structured `open_booking` action,
+and the frontend action opens the existing live scheduler. Company-information
+answers never return that action. A declined or completed booking remains sticky
+so later chat continues without repeated calendar prompts.
+
+Vertex still generates the natural explanation, but the application selects the
+single allowed next question and enforces it on the completed answer. Vercel
+passes the summary, bounded recent turns, retrieval query, and state directive to
+the existing private Cloud Run service. No database, public Cloud Run endpoint,
+new model, service-account key, or secret was introduced.
+
+Safe observability records only a shortened session ID, state transitions, turn
+counts, compaction events, booking transitions, and provider failure codes. It
+does not log visitor messages, structured requirements, summaries, credentials,
+or retrieved document text.
+
+Permanent local regressions cover a 20-turn conversation, standard project
+qualification, detailed-first-message qualification, company information,
+meeting decline, post-booking continuation, malformed client state, and session
+isolation. Live Vertex checks should remain focused to conserve trial credits.
+
+Final local verification on 9 August 2026:
+
+- conversation architecture, chat API, and responsive interaction focus: 38/38
+  passing
+- Vercel production bundle: passing
+- lint: passing with the pre-existing unused `timeOfDay` warning
+- complete inherited suite: 120/127 passing
+- the seven remaining failures are the pre-existing protected proposal snapshot
+  and local proposal-secret expectations; none of their protected files were
+  changed by this work

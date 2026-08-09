@@ -186,7 +186,8 @@ test('keeps consent aligned and resumes normal chat after booking', () => {
   assert.match(indexCss, /\.meeting-consent\s*\{[^}]*align-items:\s*center/);
   assert.match(indexCss, /\.meeting-consent input\s*\{[^}]*margin:\s*0/);
   assert.match(chatApp, /const needsIntentRouting = \["centered", "triage", "company", "scheduling", "done"\]\.includes\(step\)/);
-  assert.match(chatApp, /step === "centered" \|\| step === "triage" \|\| step === "scheduling" \|\| step === "done"/);
+  assert.match(chatApp, /step === "scheduling" \|\| step === "done"/);
+  assert.match(chatApp, /startConversation\(userMessage, true\)/);
   assert.doesNotMatch(chatApp, /readOnly:\s*step === "scheduling"/);
   assert.doesNotMatch(chatApp, /if \(step === "scheduling" \|\| isTyping\) return/);
   assert.match(chatApp, /if \(step === "centered" \|\| step === "done"\) setStep\("company"\)/);
@@ -197,4 +198,12 @@ test('keeps consent aligned and resumes normal chat after booking', () => {
 test('removes obsolete numbered progress from dynamic project conversations', () => {
   assert.doesNotMatch(chatApp, /showDiscoveryProgress/);
   assert.doesNotMatch(chatApp, /className="step-dot"/);
+});
+
+test('opens the existing scheduler from an AI qualification action', () => {
+  assert.match(chatApp, /action\.type === "open_booking"/);
+  assert.match(chatApp, /handleOpenMeetingScheduler\(\)/);
+  assert.match(chatApp, /conversation: requestConversation/);
+  assert.match(chatApp, /setConversationMemory\(result\.conversation\)/);
+  assert.match(animationPanel, /conversationSummary/);
 });

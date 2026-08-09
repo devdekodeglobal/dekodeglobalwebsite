@@ -19,3 +19,15 @@ export {
   rememberCompanyTurn,
   leaveCompanyConversation,
 } from './conversationContextManager.js';
+export {
+  beginConversationTurn,
+  buildConversationDirective,
+  completeConversationTurn,
+  conversationMemoryContext,
+  conversationMemoryLimits,
+  conversationRetrievalQuery,
+  createConversationMemory,
+  enforceConversationDirective,
+  markBookingInitiated,
+  normalizeConversationMemory,
+} from './conversationMemory.js';
