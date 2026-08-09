@@ -64,16 +64,22 @@ test("structured content is sourced and responsive fallbacks are available", () 
 }
 );
 
-test("mobile STAR content uses a cylindrical carousel and compact actions", () => {
-  assert.match(sections, /className="star-cylinder-stage"/);
+test("mobile content uses cover flow and centered stacked-card navigation", () => {
+  assert.match(sections, /className="star-coverflow-track"/);
   assert.match(sections, /drag=\{shouldReduceMotion \? false : "x"\}/);
   assert.match(sections, /onDragEnd=\{handleStarDragEnd\}/);
   assert.match(sections, /ArrowLeft/);
   assert.match(sections, /ArrowRight/);
   assert.match(sections, /star-carousel-status/);
-  assert.match(css, /perspective:\s*900px/);
+  assert.match(sections, /getCoverflowClass/);
+  assert.match(sections, /stacked-card-rail/g);
+  assert.match(sections, /syncRailSelection/);
+  assert.doesNotMatch(sections, /Current stage|CheckCircle2/);
+  assert.match(css, /perspective:\s*1200px/);
   assert.match(css, /transform-style:\s*preserve-3d/);
-  assert.match(css, /rotateY\(calc\(var\(--star-position\) \* 90deg\)\) translateZ\(148px\)/);
+  assert.match(css, /\.star-principles article\.is-next[^}]*rotateY\(-48deg\)/s);
   assert.match(css, /\.conversion-actions\s*\{[^}]*width:\s*min\(100% - 1\.5rem, 19rem\)/s);
-  assert.match(css, /\.capability-switcher,[\s\S]*flex-wrap:\s*wrap;[\s\S]*overflow:\s*visible/);
+  assert.match(css, /\.story-section\s*\{[^}]*text-align:\s*center/s);
+  assert.match(css, /\.stacked-card-rail\s*\{[^}]*overflow-x:\s*auto[^}]*scroll-snap-type:\s*x mandatory/s);
+  assert.match(css, /\.methodology-detail\s*\{[^}]*align-items:\s*center[^}]*border-top:\s*3px solid/s);
 });

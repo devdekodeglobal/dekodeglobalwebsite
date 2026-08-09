@@ -3,7 +3,6 @@ import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowUpRight,
   Calendar,
-  CheckCircle2,
   Factory,
   Mail,
   MapPin,
@@ -76,9 +75,24 @@ function SectionHeading({ eyebrow, title, description, compact = false }) {
   );
 }
 
+function getWrappedOffset(index, activeIndex, total) {
+  let offset = index - activeIndex;
+  if (offset > total / 2) offset -= total;
+  if (offset < -total / 2) offset += total;
+  return offset;
+}
+
+function getCoverflowClass(offset) {
+  if (offset === 0) return "is-active";
+  if (offset === 1) return "is-next";
+  if (offset === 2) return "is-next-far";
+  if (offset < 0) return "is-previous";
+  return "is-hidden";
+}
+
 export default function InteractiveContentSections() {
   const shouldReduceMotion = useReducedMotion();
-  const [starRotation, setStarRotation] = useState(0);
+  const [activeStar, setActiveStar] = useState(0);
   const [activeCapability, setActiveCapability] = useState(content.capabilities[0].id);
   const [activeProject, setActiveProject] = useState(content.selectedWork[0].id);
   const [activeStage, setActiveStage] = useState(content.deliveryProcess[0].id);
@@ -94,16 +108,34 @@ export default function InteractiveContentSections() {
   const industry = content.industries.find((item) => item.id === activeIndustry);
   const ProjectIcon = caseStudyIcons[project.id];
   const starItems = companyKnowledge.whyChooseUs;
-  const activeStar = ((starRotation % starItems.length) + starItems.length) % starItems.length;
 
   const rotateStar = (direction) => {
-    setStarRotation((current) => current + direction);
+    setActiveStar((current) => (current + direction + starItems.length) % starItems.length);
   };
 
   const handleStarDragEnd = (_event, info) => {
     const intent = info.offset.x + info.velocity.x * 0.12;
     if (Math.abs(intent) < 42) return;
     rotateStar(intent < 0 ? 1 : -1);
+  };
+
+  const selectRailItem = (event, setter, id) => {
+    setter(id);
+    const button = event.currentTarget;
+    const rail = button.parentElement;
+    const left = button.offsetLeft - (rail.clientWidth - button.offsetWidth) / 2;
+    rail.scrollTo({ left, behavior: shouldReduceMotion ? "auto" : "smooth" });
+  };
+
+  const syncRailSelection = (event, setter) => {
+    const rail = event.currentTarget;
+    const railCenter = rail.scrollLeft + rail.clientWidth / 2;
+    const cards = [...rail.querySelectorAll("[data-rail-id]")];
+    const nearest = cards.reduce((best, card) => {
+      const distance = Math.abs(card.offsetLeft + card.offsetWidth / 2 - railCenter);
+      return !best || distance < best.distance ? { card, distance } : best;
+    }, null);
+    if (nearest) setter(nearest.card.dataset.railId);
   };
 
   return (
@@ -180,30 +212,29 @@ export default function InteractiveContentSections() {
           }}
         >
           <motion.div
-            className="star-cylinder-stage"
+            className="star-coverflow-track"
             drag={shouldReduceMotion ? false : "x"}
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.08}
             onDragEnd={handleStarDragEnd}
-            animate={{ rotateY: shouldReduceMotion ? 0 : starRotation * -90 }}
-            transition={{ type: "spring", stiffness: 165, damping: 23 }}
           >
-            {starItems.map((item, index) => (
-              <article
-                key={item.name}
-                className={index === activeStar ? "is-active" : ""}
-                style={{ "--star-position": index }}
-              >
-                <div className="star-card-mark" aria-hidden="true">
-                  <span className="star-letter">{item.name[0]}</span>
-                  <span className="star-index">0{index + 1}</span>
-                </div>
-                <div className="star-card-copy">
-                  <h3>{item.name}</h3>
+            {starItems.map((item, index) => {
+              const offset = getWrappedOffset(index, activeStar, starItems.length);
+              return (
+                <article
+                  key={item.name}
+                  className={getCoverflowClass(offset)}
+                  data-number={`0${index + 1}`}
+                >
+                  <div className="star-accent-bar" aria-hidden="true" />
+                  <h3 className="star-wordmark">
+                    <span className="star-letter">{item.name[0]}</span>
+                    <span>{item.name.slice(1)}</span>
+                  </h3>
                   <p>{item.description}</p>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </motion.div>
           <div className="star-carousel-status" aria-label={`STAR principle ${activeStar + 1} of ${starItems.length}`}>
             {starItems.map((item, index) => (
@@ -213,7 +244,7 @@ export default function InteractiveContentSections() {
                 className={index === activeStar ? "is-active" : ""}
                 aria-label={`Show ${item.name}`}
                 aria-current={index === activeStar ? "true" : undefined}
-                onClick={() => setStarRotation(index)}
+                onClick={() => setActiveStar(index)}
               />
             ))}
           </div>
@@ -229,17 +260,25 @@ export default function InteractiveContentSections() {
           title="One team across the digital journey"
           description="Choose an area to see where DEKODE can create practical value."
         />
-        <div className="capability-switcher" role="tablist" aria-label="Select a DEKODE capability">
-          {content.capabilities.map((item) => (
+        <div
+          className="capability-switcher stacked-card-rail"
+          role="tablist"
+          aria-label="Select a DEKODE capability"
+          onScroll={(event) => syncRailSelection(event, setActiveCapability)}
+        >
+          {content.capabilities.map((item, index) => (
             <button
               type="button"
               role="tab"
               key={item.id}
+              data-rail-id={item.id}
               aria-selected={item.id === activeCapability}
               className={item.id === activeCapability ? "is-active" : ""}
-              onClick={() => setActiveCapability(item.id)}
+              onClick={(event) => selectRailItem(event, setActiveCapability, item.id)}
             >
-              {item.title}
+              <span className="stacked-card-index">0{index + 1}</span>
+              <strong>{item.title}</strong>
+              <small>{item.shortDescription}</small>
             </button>
           ))}
         </div>
@@ -327,18 +366,25 @@ export default function InteractiveContentSections() {
           description="Each stage answers a useful question before the next investment is made."
         />
         <div className="methodology-layout">
-          <div className="methodology-rail" role="tablist" aria-label="DEKODE delivery stages">
+          <div
+            className="methodology-rail stacked-card-rail"
+            role="tablist"
+            aria-label="DEKODE delivery stages"
+            onScroll={(event) => syncRailSelection(event, setActiveStage)}
+          >
             {content.deliveryProcess.map((item, index) => (
               <button
                 type="button"
                 role="tab"
                 aria-selected={item.id === activeStage}
                 key={item.id}
+                data-rail-id={item.id}
                 className={item.id === activeStage ? "is-active" : ""}
-                onClick={() => setActiveStage(item.id)}
+                onClick={(event) => selectRailItem(event, setActiveStage, item.id)}
               >
                 <span>0{index + 1}</span>
                 <strong>{item.title}</strong>
+                <small>{item.description}</small>
               </button>
             ))}
           </div>
@@ -349,8 +395,6 @@ export default function InteractiveContentSections() {
             initial={shouldReduceMotion ? false : { opacity: 0, x: 8 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <CheckCircle2 size={24} aria-hidden="true" />
-            <span>Current stage</span>
             <h3>{stage.title}</h3>
             <p>{stage.description}</p>
             <ChatAction section="delivery-process" item={stage} label={stage.question} intent="guided_discovery" />
@@ -367,17 +411,25 @@ export default function InteractiveContentSections() {
           title="Good systems begin with context"
           description="Select an industry to see how DEKODE connects capabilities around real operating needs."
         />
-        <div className="industry-switcher" role="tablist" aria-label="Select an industry">
-          {content.industries.map((item) => (
+        <div
+          className="industry-switcher stacked-card-rail"
+          role="tablist"
+          aria-label="Select an industry"
+          onScroll={(event) => syncRailSelection(event, setActiveIndustry)}
+        >
+          {content.industries.map((item, index) => (
             <button
               type="button"
               role="tab"
               key={item.id}
+              data-rail-id={item.id}
               aria-selected={item.id === activeIndustry}
               className={item.id === activeIndustry ? "is-active" : ""}
-              onClick={() => setActiveIndustry(item.id)}
+              onClick={(event) => selectRailItem(event, setActiveIndustry, item.id)}
             >
-              {item.title}
+              <span className="stacked-card-index">0{index + 1}</span>
+              <strong>{item.title}</strong>
+              <small>{item.challenge}</small>
             </button>
           ))}
         </div>
