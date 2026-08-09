@@ -13,6 +13,7 @@ const interactiveContent = await readFile(new URL('../src/components/Interactive
 const interactiveStyles = await readFile(new URL('../src/components/interactive-content.css', import.meta.url), 'utf8');
 const meetingScheduler = await readFile(new URL('../src/components/MeetingScheduler.jsx', import.meta.url), 'utf8');
 const bookingSummary = await readFile(new URL('../src/components/BookingSummary.jsx', import.meta.url), 'utf8');
+const typewriterText = await readFile(new URL('../src/components/TypewriterText.jsx', import.meta.url), 'utf8');
 
 test('uses dynamic viewport units and safe-area spacing for app and voice surfaces', () => {
   assert.match(indexCss, /height:\s*100dvh/);
@@ -70,6 +71,12 @@ test('keeps the composer responsive with rotating hints and separate voice typin
   assert.match(indexCss, /\.proposal-entry-button\s*\{[^}]*white-space:\s*nowrap/s);
   assert.match(indexCss, /\.chat-mic-btn\s*\{[^}]*width:\s*44px[^}]*height:\s*44px/s);
   assert.match(indexCss, /\.contact-panel-grid \.knowledge-panel-button span,[\s\S]*overflow-wrap:\s*anywhere/);
+});
+
+test('caps long answer reveal time instead of typing every character slowly', () => {
+  assert.match(typewriterText, /maxAnimationDuration = 1800/);
+  assert.match(typewriterText, /charactersPerTick/);
+  assert.match(typewriterText, /text\.slice\(0, nextIndex\)/);
 });
 
 test('switches legal documents in one shared panel and tightens story spacing', () => {

@@ -17,6 +17,11 @@ export function FormattedText({ text }) {
 export default function TypewriterText({ text, delay = 20, onComplete }) {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
+  const maxAnimationDuration = 1800;
+  const charactersPerTick = Math.max(
+    1,
+    Math.ceil(text.length / Math.max(1, maxAnimationDuration / delay)),
+  );
 
   useEffect(() => {
     // Reset if text changes
@@ -27,8 +32,9 @@ export default function TypewriterText({ text, delay = 20, onComplete }) {
   useEffect(() => {
     if (currentIndex < text.length) {
       const timeout = setTimeout(() => {
-        setDisplayedText(prev => prev + text[currentIndex]);
-        setCurrentIndex(prev => prev + 1);
+        const nextIndex = Math.min(text.length, currentIndex + charactersPerTick);
+        setDisplayedText(text.slice(0, nextIndex));
+        setCurrentIndex(nextIndex);
       }, delay);
       
       return () => clearTimeout(timeout);
@@ -36,7 +42,7 @@ export default function TypewriterText({ text, delay = 20, onComplete }) {
       // Fire onComplete when done
       onComplete();
     }
-  }, [currentIndex, text, delay, onComplete]);
+  }, [charactersPerTick, currentIndex, text, delay, onComplete]);
 
   return (
     <span>
