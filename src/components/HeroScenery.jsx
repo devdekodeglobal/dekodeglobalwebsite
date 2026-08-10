@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function HeroScenery({ timeOfDay = 'noon' }) {
+export default function HeroScenery({ timeOfDay = 'noon', holidayId = null, holidayName = "" }) {
   const isNight = timeOfDay === 'night';
   const isEvening = timeOfDay === 'evening';
   const isMorning = timeOfDay === 'morning';
