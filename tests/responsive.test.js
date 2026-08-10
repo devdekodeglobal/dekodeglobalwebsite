@@ -60,8 +60,8 @@ test('keeps the composer responsive with rotating hints and separate voice typin
   assert.match(chatApp, /className="action-pill calendar-entry-button"/);
   assert.match(chatApp, /aria-label="Book a meeting"/);
   assert.match(chatApp, /setStep\('scheduling'\)/);
-  assert.match(chatApp, /companyIntent\.kind === "meeting"/);
-  assert.match(chatApp, /handleOpenMeetingScheduler\(userMessage\)/);
+  assert.match(chatApp, /result\.action === "open_calendar"/);
+  assert.match(chatApp, /activateMeetingScheduler\(\)/);
   assert.match(chatApp, /> Client Portal/);
   assert.doesNotMatch(chatApp, /Access Client Portal|Access client proposal/);
   assert.equal((projectOptions.match(/label:\s*"/g) || []).length, 4);

@@ -4,6 +4,12 @@ export {
   scoreCompetingIntents,
 } from './intentClassifier.js';
 export { normalizeVisitorMessage } from './messageNormalization.js';
+export {
+  MODEL_ACTIONS,
+  MODEL_INTENTS,
+  parseStructuredModelText,
+  validateModelResponse,
+} from './modelResponse.js';
 export { getSensitiveRequestRefusal } from './safetyResponse.js';
 export { generateCompanyResponse } from './companyResponseGenerator.js';
 export {

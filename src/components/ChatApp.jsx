@@ -29,14 +29,11 @@ import {
   classifyCompanyIntent,
   createConversationMemory,
   completeConversationTurn,
-  enforceConversationDirective,
   createCompanyConversationContext,
   generateCompanyResponse,
   generateProjectResponse,
   getSensitiveRequestRefusal,
-  leaveCompanyConversation,
   markBookingInitiated,
-  MEETING_PROJECT_CLARIFICATION,
   rememberCompanyTurn,
 } from "../knowledge";
 import {
@@ -282,81 +279,15 @@ export default function ChatApp({
     setCompanyPanel(null);
   };
 
-  const handleProjectPrompt = async (initialMessage, preserveHistory = true) => {
-    if (!initialMessage.trim() || isTyping) return;
-
-    const userEntry = { id: Date.now(), sender: "user", text: initialMessage };
-    const requestConversation = preserveHistory ? conversationMemory : createConversationMemory();
-    const history = requestConversation.recentMessages;
-    const fallbackResponse = generateProjectResponse(
-      buildProjectConversationQuery(initialMessage, history),
-    );
-    const fallbackTurn = beginConversationTurn(requestConversation, initialMessage, "project");
-    const fallbackDirective = buildConversationDirective(fallbackTurn);
-    const controlledFallbackText = enforceConversationDirective(fallbackResponse.text, fallbackDirective);
-
-    setMessages((prev) =>
-      preserveHistory ? [...prev, userEntry] : [userEntry],
-    );
-    setCompanyPanel(null);
-    companyContextRef.current = leaveCompanyConversation(
-      companyContextRef.current,
-    );
-    setProjectType(fallbackResponse.projectType);
-    setGatheredTags([fallbackResponse.projectType]);
-    setStep("project");
-    setIsTyping(true);
-
-    try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ question: initialMessage, conversation: requestConversation }),
-      });
-      const result = await response.json();
-      if (!response.ok || !result.answer) throw new Error(result.error);
-      if (result.conversation) setConversationMemory(result.conversation);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          sender: "ai",
-          text: cleanAssistantText(result.answer),
-          companyTopic: fallbackResponse.topic,
-          actions: result.actions || [],
-        },
-      ]);
-    } catch {
-      setConversationMemory(completeConversationTurn(
-        fallbackTurn,
-        controlledFallbackText,
-        fallbackDirective,
-      ));
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          sender: "ai",
-          text: cleanAssistantText(controlledFallbackText),
-          companyTopic: fallbackResponse.topic,
-          actions: fallbackDirective.action ? [fallbackDirective.action] : [],
-        },
-      ]);
-    } finally {
-      setIsTyping(false);
-    }
-  };
-
-  const startConversation = (initialMessage, preserveHistory = false) => {
-    handleProjectPrompt(initialMessage, preserveHistory);
+  const startConversation = (initialMessage) => {
+    handleModelPrompt(initialMessage);
   };
 
   const handleOptionSelect = (option) => {
     startConversation(option);
   };
 
-  const handleOpenMeetingScheduler = (requestedByUser = '') => {
-    const userMessage = typeof requestedByUser === 'string' ? requestedByUser.trim() : '';
+  const activateMeetingScheduler = () => {
     setCompanyPanel(null);
     setProjectType('Discovery Call');
     setGatheredTags(['Meeting']);
@@ -368,6 +299,12 @@ export default function ChatApp({
       console.info('[DEKODE Chat] booking initiated', next.sessionId.slice(0, 12));
       return next;
     });
+    setStep('scheduling');
+  };
+
+  const handleOpenMeetingScheduler = (requestedByUser = '') => {
+    const userMessage = typeof requestedByUser === 'string' ? requestedByUser.trim() : '';
+    activateMeetingScheduler();
     setMessages((current) => [
       ...current,
       ...(userMessage ? [{ id: Date.now(), sender: 'user', text: userMessage }] : []),
@@ -377,7 +314,6 @@ export default function ChatApp({
         text: 'Here is our live calendar availability. Choose a date and time that works for you.',
       },
     ]);
-    setStep('scheduling');
   };
 
   const handleMeetingSlotsChange = useCallback((nextSlots) => {
@@ -466,6 +402,79 @@ export default function ChatApp({
     }
   };
 
+  const handleModelPrompt = async (userMessage) => {
+    if (!userMessage.trim() || isTyping) return;
+    const requestConversation = conversationMemory;
+    setMessages((current) => [
+      ...current,
+      { id: Date.now(), sender: "user", text: userMessage },
+    ]);
+    setIsTyping(true);
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ question: userMessage, conversation: requestConversation }),
+      });
+      const result = await response.json();
+      if (!response.ok || !result.answer) throw new Error(result.error);
+      if (result.conversation) setConversationMemory(result.conversation);
+
+      const visualIntent = classifyCompanyIntent(userMessage, companyContextRef.current);
+      if (result.action === "open_calendar") {
+        activateMeetingScheduler();
+      } else if (result.action === "show_project_panel" || result.intent === "project_build") {
+        const project = generateProjectResponse(buildProjectConversationQuery(
+          userMessage,
+          requestConversation.recentMessages,
+        ));
+        setCompanyPanel(null);
+        setProjectType(project.projectType);
+        setGatheredTags([project.projectType]);
+        setStep("project");
+      } else if (result.action === "show_company_panel" || [
+        "company_info", "pricing", "case_study", "methodology",
+      ].includes(result.intent)) {
+        const company = generateCompanyResponse(userMessage, {
+          ...visualIntent,
+          isCompanyRelated: true,
+          topic: result.topic || visualIntent.topic || "company",
+        });
+        companyContextRef.current = rememberCompanyTurn(companyContextRef.current, company.topic);
+        setProjectType(null);
+        setCompanyPanel(company);
+        setStep("company");
+      } else if (!["scheduling", "done"].includes(step)) {
+        setCompanyPanel(null);
+        setProjectType(null);
+        setStep("triage");
+      }
+
+      setMessages((current) => [
+        ...current,
+        {
+          id: Date.now() + 1,
+          sender: "ai",
+          text: cleanAssistantText(result.answer),
+          companyTopic: result.topic,
+          actions: result.actions || [],
+        },
+      ]);
+    } catch {
+      const intent = classifyCompanyIntent(userMessage, companyContextRef.current);
+      const fallback = intent.kind === "project"
+        ? generateProjectResponse(buildProjectConversationQuery(userMessage, requestConversation.recentMessages))
+        : generateCompanyResponse(userMessage, intent);
+      setMessages((current) => [
+        ...current,
+        { id: Date.now() + 1, sender: "ai", text: cleanAssistantText(fallback.text) },
+      ]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
   const handleProposalPrompt = async (userMessage) => {
     if (!userMessage.trim() || isTyping || !proposalChatEnabled) return;
     setMessages((prev) => [
@@ -531,82 +540,13 @@ export default function ChatApp({
       return;
     }
 
-    const companyIntent = classifyCompanyIntent(
-      userMessage,
-      companyContextRef.current,
-    );
-    if (companyIntent.kind === "unsafe") {
-      respondWithoutProject(userMessage, getSensitiveRequestRefusal(userMessage));
-      return;
-    }
-    if (companyIntent.kind === "meeting") {
-      handleOpenMeetingScheduler(userMessage);
-      return;
-    }
-    if (companyIntent.kind === "meeting_project_ambiguous") {
-      respondWithoutProject(userMessage, MEETING_PROJECT_CLARIFICATION);
-      return;
-    }
-    const isCompanyInformationQuestion =
-      companyIntent.isCompanyRelated ||
-      /\b(price|pricing|cost|budget|quote|timeline|deadline|portfolio|case stud(?:y|ies))\b/i.test(
-        userMessage,
-      );
-    if (isCompanyInformationQuestion) {
-      handleCompanyPrompt(userMessage);
+    const safetyAnswer = getSensitiveRequestRefusal(userMessage);
+    if (safetyAnswer) {
+      respondWithoutProject(userMessage, safetyAnswer);
       return;
     }
 
-    const needsIntentRouting = ["centered", "triage", "company", "scheduling", "done"].includes(step);
-    const rejectsOutOfScope = [...(needsIntentRouting ? [step] : []), "project"].includes(step);
-
-    if (rejectsOutOfScope && companyIntent.kind === "out_of_scope") {
-      respondWithoutProject(
-        userMessage,
-        "I’m focused on DEKODE’s company information, services, and helping shape digital project ideas. I can’t reliably answer that topic, but I can explain what DEKODE does or help you explore something you want to build.",
-      );
-      return;
-    }
-
-    if (needsIntentRouting && (companyIntent.kind === "greeting" || companyIntent.kind === "ambiguous")) {
-      respondWithoutProject(
-        userMessage,
-        companyIntent.kind === "greeting"
-          ? "Hello! Are you here to learn about DEKODE and our services, or would you like help shaping something to build?"
-          : "I want to make sure I understand. Are you asking about DEKODE and our services, or do you have an idea you’d like to build?",
-      );
-      return;
-    }
-
-    if (step === "centered" || step === "triage") {
-      startConversation(userMessage);
-      return;
-    }
-
-    if (step === "scheduling" || step === "done") {
-      startConversation(userMessage, true);
-      return;
-    }
-
-    if (step === "company") {
-      if (companyIntent.kind === "project") {
-        startConversation(userMessage, true);
-      } else {
-        respondWithoutProject(
-          userMessage,
-          "Could you clarify whether you want information about DEKODE or help planning a project?",
-        );
-      }
-      return;
-    }
-
-    if (step === "project") {
-      handleProjectPrompt(userMessage);
-      return;
-    }
-
-    // Unexpected legacy states are folded back into the dynamic project conversation.
-    handleProjectPrompt(userMessage);
+    handleModelPrompt(userMessage);
   };
 
   const handleMeetingBooked = (_result, slot) => {

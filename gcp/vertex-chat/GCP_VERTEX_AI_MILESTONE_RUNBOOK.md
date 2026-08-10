@@ -1293,3 +1293,32 @@ Final local verification on 9 August 2026:
 - the seven remaining failures are the pre-existing protected proposal snapshot
   and local proposal-secret expectations; none of their protected files were
   changed by this work
+
+## 18. Model-First Intent And UI Routing
+
+Normal chat messages now reach Gemini before the application returns a fallback.
+The request path is: normalize the visitor message, apply the narrow sensitive-
+request safety check, retrieve bounded DEKODE context, send the original message,
+normalized message, recent conversation, memory summary, and retrieved context to
+Vertex AI, then validate the structured result before rendering a UI action.
+
+Vertex returns `intent`, `confidence`, `action`, `topic`, and `answer` as JSON.
+Company topics such as methodology, services, pricing, BRIDGE, locations, legal
+documents, contact details, and case studies therefore use Gemini and RAG instead
+of deterministic pre-model answers. Empty retrieval is no longer an early canned
+response; Gemini can still reason about a visitor's project while remaining
+unable to invent unsupported DEKODE facts.
+
+Code retains only deterministic boundaries. Harmful requests and secret
+disclosure are refused before the model. After the model, competing intent
+validation prevents a response for a meeting, calendar, booking, or scheduling
+product from opening DEKODE's calendar. Clear requests to meet DEKODE may open the
+calendar, while genuinely mixed wording receives the specific meeting-versus-
+product clarification. Calendar availability and booking APIs remain server-side.
+
+Regression coverage includes one-word company topics, misspelled booking intent,
+meeting/calendar product false positives, contextual `yes`, sensitive requests,
+structured response parsing, transient model retry, and frontend calendar action
+rendering. The focused chat, UI, retrieval, and Cloud Run tests pass, as does the
+Vercel production build. The inherited seven protected-proposal failures remain
+unchanged and outside this architecture work.

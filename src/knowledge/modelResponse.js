@@ -1,0 +1,88 @@
+import { MEETING_PROJECT_CLARIFICATION, scoreCompetingIntents } from './intentClassifier.js';
+import { getSensitiveRequestRefusal } from './safetyResponse.js';
+
+export const MODEL_INTENTS = [
+  'company_info',
+  'project_build',
+  'book_meeting',
+  'pricing',
+  'case_study',
+  'methodology',
+  'safety_refusal',
+  'out_of_scope',
+  'clarification',
+];
+
+export const MODEL_ACTIONS = [
+  'answer',
+  'open_calendar',
+  'show_project_panel',
+  'show_company_panel',
+  'ask_clarification',
+  'refuse',
+];
+
+const DEFAULT_RESULT = {
+  intent: 'clarification',
+  confidence: 0.5,
+  action: 'answer',
+  topic: 'general',
+};
+
+export function parseStructuredModelText(value) {
+  if (value && typeof value === 'object') return value;
+  const text = String(value || '').trim();
+  if (!text) return null;
+  const unfenced = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
+  try {
+    return JSON.parse(unfenced);
+  } catch {
+    return { ...DEFAULT_RESULT, answer: text };
+  }
+}
+
+export function validateModelResponse(candidate, originalMessage) {
+  const parsed = parseStructuredModelText(candidate) || {};
+  const safetyAnswer = getSensitiveRequestRefusal(originalMessage);
+  if (safetyAnswer) {
+    return {
+      intent: 'safety_refusal',
+      confidence: 1,
+      action: 'refuse',
+      topic: 'safety',
+      answer: safetyAnswer,
+    };
+  }
+
+  const result = {
+    intent: MODEL_INTENTS.includes(parsed.intent) ? parsed.intent : DEFAULT_RESULT.intent,
+    confidence: Math.max(0, Math.min(1, Number(parsed.confidence) || DEFAULT_RESULT.confidence)),
+    action: MODEL_ACTIONS.includes(parsed.action) ? parsed.action : DEFAULT_RESULT.action,
+    topic: String(parsed.topic || DEFAULT_RESULT.topic).trim().slice(0, 80),
+    answer: String(parsed.answer || '').trim(),
+  };
+  if (!result.answer) throw new Error('MODEL_RESPONSE_ANSWER_MISSING');
+
+  const competing = scoreCompetingIntents(originalMessage);
+  if (result.action === 'open_calendar') {
+    if (competing.route === 'project') {
+      result.intent = 'project_build';
+      result.action = 'show_project_panel';
+    } else if (competing.route !== 'meeting') {
+      result.intent = 'clarification';
+      result.action = 'ask_clarification';
+      result.topic = 'meeting or project';
+      result.answer = MEETING_PROJECT_CLARIFICATION;
+    }
+  }
+
+  if (competing.route === 'clarify' && result.intent === 'book_meeting') {
+    result.intent = 'clarification';
+    result.action = 'ask_clarification';
+    result.topic = 'meeting or project';
+    result.answer = MEETING_PROJECT_CLARIFICATION;
+  }
+
+  return result;
+}
+
