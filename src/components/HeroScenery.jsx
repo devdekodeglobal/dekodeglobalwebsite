@@ -80,7 +80,6 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
 
   return (
     <div className="hero-scenery-wrapper minimalist-sky" aria-hidden="true" style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
-      <style>{styles}</style>
 
       {/* Ambient Layer Removed */}
 
