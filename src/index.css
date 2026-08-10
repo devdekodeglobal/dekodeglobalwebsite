@@ -1168,6 +1168,123 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.72rem;
 }
 
+.portfolio-panel {
+  width: 100%;
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.portfolio-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.portfolio-panel-heading strong,
+.portfolio-panel-heading small {
+  display: block;
+}
+
+.portfolio-panel-heading strong {
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+.portfolio-panel-heading small {
+  margin-top: 0.2rem;
+  color: rgba(255, 255, 255, 0.56);
+  font-size: 0.62rem;
+  line-height: 1.35;
+}
+
+.portfolio-panel-heading > span:last-child {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  border: 1px solid rgba(254, 182, 17, 0.35);
+  border-radius: 50%;
+  color: var(--color-accent-yellow);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.portfolio-card-rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(210px, 78%);
+  gap: 0.65rem;
+  width: 100%;
+  overflow-x: auto;
+  padding: 0.1rem 0 0.45rem;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(254, 182, 17, 0.42) rgba(255, 255, 255, 0.06);
+}
+
+.portfolio-card {
+  scroll-snap-align: start;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+  color: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.portfolio-card:hover {
+  border-color: rgba(254, 182, 17, 0.48);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.portfolio-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.portfolio-card-copy {
+  display: grid;
+  gap: 0.28rem;
+  padding: 0.7rem;
+}
+
+.portfolio-card-copy small {
+  color: var(--color-accent-yellow);
+  font-size: 0.56rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.portfolio-card-copy strong {
+  font-size: 0.78rem;
+}
+
+.portfolio-card-copy > span {
+  display: -webkit-box;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.62rem;
+  line-height: 1.4;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.portfolio-panel-note {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 0.61rem;
+  line-height: 1.4;
+}
+
 .industry-panel-grid .knowledge-panel-button {
   font-size: 0.72rem;
   padding: 0.65rem;

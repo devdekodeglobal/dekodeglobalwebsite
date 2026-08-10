@@ -51,6 +51,16 @@ function makeDocuments() {
       label: `${project.name} portfolio project`,
       text: project.description,
     })),
+    {
+      id: 'project-evidence-catalogue',
+      label: 'DEKODE projects, portfolio, and case studies',
+      text: `Verified DEKODE project evidence has two categories.\nPublished case studies:\n${companyKnowledge.caseStudies
+        .map((study) => `${study.name} (${study.industry}): ${study.solution} Outcome: ${study.outcome}`)
+        .join('\n')}\nPortfolio projects from the published old-site showcase:\n${(companyKnowledge.portfolioProjects || [])
+        .map((project) => `${project.name}: ${project.description}`)
+        .join('\n')}`,
+      aliases: ['projects', 'project', 'portfolio', 'past work', 'previous work', 'client work', 'case studies', 'success stories'],
+    },
     ...(companyKnowledge.initiatives || []).map((initiative) => ({
       id: `initiative-${initiative.id}`,
       label: initiative.title,
@@ -86,6 +96,7 @@ function makeDocuments() {
       text: `Published DEKODE success stories:\n${companyKnowledge.caseStudies
         .map((study) => `${study.name} (${study.industry}): ${study.solution} Outcome: ${study.outcome}`)
         .join('\n')}`,
+      aliases: companyKnowledge.aliases?.caseStudies || [],
     },
     ...companyKnowledge.caseStudies.map((study) => ({
       id: `case-study-${study.id}`,
@@ -145,13 +156,15 @@ const documents = makeDocuments();
 export function retrieveCompanyKnowledge(question, limit = 5) {
   const queryTerms = tokenize(question);
   const query = normalise(question);
+  const asksForProjectEvidence = /\b(projects?|portfolio|past work|previous work|client work|case studies|success stories)\b/.test(query);
 
   const ranked = documents
     .map((document) => {
       const overlap = queryTerms.filter((term) => document.terms.includes(term)).length;
       const nameBonus = query.includes(normalise(document.label)) ? 3 : 0;
       const aliasBonus = document.aliases.some((alias) => query.includes(normalise(alias))) ? 3 : 0;
-      return { ...document, score: overlap + nameBonus + aliasBonus };
+      const catalogueBonus = asksForProjectEvidence && document.id === 'project-evidence-catalogue' ? 5 : 0;
+      return { ...document, score: overlap + nameBonus + aliasBonus + catalogueBonus };
     })
     .filter((document) => document.score > 0)
     .sort((left, right) => right.score - left.score || left.text.length - right.text.length)

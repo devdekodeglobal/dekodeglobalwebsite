@@ -467,10 +467,13 @@ export default function ChatApp({
       } else if (result.action === "show_company_panel" || [
         "company_info", "pricing", "case_study", "methodology",
       ].includes(result.intent)) {
+        const resolvedCompanyTopic = result.intent === "case_study"
+          ? "caseStudies"
+          : visualIntent.topic || result.topic || "company";
         const company = generateCompanyResponse(userMessage, {
           ...visualIntent,
           isCompanyRelated: true,
-          topic: result.topic || visualIntent.topic || "company",
+          topic: resolvedCompanyTopic,
         });
         companyContextRef.current = rememberCompanyTurn(companyContextRef.current, company.topic);
         setProjectType(null);

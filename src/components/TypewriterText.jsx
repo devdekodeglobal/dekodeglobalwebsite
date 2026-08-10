@@ -53,7 +53,7 @@ export function FormattedText({ text, topic }) {
       {!lead && prose && <p className="answer-body"><InlineText text={prose} /></p>}
       {bullets.length > 0 && (
         <ul className="answer-points">
-          {bullets.slice(0, 4).map((bullet, index) => (
+          {bullets.slice(0, 6).map((bullet, index) => (
             <li key={`${index}-${bullet}`}><InlineText text={bullet} /></li>
           ))}
         </ul>

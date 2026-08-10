@@ -59,15 +59,19 @@ test('retrieves CHAUFFR from the old-site portfolio catalogue', () => {
   assert.match(context, /integrated web portal/i);
 });
 
-test('retrieves only verified published case studies for project evidence', () => {
+test('retrieves verified case studies and portfolio work for broad project questions', () => {
   const broadMatches = retrieveCompanyKnowledge('Show me DEKODE case studies and past work');
+  const projectMatches = retrieveCompanyKnowledge('what are dekode projects');
   const foodMatches = retrieveCompanyKnowledge('What did DEKODE build for food manufacturing?');
   const schoolMatches = retrieveCompanyKnowledge('Tell me about the AttendMe primary school project');
 
-  assert.ok(broadMatches.some((match) => match.id === 'case-study-catalogue'));
+  assert.equal(broadMatches[0]?.id, 'project-evidence-catalogue');
+  assert.equal(projectMatches[0]?.id, 'project-evidence-catalogue');
   assert.ok(foodMatches.some((match) => match.id === 'case-study-food-manufacturing'));
   assert.ok(schoolMatches.some((match) => match.id === 'case-study-primary-school'));
-  assert.doesNotMatch(broadMatches.map((match) => match.text).join('\n'), /CHAUFFR/i);
+  assert.match(projectMatches[0].text, /CHAUFFR/i);
+  assert.match(projectMatches[0].text, /SmartBroker/i);
+  assert.match(projectMatches[0].text, /Food Manufacturing Company/i);
 });
 
 test('retrieves reviewed delivery, Beston, and BRIDGE evidence', () => {

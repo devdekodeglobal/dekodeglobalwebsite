@@ -123,6 +123,17 @@ export function buildDocuments() {
     ));
   }
 
+  documents.push(createDocument(
+    'project-evidence-catalogue',
+    'DEKODE projects, portfolio, and case studies',
+    `Verified DEKODE project evidence has two categories.\nPublished case studies:\n${(companyKnowledge.caseStudies || [])
+      .map((study) => `${study.name} (${study.industry}): ${study.solution} Outcome: ${study.outcome}`)
+      .join('\n')}\nPortfolio projects from the published old-site showcase:\n${(companyKnowledge.portfolioProjects || [])
+      .map((project) => `${project.name}: ${project.description}`)
+      .join('\n')}`,
+    ['projects', 'project', 'portfolio', 'past work', 'previous work', 'client work', 'case studies', 'success stories'],
+  ));
+
   for (const [key, policy] of Object.entries(companyKnowledge.legal || {})) {
     documents.push(createDocument(
       `legal-${key}`,
@@ -155,7 +166,11 @@ function lexicalScore(question, document) {
   const coverage = matchedTerms / queryTerms.length;
   const phraseBoost = document.aliases.some((alias) => query.includes(normalize(alias))) ? 0.35 : 0;
   const labelBoost = query.includes(normalize(document.label)) ? 0.25 : 0;
-  return Math.min(1, coverage * 0.7 + phraseBoost + labelBoost);
+  const catalogueBoost = document.id === 'project-evidence-catalogue'
+    && /\b(projects?|portfolio|past work|previous work|client work|case studies|success stories)\b/.test(query)
+    ? 0.55
+    : 0;
+  return Math.min(1.55, coverage * 0.7 + phraseBoost + labelBoost + catalogueBoost);
 }
 
 export function retrieveLexical(question, limit = 5) {
@@ -225,6 +240,7 @@ export function createHybridRetriever({
   return async function retrieveHybrid(question, limit = 5) {
     const lexical = new Map(retrieveLexical(question, documents.length)
       .map((match) => [match.id, match.lexicalScore]));
+    const asksForProjectEvidence = /\b(projects?|portfolio|past work|previous work|client work|case studies|success stories)\b/.test(normalize(question));
 
     try {
       const indexedDocuments = await getDocumentEmbeddings();
@@ -233,11 +249,12 @@ export function createHybridRetriever({
       const ranked = documents.map((document) => {
         const semanticScore = dotProduct(queryVector, vectors.get(document.id));
         const exactScore = lexical.get(document.id) || 0;
+        const catalogueBoost = asksForProjectEvidence && document.id === 'project-evidence-catalogue' ? 0.4 : 0;
         return {
           ...document,
           semanticScore,
           lexicalScore: exactScore,
-          score: semanticScore * 0.82 + exactScore * 0.18,
+          score: semanticScore * 0.82 + exactScore * 0.18 + catalogueBoost,
           retrievalMode: 'hybrid',
         };
       }).sort((left, right) => right.score - left.score);

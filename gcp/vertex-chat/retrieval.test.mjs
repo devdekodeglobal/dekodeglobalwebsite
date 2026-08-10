@@ -23,6 +23,14 @@ test('lexical retrieval grounds reviewed delivery, Beston, and BRIDGE questions'
   assert.equal(retrieveLexical('What is BRIDGE?')[0].id, 'initiative-bridge');
 });
 
+test('broad project questions retrieve the complete verified evidence catalogue first', () => {
+  const matches = retrieveLexical('what are dekode projects');
+  assert.equal(matches[0].id, 'project-evidence-catalogue');
+  assert.match(matches[0].text, /CHAUFFR/);
+  assert.match(matches[0].text, /SmartBroker/);
+  assert.match(matches[0].text, /Food Manufacturing Company/);
+});
+
 test('normalizes common shorthand before Vertex retrieval', () => {
   assert.equal(normalize('need ai for my bussiness'), 'need ai for my business');
   assert.equal(normalize('can u make mob app'), 'can you make mobile app');

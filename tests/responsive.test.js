@@ -14,6 +14,7 @@ const interactiveStyles = await readFile(new URL('../src/components/interactive-
 const meetingScheduler = await readFile(new URL('../src/components/MeetingScheduler.jsx', import.meta.url), 'utf8');
 const bookingSummary = await readFile(new URL('../src/components/BookingSummary.jsx', import.meta.url), 'utf8');
 const typewriterText = await readFile(new URL('../src/components/TypewriterText.jsx', import.meta.url), 'utf8');
+const companyKnowledgePanel = await readFile(new URL('../src/components/CompanyKnowledgePanel.jsx', import.meta.url), 'utf8');
 
 test('uses dynamic viewport units and safe-area spacing for app and voice surfaces', () => {
   assert.match(indexCss, /height:\s*100dvh/);
@@ -219,6 +220,17 @@ test('presents Gemini answers with topic, lead, points, and a separated follow-u
   assert.match(typewriterText, /className="answer-follow-up"/);
   assert.match(chatApp, /topic=\{msg\.companyTopic\}/);
   assert.match(typewriterText, /const sentenceCount = sentences\.length/);
+});
+
+test('routes project evidence to a verified visual portfolio with real media', () => {
+  assert.match(chatApp, /const resolvedCompanyTopic/);
+  assert.match(chatApp, /visualIntent\.topic \|\| result\.topic/);
+  assert.match(typewriterText, /answer-presentation/);
+  assert.match(indexCss, /\.portfolio-card-rail/);
+  assert.match(indexCss, /scroll-snap-type:\s*x mandatory/);
+  assert.match(companyKnowledgePanel, /function PortfolioPanel/);
+  assert.match(companyKnowledgePanel, /case-study-food-manufacturing\.jpg/);
+  assert.match(companyKnowledgePanel, /portfolio\/chauffr\.jpg/);
 });
 
 test('opens the existing scheduler from an AI qualification action', () => {

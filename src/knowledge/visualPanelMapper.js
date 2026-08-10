@@ -11,7 +11,7 @@ const PANEL_BY_TOPIC = {
   location: 'location',
   privacy: 'privacy',
   terms: 'terms',
-  caseStudies: 'services',
+  caseStudies: 'portfolio',
   initiatives: 'overview',
 };
 

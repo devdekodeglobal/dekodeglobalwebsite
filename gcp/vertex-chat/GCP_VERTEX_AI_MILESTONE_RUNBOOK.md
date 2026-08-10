@@ -1322,3 +1322,30 @@ structured response parsing, transient model retry, and frontend calendar action
 rendering. The focused chat, UI, retrieval, and Cloud Run tests pass, as does the
 Vercel production build. The inherited seven protected-proposal failures remain
 unchanged and outside this architecture work.
+
+## 19. Verified Project Evidence Retrieval And Media
+
+A live review found that the broad question `what are dekode projects` could
+retrieve a delivery FAQ and the generic company overview instead of DEKODE's
+published work. Individual case-study and portfolio records existed, but there
+was no combined project catalogue and singular/plural project terms could tie
+with less relevant documents.
+
+The Vercel and Cloud Run corpora now include one bounded project-evidence
+catalogue. It clearly separates the two published case studies from the six
+projects in the old-site portfolio showcase. Broad project, portfolio, past-work,
+client-work, case-study, and success-story wording receives a deterministic
+catalogue boost before Gemini answers. Named projects still retrieve their own
+focused records.
+
+The frontend maps this verified topic to a dedicated visual portfolio instead
+of the generic Services panel. It uses the original old-site images for AttendMe,
+CHAUFFR, Smart Loan Helper, SmartBroker, Recycled Market, and Estrado, together
+with the existing Food Manufacturing and Primary School case-study images. Each
+card remains selectable so the visitor can ask for the approved project details.
+Gemini is instructed to name verified work and distinguish portfolio examples
+from published case studies rather than returning a company overview.
+
+Regression coverage includes the exact failed wording against both retrieval
+implementations, verification of representative project names in the returned
+context, canonical case-study visual routing, and the presence of real media.
