@@ -56,13 +56,16 @@ import {
 } from "../content/ContentToChatBridge";
 import { toLocalDateKey } from "../utils/calendarPresentation";
 import { cleanAssistantText } from "../utils/assistantText";
+import { HOLIDAYS } from "../utils/holidays";
 
-function getTimeAwareGreeting(date = new Date()) {
-  const hour = date.getHours();
-  if (hour >= 5 && hour < 12) return "Good morning, ready to shape something new?";
-  if (hour >= 12 && hour < 17) return "Good afternoon, let's warm up a bright idea.";
-  if (hour >= 17 && hour < 21) return "Good evening, let's turn today's spark into a plan.";
-  return "Good night, let's capture the idea before it slips away.";
+function getTimeAwareGreeting(timeStr = "morning") {
+  switch (timeStr) {
+    case "morning": return "Good morning, ready to shape something new?";
+    case "noon": return "Good afternoon, let's warm up a bright idea.";
+    case "evening": return "Good evening, let's turn today's spark into a plan.";
+    case "night": return "Good night, let's capture the idea before it slips away.";
+    default: return "Hello, ready to shape something new?";
+  }
 }
 
 const PROJECT_OPTION_ROWS = [
@@ -80,46 +83,33 @@ export default function ChatApp({
   isProposalChatOpen = false,
 }) {
   const [messages, setMessages] = useState([]);
-  const [timeOfDayIndex, setTimeOfDayIndex] = useState(() => {
-    const hour = new Date().getHours();
-    let currentIdx;
-    if (hour >= 5 && hour < 11) currentIdx = 0; // morning
-    else if (hour >= 11 && hour < 17) currentIdx = 1; // noon
-    else if (hour >= 17 && hour < 21) currentIdx = 2; // evening
-    else currentIdx = 3; // night
-    
-    // Start at the previous state so we can animate into the current one on load
-    return (currentIdx - 1 + 4) % 4;
-  });
+  const [timeOfDayIndex, setTimeOfDayIndex] = useState(0);
 
   const TIMES_OF_DAY = useMemo(() => ["morning", "noon", "evening", "night"], []);
+  const [holidayIndex, setHolidayIndex] = useState(0);
+  const [isHolidayLocked, setIsHolidayLocked] = useState(false);
+
   const timeOfDay = TIMES_OF_DAY[timeOfDayIndex];
+  const activeHoliday = HOLIDAYS[holidayIndex];
 
-  // Animate to current time on load, then monitor real time
   useEffect(() => {
-    const getCurrentIdx = () => {
-      const hour = new Date().getHours();
-      if (hour >= 5 && hour < 11) return 0;
-      if (hour >= 11 && hour < 17) return 1;
-      if (hour >= 17 && hour < 21) return 2;
-      return 3;
-    };
-
-    // Trigger the initial arrival animation
-    const initialTimer = setTimeout(() => {
-      setTimeOfDayIndex(getCurrentIdx());
-    }, 500);
-
-    // Check the real time every minute so it naturally changes if they leave the tab open
-    const realTimeChecker = setInterval(() => {
-      setTimeOfDayIndex(getCurrentIdx());
-    }, 60000);
+    // Cycle time of day every 3 seconds (Morning -> Noon -> Evening -> Night)
+    // Advance to next festival ONLY after a full pass completes at Night (wrapping to Morning 0)
+    // If the user selects a holiday manually, we lock the holiday but KEEP the day/night cycle going.
+    const cycleTimer = setInterval(() => {
+      setTimeOfDayIndex((prevTime) => {
+        const nextTime = (prevTime + 1) % 4;
+        if (nextTime === 0 && !isHolidayLocked) {
+          setHolidayIndex((prevHoliday) => (prevHoliday + 1) % HOLIDAYS.length);
+        }
+        return nextTime;
+      });
+    }, 3000);
 
     return () => {
-      clearTimeout(initialTimer);
-      clearInterval(realTimeChecker);
+      clearInterval(cycleTimer);
     };
-  }, []);
+  }, [HOLIDAYS.length, isHolidayLocked]);
 
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -129,7 +119,7 @@ export default function ChatApp({
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [voiceStatus, setVoiceStatus] = useState("");
   const [voiceTypingState, setVoiceTypingState] = useState("idle");
-  const heroGreeting = useMemo(() => getTimeAwareGreeting(), []);
+  const heroGreeting = useMemo(() => getTimeAwareGreeting(timeOfDay), [timeOfDay]);
 
   // States: 'centered' (hero), 'active' (chatting)
   const [step, setStep] = useState("centered");
@@ -1078,7 +1068,31 @@ export default function ChatApp({
       <ParticleBackground timeOfDay={timeOfDay} />
       
       {step === "centered" && (
-        <HeroScenery timeOfDay={timeOfDay} />
+        <>
+          <HeroScenery timeOfDay={timeOfDay} holidayId={activeHoliday.id} holidayName={activeHoliday.name} />
+          
+          <div style={{ position: 'absolute', top: '20px', left: '50%', transform: 'translateX(-50%)', zIndex: 100 }}>
+            <select 
+              value={holidayIndex} 
+              onChange={(e) => {
+                setHolidayIndex(Number(e.target.value));
+                setIsHolidayLocked(true);
+              }}
+              style={{
+                padding: '8px 20px', background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(12px)',
+                borderRadius: '20px', color: '#fff', fontFamily: 'monospace', fontSize: '12px',
+                textTransform: 'uppercase', letterSpacing: '1px', border: '1px solid rgba(255,255,255,0.2)',
+                outline: 'none', cursor: 'pointer', appearance: 'none', textAlign: 'center'
+              }}
+            >
+              {HOLIDAYS.map((h, i) => (
+                <option key={h.id} value={i} style={{ background: '#0f172a', color: '#fff' }}>
+                  Showcase: {h.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </>
       )}
 
       <a className="brand-logo" href={import.meta.env.BASE_URL || "/"} aria-label="Go to DEKODE home">
