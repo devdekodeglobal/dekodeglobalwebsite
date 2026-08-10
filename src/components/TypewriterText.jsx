@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 
-export function FormattedText({ text }) {
+function InlineText({ text }) {
   const parts = [];
   const pattern = /\*\*([^*]+)\*\*/g;
   let cursor = 0;
@@ -14,7 +15,59 @@ export function FormattedText({ text }) {
   return parts;
 }
 
-export default function TypewriterText({ text, delay = 20, onComplete }) {
+function sentenceParts(text) {
+  return text.trim().split(/(?<=[.!?])\s+(?=[A-Z0-9])/).filter(Boolean);
+}
+
+function topicLabel(topic) {
+  const value = String(topic || '').trim();
+  if (!value || ['general', 'safety'].includes(value.toLowerCase())) return '';
+  return value.replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+export function FormattedText({ text, topic }) {
+  const lines = String(text || '').split('\n').map((line) => line.trim()).filter(Boolean);
+  const bullets = lines
+    .filter((line) => /^(?:[-•]|\d+[.)])\s+/.test(line))
+    .map((line) => line.replace(/^(?:[-•]|\d+[.)])\s+/, ''));
+  const prose = lines.filter((line) => !/^(?:[-•]|\d+[.)])\s+/.test(line)).join(' ');
+  const sentences = sentenceParts(prose);
+  const followUp = sentences.length > 1 && sentences.at(-1).endsWith('?')
+    ? sentences.pop()
+    : '';
+  const lead = sentences.length > 1 ? sentences.shift() : '';
+  const body = sentences.join(' ');
+  const label = topicLabel(topic);
+
+  return (
+    <div className="answer-presentation">
+      {label && (
+        <div className="answer-topic">
+          <Sparkles size={13} aria-hidden="true" />
+          <span>{label}</span>
+        </div>
+      )}
+      {lead && <p className="answer-lead"><InlineText text={lead} /></p>}
+      {body && <p className="answer-body"><InlineText text={body} /></p>}
+      {!lead && prose && <p className="answer-body"><InlineText text={prose} /></p>}
+      {bullets.length > 0 && (
+        <ul className="answer-points">
+          {bullets.slice(0, 4).map((bullet, index) => (
+            <li key={`${index}-${bullet}`}><InlineText text={bullet} /></li>
+          ))}
+        </ul>
+      )}
+      {followUp && (
+        <p className="answer-follow-up">
+          <ArrowRight size={15} aria-hidden="true" />
+          <InlineText text={followUp} />
+        </p>
+      )}
+    </div>
+  );
+}
+
+export default function TypewriterText({ text, topic, delay = 20, onComplete }) {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const maxAnimationDuration = 1800;
@@ -45,11 +98,11 @@ export default function TypewriterText({ text, delay = 20, onComplete }) {
   }, [charactersPerTick, currentIndex, text, delay, onComplete]);
 
   return (
-    <span>
-      <FormattedText text={displayedText} />
+    <div className="typewriter-answer">
+      <FormattedText text={displayedText} topic={topic} />
       {currentIndex < text.length && (
         <span className="typewriter-cursor">|</span>
       )}
-    </span>
+    </div>
   );
 }

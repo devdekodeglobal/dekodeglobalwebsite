@@ -920,6 +920,85 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 0 15px rgba(53, 118, 193, 0.3);
 }
 
+.answer-presentation {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.answer-presentation p {
+  margin: 0;
+}
+
+.answer-topic {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: fit-content;
+  color: rgba(255, 211, 108, 0.94);
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.answer-lead {
+  color: #fff;
+  font-size: 1.02em;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.answer-body {
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.answer-points {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0.05rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.answer-points li {
+  position: relative;
+  padding-left: 1rem;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.answer-points li::before {
+  content: "";
+  position: absolute;
+  top: 0.65em;
+  left: 0;
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 50%;
+  background: var(--accent, #feb611);
+  box-shadow: 0 0 8px rgba(254, 182, 17, 0.45);
+}
+
+.answer-follow-up {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 0.1rem !important;
+  padding-top: 0.65rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-weight: 600;
+}
+
+.answer-follow-up svg {
+  flex: 0 0 auto;
+  margin-top: 0.25em;
+  color: var(--accent, #feb611);
+}
+
+.typewriter-answer {
+  display: contents;
+}
+
 /* Floating Animation Panel */
 .floating-animation-panel {
   width: 400px;

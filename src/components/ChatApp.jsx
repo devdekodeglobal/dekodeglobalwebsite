@@ -1045,9 +1045,9 @@ export default function ChatApp({
                       <div className="message-bubble">
                         {msg.sender === "ai" ? (
                           idx === messages.length - 1 ? (
-                            <TypewriterText text={msg.text} delay={30} />
+                            <TypewriterText text={msg.text} topic={msg.companyTopic} delay={30} />
                           ) : (
-                            <FormattedText text={msg.text} />
+                            <FormattedText text={msg.text} topic={msg.companyTopic} />
                           )
                         ) : (
                           msg.text

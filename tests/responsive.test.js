@@ -212,6 +212,14 @@ test('enters chat mode before waiting for the Gemini response', () => {
   );
 });
 
+test('presents Gemini answers with topic, lead, points, and a separated follow-up', () => {
+  assert.match(typewriterText, /className="answer-topic"/);
+  assert.match(typewriterText, /className="answer-lead"/);
+  assert.match(typewriterText, /className="answer-points"/);
+  assert.match(typewriterText, /className="answer-follow-up"/);
+  assert.match(chatApp, /topic=\{msg\.companyTopic\}/);
+});
+
 test('opens the existing scheduler from an AI qualification action', () => {
   assert.match(chatApp, /action\.type === "open_booking"/);
   assert.match(chatApp, /handleOpenMeetingScheduler\(\)/);
