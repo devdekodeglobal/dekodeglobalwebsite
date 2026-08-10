@@ -59,10 +59,48 @@ import { cleanAssistantText } from "../utils/assistantText";
 
 function getTimeAwareGreeting(date = new Date()) {
   const hour = date.getHours();
-  if (hour >= 5 && hour < 12) return "Starting the day off right. What are we building?";
-  if (hour >= 12 && hour < 17) return "Midday check-in. Ready to keep the momentum going?";
-  if (hour >= 17 && hour < 21) return "Winding down the day. Let's review our progress.";
-  return "Working late? Let's get things done.";
+  let options = [];
+
+  if (hour >= 0 && hour < 4) {
+    options = [
+      "Burning the midnight oil? We're right here with you.",
+      "Quiet hours. Perfect for deep focus.",
+      "Still up? Let's get things done."
+    ];
+  } else if (hour >= 4 && hour < 8) {
+    options = [
+      "A fresh start to the day. Let's build something.",
+      "Early bird gets the worm. What's on today's agenda?",
+      "Good morning. Ready to tackle the day?"
+    ];
+  } else if (hour >= 8 && hour < 12) {
+    options = [
+      "Morning momentum. What's the main focus today?",
+      "Making good progress? Let's keep the productivity flowing.",
+      "Great morning. How can we assist you today?"
+    ];
+  } else if (hour >= 12 && hour < 16) {
+    options = [
+      "Midday check-in. Ready to keep the momentum going?",
+      "Post-lunch focus. What's next on the list?",
+      "Good afternoon. Let's make it a productive one."
+    ];
+  } else if (hour >= 16 && hour < 20) {
+    options = [
+      "Winding down the day. Let's review our progress.",
+      "Great work today. Need anything else before logging off?",
+      "Evening check-in. Wrapping up today's goals?"
+    ];
+  } else {
+    options = [
+      "Nighttime focus. What are we building tonight?",
+      "The day is winding down, but we're still here.",
+      "Late hours. Time for some quiet productivity?"
+    ];
+  }
+
+  // Shuffle: Pick a random greeting from the available options
+  return options[Math.floor(Math.random() * options.length)];
 }
 
 const PROJECT_OPTION_ROWS = [
