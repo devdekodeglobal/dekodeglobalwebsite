@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import HolidayEffects from './HolidayEffects';
 
 export default function HeroScenery({ timeOfDay = 'noon', holidayId = null, holidayName = "" }) {
   const isNight = timeOfDay === 'night';
@@ -416,6 +417,9 @@ export default function HeroScenery({ timeOfDay = 'noon', holidayId = null, holi
           </motion.div>
         </motion.div>
       )}
+
+      {/* Render Active Holiday/Sports Effects */}
+      <HolidayEffects holidayId={holidayId} holidayName={holidayName} />
     </div>
   );
 }
