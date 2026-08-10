@@ -32,12 +32,14 @@ export function isGroundedVertexResult() {
   return true;
 }
 
-const systemInstruction = `You are DEKODE's intelligent website consultant. Every response must be a JSON object with exactly these fields: intent, confidence, action, topic, answer.
+const systemInstruction = `You are DEKODE's intelligent website consultant. Every response must be a JSON object with these fields: intent, confidence, action, topic, answer, suggestions.
 
 Allowed intents: company_info, project_build, book_meeting, pricing, case_study, methodology, safety_refusal, out_of_scope, clarification.
 Allowed actions: answer, open_calendar, show_project_panel, show_company_panel, ask_clarification, refuse.
 
 Infer intent from the original and normalized messages, recent conversation, and supplied public DEKODE knowledge. Preserve facts the visitor already supplied. For DEKODE facts, use only supplied approved context. For a project idea, reason helpfully, connect it to relevant DEKODE expertise, and ask at most one useful unanswered question. Make answers easy to scan: use a concise opening, optional short **bold** emphasis, and up to three markdown bullets when listing distinct ideas. Put a final question on its own line. Do not force bullets into simple answers, and do not use tables or markdown headings.
+
+Return 2 to 4 concise contextual suggestions as objects with label and prompt. Each suggestion must naturally continue the current conversation through a normal visitor message. Evolve them as the conversation progresses, never repeat labels listed as previously shown, and do not suggest details the visitor already supplied. Booking may appear only when qualification or explicit meeting intent makes it relevant. For safety refusals, return an empty suggestions array.
 
 Use open_calendar only when the visitor clearly wants to book, schedule, meet, or talk with DEKODE. A request to build/create/make/develop an app, website, platform, system, or software is project_build even when it includes meeting, calendar, booking, or scheduling. If these meanings remain close, ask exactly: "Do you want to book a discovery call with DEKODE, or are you looking to build a meeting/calendar app?"
 
@@ -52,6 +54,18 @@ const responseSchema = {
     action: { type: 'STRING', enum: ['answer', 'open_calendar', 'show_project_panel', 'show_company_panel', 'ask_clarification', 'refuse'] },
     topic: { type: 'STRING' },
     answer: { type: 'STRING' },
+    suggestions: {
+      type: 'ARRAY',
+      maxItems: 4,
+      items: {
+        type: 'OBJECT',
+        required: ['label', 'prompt'],
+        properties: {
+          label: { type: 'STRING' },
+          prompt: { type: 'STRING' },
+        },
+      },
+    },
   },
 };
 
@@ -81,12 +95,12 @@ function cleanHistory(history) {
     .filter((entry) => entry.parts[0].text);
 }
 
-function buildContents(question, normalizedQuestion, history, context, memoryContext) {
+function buildContents(question, normalizedQuestion, history, context, memoryContext, usedSuggestions) {
   return [
     ...cleanHistory(history),
     {
       role: 'user',
-      parts: [{ text: `Conversation memory:\n${memoryContext}\n\nApproved DEKODE context:\n${context}\n\nOriginal visitor message:\n${question}\n\nNormalized visitor message:\n${normalizedQuestion}` }],
+      parts: [{ text: `Conversation memory:\n${memoryContext}\n\nPreviously shown suggestion labels (do not repeat):\n${usedSuggestions.join(', ') || 'None'}\n\nApproved DEKODE context:\n${context}\n\nOriginal visitor message:\n${question}\n\nNormalized visitor message:\n${normalizedQuestion}` }],
     },
   ];
 }
@@ -105,13 +119,13 @@ export function isCompleteModelCandidate(candidate) {
 
 const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
-async function requestGemini({ apiKey, model, question, normalizedQuestion, history, context, memoryContext }) {
+async function requestGemini({ apiKey, model, question, normalizedQuestion, history, context, memoryContext, usedSuggestions }) {
   return fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
     method: 'POST',
     headers: { 'content-type': 'application/json', 'x-goog-api-key': apiKey },
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: systemInstruction }] },
-      contents: buildContents(question, normalizedQuestion, history, context, memoryContext),
+      contents: buildContents(question, normalizedQuestion, history, context, memoryContext, usedSuggestions),
       generationConfig: {
         maxOutputTokens: 1_024,
         responseMimeType: 'application/json',
@@ -148,6 +162,9 @@ export default async function handler(request, response) {
 
   const legacyHistory = Array.isArray(request.body?.history) ? request.body.history : [];
   const incomingMemory = normalizeConversationMemory(request.body?.conversation, legacyHistory);
+  const usedSuggestions = [...new Set((Array.isArray(request.body?.usedSuggestions) ? request.body.usedSuggestions : [])
+    .map((label) => cleanText(label, 42).toLowerCase())
+    .filter(Boolean))].slice(-8);
   const history = incomingMemory.recentMessages;
   const normalizedQuestion = normalizeVisitorMessage(question);
   const memoryContext = conversationMemoryContext(incomingMemory);
@@ -163,6 +180,9 @@ export default async function handler(request, response) {
       ok: true,
       ...result,
       answer: cleanAssistantText(result.answer),
+      suggestions: (result.suggestions || [])
+        .filter((suggestion) => !usedSuggestions.includes(suggestion.label.toLowerCase()))
+        .slice(0, 4),
       ...payload,
       conversation: completed,
       actions: result.action === 'open_calendar'
@@ -193,6 +213,7 @@ export default async function handler(request, response) {
         memoryContext,
         sessionId: incomingMemory.sessionId,
         conversationState: incomingMemory.state,
+        usedSuggestions,
       });
       return sendResult(result, {
         sources: result.sources || sources,
@@ -215,7 +236,7 @@ export default async function handler(request, response) {
     for (let index = 0; index < attempts.length; index += 1) {
       const model = attempts[index];
       try {
-        const geminiResponse = await requestGemini({ apiKey, model, question, normalizedQuestion, history, context, memoryContext });
+        const geminiResponse = await requestGemini({ apiKey, model, question, normalizedQuestion, history, context, memoryContext, usedSuggestions });
         const payload = await geminiResponse.json();
         if (geminiResponse.ok) {
           const candidate = extractModelCandidate(payload);

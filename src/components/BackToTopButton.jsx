@@ -3,16 +3,27 @@ import { ArrowUp } from 'lucide-react'
 
 const SCROLL_TARGET_SELECTOR = '.app-container, .chat-scroll-area, .proposal-source-stage'
 
-export default function BackToTopButton() {
+export default function BackToTopButton({ disabled = false }) {
   const [visible, setVisible] = useState(false)
   const activeTargetRef = useRef(null)
 
   useEffect(() => {
+    if (disabled) {
+      activeTargetRef.current = null
+      setVisible(false)
+      return undefined
+    }
+
     const handleScroll = (event) => {
       const target = event.target
       if (!(target instanceof HTMLElement) || !target.matches(SCROLL_TARGET_SELECTOR)) return
 
-      const shouldShow = target.scrollTop > Math.max(400, target.clientHeight * 0.75)
+      const storySections = [...target.querySelectorAll('.story-section')]
+      const thirdSection = storySections[2]
+      const meaningfulThreshold = thirdSection
+        ? Math.max(target.clientHeight, thirdSection.offsetTop - target.clientHeight * 0.35)
+        : Math.max(720, target.clientHeight * 1.5)
+      const shouldShow = target.scrollTop > meaningfulThreshold
       if (shouldShow) {
         activeTargetRef.current = target
         setVisible(true)
@@ -24,7 +35,7 @@ export default function BackToTopButton() {
 
     document.addEventListener('scroll', handleScroll, true)
     return () => document.removeEventListener('scroll', handleScroll, true)
-  }, [])
+  }, [disabled])
 
   const scrollToTop = () => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches

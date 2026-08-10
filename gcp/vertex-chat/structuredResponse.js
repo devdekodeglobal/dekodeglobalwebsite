@@ -7,6 +7,18 @@ export const responseSchema = {
     action: { type: 'STRING', enum: ['answer', 'open_calendar', 'show_project_panel', 'show_company_panel', 'ask_clarification', 'refuse'] },
     topic: { type: 'STRING' },
     answer: { type: 'STRING' },
+    suggestions: {
+      type: 'ARRAY',
+      maxItems: 4,
+      items: {
+        type: 'OBJECT',
+        required: ['label', 'prompt'],
+        properties: {
+          label: { type: 'STRING' },
+          prompt: { type: 'STRING' },
+        },
+      },
+    },
   },
 };
 
@@ -19,6 +31,13 @@ export function parseStructuredCompletion(text) {
     action: String(value.action),
     topic: String(value.topic || 'general').slice(0, 80),
     answer: String(value.answer).trim(),
+    suggestions: (Array.isArray(value.suggestions) ? value.suggestions : [])
+      .flatMap((suggestion) => {
+        const label = String(suggestion?.label || '').trim().slice(0, 42);
+        const prompt = String(suggestion?.prompt || '').trim().slice(0, 180);
+        return label && prompt ? [{ label, prompt }] : [];
+      })
+      .filter((suggestion, index, items) => items.findIndex((item) => item.label.toLowerCase() === suggestion.label.toLowerCase()) === index)
+      .slice(0, 4),
   };
 }
-

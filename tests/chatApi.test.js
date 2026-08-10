@@ -44,12 +44,12 @@ async function withDirectGemini(mockFetch, run) {
   }
 }
 
-async function ask(question, ip, conversation) {
+async function ask(question, ip, conversation, usedSuggestions = []) {
   const response = makeResponse();
   await handler({
     method: 'POST',
     headers: { 'x-forwarded-for': ip },
-    body: { question, conversation },
+    body: { question, conversation, usedSuggestions },
   }, response);
   return response;
 }
@@ -175,6 +175,35 @@ test('sensitive requests are refused before a model call', async () => {
     assert.match(response.body.answer, /API keys/i);
   });
   assert.equal(calls, 0);
+});
+
+test('returns contextual suggestions and removes labels already shown', async () => {
+  let promptIncludedUsedLabels = false;
+  await withDirectGemini(async (_url, options) => {
+    const request = JSON.parse(options.body);
+    promptIncludedUsedLabels = request.contents.at(-1).parts[0].text.includes('explore services');
+    return {
+      ok: true,
+      status: 200,
+      json: async () => modelPayload({
+        intent: 'company_info',
+        confidence: 0.95,
+        action: 'answer',
+        topic: 'DEKODE',
+        answer: 'DEKODE helps teams build practical digital products.',
+        suggestions: [
+          { label: 'Explore services', prompt: 'What services does DEKODE offer?' },
+          { label: 'See case studies', prompt: 'Show me DEKODE case studies.' },
+        ],
+      }),
+    };
+  }, async () => {
+    const response = await ask('What is DEKODE?', 'suggestions', undefined, ['Explore services']);
+    assert.deepEqual(response.body.suggestions, [
+      { label: 'See case studies', prompt: 'Show me DEKODE case studies.' },
+    ]);
+  });
+  assert.equal(promptIncludedUsedLabels, true);
 });
 
 test('retries a transient Gemini failure before returning an answer', async () => {

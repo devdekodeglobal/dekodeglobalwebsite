@@ -23,8 +23,10 @@ test('uses dynamic viewport units and safe-area spacing for app and voice surfac
   assert.match(voiceCss, /env\(safe-area-inset-bottom\)/);
 });
 
-test('keeps one responsive visual panel and removes the fixed 600px mobile frame', () => {
+test('keeps the visual panel restorable while disabling it in the current chat layout', () => {
   assert.equal((chatApp.match(/renderAnimationCard\('responsive-visual-panel'\)/g) || []).length, 1);
+  assert.match(chatApp, /SUPPORTING_VISUAL_PANEL_ENABLED = false/);
+  assert.match(chatApp, /SUPPORTING_VISUAL_PANEL_ENABLED && Boolean/);
   assert.doesNotMatch(chatApp, /renderAnimationCard\('mobile-only'\)/);
   assert.doesNotMatch(indexCss, /width:\s*600px\s*!important/);
   assert.doesNotMatch(indexCss, /\bzoom\s*:/);
@@ -102,15 +104,18 @@ test('renders composer inspiration only on the home screen', () => {
 });
 
 test('provides one translucent back-to-top control across every DEKODE layout', () => {
-  assert.match(app, /<BackToTopButton key=\{proposal \? 'proposal' : 'site'\}/);
+  assert.match(app, /<BackToTopButton[^>]*disabled=\{isChatActive && !proposal\}/);
+  assert.match(chatApp, /onChatModeChange\?\.\(step !== "centered"\)/);
+  assert.match(backToTop, /if \(disabled\)/);
+  assert.match(backToTop, /storySections\[2\]/);
   assert.match(backToTop, /\.app-container, \.chat-scroll-area, \.proposal-source-stage/);
   assert.match(backToTop, /document\.addEventListener\('scroll', handleScroll, true\)/);
   assert.match(backToTop, /aria-label="Back to top"/);
   assert.match(backToTop, /reduceMotion \? 'auto' : 'smooth'/);
   assert.match(indexCss, /\.back-to-top-button\s*\{[^}]*width:\s*44px[^}]*height:\s*44px/s);
-  assert.match(indexCss, /right:\s*calc\(32px \+ env\(safe-area-inset-right, 0px\)\)/);
-  assert.match(indexCss, /bottom:\s*calc\(32px \+ env\(safe-area-inset-bottom, 0px\)\)/);
-  assert.match(indexCss, /right:\s*calc\(20px \+ env\(safe-area-inset-right, 0px\)\)/);
+  assert.match(indexCss, /right:\s*calc\(40px \+ env\(safe-area-inset-right, 0px\)\)/);
+  assert.match(indexCss, /bottom:\s*calc\(40px \+ env\(safe-area-inset-bottom, 0px\)\)/);
+  assert.match(indexCss, /right:\s*calc\(24px \+ env\(safe-area-inset-right, 0px\)\)/);
   assert.match(indexCss, /background:\s*rgba\(5, 51, 100, 0\.72\)/);
 });
 
@@ -199,6 +204,28 @@ test('keeps consent aligned and resumes normal chat after booking', () => {
 test('removes obsolete numbered progress from dynamic project conversations', () => {
   assert.doesNotMatch(chatApp, /showDiscoveryProgress/);
   assert.doesNotMatch(chatApp, /className="step-dot"/);
+});
+
+test('centers chat, aligns the shared header, and distinguishes message roles', () => {
+  assert.match(chatApp, /<header className="chat-header">/);
+  assert.match(indexCss, /--conversation-max-width:\s*880px/);
+  assert.match(indexCss, /\.chat-section\s*\{[^}]*max-width:\s*var\(--conversation-max-width\)[^}]*margin:\s*0 auto/s);
+  assert.match(indexCss, /\.chat-header\s*\{[^}]*display:\s*flex[^}]*align-items:\s*center[^}]*justify-content:\s*space-between/s);
+  assert.match(indexCss, /\.message-ai \.message-bubble\s*\{[^}]*background:\s*var\(--chat-ai-bg\)/s);
+  assert.match(indexCss, /\.message-user \.message-bubble\s*\{[^}]*background:\s*var\(--chat-user-bg\)/s);
+  assert.match(indexCss, /\.chat-input-wrapper \.input-container\s*\{\s*max-width:\s*none/);
+});
+
+test('renders contextual suggestions through the normal chat pipeline', () => {
+  assert.match(chatApp, /aria-label="Suggested follow-up questions"/);
+  assert.match(chatApp, /handleModelPrompt\(suggestion\.prompt\)/);
+  assert.match(chatApp, /usedSuggestions:/);
+  assert.match(chatApp, /suggestions:\s*result\.suggestions \|\| \[\]/);
+});
+
+test('uses a readable translucent booking surface', () => {
+  assert.match(indexCss, /\.meeting-scheduler\s*\{[^}]*background:\s*rgba\(7, 24, 45, 0\.3[48]\)[^}]*backdrop-filter:\s*blur/s);
+  assert.match(indexCss, /\.meeting-booking-fields\s*\{[^}]*background:\s*rgba\(8, 26, 49, 0\.42\)[^}]*backdrop-filter:\s*blur/s);
 });
 
 test('enters chat mode before waiting for the Gemini response', () => {

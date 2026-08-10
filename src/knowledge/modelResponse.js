@@ -29,6 +29,19 @@ const DEFAULT_RESULT = {
   topic: 'general',
 };
 
+function sanitizeSuggestions(value) {
+  if (!Array.isArray(value)) return [];
+  const seen = new Set();
+  return value.flatMap((suggestion) => {
+    const label = String(suggestion?.label || '').trim().slice(0, 42);
+    const prompt = String(suggestion?.prompt || '').trim().slice(0, 180);
+    const key = label.toLowerCase();
+    if (!label || !prompt || seen.has(key)) return [];
+    seen.add(key);
+    return [{ label, prompt }];
+  }).slice(0, 4);
+}
+
 export function parseStructuredModelText(value) {
   if (value && typeof value === 'object') return value;
   const text = String(value || '').trim();
@@ -60,6 +73,7 @@ export function validateModelResponse(candidate, originalMessage) {
     action: MODEL_ACTIONS.includes(parsed.action) ? parsed.action : DEFAULT_RESULT.action,
     topic: String(parsed.topic || DEFAULT_RESULT.topic).trim().slice(0, 80),
     answer: String(parsed.answer || '').trim(),
+    suggestions: sanitizeSuggestions(parsed.suggestions),
   };
   if (!result.answer) throw new Error('MODEL_RESPONSE_ANSWER_MISSING');
 
@@ -85,4 +99,3 @@ export function validateModelResponse(candidate, originalMessage) {
 
   return result;
 }
-

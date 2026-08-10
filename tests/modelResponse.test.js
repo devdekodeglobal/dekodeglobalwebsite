@@ -50,3 +50,22 @@ test('deterministic safety refusal wins over a model action', () => {
   assert.equal(result.action, 'refuse');
   assert.match(result.answer, /API keys/i);
 });
+
+test('sanitizes contextual suggestion metadata without breaking older responses', () => {
+  const result = validateModelResponse({
+    ...bookingResult,
+    action: 'answer',
+    suggestions: [
+      { label: 'Explore services', prompt: 'Which DEKODE services fit this idea?' },
+      { label: 'Explore services', prompt: 'Duplicate label' },
+      { label: 'Discuss requirements', prompt: 'What requirements should we define first?' },
+      { label: '', prompt: 'Missing label' },
+    ],
+  }, 'Tell me more');
+
+  assert.deepEqual(result.suggestions, [
+    { label: 'Explore services', prompt: 'Which DEKODE services fit this idea?' },
+    { label: 'Discuss requirements', prompt: 'What requirements should we define first?' },
+  ]);
+  assert.deepEqual(validateModelResponse(bookingResult, 'Tell me more').suggestions, []);
+});

@@ -94,6 +94,8 @@ const PROJECT_OPTION_ROWS = [
   PROJECT_OPTIONS,
 ];
 
+export const SUPPORTING_VISUAL_PANEL_ENABLED = false;
+
 export default function ChatApp({
   proposalContext = null,
   proposalChatEnabled = true,
@@ -102,6 +104,7 @@ export default function ChatApp({
   onProposalSection,
   onProposalClarification,
   onCloseProposalChat,
+  onChatModeChange,
   isProposalChatOpen = false,
 }) {
   const [messages, setMessages] = useState([]);
@@ -169,6 +172,10 @@ export default function ChatApp({
   const speechProviderRef = useRef(null);
   const committedTranscriptRef = useRef("");
   const voiceStatusTimerRef = useRef(null);
+
+  useEffect(() => {
+    onChatModeChange?.(step !== "centered");
+  }, [onChatModeChange, step]);
 
   useEffect(() => {
     if (proposalContext) {
@@ -395,7 +402,14 @@ export default function ChatApp({
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ question: userMessage, conversation: conversationMemory }),
+        body: JSON.stringify({
+          question: userMessage,
+          conversation: conversationMemory,
+          usedSuggestions: messages
+            .flatMap((message) => message.suggestions || [])
+            .map((suggestion) => suggestion.label)
+            .slice(-8),
+        }),
       });
       const result = await response.json();
       if (!response.ok || !result.answer) throw new Error(result.error);
@@ -407,7 +421,7 @@ export default function ChatApp({
           sender: "ai",
           text: cleanAssistantText(result.answer),
           companyTopic: fallbackResponse.topic,
-          suggestions: fallbackResponse.suggestions,
+          suggestions: result.suggestions || [],
           actions: result.actions || [],
         },
       ]);
@@ -424,7 +438,7 @@ export default function ChatApp({
           sender: "ai",
           text: cleanAssistantText(fallbackResponse.text),
           companyTopic: fallbackResponse.topic,
-          suggestions: fallbackResponse.suggestions,
+          suggestions: [],
         },
       ]);
     } finally {
@@ -446,7 +460,14 @@ export default function ChatApp({
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ question: userMessage, conversation: requestConversation }),
+        body: JSON.stringify({
+          question: userMessage,
+          conversation: requestConversation,
+          usedSuggestions: messages
+            .flatMap((message) => message.suggestions || [])
+            .map((suggestion) => suggestion.label)
+            .slice(-8),
+        }),
       });
       const result = await response.json();
       if (!response.ok || !result.answer) throw new Error(result.error);
@@ -493,6 +514,7 @@ export default function ChatApp({
           sender: "ai",
           text: cleanAssistantText(result.answer),
           companyTopic: result.topic,
+          suggestions: result.suggestions || [],
           actions: result.actions || [],
         },
       ]);
@@ -785,7 +807,7 @@ export default function ChatApp({
   };
 
   const isBookingExperience = projectType === "Discovery Call" && ["scheduling", "done"].includes(step);
-  const hasSupportingVisual = Boolean(companyPanel || projectType);
+  const hasSupportingVisual = SUPPORTING_VISUAL_PANEL_ENABLED && Boolean(companyPanel || projectType);
 
   const renderAnimationCard = (classNameExt = "") => (
     <motion.div
@@ -926,31 +948,33 @@ export default function ChatApp({
         />
       )}
 
-      <a className="brand-logo" href={import.meta.env.BASE_URL || "/"} aria-label="Go to DEKODE home">
-        DEKODE
-      </a>
-      {!proposalContext && (
-        <div className="top-right-actions">
-          <button
-            type="button"
-            className="action-pill calendar-entry-button"
-            onClick={handleOpenMeetingScheduler}
-            aria-label="Book a meeting"
-            title="Book a meeting"
-          >
-            <CalendarDays size={18} strokeWidth={2.5} />
-          </button>
-          {onOpenProposalAccess && (
+      <header className="chat-header">
+        <a className="brand-logo" href={import.meta.env.BASE_URL || "/"} aria-label="Go to DEKODE home">
+          DEKODE
+        </a>
+        {!proposalContext && (
+          <div className="top-right-actions">
             <button
               type="button"
-              className="action-pill proposal-entry-button client-portal-top-right"
-              onClick={onOpenProposalAccess}
+              className="action-pill calendar-entry-button"
+              onClick={handleOpenMeetingScheduler}
+              aria-label="Book a meeting"
+              title="Book a meeting"
             >
-              <LockKeyhole size={15} /> Client Portal
+              <CalendarDays size={18} strokeWidth={2.5} />
             </button>
-          )}
-        </div>
-      )}
+            {onOpenProposalAccess && (
+              <button
+                type="button"
+                className="action-pill proposal-entry-button client-portal-top-right"
+                onClick={onOpenProposalAccess}
+              >
+                <LockKeyhole size={15} /> Client Portal
+              </button>
+            )}
+          </div>
+        )}
+      </header>
       {proposalContext && (
         <div className="proposal-context-bar">
           <span id="proposal-chat-title"><i /> Proposal chat</span>
@@ -1029,7 +1053,7 @@ export default function ChatApp({
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className={`active-chat-layout ${isBookingExperience ? "is-booking-layout" : ""}`}
+            className={`active-chat-layout ${isBookingExperience && hasSupportingVisual ? "is-booking-layout" : ""} ${hasSupportingVisual ? "" : "chat-panel-hidden"}`}
           >
             <div className="chat-section">
               <div className="chat-scroll-area" ref={scrollRef}>
@@ -1062,13 +1086,15 @@ export default function ChatApp({
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
                             className="company-suggestion-chips"
+                            role="group"
+                            aria-label="Suggested follow-up questions"
                           >
                             {msg.suggestions.map((suggestion) => (
                               <button
                                 key={suggestion.label}
                                 type="button"
                                 onClick={() =>
-                                  handleCompanyPrompt(suggestion.prompt)
+                                  handleModelPrompt(suggestion.prompt)
                                 }
                                 disabled={isTyping}
                               >
