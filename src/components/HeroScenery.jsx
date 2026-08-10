@@ -80,7 +80,10 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
 
   return (
     <div className="hero-scenery-wrapper minimalist-sky" aria-hidden="true" style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
-      
+      <style>{styles}</style>
+
+      {/* Ambient Layer Removed */}
+
       {/* Rich Atmospheric Sky Gradients */}
       <AnimatePresence mode="wait">
         {isMorning && (
@@ -131,7 +134,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
           <>
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ 
+              animate={{
                 opacity: [0.15, 0.35, 0.15],
                 scale: [0.9, 1.1, 0.9],
                 rotate: [0, 10, 0]
@@ -151,7 +154,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ 
+              animate={{
                 opacity: [0.1, 0.25, 0.1],
                 scale: [1, 1.2, 1],
                 rotate: [0, -5, 0]
@@ -179,12 +182,12 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
           <motion.div
             className="stars-container"
             initial={{ opacity: 0 }}
-            animate={{ 
+            animate={{
               opacity: isNight ? 1 : isMorning ? 0.35 : 0.5,
               y: [0, -20, 0] // Subtle drift
             }}
             exit={{ opacity: 0 }}
-            transition={{ 
+            transition={{
               opacity: { duration: 2.5, ease: 'easeInOut' },
               y: { duration: 60, repeat: Infinity, ease: 'linear' }
             }}
@@ -214,7 +217,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
       {/* Floating Ambient Light Orbs (Daytime & Sunset) */}
       <AnimatePresence>
         {!isNight && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -251,47 +254,169 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
         )}
       </AnimatePresence>
 
-      {/* Unified Celestial Body (Sun morphs into Moon) */}
-      <motion.div
-        className="celestial-body-container"
-        initial={false}
-        animate={{
-          x: `calc(${targetState.body.x} - 55px)`,
-          y: `calc(${targetState.body.y} - 55px)`,
-          scale: targetState.body.scale,
-        }}
-        transition={{
-          x: { type: 'tween', duration: 5, ease: 'linear' },
-          y: { type: 'tween', duration: 5, ease: (timeOfDay === 'morning' || timeOfDay === 'evening') ? 'easeIn' : 'easeOut' },
-          scale: { type: 'tween', duration: 5, ease: 'easeInOut' }
-        }}
-        style={{ zIndex: 2 }}
-      >
-        {/* Sun Visuals */}
+      {/* Unified Celestial Body (Sun morphs into Moon) - Hidden during sports scenes */}
+      {!(holidayId === 'cricket' || holidayId === 'soccer') && (
         <motion.div
-          style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          className="celestial-body-container"
           initial={false}
-          animate={{ opacity: targetState.sunOpacity }}
-          transition={{ duration: 2, ease: 'easeInOut' }}
+          animate={{
+            x: `calc(${targetState.body.x} - 55px)`,
+            y: `calc(${targetState.body.y} - 55px)`,
+            scale: holidayId === 'yoga_day' ? [targetState.body.scale, targetState.body.scale * 1.15, targetState.body.scale] : targetState.body.scale,
+            filter: (function () {
+              if (holidayId === 'halloween') return 'drop-shadow(0 0 20px rgba(234, 88, 12, 0.8))'; // Vibrant Orange Glow
+              if (holidayId === 'earth_day' || holidayId === 'environment_day') return 'sepia(0.8) hue-rotate(90deg) saturate(2.5)'; // Earth Green
+              if (holidayId === 'valentines_day' || holidayId === 'mothers_day') return 'sepia(0.6) hue-rotate(-80deg) saturate(2.5)'; // Rose Pink
+              if (holidayId === 'st_patricks_day') return 'sepia(0.9) hue-rotate(85deg) saturate(3)'; // Shamrock Green
+              if (holidayId === 'diwali') return 'sepia(0.9) hue-rotate(-10deg) saturate(3) brightness(1.2)'; // Diya Golden Flame
+              if (holidayId === 'christmas' || holidayId === 'christmas_countdown') return 'sepia(0.8) hue-rotate(-15deg) saturate(3) brightness(1.3)'; // Festive Red-Gold
+              if (holidayId === 'womens_day') return 'sepia(0.5) hue-rotate(-90deg) saturate(2.5)'; // Sakura Pink
+              if (holidayId === 'mens_day' || holidayId === 'fathers_day') return 'sepia(0.8) hue-rotate(180deg) saturate(2.5)'; // Sapphire Blue
+              if (holidayId === 'yoga_day') return 'sepia(0.6) hue-rotate(140deg) saturate(2)'; // Teal Pulse
+              if (holidayId === 'friendship_day') return 'saturate(3) brightness(1.2)'; // Warm Gold
+              if (holidayId === 'new_years' || holidayId === 'new_years_eve') return 'saturate(2) brightness(1.3) contrast(1.1)'; // Golden Starburst
+              return 'sepia(0) hue-rotate(0deg) saturate(1) brightness(1)'; // Default
+            })()
+          }}
+          transition={{
+            x: { type: 'tween', duration: 2.5, ease: 'linear' },
+            y: { type: 'tween', duration: 2.5, ease: (timeOfDay === 'morning' || timeOfDay === 'evening') ? 'easeIn' : 'easeOut' },
+            scale: holidayId === 'yoga_day' ? { duration: 4, ease: 'easeInOut', repeat: Infinity } : { type: 'tween', duration: 2.5, ease: 'easeInOut' },
+            filter: { duration: 2.5, ease: 'easeInOut' }
+          }}
+          style={{ zIndex: 50 }}
         >
-          <div className="sun-core" />
-          <div className="sun-glow-ring" />
-        </motion.div>
+          {/* Halloween Jack-O-Lantern Glowing Carved Face */}
+          {holidayId === 'halloween' && (
+            <div style={{ position: 'absolute', inset: 0, zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+              <svg width="75" height="75" viewBox="0 0 100 100">
+                {/* Solid Pumpkin Shell based on timeOfDay */}
+                <motion.circle
+                  cx="50" cy="50" r="48"
+                  initial={false}
+                  animate={{
+                    fill: timeOfDay === 'night' ? '#c2410c' :
+                      timeOfDay === 'evening' ? '#ea580c' :
+                        timeOfDay === 'morning' ? '#fb923c' : '#f97316'
+                  }}
+                  transition={{ duration: 2 }}
+                />
 
-        {/* Moon Visuals */}
-        <motion.div
-          style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-          initial={false}
-          animate={{ opacity: targetState.moonOpacity }}
-          transition={{ duration: 2, ease: 'easeInOut' }}
-        >
-          <div className="moon-core">
-            <div className="moon-crater crater-1" />
-            <div className="moon-crater crater-2" />
-          </div>
-          <div className="moon-glow-ring" />
+                {/* Pumpkin texture lines */}
+                <path d="M 50 2 Q 25 50 50 98" fill="none" stroke="#7c2d12" strokeWidth="3" opacity="0.4" />
+                <path d="M 50 2 Q 75 50 50 98" fill="none" stroke="#7c2d12" strokeWidth="3" opacity="0.4" />
+                <path d="M 50 2 Q 0 50 50 98" fill="none" stroke="#7c2d12" strokeWidth="2" opacity="0.2" />
+                <path d="M 50 2 Q 100 50 50 98" fill="none" stroke="#7c2d12" strokeWidth="2" opacity="0.2" />
+
+                {/* Changing Face Logic with Dynamic Glow (Matching the classic 3D carved look) */}
+                {/* Base Carved Shadow (Dark Layer) - creates the 3D depth */}
+                <motion.g
+                  transform="translate(0, 3)"
+                  initial={false}
+                  animate={{
+                    fill: (timeOfDay === 'morning' || timeOfDay === 'noon') ? '#78350f' : '#450a0a'
+                  }}
+                  transition={{ duration: 2 }}
+                >
+                  <path d="M 22 48 L 42 38 L 42 52 Z" />
+                  <path d="M 78 48 L 58 38 L 58 52 Z" />
+                  <path d="M 50 52 L 45 60 L 55 60 Z" />
+                  <path d="M 15 65 L 25 75 L 35 60 L 50 75 L 65 60 L 75 75 L 85 65 L 80 82 L 65 68 L 50 88 L 35 68 L 20 82 Z" />
+                </motion.g>
+
+                {/* Glowing Inner Layer (Light Layer) - only glows in evening/night */}
+                <motion.g
+                  initial={false}
+                  animate={{
+                    opacity: (timeOfDay === 'morning' || timeOfDay === 'noon') ? 0 : 1,
+                    fill: timeOfDay === 'night' ? '#fef08a' : '#fca5a5',
+                    filter: timeOfDay === 'night'
+                      ? 'drop-shadow(0 0 6px #fef08a) drop-shadow(0 0 12px #f97316)'
+                      : 'drop-shadow(0 0 4px #ef4444) drop-shadow(0 0 8px #ea580c)'
+                  }}
+                  transition={{ duration: 2 }}
+                >
+                  <path d="M 22 48 L 42 38 L 42 52 Z" />
+                  <path d="M 78 48 L 58 38 L 58 52 Z" />
+                  <path d="M 50 52 L 45 60 L 55 60 Z" />
+                  <path d="M 15 65 L 25 75 L 35 60 L 50 75 L 65 60 L 75 75 L 85 65 L 80 82 L 65 68 L 50 88 L 35 68 L 20 82 Z" />
+                </motion.g>
+              </svg>
+            </div>
+          )}
+
+          {/* Earth Day Globe Outline */}
+          {(holidayId === 'earth_day' || holidayId === 'environment_day') && (
+            <div style={{ position: 'absolute', inset: 0, zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+              <svg width="80" height="80" viewBox="0 0 100 100" fill="rgba(34,197,94,0.4)">
+                <path d="M 20 30 Q 40 10 70 20 Q 90 40 80 70 Q 50 90 20 70 Q 10 40 20 30 Z" />
+              </svg>
+            </div>
+          )}
+
+          {/* Diwali Radiant Mandala Outline */}
+          {holidayId === 'diwali' && (
+            <div style={{ position: 'absolute', inset: 0, zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+              <motion.svg
+                width="90" height="90" viewBox="0 0 100 100"
+                fill="none" stroke="rgba(253, 224, 71, 0.8)" strokeWidth="1.5"
+                initial={{ rotate: 0 }}
+                animate={{ rotate: 360 }}
+                transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+                style={{ filter: 'drop-shadow(0 0 5px rgba(253, 224, 71, 0.5))' }}
+              >
+                {/* Outer Lotus Petals */}
+                {[...Array(12)].map((_, i) => (
+                  <path
+                    key={`outer-${i}`}
+                    d="M 50 10 Q 60 25 50 40 Q 40 25 50 10 Z"
+                    transform={`rotate(${i * 30} 50 50)`}
+                    fill="rgba(250, 204, 21, 0.2)"
+                  />
+                ))}
+                {/* Inner Star/Petals */}
+                {[...Array(8)].map((_, i) => (
+                  <path
+                    key={`inner-${i}`}
+                    d="M 50 25 L 55 45 L 50 50 L 45 45 Z"
+                    transform={`rotate(${i * 45} 50 50)`}
+                    stroke="rgba(251, 146, 60, 0.9)"
+                    fill="rgba(251, 146, 60, 0.3)"
+                  />
+                ))}
+                {/* Center Ring */}
+                <circle cx="50" cy="50" r="15" strokeDasharray="3 3" />
+                <circle cx="50" cy="50" r="8" fill="rgba(253, 224, 71, 0.5)" />
+              </motion.svg>
+            </div>
+          )}
+
+          {/* Sun Visuals */}
+          <motion.div
+            style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            initial={false}
+            animate={{ opacity: targetState.sunOpacity }}
+            transition={{ duration: 2, ease: 'easeInOut' }}
+          >
+            <div className="sun-core" />
+            <div className="sun-glow-ring" />
+          </motion.div>
+
+          {/* Moon Visuals */}
+          <motion.div
+            style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            initial={false}
+            animate={{ opacity: targetState.moonOpacity }}
+            transition={{ duration: 2, ease: 'easeInOut' }}
+          >
+            <div className="moon-core">
+              <div className="moon-crater crater-1" />
+              <div className="moon-crater crater-2" />
+            </div>
+            <div className="moon-glow-ring" />
+          </motion.div>
         </motion.div>
-      </motion.div>
+      )}
     </div>
   );
 }
