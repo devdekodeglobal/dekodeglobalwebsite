@@ -26,18 +26,21 @@ function topicLabel(topic) {
 }
 
 export function FormattedText({ text, topic }) {
-  const lines = String(text || '').split('\n').map((line) => line.trim()).filter(Boolean);
+  const normalizedText = String(text || '')
+    .replace(/\s+([*-])\s+(?=\*\*[^*]+\*\*\s*:)/g, '\n$1 ');
+  const bulletPattern = /^(?:[-*•]|\d+[.)])\s+/;
+  const lines = normalizedText.split('\n').map((line) => line.trim()).filter(Boolean);
   const bullets = lines
-    .filter((line) => /^(?:[-•]|\d+[.)])\s+/.test(line))
-    .map((line) => line.replace(/^(?:[-•]|\d+[.)])\s+/, ''));
-  const prose = lines.filter((line) => !/^(?:[-•]|\d+[.)])\s+/.test(line)).join(' ');
+    .filter((line) => bulletPattern.test(line))
+    .map((line) => line.replace(bulletPattern, ''));
+  const prose = lines.filter((line) => !bulletPattern.test(line)).join(' ');
   const sentences = sentenceParts(prose);
   const sentenceCount = sentences.length;
   const followUp = sentences.length > 1 && sentences.at(-1).endsWith('?')
     ? sentences.pop()
     : '';
   const lead = sentenceCount > 1 && sentences.length > 0 ? sentences.shift() : '';
-  const body = sentences.join(' ');
+  const body = lead ? sentences.join(' ') : '';
   const label = topicLabel(topic);
 
   return (
@@ -53,7 +56,7 @@ export function FormattedText({ text, topic }) {
       {!lead && prose && <p className="answer-body"><InlineText text={prose} /></p>}
       {bullets.length > 0 && (
         <ul className="answer-points">
-          {bullets.slice(0, 6).map((bullet, index) => (
+          {bullets.slice(0, 8).map((bullet, index) => (
             <li key={`${index}-${bullet}`}><InlineText text={bullet} /></li>
           ))}
         </ul>

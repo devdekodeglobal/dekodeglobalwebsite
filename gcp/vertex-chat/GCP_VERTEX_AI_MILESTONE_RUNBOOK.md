@@ -1349,3 +1349,33 @@ from published case studies rather than returning a company overview.
 Regression coverage includes the exact failed wording against both retrieval
 implementations, verification of representative project names in the returned
 context, canonical case-study visual routing, and the presence of real media.
+
+## 20. Old-Site Portfolio Enrichment And Ranking Repair
+
+The old `PortfolioShowcase.jsx`, `FoodManufacture.jsx`, `PrimarySchool.jsx`, and
+`Bridge.jsx` sources were reviewed as the approved evidence boundary. Both the
+Vercel and Cloud Run knowledge copies now carry structured details for AttendMe,
+CHAUFFR, Smart Loan Helper, SmartBroker, Recycled Market, and Estrado, including
+known platforms, client context, deliverables, aliases, and source references.
+The Beston and Stella Maris case studies now also preserve their obstacles,
+delivery approach, platforms, and verified outcomes. Unknown project outcomes
+remain unstated.
+
+Project retrieval recognizes portfolio, past work, previous work, examples,
+case studies, success stories, clients, and `what have you built`. These queries
+boost the complete evidence catalogue and individual project documents while
+penalizing the generic company overview. Client and product aliases are attached
+only to their corresponding evidence document, preventing Beston or AttendMe
+from making every case study appear equally relevant.
+
+Post-model visual validation now lets a verified company-project topic override
+an incorrect `project_build` panel action, while Gemini still produces the
+answer first. Answer rendering also separates inline markdown project bullets,
+supports all eight public examples, and prevents a one-sentence response from
+being rendered twice.
+
+Regression coverage includes broad projects, portfolio, built-work, case-study,
+Beston, CHAUFFR, and primary-school platform questions in both retrieval stacks.
+The full application suite continues to have only the seven inherited protected-
+proposal snapshot and local-secret failures; all relevant chat, retrieval, UI,
+Cloud Run, lint, and production-build checks pass.

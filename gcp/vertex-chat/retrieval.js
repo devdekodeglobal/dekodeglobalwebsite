@@ -10,6 +10,32 @@ const STOP_WORDS = new Set([
 
 const join = (items = []) => items.filter(Boolean).join(', ');
 
+const PROJECT_EVIDENCE_ALIASES = [
+  'projects', 'project', 'portfolio', 'past work', 'previous work', 'client work',
+  'examples', 'case studies', 'success stories', 'clients', 'what have you built',
+];
+
+const asksForProjectEvidence = (question) => /\b(projects?|portfolio|past work|previous work|client work|examples?|case studies|success stories|clients?|what have you built)\b/.test(normalize(question));
+
+const formatProject = (project) => [
+  project.description,
+  project.category && `Category: ${project.category}.`,
+  project.type && `Type: ${project.type}.`,
+  project.platform && `Platform: ${project.platform}.`,
+  project.clientContext && `Client or context: ${project.clientContext}.`,
+  project.deliverables?.length && `Deliverables: ${join(project.deliverables)}.`,
+  project.outcome && `Outcome: ${project.outcome}`,
+].filter(Boolean).join('\n');
+
+const formatCaseStudy = (study) => [
+  `Known as: ${join(study.aliases)}. Industry: ${study.industry}. Platform: ${study.platform}.`,
+  `Challenge: ${study.challenge}`,
+  study.obstacles && `Obstacles: ${study.obstacles}`,
+  `Solution: ${study.solution}`,
+  study.deliveryApproach && `Delivery approach: ${study.deliveryApproach}`,
+  `Outcome: ${study.outcome}`,
+].filter(Boolean).join('\n');
+
 export const normalize = (value) => String(value ?? '')
   .toLowerCase()
   .replace(/\bbookameeting\b/g, 'book a meeting')
@@ -100,8 +126,8 @@ export function buildDocuments() {
     documents.push(createDocument(
       `case-${study.id}`,
       `${study.name} case study`,
-      `Known as: ${join(study.aliases)}. Industry: ${study.industry}. Platform: ${study.platform}. Challenge: ${study.challenge}\nSolution: ${study.solution}\nOutcome: ${study.outcome}`,
-      [...(companyKnowledge.aliases?.caseStudies || []), ...(study.aliases || [])],
+      formatCaseStudy(study),
+      [study.name, study.industry, ...(study.aliases || [])],
     ));
   }
 
@@ -118,8 +144,8 @@ export function buildDocuments() {
     documents.push(createDocument(
       `portfolio-${project.id}`,
       `${project.name} portfolio project`,
-      project.description,
-      [project.name, 'portfolio', 'project example', 'previous work'],
+      formatProject(project),
+      [project.name, ...(project.aliases || []), 'portfolio', 'project example', 'previous work'],
     ));
   }
 
@@ -127,11 +153,11 @@ export function buildDocuments() {
     'project-evidence-catalogue',
     'DEKODE projects, portfolio, and case studies',
     `Verified DEKODE project evidence has two categories.\nPublished case studies:\n${(companyKnowledge.caseStudies || [])
-      .map((study) => `${study.name} (${study.industry}): ${study.solution} Outcome: ${study.outcome}`)
+      .map((study) => `${study.name} (${study.industry}, ${study.platform}): ${study.solution} Outcome: ${study.outcome}`)
       .join('\n')}\nPortfolio projects from the published old-site showcase:\n${(companyKnowledge.portfolioProjects || [])
-      .map((project) => `${project.name}: ${project.description}`)
+      .map((project) => `${project.name} (${project.platform || project.type}): ${project.description}`)
       .join('\n')}`,
-    ['projects', 'project', 'portfolio', 'past work', 'previous work', 'client work', 'case studies', 'success stories'],
+    PROJECT_EVIDENCE_ALIASES,
   ));
 
   for (const [key, policy] of Object.entries(companyKnowledge.legal || {})) {
@@ -166,11 +192,13 @@ function lexicalScore(question, document) {
   const coverage = matchedTerms / queryTerms.length;
   const phraseBoost = document.aliases.some((alias) => query.includes(normalize(alias))) ? 0.35 : 0;
   const labelBoost = query.includes(normalize(document.label)) ? 0.25 : 0;
-  const catalogueBoost = document.id === 'project-evidence-catalogue'
-    && /\b(projects?|portfolio|past work|previous work|client work|case studies|success stories)\b/.test(query)
+  const projectEvidenceQuery = asksForProjectEvidence(query);
+  const catalogueBoost = document.id === 'project-evidence-catalogue' && projectEvidenceQuery
     ? 0.55
     : 0;
-  return Math.min(1.55, coverage * 0.7 + phraseBoost + labelBoost + catalogueBoost);
+  const evidenceBoost = projectEvidenceQuery && /^(?:portfolio-|case-)/.test(document.id) ? 0.2 : 0;
+  const overviewPenalty = projectEvidenceQuery && document.id === 'company-about' ? 0.8 : 0;
+  return Math.max(0, Math.min(1.75, coverage * 0.7 + phraseBoost + labelBoost + catalogueBoost + evidenceBoost - overviewPenalty));
 }
 
 export function retrieveLexical(question, limit = 5) {
@@ -240,7 +268,7 @@ export function createHybridRetriever({
   return async function retrieveHybrid(question, limit = 5) {
     const lexical = new Map(retrieveLexical(question, documents.length)
       .map((match) => [match.id, match.lexicalScore]));
-    const asksForProjectEvidence = /\b(projects?|portfolio|past work|previous work|client work|case studies|success stories)\b/.test(normalize(question));
+    const projectEvidenceQuery = asksForProjectEvidence(question);
 
     try {
       const indexedDocuments = await getDocumentEmbeddings();
@@ -249,12 +277,14 @@ export function createHybridRetriever({
       const ranked = documents.map((document) => {
         const semanticScore = dotProduct(queryVector, vectors.get(document.id));
         const exactScore = lexical.get(document.id) || 0;
-        const catalogueBoost = asksForProjectEvidence && document.id === 'project-evidence-catalogue' ? 0.4 : 0;
+        const catalogueBoost = projectEvidenceQuery && document.id === 'project-evidence-catalogue' ? 0.5 : 0;
+        const evidenceBoost = projectEvidenceQuery && /^(?:portfolio-|case-)/.test(document.id) ? 0.15 : 0;
+        const overviewPenalty = projectEvidenceQuery && document.id === 'company-about' ? 0.5 : 0;
         return {
           ...document,
           semanticScore,
           lexicalScore: exactScore,
-          score: semanticScore * 0.82 + exactScore * 0.18 + catalogueBoost,
+          score: semanticScore * 0.82 + exactScore * 0.18 + catalogueBoost + evidenceBoost - overviewPenalty,
           retrievalMode: 'hybrid',
         };
       }).sort((left, right) => right.score - left.score);

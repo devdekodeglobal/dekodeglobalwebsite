@@ -31,6 +31,24 @@ test('broad project questions retrieve the complete verified evidence catalogue 
   assert.match(matches[0].text, /Food Manufacturing Company/);
 });
 
+test('prioritises project evidence across portfolio and case-study wording', () => {
+  for (const question of [
+    'what are dekode projects',
+    'show me your portfolio',
+    'what projects has dekode built',
+    'case studies',
+  ]) {
+    assert.equal(retrieveLexical(question)[0]?.id, 'project-evidence-catalogue', question);
+  }
+
+  assert.equal(retrieveLexical('tell me about Beston')[0]?.id, 'case-food-manufacturing');
+  assert.equal(retrieveLexical('what is CHAUFFR')[0]?.id, 'portfolio-chauffr');
+
+  const school = retrieveLexical('what platform was used for the primary school solution')[0];
+  assert.equal(school?.id, 'case-primary-school');
+  assert.match(school?.text || '', /Amazon Web Services|AWS/i);
+});
+
 test('normalizes common shorthand before Vertex retrieval', () => {
   assert.equal(normalize('need ai for my bussiness'), 'need ai for my business');
   assert.equal(normalize('can u make mob app'), 'can you make mobile app');

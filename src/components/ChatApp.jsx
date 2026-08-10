@@ -453,23 +453,15 @@ export default function ChatApp({
       if (result.conversation) setConversationMemory(result.conversation);
 
       const visualIntent = classifyCompanyIntent(userMessage, companyContextRef.current);
+      const verifiedCompanyTopic = visualIntent.kind === "company" && visualIntent.topic;
       if (result.action === "open_calendar") {
         activateMeetingScheduler();
-      } else if (result.action === "show_project_panel" || result.intent === "project_build") {
-        const project = generateProjectResponse(buildProjectConversationQuery(
-          userMessage,
-          requestConversation.recentMessages,
-        ));
-        setCompanyPanel(null);
-        setProjectType(project.projectType);
-        setGatheredTags([project.projectType]);
-        setStep("project");
-      } else if (result.action === "show_company_panel" || [
+      } else if (verifiedCompanyTopic || result.action === "show_company_panel" || [
         "company_info", "pricing", "case_study", "methodology",
       ].includes(result.intent)) {
         const resolvedCompanyTopic = result.intent === "case_study"
           ? "caseStudies"
-          : visualIntent.topic || result.topic || "company";
+          : verifiedCompanyTopic || result.topic || "company";
         const company = generateCompanyResponse(userMessage, {
           ...visualIntent,
           isCompanyRelated: true,
@@ -479,6 +471,15 @@ export default function ChatApp({
         setProjectType(null);
         setCompanyPanel(company);
         setStep("company");
+      } else if (result.action === "show_project_panel" || result.intent === "project_build") {
+        const project = generateProjectResponse(buildProjectConversationQuery(
+          userMessage,
+          requestConversation.recentMessages,
+        ));
+        setCompanyPanel(null);
+        setProjectType(project.projectType);
+        setGatheredTags([project.projectType]);
+        setStep("project");
       } else if (!["scheduling", "done"].includes(step)) {
         setCompanyPanel(null);
         setProjectType(null);

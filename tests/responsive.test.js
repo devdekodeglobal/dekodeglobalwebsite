@@ -220,11 +220,15 @@ test('presents Gemini answers with topic, lead, points, and a separated follow-u
   assert.match(typewriterText, /className="answer-follow-up"/);
   assert.match(chatApp, /topic=\{msg\.companyTopic\}/);
   assert.match(typewriterText, /const sentenceCount = sentences\.length/);
+  assert.match(typewriterText, /const body = lead \? sentences\.join\(' '\) : ''/);
+  assert.match(typewriterText, /bullets\.slice\(0, 8\)/);
+  assert.match(typewriterText, /const bulletPattern/);
 });
 
 test('routes project evidence to a verified visual portfolio with real media', () => {
   assert.match(chatApp, /const resolvedCompanyTopic/);
-  assert.match(chatApp, /visualIntent\.topic \|\| result\.topic/);
+  assert.match(chatApp, /const verifiedCompanyTopic/);
+  assert.match(chatApp, /verifiedCompanyTopic \|\| result\.topic/);
   assert.match(typewriterText, /answer-presentation/);
   assert.match(indexCss, /\.portfolio-card-rail/);
   assert.match(indexCss, /scroll-snap-type:\s*x mandatory/);

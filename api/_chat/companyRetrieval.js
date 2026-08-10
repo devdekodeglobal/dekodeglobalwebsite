@@ -19,6 +19,33 @@ const tokenize = (value) => [...new Set(normalise(value).match(/[a-z0-9+-]{3,}/g
 
 const joinItems = (items) => items.join(', ');
 
+const PROJECT_EVIDENCE_ALIASES = [
+  'projects', 'project', 'portfolio', 'past work', 'previous work', 'client work',
+  'examples', 'case studies', 'success stories', 'clients', 'what have you built',
+];
+
+const asksForProjectEvidence = (question) => /\b(projects?|portfolio|past work|previous work|client work|examples?|case studies|success stories|clients?|what have you built)\b/.test(normalise(question));
+
+const formatProject = (project) => [
+  project.description,
+  project.category && `Category: ${project.category}.`,
+  project.type && `Type: ${project.type}.`,
+  project.platform && `Platform: ${project.platform}.`,
+  project.clientContext && `Client or context: ${project.clientContext}.`,
+  project.deliverables?.length && `Deliverables: ${joinItems(project.deliverables)}.`,
+  project.outcome && `Outcome: ${project.outcome}`,
+].filter(Boolean).join('\n');
+
+const formatCaseStudy = (study) => [
+  `${study.name}\nKnown as: ${joinItems(study.aliases || [])}`,
+  `Industry: ${study.industry}\nPlatform: ${study.platform}`,
+  `Challenge: ${study.challenge}`,
+  study.obstacles && `Obstacles: ${study.obstacles}`,
+  `Solution: ${study.solution}`,
+  study.deliveryApproach && `Delivery approach: ${study.deliveryApproach}`,
+  `Outcome: ${study.outcome}`,
+].filter(Boolean).join('\n');
+
 function makeDocuments() {
   const documents = [
     {
@@ -49,17 +76,18 @@ function makeDocuments() {
     ...(companyKnowledge.portfolioProjects || []).map((project) => ({
       id: `portfolio-${project.id}`,
       label: `${project.name} portfolio project`,
-      text: project.description,
+      text: formatProject(project),
+      aliases: [project.name, ...(project.aliases || []), 'portfolio', 'project example', 'previous work'],
     })),
     {
       id: 'project-evidence-catalogue',
       label: 'DEKODE projects, portfolio, and case studies',
       text: `Verified DEKODE project evidence has two categories.\nPublished case studies:\n${companyKnowledge.caseStudies
-        .map((study) => `${study.name} (${study.industry}): ${study.solution} Outcome: ${study.outcome}`)
+        .map((study) => `${study.name} (${study.industry}, ${study.platform}): ${study.solution} Outcome: ${study.outcome}`)
         .join('\n')}\nPortfolio projects from the published old-site showcase:\n${(companyKnowledge.portfolioProjects || [])
-        .map((project) => `${project.name}: ${project.description}`)
+        .map((project) => `${project.name} (${project.platform || project.type}): ${project.description}`)
         .join('\n')}`,
-      aliases: ['projects', 'project', 'portfolio', 'past work', 'previous work', 'client work', 'case studies', 'success stories'],
+      aliases: PROJECT_EVIDENCE_ALIASES,
     },
     ...(companyKnowledge.initiatives || []).map((initiative) => ({
       id: `initiative-${initiative.id}`,
@@ -96,13 +124,13 @@ function makeDocuments() {
       text: `Published DEKODE success stories:\n${companyKnowledge.caseStudies
         .map((study) => `${study.name} (${study.industry}): ${study.solution} Outcome: ${study.outcome}`)
         .join('\n')}`,
-      aliases: companyKnowledge.aliases?.caseStudies || [],
+      aliases: ['case study', 'case studies', 'success story', 'success stories'],
     },
     ...companyKnowledge.caseStudies.map((study) => ({
       id: `case-study-${study.id}`,
       label: `${study.name} case study`,
-      text: `${study.name}\nKnown as: ${(study.aliases || []).join(', ')}\nIndustry: ${study.industry}\nPlatform: ${study.platform}\nChallenge: ${study.challenge}\nSolution: ${study.solution}\nOutcome: ${study.outcome}`,
-      aliases: study.aliases || [],
+      text: formatCaseStudy(study),
+      aliases: [study.name, study.industry, ...(study.aliases || [])],
     })),
     {
       id: 'values',
@@ -156,15 +184,17 @@ const documents = makeDocuments();
 export function retrieveCompanyKnowledge(question, limit = 5) {
   const queryTerms = tokenize(question);
   const query = normalise(question);
-  const asksForProjectEvidence = /\b(projects?|portfolio|past work|previous work|client work|case studies|success stories)\b/.test(query);
+  const projectEvidenceQuery = asksForProjectEvidence(query);
 
   const ranked = documents
     .map((document) => {
       const overlap = queryTerms.filter((term) => document.terms.includes(term)).length;
       const nameBonus = query.includes(normalise(document.label)) ? 3 : 0;
       const aliasBonus = document.aliases.some((alias) => query.includes(normalise(alias))) ? 3 : 0;
-      const catalogueBonus = asksForProjectEvidence && document.id === 'project-evidence-catalogue' ? 5 : 0;
-      return { ...document, score: overlap + nameBonus + aliasBonus + catalogueBonus };
+      const catalogueBonus = projectEvidenceQuery && document.id === 'project-evidence-catalogue' ? 6 : 0;
+      const evidenceBonus = projectEvidenceQuery && /^(?:portfolio-|case-study-)/.test(document.id) ? 2 : 0;
+      const overviewPenalty = projectEvidenceQuery && document.id === 'company-overview' ? 8 : 0;
+      return { ...document, score: overlap + nameBonus + aliasBonus + catalogueBonus + evidenceBonus - overviewPenalty };
     })
     .filter((document) => document.score > 0)
     .sort((left, right) => right.score - left.score || left.text.length - right.text.length)
