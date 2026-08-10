@@ -185,9 +185,9 @@ test('keeps booking controls accessible and motion-sensitive', () => {
 test('keeps consent aligned and resumes normal chat after booking', () => {
   assert.match(indexCss, /\.meeting-consent\s*\{[^}]*align-items:\s*center/);
   assert.match(indexCss, /\.meeting-consent input\s*\{[^}]*margin:\s*0/);
-  assert.match(chatApp, /const needsIntentRouting = \["centered", "triage", "company", "scheduling", "done"\]\.includes\(step\)/);
-  assert.match(chatApp, /step === "scheduling" \|\| step === "done"/);
-  assert.match(chatApp, /startConversation\(userMessage, true\)/);
+  assert.match(chatApp, /handleModelPrompt\(userMessage\)/);
+  assert.match(chatApp, /result\.action === "open_calendar"/);
+  assert.match(chatApp, /activateMeetingScheduler\(\)/);
   assert.doesNotMatch(chatApp, /readOnly:\s*step === "scheduling"/);
   assert.doesNotMatch(chatApp, /if \(step === "scheduling" \|\| isTyping\) return/);
   assert.match(chatApp, /if \(step === "centered" \|\| step === "done"\) setStep\("company"\)/);

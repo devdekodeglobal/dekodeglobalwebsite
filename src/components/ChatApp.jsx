@@ -46,10 +46,48 @@ import { cleanAssistantText } from "../utils/assistantText";
 
 function getTimeAwareGreeting(date = new Date()) {
   const hour = date.getHours();
-  if (hour >= 5 && hour < 12) return "Starting the day off right. What are we building?";
-  if (hour >= 12 && hour < 17) return "Midday check-in. Ready to keep the momentum going?";
-  if (hour >= 17 && hour < 21) return "Winding down the day. Let's review our progress.";
-  return "Working late? Let's get things done.";
+  let options = [];
+
+  if (hour >= 0 && hour < 4) {
+    options = [
+      "Burning the midnight oil? We're right here with you.",
+      "Quiet hours. Perfect for deep focus.",
+      "Still up? Let's get things done."
+    ];
+  } else if (hour >= 4 && hour < 8) {
+    options = [
+      "A fresh start to the day. Let's build something.",
+      "Early bird gets the worm. What's on today's agenda?",
+      "Good morning. Ready to tackle the day?"
+    ];
+  } else if (hour >= 8 && hour < 12) {
+    options = [
+      "Morning momentum. What's the main focus today?",
+      "Making good progress? Let's keep the productivity flowing.",
+      "Great morning. How can we assist you today?"
+    ];
+  } else if (hour >= 12 && hour < 16) {
+    options = [
+      "Midday check-in. Ready to keep the momentum going?",
+      "Post-lunch focus. What's next on the list?",
+      "Good afternoon. Let's make it a productive one."
+    ];
+  } else if (hour >= 16 && hour < 20) {
+    options = [
+      "Winding down the day. Let's review our progress.",
+      "Great work today. Need anything else before logging off?",
+      "Evening check-in. Wrapping up today's goals?"
+    ];
+  } else {
+    options = [
+      "Nighttime focus. What are we building tonight?",
+      "The day is winding down, but we're still here.",
+      "Late hours. Time for some quiet productivity?"
+    ];
+  }
+
+  // Shuffle: Pick a random greeting from the available options
+  return options[Math.floor(Math.random() * options.length)];
 }
 
 const PROJECT_OPTION_ROWS = [
@@ -68,39 +106,31 @@ export default function ChatApp({
 }) {
   const [messages, setMessages] = useState([]);
   const [conversationMemory, setConversationMemory] = useState(() => createConversationMemory());
-  const [timeOfDayIndex, setTimeOfDayIndex] = useState(() => {
-    const hour = new Date().getHours();
-    let currentIdx;
-    if (hour >= 5 && hour < 11) currentIdx = 0; // morning
-    else if (hour >= 11 && hour < 17) currentIdx = 1; // noon
-    else if (hour >= 17 && hour < 21) currentIdx = 2; // evening
-    else currentIdx = 3; // night
-    
-    // Start at the previous state so we can animate into the current one on load
-    return (currentIdx - 1 + 4) % 4;
+  const [realTime, setRealTime] = useState(() => {
+    // Start 6 hours in the past to trigger the entrance animation
+    const d = new Date();
+    d.setHours(d.getHours() - 6);
+    return d;
   });
 
-  const TIMES_OF_DAY = useMemo(() => ["morning", "noon", "evening", "night"], []);
-  const timeOfDay = TIMES_OF_DAY[timeOfDayIndex];
+  const timeOfDay = useMemo(() => {
+    const hour = realTime.getHours();
+    if (hour >= 5 && hour < 11) return "morning";
+    if (hour >= 11 && hour < 17) return "noon";
+    if (hour >= 17 && hour < 21) return "evening";
+    return "night";
+  }, [realTime]);
 
   // Animate to current time on load, then monitor real time
   useEffect(() => {
-    const getCurrentIdx = () => {
-      const hour = new Date().getHours();
-      if (hour >= 5 && hour < 11) return 0;
-      if (hour >= 11 && hour < 17) return 1;
-      if (hour >= 17 && hour < 21) return 2;
-      return 3;
-    };
-
-    // Trigger the initial arrival animation
+    // Trigger the initial arrival animation after the page settles (starts quickly)
     const initialTimer = setTimeout(() => {
-      setTimeOfDayIndex(getCurrentIdx());
-    }, 500);
+      setRealTime(new Date());
+    }, 600);
 
     // Check the real time every minute so it naturally changes if they leave the tab open
     const realTimeChecker = setInterval(() => {
-      setTimeOfDayIndex(getCurrentIdx());
+      setRealTime(new Date());
     }, 60000);
 
     return () => {
@@ -885,7 +915,10 @@ export default function ChatApp({
       <ParticleBackground timeOfDay={timeOfDay} />
       
       {step === "centered" && (
-        <HeroScenery timeOfDay={timeOfDay} />
+        <HeroScenery
+          timeOfDay={timeOfDay}
+          realTime={realTime}
+        />
       )}
 
       <a className="brand-logo" href={import.meta.env.BASE_URL || "/"} aria-label="Go to DEKODE home">
