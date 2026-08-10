@@ -1,6 +1,6 @@
 import { normalizeVisitorMessage } from './messageNormalization.js';
 
-const ACCOUNT_INTRUSION = /\b(can|could|would|will)\s+you\b.{0,24}\b(hack|break into|take over|bypass)\b.{0,32}\b(account|login|authentication|website|system)\b|^(?:please\s+)?\b(hack|break into|take over|bypass)\b.{0,32}\b(account|login|authentication|website|system)\b|\b(help|teach|show|tell)\b.{0,24}\b(hack|break into|steal|phish)\b.{0,30}\b(account|credentials?|passwords?)\b/i;
+const ACCOUNT_INTRUSION = /\b(can|could|would|will)\s+you\b.{0,24}\b(hack|break into|take over|bypass)\b.{0,32}\b(account|login|authentication|website|system)\b|^(?:please\s+)?\b(hack|break into|take over|bypass)\b.{0,32}\b(account|login|authentication|website|system)\b|\b(help|teach|show|tell)\b.{0,24}\b(hack|break into|steal|phish)\b.{0,30}\b(account|credentials?|passwords?)\b|\b(hack|break into|take over|bypass)\b.{0,32}\b(account|login|authentication|website|system)\b/i;
 const SECRET_DISCLOSURE = /\b(reveal|show|share|give|send|leak|expose|tell)\b.{0,32}\b(api[ -]?keys?|access tokens?|refresh tokens?|passwords?|credentials?|private keys?|secrets?)\b|\b(what is|can i have|i need|i want)\b.{0,24}\b(your\s+)?(api[ -]?key|access token|password|credential|private key|secret)\b/i;
 const PRIVATE_DATA = /\b(reveal|find|steal|share|expose|leak)\b.{0,32}\b(private|personal|confidential|customer|user)\b.{0,20}\b(data|information|records?|details?)\b/i;
 

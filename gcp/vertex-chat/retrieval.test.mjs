@@ -27,6 +27,10 @@ test('normalizes common shorthand before Vertex retrieval', () => {
   assert.equal(normalize('need ai for my bussiness'), 'need ai for my business');
   assert.equal(normalize('can u make mob app'), 'can you make mobile app');
   assert.equal(normalize('do u make ecomerce?'), 'do you make ecommerce');
+  assert.equal(normalize('book ameeting'), 'book a meeting');
+  assert.equal(normalize('bookameeting'), 'book a meeting');
+  assert.equal(normalize('metting meating meetng'), 'meeting meeting meeting');
+  assert.equal(normalize('schedual a calender call'), 'schedule a calendar call');
   assert.ok(retrieveLexical('can u make mob app').some((match) => match.id === 'solution-mobile-app'));
   assert.ok(retrieveLexical('do u make ecomerce?').some((match) => match.id === 'solution-ecommerce'));
 });

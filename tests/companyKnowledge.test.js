@@ -6,6 +6,7 @@ import {
   generateCompanyResponse,
   generateProjectResponse,
   getSensitiveRequestRefusal,
+  MEETING_PROJECT_CLARIFICATION,
   normalizeVisitorMessage,
   rememberCompanyTurn,
 } from '../src/knowledge/index.js';
@@ -95,12 +96,32 @@ test('routes explicit meeting requests directly to live calendar availability', 
   assert.equal(classifyCompanyIntent('can I meet someone?').kind, 'meeting');
   assert.equal(classifyCompanyIntent('want to talk').kind, 'meeting');
   assert.equal(classifyCompanyIntent('book').kind, 'meeting');
+  assert.equal(classifyCompanyIntent('book ameeting').kind, 'meeting');
+  assert.equal(classifyCompanyIntent('bookameeting').kind, 'meeting');
+  assert.equal(classifyCompanyIntent('can i book a call with your team').kind, 'meeting');
+});
+
+test('keeps scheduling-product requests out of the DEKODE booking flow', () => {
+  assert.equal(classifyCompanyIntent('i want to create a meeting app').kind, 'project');
+  assert.equal(classifyCompanyIntent('i need calendar booking in my website').kind, 'project');
+  assert.equal(classifyCompanyIntent('can you build appointment scheduling software').kind, 'project');
+
+  const ambiguous = classifyCompanyIntent('Can I schedule a meeting app?');
+  assert.equal(ambiguous.kind, 'meeting_project_ambiguous');
+  assert.equal(
+    MEETING_PROJECT_CLARIFICATION,
+    'Do you want to book a discovery call with DEKODE, or are you looking to build a meeting/calendar app?',
+  );
 });
 
 test('normalizes common visitor misspellings and shorthand before routing', () => {
   assert.equal(normalizeVisitorMessage('need ai for my bussiness'), 'need ai for my business');
   assert.equal(normalizeVisitorMessage('can u make mob app'), 'can you make mobile app');
   assert.equal(normalizeVisitorMessage('do u make ecomerce?'), 'do you make ecommerce');
+  assert.equal(normalizeVisitorMessage('book ameeting'), 'book a meeting');
+  assert.equal(normalizeVisitorMessage('bookameeting'), 'book a meeting');
+  assert.equal(normalizeVisitorMessage('metting meating meetng'), 'meeting meeting meeting');
+  assert.equal(normalizeVisitorMessage('schedual a calender call'), 'schedule a calendar call');
 
   assert.equal(classifyCompanyIntent('need ai for my bussiness').kind, 'project');
   assert.match(generateProjectResponse('need ai for my bussiness').text, /AI Strategy & Consulting/);
@@ -119,6 +140,7 @@ test('refuses account intrusion and secret disclosure explicitly', () => {
   assert.match(getSensitiveRequestRefusal(secrets), /can’t reveal.*API keys/i);
   assert.notEqual(classifyCompanyIntent('How do you protect API keys?').kind, 'unsafe');
   assert.notEqual(classifyCompanyIntent('How do you prevent account hacking?').kind, 'unsafe');
+  assert.equal(classifyCompanyIntent('Book a meeting to hack an account').kind, 'unsafe');
 });
 
 test('keeps safe bold headings while removing unsupported markdown', () => {

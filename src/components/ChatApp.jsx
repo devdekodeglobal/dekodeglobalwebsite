@@ -36,6 +36,7 @@ import {
   getSensitiveRequestRefusal,
   leaveCompanyConversation,
   markBookingInitiated,
+  MEETING_PROJECT_CLARIFICATION,
   rememberCompanyTurn,
 } from "../knowledge";
 import {
@@ -534,12 +535,16 @@ export default function ChatApp({
       userMessage,
       companyContextRef.current,
     );
+    if (companyIntent.kind === "unsafe") {
+      respondWithoutProject(userMessage, getSensitiveRequestRefusal(userMessage));
+      return;
+    }
     if (companyIntent.kind === "meeting") {
       handleOpenMeetingScheduler(userMessage);
       return;
     }
-    if (companyIntent.kind === "unsafe") {
-      respondWithoutProject(userMessage, getSensitiveRequestRefusal(userMessage));
+    if (companyIntent.kind === "meeting_project_ambiguous") {
+      respondWithoutProject(userMessage, MEETING_PROJECT_CLARIFICATION);
       return;
     }
     const isCompanyInformationQuestion =

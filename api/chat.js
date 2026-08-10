@@ -15,6 +15,7 @@ import {
   generateProjectResponse,
   getSensitiveRequestRefusal,
   isProjectContinuation,
+  MEETING_PROJECT_CLARIFICATION,
   normalizeConversationMemory,
 } from '../src/knowledge/index.js';
 import { cleanAssistantText } from '../src/utils/assistantText.js';
@@ -204,6 +205,9 @@ export default async function handler(request, response) {
     : question;
   const sensitiveRefusal = getSensitiveRequestRefusal(question);
   if (sensitiveRefusal) return respondAnswer(sensitiveRefusal, { sources: [], provider: 'safety-policy' });
+  if (effectiveIntentKind === 'meeting_project_ambiguous') {
+    return respondAnswer(MEETING_PROJECT_CLARIFICATION, { sources: [], provider: 'intent-router' });
+  }
   if (effectiveIntentKind === 'out_of_scope') {
     return respondAnswer("I'm focused on DEKODE's company information, services, and helping shape digital project ideas. That question is outside the information I can answer reliably, but I can explain what DEKODE does or help you explore something you want to build.", { sources: [] });
   }

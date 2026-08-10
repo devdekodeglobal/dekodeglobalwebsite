@@ -229,6 +229,34 @@ test('switches to the fallback model after repeated capacity errors', async () =
   }
 });
 
+test('returns targeted clarification for mixed booking and product intent without calling a model', async () => {
+  const originalFetch = global.fetch;
+  let fetchCalls = 0;
+  global.fetch = async () => {
+    fetchCalls += 1;
+    throw new Error('Ambiguous meeting-product intent should not call a model');
+  };
+
+  try {
+    const response = makeResponse();
+    await handler({
+      method: 'POST',
+      headers: { 'x-forwarded-for': 'meeting-product-clarification-test' },
+      body: { question: 'Can I schedule a meeting app?' },
+    }, response);
+
+    assert.equal(response.statusCode, 200);
+    assert.equal(response.body.provider, 'intent-router');
+    assert.equal(
+      response.body.answer,
+      'Do you want to book a discovery call with DEKODE, or are you looking to build a meeting/calendar app?',
+    );
+    assert.equal(fetchCalls, 0);
+  } finally {
+    global.fetch = originalFetch;
+  }
+});
+
 test('keeps an explicit website request grounded when AI providers are unavailable', async () => {
   const originalFetch = global.fetch;
   const originalEnvironment = new Map([

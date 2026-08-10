@@ -1,4 +1,8 @@
-import { generateCompanyResponse } from '../knowledge/index.js';
+import {
+  generateCompanyResponse,
+  getSensitiveRequestRefusal,
+  MEETING_PROJECT_CLARIFICATION,
+} from '../knowledge/index.js';
 import { classifyVoiceIntent } from './voiceIntentClassifier.js';
 import { extractLeadProfile, getNextQualificationQuestion } from './leadQualificationManager.js';
 
@@ -17,6 +21,12 @@ export class KnowledgeConversationProvider {
       const response = generateCompanyResponse(message, classification);
       return { ...response, intent: classification.intent, leadProfile };
     }
+    if (classification.intent === 'sensitive_refusal') {
+      return {
+        text: getSensitiveRequestRefusal(message),
+        topic: 'company', panel: 'overview', intent: classification.intent, leadProfile,
+      };
+    }
     if (classification.intent === 'greeting') {
       return { text: OPENING, topic: 'company', panel: 'overview', intent: 'greeting', leadProfile };
     }
@@ -30,6 +40,12 @@ export class KnowledgeConversationProvider {
       return {
         text: 'I can help you choose a preferred meeting time. This will create a request only; the DEKODE team will confirm availability after you review and submit your details.',
         topic: 'meeting', panel: 'meeting', intent: classification.intent, leadProfile: { ...leadProfile, meetingInterest: true }, action: 'offer_meeting',
+      };
+    }
+    if (classification.intent === 'meeting_project_clarification') {
+      return {
+        text: MEETING_PROJECT_CLARIFICATION,
+        topic: 'project', panel: 'services', intent: classification.intent, leadProfile,
       };
     }
     if (classification.intent === 'project_discussion' || classification.intent === 'timeline_interest') {
