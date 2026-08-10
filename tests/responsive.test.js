@@ -200,6 +200,18 @@ test('removes obsolete numbered progress from dynamic project conversations', ()
   assert.doesNotMatch(chatApp, /className="step-dot"/);
 });
 
+test('enters chat mode before waiting for the Gemini response', () => {
+  const handlerStart = chatApp.indexOf('const handleModelPrompt = async');
+  const handlerEnd = chatApp.indexOf('const handleProposalPrompt = async');
+  const modelHandler = chatApp.slice(handlerStart, handlerEnd);
+  assert.ok(handlerStart >= 0 && handlerEnd > handlerStart);
+  assert.ok(modelHandler.indexOf('if (step === "centered") setStep("triage")') >= 0);
+  assert.ok(
+    modelHandler.indexOf('setStep("triage")') < modelHandler.indexOf('fetch("/api/chat"'),
+    'chat mode should render before the model request completes',
+  );
+});
+
 test('opens the existing scheduler from an AI qualification action', () => {
   assert.match(chatApp, /action\.type === "open_booking"/);
   assert.match(chatApp, /handleOpenMeetingScheduler\(\)/);

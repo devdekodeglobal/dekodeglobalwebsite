@@ -439,6 +439,7 @@ export default function ChatApp({
       ...current,
       { id: Date.now(), sender: "user", text: userMessage },
     ]);
+    if (step === "centered") setStep("triage");
     setIsTyping(true);
 
     try {
