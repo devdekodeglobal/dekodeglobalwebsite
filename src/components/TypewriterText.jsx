@@ -32,10 +32,11 @@ export function FormattedText({ text, topic }) {
     .map((line) => line.replace(/^(?:[-•]|\d+[.)])\s+/, ''));
   const prose = lines.filter((line) => !/^(?:[-•]|\d+[.)])\s+/.test(line)).join(' ');
   const sentences = sentenceParts(prose);
+  const sentenceCount = sentences.length;
   const followUp = sentences.length > 1 && sentences.at(-1).endsWith('?')
     ? sentences.pop()
     : '';
-  const lead = sentences.length > 1 ? sentences.shift() : '';
+  const lead = sentenceCount > 1 && sentences.length > 0 ? sentences.shift() : '';
   const body = sentences.join(' ');
   const label = topicLabel(topic);
 

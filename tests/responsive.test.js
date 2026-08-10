@@ -218,6 +218,7 @@ test('presents Gemini answers with topic, lead, points, and a separated follow-u
   assert.match(typewriterText, /className="answer-points"/);
   assert.match(typewriterText, /className="answer-follow-up"/);
   assert.match(chatApp, /topic=\{msg\.companyTopic\}/);
+  assert.match(typewriterText, /const sentenceCount = sentences\.length/);
 });
 
 test('opens the existing scheduler from an AI qualification action', () => {
