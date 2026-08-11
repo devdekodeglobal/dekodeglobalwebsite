@@ -543,8 +543,8 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.16;
   letter-spacing: -0.02em;
   text-align: center;
-  margin-bottom: 1.35rem;
-  max-width: min(1120px, 100%);
+  margin: 0 auto 1.35rem auto;
+  max-width: min(720px, 90%);
   color: #ffffff;
   text-shadow: 0 4px 24px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.2);
   pointer-events: none; /* Let clicks in title area pass through to 3D robot companion */
@@ -563,7 +563,7 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 60;
   pointer-events: auto !important;
   width: 100%;
-  max-width: 700px;
+  max-width: 800px;
   background: rgba(30, 41, 59, 0.4);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -867,11 +867,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-@media (min-width: 901px) {
-  .hero-title {
-    white-space: nowrap;
-  }
-}
+
 
 /* Active Chat Area */
 .chat-scroll-area {

@@ -6,6 +6,7 @@ import queryProposal from '../api/proposals/query.js'
 import submitLead from '../api/leads.js'
 import getCalendarAvailability from '../api/calendar/availability.js'
 import bookCalendarMeeting from '../api/calendar/book.js'
+import chatApi from '../api/chat.js'
 
 const MAX_LOCAL_BODY_BYTES = 64_000
 
@@ -18,6 +19,7 @@ const handlers = new Map([
   ['/api/proposals/content', getProposalContent],
   ['/api/proposals/logout', logoutProposal],
   ['/api/proposals/query', queryProposal],
+  ['/api/chat', chatApi],
 ])
 
 const readRequestBody = async (request) => {

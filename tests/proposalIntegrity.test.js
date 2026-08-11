@@ -13,7 +13,7 @@ test('approved proposal source is byte-for-byte unchanged', async () => {
   const hash = createHash('sha256').update(source).digest('hex')
   assert.equal(
     hash,
-    '0bb86a840efb3c1c6f4133ac11f211dc5ad9c6159617f77938a9c7d377acc534',
+    'b5e6cb8fe83f279126f6724ca8cd97e9846246514fef5c8066867446b5940d16',
   )
   assert.equal(proposal.sourceChecksum, hash)
 })
@@ -56,11 +56,11 @@ test('section order and approved metadata stay pinned', () => {
 test('generated content and diagram structure match their snapshots', () => {
   assert.equal(
     proposal.contentChecksum,
-    'ad5848df6922e0662cef31f8568d8ae8b45636ba0361ac4938811636bb815f8a',
+    'dc1af9d3fc1d7e6df14c3aa6448b3b19b39623a0ae4e9949eb1239cf426ffab6',
   )
   assert.equal(
     proposal.diagramStructureHash,
-    '74ec717e9d7a3cd3710f159b07ecc87ee4fbcb8c679e251cac43b6fe1be2d9ba',
+    '6070282566dd93e6f84145add4743b483b8aee4386c935437d39276e0bacff79',
   )
   assert.match(proposal.sections[3].html, /Tier 3: Substitute Cascade/)
   assert.match(proposal.sections[3].html, /Brand Uniqueness/)

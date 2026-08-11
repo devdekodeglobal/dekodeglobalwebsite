@@ -66,10 +66,10 @@ export default function HeroScenery({
 
     let progress;
     if (isDaytime) {
-      progress = (normalizedTime - 6) / 12;
+      progress = (normalizedTime - 6) / 12; // 0 to 1 (left to right)
     } else {
       let nightTime = normalizedTime >= 18 ? normalizedTime : normalizedTime + 24;
-      progress = (nightTime - 18) / 12;
+      progress = 1 - ((nightTime - 18) / 12); // 1 to 0 (right to left)
     }
 
     const leftX = mobileState ? 15 : 25;
@@ -87,7 +87,24 @@ export default function HeroScenery({
 
     const scale = isDaytime ? 1 + (0.15 * Math.sin(progress * Math.PI)) : 1;
 
-    return { x: currentX, y: currentY, scale, sunOpacity: isDaytime ? 1 : 0, moonOpacity: isDaytime ? 0 : 1 };
+    // Smooth opacity crossfade around 6 (sunrise) and 18 (sunset)
+    let sunOpacity = 0;
+    let moonOpacity = 1;
+
+    if (normalizedTime >= 7 && normalizedTime <= 17) {
+      sunOpacity = 1; 
+      moonOpacity = 0;
+    } else if (normalizedTime > 17 && normalizedTime < 19) {
+      const p = (normalizedTime - 17) / 2; // 0 to 1
+      sunOpacity = 1 - p; 
+      moonOpacity = p;
+    } else if (normalizedTime > 5 && normalizedTime < 7) {
+      const p = (normalizedTime - 5) / 2; // 0 to 1
+      sunOpacity = p; 
+      moonOpacity = 1 - p;
+    }
+
+    return { x: currentX, y: currentY, scale, sunOpacity, moonOpacity };
   };
 
   // 1. Initialize a motion value with the exact decimal time when component mounts
