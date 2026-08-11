@@ -96,7 +96,11 @@ test('opens the calendar for model-confirmed booking intent', async () => {
       intent: 'book_meeting', confidence: 0.98, action: 'open_calendar', topic: 'discovery call', answer: 'Choose a date and time.',
     }),
   }), async () => {
-    for (const [index, question] of ['book ameeting', 'i want meet'].entries()) {
+    for (const [index, question] of [
+      'book ameeting',
+      'i want meet',
+      'I would like to book a discovery call to discuss my mobile app idea.',
+    ].entries()) {
       const response = await ask(question, `booking-${index}`);
       assert.equal(response.body.action, 'open_calendar');
       assert.deepEqual(response.body.actions, [{ type: 'open_booking', label: 'View available times' }]);

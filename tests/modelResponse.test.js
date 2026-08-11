@@ -21,6 +21,10 @@ test('parses structured JSON with or without a markdown fence', () => {
 test('allows calendar UI only for clear scheduling-with-DEKODE intent', () => {
   assert.equal(validateModelResponse(bookingResult, 'book ameeting').action, 'open_calendar');
   assert.equal(validateModelResponse(bookingResult, 'i want meet').action, 'open_calendar');
+  assert.equal(
+    validateModelResponse(bookingResult, 'I would like to book a discovery call to discuss my mobile app idea.').action,
+    'open_calendar',
+  );
 });
 
 test('preserves a resolved booking decision from a contextual suggestion', () => {
