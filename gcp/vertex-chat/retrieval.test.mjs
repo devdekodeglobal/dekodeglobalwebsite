@@ -18,7 +18,7 @@ test('lexical aliases find location and meeting documents', () => {
 });
 
 test('lexical retrieval grounds reviewed delivery, Beston, and BRIDGE questions', () => {
-  assert.equal(retrieveLexical('What happens during discovery?')[0].id, 'process-discover');
+  assert.equal(retrieveLexical('What happens during discovery?')[0].id, 'process-discovery');
   assert.equal(retrieveLexical('How did DEKODE help Beston?')[0].id, 'case-food-manufacturing');
   assert.equal(retrieveLexical('What is BRIDGE?')[0].id, 'initiative-bridge');
 });

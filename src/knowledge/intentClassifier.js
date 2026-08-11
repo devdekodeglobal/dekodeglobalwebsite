@@ -135,12 +135,13 @@ export function classifyCompanyIntent(message, context = {}) {
     /\b(what is|tell me about|do you|can you|offer|provide|help with|explain)\b/i.test(text);
   const asksAboutPortfolio = Boolean(match.portfolioProject);
   const asksAboutVerifiedEntity = Boolean(match.caseStudy || match.initiative || match.developmentStep);
+  const asksAboutKnownTopic = Boolean(match.topic && match.score > 0);
   const contextualFollowUp =
     context.isCompanyConversation &&
     (match.score > 0 || /^(what about|how about|and|also|tell me more|why|how|which|do you|can you)\b/i.test(text));
 
   const isShortCompanyTopic = SHORT_COMPANY_TOPICS.test(text);
-  const isCompanyRelated = hasCompanyCue || asksAboutSolution || asksAboutPortfolio || asksAboutVerifiedEntity || contextualFollowUp || isShortCompanyTopic;
+  const isCompanyRelated = hasCompanyCue || asksAboutSolution || asksAboutPortfolio || asksAboutVerifiedEntity || asksAboutKnownTopic || contextualFollowUp || isShortCompanyTopic;
 
   if (!isCompanyRelated && !match.topic && CLEAR_EXTERNAL_QUESTION.test(text)) {
     return { isCompanyRelated: false, topic: null, kind: 'out_of_scope' };

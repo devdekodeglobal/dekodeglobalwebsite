@@ -107,6 +107,20 @@ test('booking initiation uses the existing state envelope', () => {
   assert.equal(buildConversationDirective(followUp).action, null);
 });
 
+test('records a booking suggestion selection without losing project facts', () => {
+  let memory = createConversationMemory('suggestion-booking');
+  memory = exchange(memory, 'I want to build an Android app for field staff.').memory;
+  const turn = beginConversationTurn(
+    memory,
+    'I would like to book a discovery call to discuss my Android app idea.',
+    'meeting',
+    { type: 'suggestion', intent: 'book_meeting', action: 'open_calendar' },
+  );
+  assert.equal(turn.memory.booking.requested, true);
+  assert.match(turn.memory.summary, /Android/i);
+  assert.match(turn.memory.summary, /explicitly selected or requested a discovery call/i);
+});
+
 test('sessions remain isolated and malformed client state is sanitized', () => {
   const first = createConversationMemory('first-session');
   const second = createConversationMemory('second-session');

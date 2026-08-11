@@ -12,10 +12,12 @@ export const responseSchema = {
       maxItems: 4,
       items: {
         type: 'OBJECT',
-        required: ['label', 'prompt'],
+        required: ['label', 'prompt', 'intent', 'action'],
         properties: {
           label: { type: 'STRING' },
           prompt: { type: 'STRING' },
+          intent: { type: 'STRING', enum: ['company_info', 'project_build', 'book_meeting', 'pricing', 'case_study', 'methodology', 'clarification'] },
+          action: { type: 'STRING', enum: ['answer', 'open_calendar', 'show_project_panel', 'show_company_panel', 'ask_clarification'] },
         },
       },
     },
@@ -35,7 +37,11 @@ export function parseStructuredCompletion(text) {
       .flatMap((suggestion) => {
         const label = String(suggestion?.label || '').trim().slice(0, 42);
         const prompt = String(suggestion?.prompt || '').trim().slice(0, 180);
-        return label && prompt ? [{ label, prompt }] : [];
+        const intent = responseSchema.properties.intent.enum.includes(suggestion?.intent) ? suggestion.intent : undefined;
+        const action = responseSchema.properties.action.enum.includes(suggestion?.action) ? suggestion.action : undefined;
+        return label && prompt
+          ? [{ label, prompt, ...(intent ? { intent } : {}), ...(action ? { action } : {}) }]
+          : [];
       })
       .filter((suggestion, index, items) => items.findIndex((item) => item.label.toLowerCase() === suggestion.label.toLowerCase()) === index)
       .slice(0, 4),

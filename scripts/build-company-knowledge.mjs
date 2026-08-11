@@ -20,6 +20,7 @@ const sourceFiles = {
   terms: resolve(sourceRoot, 'src', 'pages', 'TermsOfService.jsx'),
   portfolio: resolve(sourceRoot, 'src', 'components', 'PortfolioShowcase.jsx'),
   bridge: resolve(sourceRoot, 'src', 'components', 'BridgeTeaser.jsx'),
+  footer: resolve(sourceRoot, 'src', 'components', 'Footer.jsx'),
 };
 
 const missingSourceFiles = [];
@@ -177,17 +178,60 @@ const extractInitiatives = () => {
 };
 
 const extractPortfolioProjects = () => {
+  const metadata = {
+    attendme: {
+      category: 'School administration and safety', type: 'Automated information and movement management system', platform: 'Cloud, Amazon Web Services',
+      clientContext: 'Primary-school operations, including Stella Maris Primary School',
+      deliverables: ['Child, staff, and visitor arrival and departure records', 'Incident recording and reporting', 'Automated record storage, retrieval, archiving, and compliance reporting'],
+      outcome: 'Reduced paper-based administrative overhead and made records easier to archive, locate, and report while supporting a safer school environment.',
+      aliases: ['Attend Me', 'school attendance system', 'visitor management', 'Stella Maris solution'],
+    },
+    chauffr: {
+      category: 'Transport and booking management', type: 'Mobile app and integrated web portal', platform: 'Android, iOS, and web',
+      clientContext: 'Chauffeurs managing bookings while mobile',
+      deliverables: ['Android mobile app', 'iOS mobile app', 'Integrated web portal', 'On-the-go booking management'],
+      aliases: ['chauffeur app', 'chauffeur booking app', 'driver booking management'],
+    },
+    'smart-loan-helper': {
+      category: 'Finance and mortgage tools', type: 'Mobile application', platform: 'iOS and Android',
+      clientContext: 'Smart Money Solutions, an independent Australian mortgage broker',
+      deliverables: ['Unified home-loan calculators', 'Borrowing-capacity calculations', 'Repayment and stamp-duty calculations', 'Saved mortgage calculations', 'iOS and Android apps'],
+      aliases: ['SmartLoan Helper', 'home loan calculator app', 'mortgage calculator', 'Smart Money Solutions app'],
+    },
+    smartbroker: {
+      category: 'Finance and client relationship management', type: 'Web and mobile application', platform: 'Web and iOS',
+      clientContext: 'A Melbourne start-up serving mortgage brokers and their clients',
+      deliverables: ['Web application', 'iOS application', 'On-the-go broker and client relationship management'],
+      aliases: ['Smart Broker', 'mortgage broker app', 'broker client platform'],
+    },
+    'recycled-market': {
+      category: 'E-commerce and sustainability', type: 'Responsive web marketplace', platform: 'Web',
+      clientContext: 'An online marketplace for products made from recycled materials',
+      deliverables: ['Browser-independent responsive web portal', 'Integrated content management system', 'Online product marketplace'],
+      aliases: ['Recycled Marketplace', 'recycled products marketplace', 'sustainable ecommerce'],
+    },
+    estrado: {
+      category: 'Retail and point of sale', type: 'Point-of-sale system and web management console', platform: 'iPad and web',
+      clientContext: 'A Melbourne retail-technology start-up',
+      deliverables: ['iPad-based point-of-sale system', 'Web-based retailer management console'],
+      aliases: ['Estrado POS', 'point of sale', 'retail POS system', 'iPad POS'],
+    },
+  };
   const block = matchRaw(entries.portfolio, /const projects = \[([\s\S]*?)\n  \];/, 'portfolio projects');
   const projects = [...block.matchAll(
     /\{\s*id:\s*\d+,[\s\S]*?title:\s*'([^']+)'[\s\S]*?paragraphs:\s*\[([\s\S]*?)\]\s*\}/g,
-  )].map(([, name, paragraphs]) => ({
-    id: clean(name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
-    name: clean(name),
-    description: [...paragraphs.matchAll(/'([^']+)'/g)]
-      .map((match) => clean(match[1]))
-      .join(' '),
-    sourceReference: 'DEKODE/src/components/PortfolioShowcase.jsx',
-  }));
+  )].map(([, name, paragraphs]) => {
+    const id = clean(name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    return {
+      id,
+      name: clean(name),
+      description: [...paragraphs.matchAll(/'([^']+)'/g)]
+        .map((match) => clean(match[1]))
+        .join(' '),
+      ...metadata[id],
+      sourceReference: 'DEKODE/src/components/PortfolioShowcase.jsx',
+    };
+  });
   if (projects.length !== 6) throw new Error(`Expected 6 portfolio projects, found ${projects.length}`);
   return projects;
 };
@@ -222,26 +266,66 @@ const industries = industriesSentence
   .filter(Boolean);
 
 const services = extractServices();
-const developmentProcess = extractProcess();
+const legacyDevelopmentProcess = extractProcess();
+const developmentProcess = [
+  {
+    name: 'Discovery',
+    description: 'Align on goals, users, constraints, workflows, and the outcomes that will define success.',
+  },
+  {
+    name: 'Prototype',
+    description: 'Turn the strongest direction into something tangible so assumptions, user flows, and technical choices can be tested early.',
+  },
+  {
+    name: 'Design',
+    description: 'Define the solution architecture, user experience, delivery plan, and measures of success.',
+  },
+  {
+    name: 'Build',
+    description: 'Implement, integrate, test, and document the solution with security and maintainability built in throughout.',
+  },
+  {
+    name: 'Deploy',
+    description: 'Release the production-ready solution with a practical rollout, operational readiness, and support plan.',
+  },
+  {
+    name: 'Evolve',
+    description: 'Monitor what was shipped, support users, learn from real usage, and improve the product over time.',
+  },
+];
 const whyChooseUs = extractDifferences();
 const values = extractPrinciples();
 const caseStudies = [
-  extractCaseStudy({
+  {
+    ...extractCaseStudy({
     id: 'food-manufacturing',
     sourceKey: 'foodManufacture',
     outcomeSection: /<section className="fm-outcomes-section[^"]*">([\s\S]*?)<\/section>/,
     sourceReference: 'DEKODE/src/pages/FoodManufacture.jsx',
-    aliases: ['Beston'],
-  }),
-  extractCaseStudy({
+    aliases: ['Beston', 'Beston Global Food', 'food manufacturing case study', 'production management system'],
+    }),
+    obstacles: 'The Shepparton plant relied on paper records that were difficult to store and retrieve, disconnected from corporate reporting, time-consuming to reconcile, and unable to give management reliable visibility into procurement, waste, inventory, and production performance.',
+    deliveryApproach: 'DEKODE worked through understand, design, develop and iterate, and deploy stages: identifying loss-making operational gaps, designing a cloud-based information capture and management system with simple interfaces, a database, and reports, validating a prototype with client feedback, and deploying within the client\'s budget and timeframe with support.',
+  },
+  {
+    ...extractCaseStudy({
     id: 'primary-school',
     sourceKey: 'primarySchool',
     outcomeSection: /<section className="ps-help-section[^"]*">([\s\S]*?)<\/section>/,
     sourceReference: 'DEKODE/src/pages/PrimarySchool.jsx',
-  }),
+    aliases: ['Stella Maris', 'Stella Maris Primary School', 'AttendMe', 'primary school solution', 'school case study'],
+    }),
+    obstacles: 'Stella Maris manually recorded administration data, visitors, child pickup and drop-off, staff, and incidents. Storing, locating, archiving, and reporting those records increased administrative cost and made compliance reporting inefficient.',
+    deliveryApproach: 'DEKODE replaced paper-based administration with an automated cloud information-capture system that supports record storage, retrieval, archiving, visitor and movement records, incident management, and compliance reporting.',
+  },
 ];
 const portfolioProjects = extractPortfolioProjects();
 const initiatives = extractInitiatives();
+const founderName = matchOne(
+  entries.footer,
+  /\{\s*name:\s*'([^']+)',\s*role:\s*'Founder'\s*\}/,
+  'founder name',
+);
 const solutionAreas = [
   {
     id: 'ai-strategy',
@@ -346,6 +430,14 @@ const knowledge = {
       'vision',
     ).replace(/^/, 'DEKODE is building toward becoming '),
     belief: matchOne(entries.about, /<p className="about-accent-text">([\s\S]*?)<\/p>/, 'company belief'),
+    leadership: {
+      founder: {
+        name: founderName,
+        role: 'Founder',
+        linkedin: 'https://www.linkedin.com/in/pankajbanga/',
+        sourceReference: 'DEKODE/src/components/Footer.jsx',
+      },
+    },
   },
   services,
   solutionAreas,
@@ -377,7 +469,7 @@ const knowledge = {
   legal: {
     privacy: {
       title: 'Privacy Policy',
-      contactEmail: entries.privacy.match(/mailto:([^"]+)/)?.[1] || null,
+      contactEmail: 'pankaj.banga@dekodeglobal.com',
       summary: matchOne(
         entries.privacy,
         /<p className="text-xl[^>]*>([\s\S]*?)<\/p>/,
@@ -406,7 +498,7 @@ const knowledge = {
     },
     {
       question: 'How does DEKODE deliver projects?',
-      answer: `DEKODE follows five stages: ${developmentProcess.map((step) => step.name).join(', ')}.`,
+      answer: `DEKODE follows six connected stages: ${developmentProcess.map((step) => step.name).join(', ')}. Security, privacy, and maintainability are considered throughout.`,
     },
   ],
   aliases: {
@@ -414,17 +506,20 @@ const knowledge = {
     services: ['service', 'offer', 'offering', 'solutions', 'build', 'capabilities'],
     industries: ['industry', 'industries', 'sector', 'sectors', 'clients', 'customers', 'work with'],
     technologies: ['technology', 'technologies', 'tech', 'tech stack', 'stack', 'platforms', 'tools'],
-    process: ['process', 'method', 'methodology', 'workflow', 'delivery', 'how you work', 'approach'],
+    process: ['process', 'method', 'methodology', 'workflow', 'delivery', 'deliver projects', 'how you work', 'how you build', 'build products', 'product lifecycle', 'approach'],
+    leadership: ['founder', 'founded', 'owner', 'owns', 'leadership', 'who started', 'who is behind', 'who runs', 'pankaj banga', 'linkedin'],
     why: ['why choose', 'different', 'difference', 'values', 'culture', 'principles'],
     caseStudies: ['case study', 'case studies', 'success story', 'success stories', 'portfolio', 'past work', 'projects', 'clients', 'food manufacturing', 'beston', 'primary school', 'attendme'],
     initiatives: ['initiative', 'initiatives', 'bridge', 'bridge initiative', 'australia india bridge'],
     company: ['dekode', 'company', 'business', 'who are you', 'about you', 'what do you do'],
     contact: ['contact', 'contact us', 'email', 'phone', 'whatsapp', 'get in touch', 'reach you'],
     location: ['location', 'locations', 'located', 'address', 'office', 'offices', 'where is', 'where are you', 'where are you based', 'headquarters', 'hq'],
-    privacy: ['privacy', 'privacy policy', 'personal data', 'data protection', 'data security', 'my data'],
+    privacy: ['privacy', 'privacy policy', 'privacy request', 'personal data', 'data protection', 'data protection inquiry', 'data request', 'data security', 'my data'],
     terms: ['terms', 'terms and conditions', 'terms of service', 'conditions', 'legal', 'liability', 'intellectual property', 'governing law'],
   },
 };
+
+void legacyDevelopmentProcess;
 
 await mkdir(dirname(outputFile), { recursive: true });
 const serializedKnowledge = `${JSON.stringify(knowledge, null, 2)}\n`;

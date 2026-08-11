@@ -37,9 +37,11 @@ const systemInstruction = `You are DEKODE's intelligent website consultant. Ever
 Allowed intents: company_info, project_build, book_meeting, pricing, case_study, methodology, safety_refusal, out_of_scope, clarification.
 Allowed actions: answer, open_calendar, show_project_panel, show_company_panel, ask_clarification, refuse.
 
-Infer intent from the original and normalized messages, recent conversation, and supplied public DEKODE knowledge. Preserve facts the visitor already supplied. For DEKODE facts, use only supplied approved context. For a project idea, reason helpfully, connect it to relevant DEKODE expertise, and ask at most one useful unanswered question. Make answers easy to scan: use a concise opening, optional short **bold** emphasis, and up to three markdown bullets when listing distinct ideas. Put a final question on its own line. Do not force bullets into simple answers, and do not use tables or markdown headings.
+Infer intent from the original and normalized messages, recent conversation, and supplied public DEKODE knowledge. Preserve facts the visitor already supplied. For DEKODE facts, use only supplied approved context. For a project idea, reason helpfully, connect it to relevant DEKODE expertise, and ask at most one useful unanswered question. Make answers easy to scan: use a concise opening, optional short **bold** emphasis, and up to three markdown bullets when listing distinct ideas. Every bullet must start on its own line with "- ". Put a final question on its own line. Do not force bullets into simple answers, and do not use tables or markdown headings.
 
-Return 2 to 4 concise contextual suggestions as objects with label and prompt. Each suggestion must naturally continue the current conversation through a normal visitor message. Evolve them as the conversation progresses, never repeat labels listed as previously shown, and do not suggest details the visitor already supplied. Booking may appear only when qualification or explicit meeting intent makes it relevant. For safety refusals, return an empty suggestions array.
+Return 2 to 4 concise contextual suggestions as objects with label, prompt, intent, and action. Each suggestion must naturally continue the current conversation through a normal visitor message. Evolve them as the conversation progresses, never repeat labels listed as previously shown, and do not suggest details the visitor already supplied. Booking may appear only when qualification or explicit meeting intent makes it relevant; a booking suggestion must use intent book_meeting and action open_calendar. For safety refusals, return an empty suggestions array.
+
+DEKODE's delivery methodology is Discovery, Prototype, Design, Build, Deploy, and Evolve. Use it as a reasoning framework across services, not a slogan to repeat in every answer. Explain all six stages when the visitor asks how DEKODE works or delivers; otherwise mention only the stages that help answer the question. Security, privacy, and maintainability apply throughout the lifecycle.
 
 Use open_calendar only when the visitor clearly wants to book, schedule, meet, or talk with DEKODE. A request to build/create/make/develop an app, website, platform, system, or software is project_build even when it includes meeting, calendar, booking, or scheduling. If these meanings remain close, ask exactly: "Do you want to book a discovery call with DEKODE, or are you looking to build a meeting/calendar app?"
 
@@ -59,10 +61,12 @@ const responseSchema = {
       maxItems: 4,
       items: {
         type: 'OBJECT',
-        required: ['label', 'prompt'],
+        required: ['label', 'prompt', 'intent', 'action'],
         properties: {
           label: { type: 'STRING' },
           prompt: { type: 'STRING' },
+          intent: { type: 'STRING', enum: ['company_info', 'project_build', 'book_meeting', 'pricing', 'case_study', 'methodology', 'clarification'] },
+          action: { type: 'STRING', enum: ['answer', 'open_calendar', 'show_project_panel', 'show_company_panel', 'ask_clarification'] },
         },
       },
     },
@@ -95,12 +99,12 @@ function cleanHistory(history) {
     .filter((entry) => entry.parts[0].text);
 }
 
-function buildContents(question, normalizedQuestion, history, context, memoryContext, usedSuggestions) {
+function buildContents(question, normalizedQuestion, history, context, memoryContext, usedSuggestions, interaction) {
   return [
     ...cleanHistory(history),
     {
       role: 'user',
-      parts: [{ text: `Conversation memory:\n${memoryContext}\n\nPreviously shown suggestion labels (do not repeat):\n${usedSuggestions.join(', ') || 'None'}\n\nApproved DEKODE context:\n${context}\n\nOriginal visitor message:\n${question}\n\nNormalized visitor message:\n${normalizedQuestion}` }],
+      parts: [{ text: `Conversation memory:\n${memoryContext}\n\nCurrent interaction:\n${interaction ? JSON.stringify(interaction) : 'Direct visitor message'}\n\nPreviously shown suggestion labels (do not repeat):\n${usedSuggestions.join(', ') || 'None'}\n\nApproved DEKODE context:\n${context}\n\nOriginal visitor message:\n${question}\n\nNormalized visitor message:\n${normalizedQuestion}` }],
     },
   ];
 }
@@ -119,13 +123,13 @@ export function isCompleteModelCandidate(candidate) {
 
 const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
-async function requestGemini({ apiKey, model, question, normalizedQuestion, history, context, memoryContext, usedSuggestions }) {
+async function requestGemini({ apiKey, model, question, normalizedQuestion, history, context, memoryContext, usedSuggestions, interaction }) {
   return fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
     method: 'POST',
     headers: { 'content-type': 'application/json', 'x-goog-api-key': apiKey },
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: systemInstruction }] },
-      contents: buildContents(question, normalizedQuestion, history, context, memoryContext, usedSuggestions),
+      contents: buildContents(question, normalizedQuestion, history, context, memoryContext, usedSuggestions, interaction),
       generationConfig: {
         maxOutputTokens: 1_024,
         responseMimeType: 'application/json',
@@ -136,12 +140,12 @@ async function requestGemini({ apiKey, model, question, normalizedQuestion, hist
   });
 }
 
-function fallbackAfterProviderFailure(question, history, verifiedIntent) {
+function fallbackAfterProviderFailure(question, history, verifiedIntent, interaction) {
   if (verifiedIntent.kind === 'project' || history.length) {
     const project = generateProjectResponse(buildProjectConversationQuery(question, history));
     return validateModelResponse({
       intent: 'project_build', confidence: 0.5, action: 'show_project_panel', topic: project.topic, answer: project.text,
-    }, question);
+    }, question, { interaction });
   }
   const company = generateCompanyResponse(question, verifiedIntent);
   return validateModelResponse({
@@ -150,7 +154,7 @@ function fallbackAfterProviderFailure(question, history, verifiedIntent) {
     action: verifiedIntent.kind === 'out_of_scope' ? 'answer' : 'show_company_panel',
     topic: company.topic,
     answer: company.text,
-  }, question);
+  }, question, { interaction });
 }
 
 export default async function handler(request, response) {
@@ -165,6 +169,17 @@ export default async function handler(request, response) {
   const usedSuggestions = [...new Set((Array.isArray(request.body?.usedSuggestions) ? request.body.usedSuggestions : [])
     .map((label) => cleanText(label, 42).toLowerCase())
     .filter(Boolean))].slice(-8);
+  const rawInteraction = request.body?.interaction;
+  const interaction = rawInteraction?.type === 'suggestion'
+    ? {
+      type: 'suggestion',
+      label: cleanText(rawInteraction.label, 42),
+      intent: ['company_info', 'project_build', 'book_meeting', 'pricing', 'case_study', 'methodology', 'clarification'].includes(rawInteraction.intent)
+        ? rawInteraction.intent : undefined,
+      action: ['answer', 'open_calendar', 'show_project_panel', 'show_company_panel', 'ask_clarification'].includes(rawInteraction.action)
+        ? rawInteraction.action : undefined,
+    }
+    : null;
   const history = incomingMemory.recentMessages;
   const normalizedQuestion = normalizeVisitorMessage(question);
   const memoryContext = conversationMemoryContext(incomingMemory);
@@ -172,9 +187,9 @@ export default async function handler(request, response) {
   const sensitiveRefusal = getSensitiveRequestRefusal(question);
 
   const sendResult = (modelResult, payload = {}) => {
-    const result = validateModelResponse(modelResult, question);
-    const memoryKind = result.intent === 'project_build' ? 'project' : 'company';
-    const turn = beginConversationTurn(incomingMemory, question, memoryKind);
+    const result = validateModelResponse(modelResult, question, { interaction, conversation: incomingMemory });
+    const memoryKind = result.intent === 'project_build' ? 'project' : result.intent === 'book_meeting' ? 'meeting' : 'company';
+    const turn = beginConversationTurn(incomingMemory, question, memoryKind, interaction);
     const completed = completeConversationTurn(turn, result.answer, { mode: 'informational', action: null });
     return response.status(200).json({
       ok: true,
@@ -214,6 +229,7 @@ export default async function handler(request, response) {
         sessionId: incomingMemory.sessionId,
         conversationState: incomingMemory.state,
         usedSuggestions,
+        interaction,
       });
       return sendResult(result, {
         sources: result.sources || sources,
@@ -236,7 +252,7 @@ export default async function handler(request, response) {
     for (let index = 0; index < attempts.length; index += 1) {
       const model = attempts[index];
       try {
-        const geminiResponse = await requestGemini({ apiKey, model, question, normalizedQuestion, history, context, memoryContext, usedSuggestions });
+        const geminiResponse = await requestGemini({ apiKey, model, question, normalizedQuestion, history, context, memoryContext, usedSuggestions, interaction });
         const payload = await geminiResponse.json();
         if (geminiResponse.ok) {
           const candidate = extractModelCandidate(payload);
@@ -256,6 +272,6 @@ export default async function handler(request, response) {
     console.error('[DEKODE Chat] Gemini attempts failed.', lastFailure?.status, lastFailure?.reason);
   }
 
-  const fallback = fallbackAfterProviderFailure(question, history, verifiedIntent);
+  const fallback = fallbackAfterProviderFailure(question, history, verifiedIntent, interaction);
   return sendResult(fallback, { sources, provider: 'verified-fallback' });
 }

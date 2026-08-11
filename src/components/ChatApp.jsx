@@ -446,7 +446,7 @@ export default function ChatApp({
     }
   };
 
-  const handleModelPrompt = async (userMessage) => {
+  const handleModelPrompt = async (userMessage, interaction = null) => {
     if (!userMessage.trim() || isTyping) return;
     const requestConversation = conversationMemory;
     setMessages((current) => [
@@ -467,6 +467,7 @@ export default function ChatApp({
             .flatMap((message) => message.suggestions || [])
             .map((suggestion) => suggestion.label)
             .slice(-8),
+          interaction,
         }),
       });
       const result = await response.json();
@@ -1094,7 +1095,12 @@ export default function ChatApp({
                                 key={suggestion.label}
                                 type="button"
                                 onClick={() =>
-                                  handleModelPrompt(suggestion.prompt)
+                                  handleModelPrompt(suggestion.prompt, {
+                                    type: "suggestion",
+                                    label: suggestion.label,
+                                    intent: suggestion.intent,
+                                    action: suggestion.action,
+                                  })
                                 }
                                 disabled={isTyping}
                               >

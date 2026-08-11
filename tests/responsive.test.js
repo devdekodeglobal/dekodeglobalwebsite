@@ -218,7 +218,8 @@ test('centers chat, aligns the shared header, and distinguishes message roles', 
 
 test('renders contextual suggestions through the normal chat pipeline', () => {
   assert.match(chatApp, /aria-label="Suggested follow-up questions"/);
-  assert.match(chatApp, /handleModelPrompt\(suggestion\.prompt\)/);
+  assert.match(chatApp, /handleModelPrompt\(suggestion\.prompt,\s*\{/);
+  assert.match(chatApp, /type:\s*"suggestion"/);
   assert.match(chatApp, /usedSuggestions:/);
   assert.match(chatApp, /suggestions:\s*result\.suggestions \|\| \[\]/);
 });

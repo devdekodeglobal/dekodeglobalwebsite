@@ -31,6 +31,8 @@ test('classifies representative company questions without capturing general chat
     'Where is DEKODE located?',
     "What is DEKODE's privacy policy?",
     'What are your terms and conditions?',
+    'Who is behind DEKODE?',
+    'Who owns the company?',
   ];
   const generalQuestions = [
     'Hello',
@@ -278,6 +280,39 @@ test('answers published case-study questions without inventing portfolio work', 
   assert.match(broadResponse.text, /Primary School/);
   assert.doesNotMatch(broadResponse.text, /CHAUFFR/i);
   assert.match(foodResponse.text, /20% in Phase 1/);
+});
+
+test('normalizes inline model bullets into distinct list lines', () => {
+  assert.equal(
+    cleanAssistantText('Key factors: * Complexity of features. * Integration requirements. * Design fidelity.'),
+    'Key factors:\n- Complexity of features.\n- Integration requirements.\n- Design fidelity.',
+  );
+});
+
+test('answers founder and privacy questions from verified centralized knowledge', () => {
+  const founderQuestions = [
+    'Who founded DEKODE?',
+    'Who owns the company?',
+    'Who is behind DEKODE?',
+    "Can I see the founder's LinkedIn?",
+  ];
+  for (const question of founderQuestions) {
+    const response = generateCompanyResponse(question, classifyCompanyIntent(question));
+    assert.match(response.text, /Pankaj Banga/);
+    assert.match(response.text, /linkedin\.com\/in\/pankajbanga/);
+  }
+  const privacy = generateCompanyResponse(
+    'Who should I email about a privacy request?',
+    classifyCompanyIntent('Who should I email about a privacy request?'),
+  );
+  assert.match(privacy.text, /pankaj\.banga@dekodeglobal\.com/);
+  assert.doesNotMatch(privacy.text, /pm@dekodeglobal\.com/);
+});
+
+test('explains all six methodology stages when asked about delivery', () => {
+  const question = 'How does DEKODE build products?';
+  const response = generateCompanyResponse(question, classifyCompanyIntent(question));
+  assert.match(response.text, /Discovery:[\s\S]*Prototype:[\s\S]*Design:[\s\S]*Build:[\s\S]*Deploy:[\s\S]*Evolve:/);
 });
 
 test('answers an exact case-study platform field when requested', () => {

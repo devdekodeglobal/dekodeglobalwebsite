@@ -23,6 +23,19 @@ test('allows calendar UI only for clear scheduling-with-DEKODE intent', () => {
   assert.equal(validateModelResponse(bookingResult, 'i want meet').action, 'open_calendar');
 });
 
+test('preserves a resolved booking decision from a contextual suggestion', () => {
+  const result = validateModelResponse(bookingResult, 'I would like to discuss my mobile app idea.', {
+    interaction: {
+      type: 'suggestion',
+      label: 'Book a discovery call',
+      intent: 'book_meeting',
+      action: 'open_calendar',
+    },
+  });
+  assert.equal(result.intent, 'book_meeting');
+  assert.equal(result.action, 'open_calendar');
+});
+
 test('blocks calendar UI for meeting and calendar product requests', () => {
   for (const message of [
     'i want to create a meeting app',

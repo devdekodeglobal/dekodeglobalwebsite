@@ -61,9 +61,9 @@ function responseForTopic(topic, message, detectedService, detectedSolutionArea,
       return `DEKODE chooses technology around the problem, with reliability, security, and maintainability in mind.\n\nThe platforms explicitly named in our company profile are:\n${bullets(knowledge.technologies)}\n\nWe also build with AI, machine learning, generative AI, APIs, mobile and web technologies. The public profile does not list a more detailed framework-by-framework stack.`;
     case 'process':
       if (detectedDevelopmentStep) {
-        return `${detectedDevelopmentStep.name} is one of the five stages in DEKODE's delivery process. ${detectedDevelopmentStep.description}`;
+        return `${detectedDevelopmentStep.name} is one of the six connected stages in DEKODE's delivery methodology. ${detectedDevelopmentStep.description}`;
       }
-      return `DEKODE uses a simple, risk-reducing delivery flow:\n\n${bullets(knowledge.developmentProcess.map((step) => `${step.name}: ${step.description}`))}\n\nThe aim is clear scope, security from day one, and support after launch.`;
+      return `DEKODE uses a simple, risk-reducing delivery methodology:\n\n${bullets(knowledge.developmentProcess.map((step) => `${step.name}: ${step.description}`))}\n\nSecurity, privacy, and maintainability apply throughout, from early validation to ongoing improvement.`;
     case 'caseStudies': {
       const namedStudy = detectedCaseStudy || knowledge.caseStudies.find((item) => {
         const input = message.toLowerCase();
@@ -84,6 +84,10 @@ function responseForTopic(topic, message, detectedService, detectedSolutionArea,
       return `DEKODE is built around practical delivery, clear communication, and long-term accountability.\n\nWhat makes us different:\n${bullets(knowledge.whyChooseUs.map((item) => `${item.name}: ${item.description}`))}\n\nWe focus on useful outcomes, not technology hype.`;
     case 'origin':
       return knowledge.company.origin;
+    case 'leadership': {
+      const founder = knowledge.company.leadership.founder;
+      return `Pankaj Banga is DEKODE's founder. DEKODE's published company content confirms his name and role, but does not provide a longer biography, so I won't add unsupported personal details.\n\nLinkedIn: ${founder.linkedin}`;
+    }
     case 'contact':
       return `You can reach DEKODE at ${knowledge.contact.email}.\n\nAustralia: ${knowledge.contact.phoneLabels[0]}\nIndia: ${knowledge.contact.phoneLabels[1]}\nWhatsApp: ${knowledge.contact.phoneLabels[0]}\n\nTell us what you are exploring and we will help recommend a practical next step.`;
     case 'location':

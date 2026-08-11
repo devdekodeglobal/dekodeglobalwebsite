@@ -15,7 +15,11 @@ const PROJECT_EVIDENCE_ALIASES = [
   'examples', 'case studies', 'success stories', 'clients', 'what have you built',
 ];
 
-const asksForProjectEvidence = (question) => /\b(projects?|portfolio|past work|previous work|client work|examples?|case studies|success stories|clients?|what have you built)\b/.test(normalize(question));
+const asksForProjectEvidence = (question) => {
+  const query = normalize(question);
+  if (/\b(methodology|delivery process|deliver projects?|how (?:do|does) .{0,16}work|project lifecycle)\b/.test(query)) return false;
+  return /\b(projects?|portfolio|past work|previous work|client work|examples?|case studies|success stories|clients?|what have you built)\b/.test(query);
+};
 
 const formatProject = (project) => [
   project.description,
@@ -72,6 +76,9 @@ export function buildDocuments() {
       ...(companyKnowledge.whyChooseUs || []).map((item) => `${item.name}: ${item.description}`),
       ...(companyKnowledge.values || []).map((item) => `${item.name}: ${item.description}`),
     ].join('\n'), companyKnowledge.aliases?.why),
+    createDocument('company-leadership', 'DEKODE founder and leadership',
+      `${companyKnowledge.company.leadership.founder.name} is DEKODE's ${companyKnowledge.company.leadership.founder.role}. LinkedIn: ${companyKnowledge.company.leadership.founder.linkedin}. The published source does not provide a longer founder biography.`,
+      companyKnowledge.aliases?.leadership),
     createDocument('industries', 'Industries DEKODE serves',
       `DEKODE works with businesses in ${join(companyKnowledge.industries)}.`,
       companyKnowledge.aliases?.industries),
@@ -106,14 +113,14 @@ export function buildDocuments() {
   documents.push(createDocument(
     'process-overview',
     'DEKODE delivery process',
-    `DEKODE takes projects from idea to ongoing support through five connected stages:\n${(companyKnowledge.developmentProcess || [])
+    `DEKODE takes projects from idea to ongoing improvement through six connected stages. Security, privacy, and maintainability apply throughout:\n${(companyKnowledge.developmentProcess || [])
       .map((step) => `${step.name}: ${step.description}`)
       .join('\n')}`,
     companyKnowledge.aliases?.process,
   ));
 
   for (const step of companyKnowledge.developmentProcess || []) {
-    const stepAliases = step.name === 'Discover' ? ['discover', 'discovery'] : [step.name];
+    const stepAliases = step.name === 'Discovery' ? ['discover', 'discovery'] : [step.name];
     documents.push(createDocument(
       `process-${normalize(step.name).replace(/[^a-z0-9]+/g, '-')}`,
       `${step.name} delivery stage`,

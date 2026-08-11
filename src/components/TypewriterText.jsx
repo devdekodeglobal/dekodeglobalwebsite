@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Sparkles } from 'lucide-react';
+import { normalizeAssistantLists } from '../utils/assistantText.js';
 
 function InlineText({ text }) {
   const parts = [];
@@ -26,7 +27,7 @@ function topicLabel(topic) {
 }
 
 export function FormattedText({ text, topic }) {
-  const normalizedText = String(text || '')
+  const normalizedText = normalizeAssistantLists(text)
     .replace(/\s+([*-])\s+(?=\*\*[^*]+\*\*\s*:)/g, '\n$1 ');
   const bulletPattern = /^(?:[-*•]|\d+[.)])\s+/;
   const lines = normalizedText.split('\n').map((line) => line.trim()).filter(Boolean);

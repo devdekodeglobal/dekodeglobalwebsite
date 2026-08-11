@@ -7,6 +7,7 @@ const PANEL_BY_TOPIC = {
   process: 'process',
   why: 'why',
   origin: 'overview',
+  leadership: 'overview',
   contact: 'contact',
   location: 'location',
   privacy: 'privacy',

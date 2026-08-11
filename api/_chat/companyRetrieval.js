@@ -24,7 +24,11 @@ const PROJECT_EVIDENCE_ALIASES = [
   'examples', 'case studies', 'success stories', 'clients', 'what have you built',
 ];
 
-const asksForProjectEvidence = (question) => /\b(projects?|portfolio|past work|previous work|client work|examples?|case studies|success stories|clients?|what have you built)\b/.test(normalise(question));
+const asksForProjectEvidence = (question) => {
+  const query = normalise(question);
+  if (/\b(methodology|delivery process|deliver projects?|how (?:do|does) .{0,16}work|project lifecycle)\b/.test(query)) return false;
+  return /\b(projects?|portfolio|past work|previous work|client work|examples?|case studies|success stories|clients?|what have you built)\b/.test(query);
+};
 
 const formatProject = (project) => [
   project.description,
@@ -89,6 +93,12 @@ function makeDocuments() {
         .join('\n')}`,
       aliases: PROJECT_EVIDENCE_ALIASES,
     },
+    {
+      id: 'company-leadership',
+      label: 'DEKODE founder and leadership',
+      text: `${companyKnowledge.company.leadership.founder.name} is DEKODE's ${companyKnowledge.company.leadership.founder.role}. LinkedIn: ${companyKnowledge.company.leadership.founder.linkedin}. The published source does not provide a longer founder biography.`,
+      aliases: companyKnowledge.aliases.leadership,
+    },
     ...(companyKnowledge.initiatives || []).map((initiative) => ({
       id: `initiative-${initiative.id}`,
       label: initiative.title,
@@ -108,15 +118,16 @@ function makeDocuments() {
     {
       id: 'delivery-process',
       label: 'Delivery process',
-      text: companyKnowledge.developmentProcess
+      text: `DEKODE's six-stage delivery methodology. Security, privacy, and maintainability apply throughout.\n${companyKnowledge.developmentProcess
         .map((step) => `${step.name}: ${step.description}`)
-        .join('\n'),
+        .join('\n')}`,
+      aliases: companyKnowledge.aliases.process,
     },
     ...companyKnowledge.developmentProcess.map((step) => ({
       id: `process-${normalise(step.name).replace(/[^a-z0-9]+/g, '-')}`,
       label: `${step.name} delivery stage`,
       text: step.description,
-      aliases: step.name === 'Discover' ? ['discover', 'discovery'] : [step.name],
+      aliases: step.name === 'Discovery' ? ['discover', 'discovery'] : [step.name],
     })),
     {
       id: 'case-study-catalogue',
