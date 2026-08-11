@@ -190,51 +190,7 @@
 .star-principles article:first-child { border-radius: 8px 0 0 8px; }
 .star-principles article:last-child { border-right: 1px solid var(--story-border); border-radius: 0 8px 8px 0; }
 
-/* Spotlight effect */
-.star-principles:hover article::before { opacity: 1; }
-.star-principles:hover article::after { opacity: 1; }
 
-.star-principles article::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(
-    400px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
-    rgba(255, 255, 255, 0.06),
-    transparent 40%
-  );
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.5s;
-}
-
-.star-principles article::after {
-  content: "";
-  position: absolute;
-  inset: -1px; /* Cover the border */
-  border-radius: inherit;
-  padding: 1px; /* border thickness */
-  background: radial-gradient(
-    300px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
-    rgba(255, 255, 255, 0.35),
-    transparent 40%
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.5s;
-  z-index: 0;
-}
-
-.star-principles article > * { position: relative; z-index: 1; }
-
-.star-principles article:hover .star-letter {
-  text-shadow: 0 0 24px currentColor, 0 0 45px currentColor;
-}
 .star-accent-bar { display: none; }
 
 .star-letter {
@@ -243,13 +199,13 @@
   font-size: clamp(2.5rem, 5vw, 4.4rem);
   font-weight: 700;
   line-height: 0.8;
-  transition: text-shadow 0.3s ease;
 }
 
 .star-wordmark { display: flex; align-items: baseline; gap: .1rem; }
+.star-wordmark span { display: inline-block; vertical-align: baseline; }
 /* Optical kerning for the 'T' in Transparent */
 .star-principles article:nth-child(2) .star-wordmark { margin-left: -0.1em; }
-.star-principles article:nth-child(2) .star-wordmark span:last-child { margin-left: -0.3em; }
+.star-principles article:nth-child(2) .star-wordmark span:last-child { margin-left: -0.35em; }
 .star-principles h3 { margin-top: 0.25rem; font-size: 0.95rem; }
 .star-principles p { margin-top: 0.45rem; color: var(--story-muted); font-size: 0.78rem; line-height: 1.5; }
 .star-carousel-status { display: none; }
@@ -620,17 +576,7 @@
   .star-letter { font-size: 3rem; line-height: .8; }
   .star-principles p { max-width: none; margin: 0; font-size: .9rem; line-height: 1.6; text-align: left; }
   .star-carousel-status { display: none; }
-    width: 6px;
-    height: 6px;
-    padding: 0;
-    border: 0;
-    border-radius: 999px;
-    background: rgba(255,255,255,.28);
-    cursor: pointer;
-    transition: width .2s ease, background-color .2s ease;
-  }
-  .star-carousel-status button.is-active { width: 22px; background: var(--story-yellow); }
-  .star-carousel-status button:focus-visible { outline: 2px solid white; outline-offset: 3px; }
+
   .stacked-card-rail { --stack-card-width: min(76vw, 282px); width: calc(100% + 2rem); margin-left: -1rem; display: flex; flex-wrap: nowrap; gap: .8rem; overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: x mandatory; scroll-padding-inline: calc((100% - var(--stack-card-width)) / 2); padding: .55rem calc((100% - var(--stack-card-width)) / 2) 1.4rem; }
   .stacked-card-rail button,
   .methodology-rail.stacked-card-rail button { min-width: 0; min-height: 138px; flex: 0 0 var(--stack-card-width); display: grid; grid-template-columns: 1fr; align-content: center; justify-items: start; gap: .5rem; padding: 1.05rem 1.1rem; border: 1px solid rgba(255,255,255,.14); border-radius: 8px; background: #0b2239; color: var(--story-muted); text-align: left; scroll-snap-align: center; scroll-snap-stop: always; opacity: .66; transform: scale(.94); box-shadow: 9px 9px 0 -4px rgba(105,170,241,.11), 17px 17px 0 -8px rgba(254,182,17,.08); transition: transform .3s ease, opacity .3s ease, border-color .3s ease, background-color .3s ease; }
