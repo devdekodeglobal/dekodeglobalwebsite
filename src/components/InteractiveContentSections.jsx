@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowUpRight,
   Calendar,
@@ -128,31 +128,6 @@ export default function InteractiveContentSections() {
   const [activeStage, setActiveStage] = useState(content.deliveryProcess[0].id);
   const [activeIndustry, setActiveIndustry] = useState(content.industries[0].id);
   const [activeLegalDocument, setActiveLegalDocument] = useState("privacy");
-  const starContainerRef = useRef(null);
-  const { scrollYProgress: starScrollProgress } = useScroll({
-    target: starContainerRef,
-    offset: ["start start", "end end"],
-  });
-
-  const letterSOffset = useTransform(starScrollProgress, [0, 0.4], ["-80vw", "0vw"]);
-  const letterTOffset = useTransform(starScrollProgress, [0, 0.4], ["80vw", "0vw"]);
-  const letterAOffset = useTransform(starScrollProgress, [0, 0.4], ["-80vh", "0vh"]);
-  const letterROffset = useTransform(starScrollProgress, [0, 0.4], ["80vh", "0vh"]);
-
-  const getLetterTransform = (index) => {
-    if (shouldReduceMotion) return {};
-    switch (index) {
-      case 0: return { x: letterSOffset };
-      case 1: return { x: letterTOffset };
-      case 2: return { y: letterAOffset };
-      case 3: return { y: letterROffset };
-      default: return {};
-    }
-  };
-
-  const cardRestOpacity = useTransform(starScrollProgress, [0.5, 0.8], [0, 1]);
-  const cardRestY = useTransform(starScrollProgress, [0.5, 0.8], [30, 0]);
-
   const [sessionSummary, setSessionSummary] = useState("");
 
   useEffect(() => subscribeToSessionSummary(setSessionSummary), []);
@@ -249,52 +224,51 @@ export default function InteractiveContentSections() {
         <p className="company-about">{companyKnowledge.company.about}</p>
       </motion.section>
 
-      <section ref={starContainerRef} style={{ height: "300vh", position: "relative" }}>
-        <div style={{ position: "sticky", top: 0, height: "100vh", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-          <motion.section
-            className="story-section star-section"
-            style={{ width: "100%" }}
-            {...(shouldReduceMotion ? { initial: false } : reveal)}
-          >
-            <SectionHeading
-              eyebrow="The DEKODE standard"
-              title="Simple enough to understand. Strong enough to rely on."
-              description="Four principles guide how we communicate, deliver and stay accountable."
-            />
-            <div
-              className="star-principles"
-              aria-label="DEKODE STAR principles"
-            >
-              <div className="star-coverflow-track">
-                {starItems.map((item, index) => {
-                  return (
-                    <article
-                      key={item.name}
-                      className="is-active"
-                      data-number={`0${index + 1}`}
+      <motion.section
+        className="story-section star-section"
+        {...(shouldReduceMotion ? { initial: false } : reveal)}
+      >
+        <SectionHeading
+          eyebrow="The DEKODE standard"
+          title="Simple enough to understand. Strong enough to rely on."
+          description="Four principles guide how we communicate, deliver and stay accountable."
+        />
+        <motion.div
+          className="star-principles"
+          aria-label="DEKODE STAR principles"
+          variants={shouldReduceMotion ? {} : starContainerVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          <div className="star-coverflow-track">
+            {starItems.map((item, index) => {
+              return (
+                <motion.article
+                  key={item.name}
+                  className="is-active"
+                  data-number={`0${index + 1}`}
+                >
+                  <motion.h3 className="star-wordmark">
+                    <motion.span 
+                      className="star-letter" 
+                      variants={giantLetterVariant}
                     >
-                      <h3 className="star-wordmark">
-                        <motion.span 
-                          className="star-letter" 
-                          style={getLetterTransform(index)}
-                        >
-                          {item.name[0]}
-                        </motion.span>
-                        <motion.span style={{ opacity: shouldReduceMotion ? 1 : cardRestOpacity }}>
-                          {item.name.slice(1)}
-                        </motion.span>
-                      </h3>
-                      <motion.p style={{ opacity: shouldReduceMotion ? 1 : cardRestOpacity, y: shouldReduceMotion ? 0 : cardRestY }}>
-                        {item.description}
-                      </motion.p>
-                    </article>
-                  );
-                })}
-              </div>
-            </div>
-          </motion.section>
-        </div>
-      </section>
+                      {item.name[0]}
+                    </motion.span>
+                    <motion.span variants={wordmarkVariant}>
+                      {item.name.slice(1)}
+                    </motion.span>
+                  </motion.h3>
+                  <motion.p variants={cardBodyVariant}>
+                    {item.description}
+                  </motion.p>
+                </motion.article>
+              );
+            })}
+          </div>
+        </motion.div>
+      </motion.section>
 
       <motion.section
         className="story-section capabilities-section"
