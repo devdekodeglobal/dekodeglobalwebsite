@@ -23,6 +23,12 @@ test('lexical retrieval grounds reviewed delivery, Beston, and BRIDGE questions'
   assert.equal(retrieveLexical('What is BRIDGE?')[0].id, 'initiative-bridge');
 });
 
+test('direct founder questions prioritize verified leadership knowledge', () => {
+  const matches = retrieveLexical('Who is founder of DEKODE company?');
+  assert.equal(matches[0]?.id, 'company-leadership');
+  assert.match(matches[0]?.text || '', /Pankaj Banga/);
+});
+
 test('broad project questions retrieve the complete verified evidence catalogue first', () => {
   const matches = retrieveLexical('what are dekode projects');
   assert.equal(matches[0].id, 'project-evidence-catalogue');

@@ -234,6 +234,7 @@ export function retrieveCompanyKnowledge(question, limit = 5) {
   const asksAboutServices = /\b(?:services?|offerings?|capabilities|what (?:do|does) dekode (?:do|offer|provide))\b/.test(query);
   const asksAboutDelivery = /\b(?:methodology|delivery process|deliver projects?|project lifecycle|how does dekode (?:deliver|work))\b/.test(query);
   const asksAboutBridge = /\b(?:what is bridge|bridge initiative|dekode bridge)\b/.test(query);
+  const asksAboutLeadership = /\b(?:founder|founded|owner|leadership|who (?:started|founded|runs|is behind)|pankaj banga)\b/.test(query);
 
   const ranked = documents
     .map((document) => {
@@ -248,12 +249,15 @@ export function retrieveCompanyKnowledge(question, limit = 5) {
       const serviceCatalogueBonus = asksAboutServices && document.id === 'service-catalogue' ? 8 : 0;
       const deliveryProcessBonus = asksAboutDelivery && document.id === 'delivery-process' ? 8 : 0;
       const bridgeInitiativeBonus = asksAboutBridge && document.id === 'initiative-bridge' ? 8 : 0;
+      const leadershipBonus = asksAboutLeadership && document.id === 'company-leadership' ? 10 : 0;
+      const leadershipOverviewPenalty = asksAboutLeadership && document.id === 'company-overview' ? 5 : 0;
       const discoveryPenalty = document.id.startsWith('discovery-') ? 2 : 0;
       return {
         ...document,
         score: overlap + nameBonus + aliasBonus + catalogueBonus + evidenceBonus
           + companyOverviewBonus + faqOverviewBonus + serviceCatalogueBonus
-          + deliveryProcessBonus + bridgeInitiativeBonus - overviewPenalty - discoveryPenalty,
+          + deliveryProcessBonus + bridgeInitiativeBonus + leadershipBonus
+          - overviewPenalty - leadershipOverviewPenalty - discoveryPenalty,
       };
     })
     .filter((document) => document.score > 0)

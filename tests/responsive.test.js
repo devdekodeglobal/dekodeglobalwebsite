@@ -253,6 +253,8 @@ test('presents Gemini answers with topic, lead, points, and a separated follow-u
   assert.match(typewriterText, /const body = lead \? sentences\.join\(' '\) : ''/);
   assert.match(typewriterText, /bullets\.slice\(0, 8\)/);
   assert.match(typewriterText, /const bulletPattern/);
+  assert.match(typewriterText, /target="_blank" rel="noopener noreferrer"/);
+  assert.match(indexCss, /\.answer-presentation a\s*\{[^}]*overflow-wrap:\s*anywhere/s);
 });
 
 test('routes project evidence to a verified visual portfolio with real media', () => {

@@ -3,17 +3,20 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 import { normalizeAssistantLists } from '../utils/assistantText.js';
 
 function InlineText({ text }) {
-  const parts = [];
-  const pattern = /\*\*([^*]+)\*\*/g;
-  let cursor = 0;
-  let match;
-  while ((match = pattern.exec(text)) !== null) {
-    if (match.index > cursor) parts.push(text.slice(cursor, match.index).replaceAll('**', ''));
-    parts.push(<strong key={`${match.index}-${match[1]}`}>{match[1]}</strong>);
-    cursor = match.index + match[0].length;
-  }
-  if (cursor < text.length) parts.push(text.slice(cursor).replaceAll('**', ''));
-  return parts;
+  return text.split(/(\*\*[^*]+\*\*|https?:\/\/[^\s]+)/g).filter(Boolean).flatMap((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={`strong-${index}`}>{part.slice(2, -2)}</strong>;
+    }
+    if (/^https?:\/\//i.test(part)) {
+      const url = part.replace(/[),.;!?]+$/, '');
+      const trailing = part.slice(url.length);
+      return [
+        <a key={`link-${index}`} href={url} target="_blank" rel="noopener noreferrer">{url}</a>,
+        trailing,
+      ];
+    }
+    return part.replaceAll('**', '');
+  });
 }
 
 function sentenceParts(text) {

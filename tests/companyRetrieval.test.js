@@ -116,9 +116,11 @@ test('retrieves reviewed delivery, Beston, and BRIDGE evidence', () => {
 test('retrieves the six-stage methodology and verified founder details', () => {
   const methodology = retrieveCompanyKnowledge('How does DEKODE deliver projects?')[0];
   const founder = retrieveCompanyKnowledge('Who is behind DEKODE?')[0];
+  const directFounder = retrieveCompanyKnowledge('Who is founder of DEKODE company?')[0];
   assert.equal(methodology.id, 'delivery-process');
   assert.match(methodology.text, /Discovery:[\s\S]*Prototype:[\s\S]*Design:[\s\S]*Build:[\s\S]*Deploy:[\s\S]*Evolve:/);
   assert.equal(founder.id, 'company-leadership');
+  assert.equal(directFounder.id, 'company-leadership');
   assert.match(founder.text, /Pankaj Banga/);
   assert.match(founder.text, /linkedin\.com\/in\/pankajbanga/);
 });

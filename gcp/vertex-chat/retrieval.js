@@ -221,7 +221,11 @@ function lexicalScore(question, document) {
     : 0;
   const evidenceBoost = projectEvidenceQuery && /^(?:portfolio-|case-)/.test(document.id) ? 0.2 : 0;
   const overviewPenalty = projectEvidenceQuery && document.id === 'company-about' ? 0.8 : 0;
-  return Math.max(0, Math.min(1.75, coverage * 0.7 + phraseBoost + labelBoost + catalogueBoost + evidenceBoost - overviewPenalty));
+  const leadershipQuery = /\b(?:founder|founded|owner|leadership|who (?:started|founded|runs|is behind)|pankaj banga)\b/.test(query);
+  const leadershipBoost = leadershipQuery && document.id === 'company-leadership' ? 0.75 : 0;
+  const leadershipOverviewPenalty = leadershipQuery && document.id === 'company-about' ? 0.45 : 0;
+  return Math.max(0, Math.min(1.75, coverage * 0.7 + phraseBoost + labelBoost + catalogueBoost
+    + evidenceBoost + leadershipBoost - overviewPenalty - leadershipOverviewPenalty));
 }
 
 export function retrieveLexical(question, limit = 5) {
@@ -292,6 +296,7 @@ export function createHybridRetriever({
     const lexical = new Map(retrieveLexical(question, documents.length)
       .map((match) => [match.id, match.lexicalScore]));
     const projectEvidenceQuery = asksForProjectEvidence(question);
+    const leadershipQuery = /\b(?:founder|founded|owner|leadership|who (?:started|founded|runs|is behind)|pankaj banga)\b/.test(normalize(question));
 
     try {
       const indexedDocuments = await getDocumentEmbeddings();
@@ -303,11 +308,14 @@ export function createHybridRetriever({
         const catalogueBoost = projectEvidenceQuery && document.id === 'project-evidence-catalogue' ? 0.5 : 0;
         const evidenceBoost = projectEvidenceQuery && /^(?:portfolio-|case-)/.test(document.id) ? 0.15 : 0;
         const overviewPenalty = projectEvidenceQuery && document.id === 'company-about' ? 0.5 : 0;
+        const leadershipBoost = leadershipQuery && document.id === 'company-leadership' ? 0.45 : 0;
+        const leadershipOverviewPenalty = leadershipQuery && document.id === 'company-about' ? 0.3 : 0;
         return {
           ...document,
           semanticScore,
           lexicalScore: exactScore,
-          score: semanticScore * 0.82 + exactScore * 0.18 + catalogueBoost + evidenceBoost - overviewPenalty,
+          score: semanticScore * 0.82 + exactScore * 0.18 + catalogueBoost + evidenceBoost
+            + leadershipBoost - overviewPenalty - leadershipOverviewPenalty,
           retrievalMode: 'hybrid',
         };
       }).sort((left, right) => right.score - left.score);
