@@ -81,6 +81,9 @@ function responseForTopic(topic, message, detectedService, detectedSolutionArea,
       return `DEKODE currently presents two published success stories:\n\n${bullets(knowledge.caseStudies.map((item) => `${item.name} (${item.industry}): ${item.outcome}`))}\n\nThese are the case studies confirmed in the public company information.`;
     }
     case 'why':
+      if (/\bstar\b/i.test(message)) {
+        return `DEKODE's STAR principles are **Simple, Transparent, Accountable, and Reliable**. They describe how we communicate, deliver, take ownership, and build dependable systems.`;
+      }
       return `DEKODE is built around practical delivery, clear communication, and long-term accountability.\n\nWhat makes us different:\n${bullets(knowledge.whyChooseUs.map((item) => `${item.name}: ${item.description}`))}\n\nWe focus on useful outcomes, not technology hype.`;
     case 'origin':
       return knowledge.company.origin;

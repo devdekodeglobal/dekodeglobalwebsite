@@ -8,6 +8,7 @@ import {
   CalendarDays,
   ChevronDown,
   LockKeyhole,
+  Sparkles,
   X,
 } from "lucide-react";
 import AnimationPanel from "./AnimationPanel";
@@ -481,9 +482,10 @@ export default function ChatApp({
       } else if (verifiedCompanyTopic || result.action === "show_company_panel" || [
         "company_info", "pricing", "case_study", "methodology",
       ].includes(result.intent)) {
+        const verifiedTopicFallback = verifiedCompanyTopic || result.topic;
         const resolvedCompanyTopic = result.intent === "case_study"
           ? "caseStudies"
-          : verifiedCompanyTopic || result.topic || "company";
+          : result.topic || verifiedTopicFallback || "company";
         const company = generateCompanyResponse(userMessage, {
           ...visualIntent,
           isCompanyRelated: true,
@@ -1090,10 +1092,14 @@ export default function ChatApp({
                             role="group"
                             aria-label="Suggested follow-up questions"
                           >
+                            {msg.suggestions.some((suggestion) => suggestion.kind === "discovery") && (
+                              <span className="suggestion-context-label">Related to this</span>
+                            )}
                             {msg.suggestions.map((suggestion) => (
                               <button
                                 key={suggestion.label}
                                 type="button"
+                                className={suggestion.kind === "discovery" ? "is-discovery" : undefined}
                                 onClick={() =>
                                   handleModelPrompt(suggestion.prompt, {
                                     type: "suggestion",
@@ -1104,6 +1110,9 @@ export default function ChatApp({
                                 }
                                 disabled={isTyping}
                               >
+                                {suggestion.kind === "discovery" && (
+                                  <Sparkles size={13} aria-hidden="true" />
+                                )}
                                 {suggestion.label}
                               </button>
                             ))}

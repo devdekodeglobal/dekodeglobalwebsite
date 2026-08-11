@@ -237,7 +237,7 @@ test('returns contextual suggestions and removes labels already shown', async ()
   }, async () => {
     const response = await ask('What is DEKODE?', 'suggestions', undefined, ['Explore services']);
     assert.deepEqual(response.body.suggestions, [
-      { label: 'See case studies', prompt: 'Show me DEKODE case studies.' },
+      { label: 'See case studies', prompt: 'Show me DEKODE case studies.', kind: 'follow_up' },
     ]);
   });
   assert.equal(promptIncludedUsedLabels, true);

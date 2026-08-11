@@ -122,3 +122,13 @@ test('retrieves the six-stage methodology and verified founder details', () => {
   assert.match(founder.text, /Pankaj Banga/);
   assert.match(founder.text, /linkedin\.com\/in\/pankajbanga/);
 });
+
+test('retrieves one related DEKODE discovery opportunity from relevant context', () => {
+  const location = retrieveCompanyKnowledge('How do you work across Australia and India?');
+  const delivery = retrieveCompanyKnowledge('How do you reduce project risk?');
+  const product = retrieveCompanyKnowledge('We want to build a mobile app');
+
+  assert.ok(location.some((match) => match.id === 'discovery-bridge'));
+  assert.ok(delivery.some((match) => match.id === 'discovery-star'));
+  assert.ok(product.some((match) => match.id === 'discovery-portfolio'));
+});

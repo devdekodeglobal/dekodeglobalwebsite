@@ -47,7 +47,8 @@ function sanitizeSuggestions(value) {
       : suggestionRoute === 'project' ? 'show_project_panel' : undefined;
     const intent = MODEL_INTENTS.includes(suggestion?.intent) ? suggestion.intent : inferredIntent;
     const action = MODEL_ACTIONS.includes(suggestion?.action) ? suggestion.action : inferredAction;
-    return [{ label, prompt, ...(intent ? { intent } : {}), ...(action ? { action } : {}) }];
+    const kind = suggestion?.kind === 'discovery' ? 'discovery' : 'follow_up';
+    return [{ label, prompt, kind, ...(intent ? { intent } : {}), ...(action ? { action } : {}) }];
   }).slice(0, 4);
 }
 

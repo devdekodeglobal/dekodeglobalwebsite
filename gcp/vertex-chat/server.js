@@ -54,6 +54,10 @@ function sensitiveRequestRefusal(question) {
   if (/\b(can|could|would|will)\s+you\b.{0,24}\b(hack|break into|take over|bypass)\b.{0,32}\b(account|login|authentication|website|system)\b|^(?:please\s+)?\b(hack|break into|take over|bypass)\b.{0,32}\b(account|login|authentication|website|system)\b|\b(help|teach|show|tell)\b.{0,24}\b(hack|break into|steal|phish)\b.{0,30}\b(account|credentials?|passwords?)\b/i.test(text)) {
     return "I can’t help hack accounts, steal credentials, bypass authentication, or gain unauthorised access. I can help with defensive security or account-recovery guidance.";
   }
+  if (/\b(reveal|find|steal|share|expose|leak|show)\b.{0,32}\b(private|personal|confidential|customer|user)\b.{0,20}\b(data|information|records?|details?|projects?)\b/i.test(text)
+    || /\b(?:private|confidential)\s+(?:client|customer)\s+(?:data|projects?|information)\b/i.test(text)) {
+    return "I can't help obtain or expose private, confidential, or personal data. I can help with authorised data protection, privacy controls, secure access, or incident-response planning.";
+  }
   return null;
 }
 
@@ -165,7 +169,7 @@ Infer intent despite ordinary misspellings and informal wording. Preserve explic
 
 For project or problem-led messages, briefly reflect the actual goal, connect it to the most relevant verified DEKODE expertise, quietly consider likely failure points, and ask exactly one useful next question that has not already been answered. Mention only risks that matter at this stage; do not force a fixed questionnaire or jump to scheduling. Make answers easy to scan: use a concise opening, optional short **bold** emphasis, and up to three markdown bullets when listing distinct ideas. Every bullet must start on its own line with "- ". Put a final question on its own line. Do not force bullets into simple answers, and do not use tables or markdown headings.
 
-Return 2 to 4 concise contextual suggestions as objects with label, prompt, intent, and action. Each prompt must behave like a natural visitor message sent through the normal conversation. Suggestions must evolve with the supplied context, must not repeat previously shown labels, and must not ask for facts the visitor already supplied. Include booking only after clear meeting intent or when project qualification makes it a useful next step; a booking suggestion must use intent book_meeting and action open_calendar. For safety refusals, return an empty suggestions array.
+Return 2 to 4 concise contextual suggestions as objects with label, prompt, kind, intent, and action. Use kind follow_up for normal next questions. You may include at most one kind discovery suggestion when it reveals verified DEKODE evidence or an initiative that is genuinely relevant to the current conversation. Examples include BRIDGE for Australia/India or cross-border context, a matching portfolio or case study for a similar operating problem, STAR for working-style questions, or the delivery methodology for project-risk questions. Do not force a discovery suggestion when no strong connection exists. Each prompt must behave like a natural visitor message sent through the normal conversation. Suggestions must evolve with the supplied context, must not repeat previously shown labels, and must not ask for facts the visitor already supplied. Include booking only after clear meeting intent or when project qualification makes it a useful next step; a booking suggestion must use intent book_meeting and action open_calendar. For safety refusals, return an empty suggestions array.
 
 DEKODE's delivery methodology is Discovery, Prototype, Design, Build, Deploy, and Evolve. Use it as a reasoning framework across services, not a slogan to repeat in every answer. Explain all six stages when the visitor asks how DEKODE works or delivers; otherwise mention only the stages that improve the answer. Security, privacy, and maintainability apply throughout the lifecycle.
 

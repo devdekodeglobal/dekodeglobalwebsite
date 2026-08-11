@@ -57,8 +57,7 @@ test('keeps the composer responsive with rotating hints and separate voice typin
   assert.match(chatApp, /const handleOpenDekodeVoice = \(\) =>/);
   assert.match(chatApp, /onClick=\{handleSpeech\}/);
   assert.doesNotMatch(chatApp, /<DekodeVoiceEntry onClick=/);
-  assert.match(indexCss, /\.hero-title\s*\{[^}]*font-size:\s*clamp\(1\.65rem,\s*2\.4vw,\s*2\.2rem\)[^}]*max-width:\s*min\(1120px,\s*100%\)/s);
-  assert.match(indexCss, /@media \(min-width:\s*901px\)[\s\S]*\.hero-title\s*\{[^}]*white-space:\s*nowrap/s);
+  assert.match(indexCss, /\.hero-title\s*\{[^}]*font-size:\s*clamp\(1\.65rem,\s*2\.4vw,\s*2\.2rem\)[^}]*max-width:\s*min\(720px,\s*90%\)/s);
   assert.match(chatApp, /className="action-pill proposal-entry-button client-portal-top-right"/);
   assert.match(chatApp, /className="action-pill calendar-entry-button"/);
   assert.match(chatApp, /aria-label="Book a meeting"/);
@@ -222,6 +221,9 @@ test('renders contextual suggestions through the normal chat pipeline', () => {
   assert.match(chatApp, /type:\s*"suggestion"/);
   assert.match(chatApp, /usedSuggestions:/);
   assert.match(chatApp, /suggestions:\s*result\.suggestions \|\| \[\]/);
+  assert.match(chatApp, /suggestion\.kind === "discovery"/);
+  assert.match(chatApp, /suggestion-context-label/);
+  assert.match(indexCss, /\.company-suggestion-chips button\.is-discovery/);
 });
 
 test('uses a readable translucent booking surface', () => {

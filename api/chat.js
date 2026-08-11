@@ -39,7 +39,7 @@ Allowed actions: answer, open_calendar, show_project_panel, show_company_panel, 
 
 Infer intent from the original and normalized messages, recent conversation, and supplied public DEKODE knowledge. Preserve facts the visitor already supplied. For DEKODE facts, use only supplied approved context. For a project idea, reason helpfully, connect it to relevant DEKODE expertise, and ask at most one useful unanswered question. Make answers easy to scan: use a concise opening, optional short **bold** emphasis, and up to three markdown bullets when listing distinct ideas. Every bullet must start on its own line with "- ". Put a final question on its own line. Do not force bullets into simple answers, and do not use tables or markdown headings.
 
-Return 2 to 4 concise contextual suggestions as objects with label, prompt, intent, and action. Each suggestion must naturally continue the current conversation through a normal visitor message. Evolve them as the conversation progresses, never repeat labels listed as previously shown, and do not suggest details the visitor already supplied. Booking may appear only when qualification or explicit meeting intent makes it relevant; a booking suggestion must use intent book_meeting and action open_calendar. For safety refusals, return an empty suggestions array.
+Return 2 to 4 concise contextual suggestions as objects with label, prompt, kind, intent, and action. Use kind follow_up for normal next questions. You may include at most one kind discovery suggestion when it reveals verified DEKODE evidence or an initiative that is genuinely relevant to the current conversation. Examples include BRIDGE for Australia/India or cross-border context, a matching portfolio or case study for a similar operating problem, STAR for working-style questions, or the delivery methodology for project-risk questions. Do not force a discovery suggestion when no strong connection exists. Each suggestion must naturally continue the current conversation through a normal visitor message. Evolve them as the conversation progresses, never repeat labels listed as previously shown, and do not suggest details the visitor already supplied. Booking may appear only when qualification or explicit meeting intent makes it relevant; a booking suggestion must use intent book_meeting and action open_calendar. For safety refusals, return an empty suggestions array.
 
 DEKODE's delivery methodology is Discovery, Prototype, Design, Build, Deploy, and Evolve. Use it as a reasoning framework across services, not a slogan to repeat in every answer. Explain all six stages when the visitor asks how DEKODE works or delivers; otherwise mention only the stages that help answer the question. Security, privacy, and maintainability apply throughout the lifecycle.
 
@@ -61,10 +61,11 @@ const responseSchema = {
       maxItems: 4,
       items: {
         type: 'OBJECT',
-        required: ['label', 'prompt', 'intent', 'action'],
+        required: ['label', 'prompt', 'kind', 'intent', 'action'],
         properties: {
           label: { type: 'STRING' },
           prompt: { type: 'STRING' },
+          kind: { type: 'STRING', enum: ['follow_up', 'discovery'] },
           intent: { type: 'STRING', enum: ['company_info', 'project_build', 'book_meeting', 'pricing', 'case_study', 'methodology', 'clarification'] },
           action: { type: 'STRING', enum: ['answer', 'open_calendar', 'show_project_panel', 'show_company_panel', 'ask_clarification'] },
         },
@@ -141,7 +142,7 @@ async function requestGemini({ apiKey, model, question, normalizedQuestion, hist
 }
 
 function fallbackAfterProviderFailure(question, history, verifiedIntent, interaction) {
-  if (verifiedIntent.kind === 'project' || history.length) {
+  if (verifiedIntent.kind === 'project') {
     const project = generateProjectResponse(buildProjectConversationQuery(question, history));
     return validateModelResponse({
       intent: 'project_build', confidence: 0.5, action: 'show_project_panel', topic: project.topic, answer: project.text,

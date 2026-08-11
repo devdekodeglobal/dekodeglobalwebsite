@@ -48,6 +48,9 @@ export const normalize = (value) => String(value ?? '')
   .replace(/\bcalanders?\b|\bcalenders?\b/g, 'calendar')
   .replace(/\bscheduals?\b/g, 'schedule')
   .replace(/\bbussiness(?:es)?\b/g, 'business')
+  .replace(/\bautomashun\b/g, 'automation')
+  .replace(/\bmordern(?:ise|ize)?\b/g, 'modernise')
+  .replace(/\battendence\b/g, 'attendance')
   .replace(/\bmob\s+apps?\b/g, 'mobile app')
   .replace(/\be[\s-]?comm?erce\b/g, 'ecommerce')
   .replace(/\bu\b/g, 'you')
@@ -64,6 +67,7 @@ function createDocument(id, label, text, aliases = []) {
 }
 
 export function buildDocuments() {
+  const bridge = companyKnowledge.initiatives?.find((initiative) => initiative.id === 'bridge');
   const documents = [
     createDocument('company-about', 'About DEKODE', [
       companyKnowledge.company?.about,
@@ -71,11 +75,11 @@ export function buildDocuments() {
       `Mission: ${companyKnowledge.company?.mission}`,
       `Vision: ${companyKnowledge.company?.vision}`,
       `Belief: ${companyKnowledge.company?.belief}`,
-    ].filter(Boolean).join('\n'), companyKnowledge.aliases?.company),
+    ].filter(Boolean).join('\n'), [...(companyKnowledge.aliases?.company || []), 'what does dekode do', 'what kind of company', 'about dekode']),
     createDocument('company-values', 'Why choose DEKODE', [
       ...(companyKnowledge.whyChooseUs || []).map((item) => `${item.name}: ${item.description}`),
       ...(companyKnowledge.values || []).map((item) => `${item.name}: ${item.description}`),
-    ].join('\n'), companyKnowledge.aliases?.why),
+    ].join('\n'), [...(companyKnowledge.aliases?.why || []), 'star', 'star principles']),
     createDocument('company-leadership', 'DEKODE founder and leadership',
       `${companyKnowledge.company.leadership.founder.name} is DEKODE's ${companyKnowledge.company.leadership.founder.role}. LinkedIn: ${companyKnowledge.company.leadership.founder.linkedin}. The published source does not provide a longer founder biography.`,
       companyKnowledge.aliases?.leadership),
@@ -95,6 +99,18 @@ export function buildDocuments() {
       ...(companyKnowledge.contact?.locations || []).map((location) => `${location.country}: ${location.address}`),
       companyKnowledge.contact?.operatingModel,
     ].filter(Boolean).join('\n'), companyKnowledge.aliases?.location),
+    createDocument('pricing', 'DEKODE pricing approach',
+      'DEKODE does not publish fixed pricing because scope depends on the problem, product, integrations, security, and support required. Accurate estimates are prepared after understanding the project.',
+      ['pricing', 'price', 'prices', 'cost', 'costs', 'quote', 'estimate', 'fixed price', 'time and materials']),
+    createDocument('discovery-bridge', 'Related DEKODE initiative: BRIDGE',
+      bridge ? bridge.title + '. ' + bridge.summary + ' Status: ' + bridge.status + '.' : '',
+      ['Australia', 'India', 'cross-border', 'global delivery', 'location', 'locations', 'talent exchange', 'R&D collaboration']),
+    createDocument('discovery-star', 'Related DEKODE trust signal: STAR',
+      'DEKODE works through four STAR principles: Simple, Transparent, Accountable, and Reliable.',
+      ['working style', 'delivery process', 'methodology', 'project risk', 'trust', 'why choose dekode']),
+    createDocument('discovery-portfolio', 'Related DEKODE public work',
+      'Verified portfolio examples include AttendMe, CHAUFFR, Smart Loan Helper, SmartBroker, Recycled Market, and Estrado. Published case studies cover Beston food manufacturing and Stella Maris Primary School.',
+      ['website', 'mobile app', 'ecommerce', 'automation', 'internal system', 'cloud solution', 'similar work', 'relevant project']),
   ];
 
   for (const service of companyKnowledge.services || []) {
