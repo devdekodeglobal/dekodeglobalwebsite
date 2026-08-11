@@ -118,6 +118,17 @@ export default function InteractiveContentSections() {
     rotateStar(intent < 0 ? 1 : -1);
   };
 
+  const handleStarMouseMove = (e) => {
+    const cards = document.querySelectorAll(".star-principles article");
+    for (const card of cards) {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty("--mouse-x", `${x}px`);
+      card.style.setProperty("--mouse-y", `${y}px`);
+    }
+  };
+
   const selectRailItem = (event, setter, id) => {
     setter(id);
     const button = event.currentTarget;
@@ -209,6 +220,7 @@ export default function InteractiveContentSections() {
             if (event.key === "ArrowLeft") rotateStar(-1);
             if (event.key === "ArrowRight") rotateStar(1);
           }}
+          onMouseMove={handleStarMouseMove}
         >
           <motion.div
             className="star-coverflow-track"
