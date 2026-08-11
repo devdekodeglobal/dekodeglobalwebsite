@@ -17,10 +17,29 @@ import {
   Workflow,
 } from 'lucide-react';
 import { loadCompanyKnowledge } from '../knowledge/companyKnowledgeLoader';
+import foodManufacturingImage from '../assets/case-study-food-manufacturing.jpg';
+import primarySchoolImage from '../assets/case-study-primary-school.jpg';
+import attendMeImage from '../assets/portfolio/attendme.jpg';
+import chauffrImage from '../assets/portfolio/chauffr.jpg';
+import smartLoanImage from '../assets/portfolio/smart-loan.jpg';
+import smartBrokerImage from '../assets/portfolio/smartbroker.png';
+import recycledMarketImage from '../assets/portfolio/recycled-market.png';
+import estradoImage from '../assets/portfolio/estrado.jpg';
 
 const knowledge = loadCompanyKnowledge();
 
 const serviceIcons = [BrainCircuit, Bot, Code2, Sparkles, Workflow, Cloud];
+
+const evidenceImages = {
+  'food-manufacturing': foodManufacturingImage,
+  'primary-school': primarySchoolImage,
+  attendme: attendMeImage,
+  chauffr: chauffrImage,
+  'smart-loan-helper': smartLoanImage,
+  smartbroker: smartBrokerImage,
+  'recycled-market': recycledMarketImage,
+  estrado: estradoImage,
+};
 
 const stagger = {
   show: { transition: { staggerChildren: 0.08 } },
@@ -82,6 +101,52 @@ function ServicesPanel({ onSelect }) {
           </PanelButton>
         );
       })}
+    </motion.div>
+  );
+}
+
+function PortfolioPanel({ onSelect }) {
+  const evidence = [
+    ...knowledge.caseStudies.map((study) => ({
+      ...study,
+      category: 'Published case study',
+      description: study.solution,
+      prompt: `Tell me about the ${study.name} case study`,
+    })),
+    ...knowledge.portfolioProjects.map((project) => ({
+      ...project,
+      category: 'Verified portfolio',
+      prompt: `Tell me about the ${project.name} project`,
+    })),
+  ];
+
+  return (
+    <motion.div variants={stagger} initial="hidden" animate="show" className="portfolio-panel">
+      <motion.div variants={itemMotion} className="portfolio-panel-heading">
+        <span><strong>Verified work</strong><small>Published DEKODE case studies and old-site portfolio projects</small></span>
+        <span>{evidence.length}</span>
+      </motion.div>
+      <div className="portfolio-card-rail" aria-label="DEKODE project evidence">
+        {evidence.map((item) => (
+          <motion.button
+            variants={itemMotion}
+            type="button"
+            className="portfolio-card"
+            key={`${item.category}-${item.id}`}
+            onClick={() => onSelect(item.prompt)}
+          >
+            <img src={evidenceImages[item.id]} alt={`${item.name} project`} />
+            <span className="portfolio-card-copy">
+              <small>{item.category}</small>
+              <strong>{item.name}</strong>
+              <span>{item.description}</span>
+            </span>
+          </motion.button>
+        ))}
+      </div>
+      <motion.p variants={itemMotion} className="portfolio-panel-note">
+        Swipe through the verified examples or select one for its challenge, solution, and outcome.
+      </motion.p>
     </motion.div>
   );
 }
@@ -283,6 +348,7 @@ const TermsPanel = (props) => <LegalPanel {...props} type="terms" />;
 const panels = {
   overview: OverviewPanel,
   services: ServicesPanel,
+  portfolio: PortfolioPanel,
   industries: IndustriesPanel,
   technologies: TechnologiesPanel,
   process: ProcessPanel,

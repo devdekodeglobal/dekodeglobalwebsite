@@ -13,7 +13,11 @@ const architectureAssetPath = resolve(
 )
 const businessPlanAssetPath = resolve(
   fileURLToPath(new URL('..', import.meta.url)),
-  '_proposal/source/CFS_Business_Impact_Statement.pdf',
+  '_proposal/source/CFS_Business_Impact_Presentation.pdf',
+)
+const commercialTermsAssetPath = resolve(
+  fileURLToPath(new URL('..', import.meta.url)),
+  '_proposal/source/CFS_OptiFlow_Payback_Commercial_Terms.pdf',
 )
 
 export default async function handler(request, response) {
@@ -29,6 +33,12 @@ export default async function handler(request, response) {
     if (session.accessLevel !== 'extended') return response.status(403).end()
     response.setHeader('Content-Type', 'application/pdf')
     return response.status(200).send(await readFile(businessPlanAssetPath))
+  }
+
+  if (requestedAsset === 'commercial_terms') {
+    if (session.accessLevel !== 'extended') return response.status(403).end()
+    response.setHeader('Content-Type', 'application/pdf')
+    return response.status(200).send(await readFile(commercialTermsAssetPath))
   }
     
   const assetPath = requestedAsset === 'architecture'

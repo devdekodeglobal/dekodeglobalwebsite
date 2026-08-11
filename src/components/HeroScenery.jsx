@@ -1,7 +1,10 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 
-export default function HeroScenery({ timeOfDay = 'noon' }) {
+export default function HeroScenery({
+  timeOfDay = 'noon',
+  realTime = new Date()
+}) {
   const isNight = timeOfDay === 'night';
   const isEvening = timeOfDay === 'evening';
   const isMorning = timeOfDay === 'morning';
@@ -51,32 +54,78 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
     delay: Math.random() * 5,
   })), []);
 
-  // Celestial Positions mapped across the 4 stages
-  // Adjust dawn/dusk positions based on device size so they sit beautifully above the chat UI
-  const celestialConfig = {
-    morning: {
-      body: { x: isMobile ? '15vw' : '25vw', y: isMobile ? '20vh' : '32vh', scale: 1 },
-      sunOpacity: 0.9,
-      moonOpacity: 0,
-    },
-    noon: {
-      body: { x: '50vw', y: isMobile ? '10vh' : '12vh', scale: 1.1 },
-      sunOpacity: 1,
-      moonOpacity: 0,
-    },
-    evening: {
-      body: { x: isMobile ? '85vw' : '75vw', y: isMobile ? '20vh' : '32vh', scale: 1.15 },
-      sunOpacity: 1,
-      moonOpacity: 0,
-    },
-    night: {
-      body: { x: '50vw', y: isMobile ? '12vh' : '20vh', scale: 1 },
-      sunOpacity: 0,
-      moonOpacity: 1,
+
+
+  // Extract the decimal time logic so it can be used on every frame
+  const getCoordinatesForTime = (decimalTime, mobileState) => {
+    let normalizedTime = decimalTime;
+    while (normalizedTime < 0) normalizedTime += 24;
+    while (normalizedTime >= 24) normalizedTime -= 24;
+
+    const isDaytime = normalizedTime >= 6 && normalizedTime < 18;
+
+    let progress;
+    if (isDaytime) {
+      progress = (normalizedTime - 6) / 12;
+    } else {
+      let nightTime = normalizedTime >= 18 ? normalizedTime : normalizedTime + 24;
+      progress = (nightTime - 18) / 12;
     }
+
+    const leftX = mobileState ? 15 : 25;
+    const rightX = mobileState ? 85 : 75;
+
+    const edgeY = mobileState ? 20 : 32;
+    const peakDayY = mobileState ? 10 : 12;
+    const peakNightY = mobileState ? 12 : 20;
+
+    const currentX = leftX + (rightX - leftX) * progress;
+
+    const peakY = isDaytime ? peakDayY : peakNightY;
+    const a = (edgeY - peakY) / 0.25;
+    const currentY = a * Math.pow(progress - 0.5, 2) + peakY;
+
+    const scale = isDaytime ? 1 + (0.15 * Math.sin(progress * Math.PI)) : 1;
+
+    return { x: currentX, y: currentY, scale, sunOpacity: isDaytime ? 1 : 0, moonOpacity: isDaytime ? 0 : 1 };
   };
 
-  const targetState = celestialConfig[timeOfDay] || celestialConfig.noon;
+  // 1. Initialize a motion value with the exact decimal time when component mounts
+  const [initialDecimal] = useState(() => {
+    const hours = realTime.getHours();
+    const minutes = realTime.getMinutes();
+    return hours + minutes / 60;
+  });
+  const animatedTime = useMotionValue(initialDecimal);
+
+  // 2. Whenever realTime updates, smoothly animate the motion value over 7 seconds
+  useEffect(() => {
+    const hours = realTime.getHours();
+    const minutes = realTime.getMinutes();
+    let targetDecimal = hours + minutes / 60;
+
+    // Ensure we animate forward over the day transition correctly if it crosses midnight
+    // e.g. 23:00 to 01:00 should animate forward, not backward.
+    // For now, since it sweeps from -6 hours, it's a direct sweep.
+    if (targetDecimal < animatedTime.get() && (animatedTime.get() - targetDecimal > 12)) {
+      targetDecimal += 24;
+    }
+
+    const controls = animate(animatedTime, targetDecimal, {
+      type: "tween",
+      duration: 7,
+      ease: "easeInOut"
+    });
+
+    return controls.stop;
+  }, [realTime, animatedTime]);
+
+  // 3. Derive our exact visual properties dynamically on every frame!
+  const bodyX = useTransform(animatedTime, t => `calc(${getCoordinatesForTime(t, isMobile).x}vw - 55px)`);
+  const bodyY = useTransform(animatedTime, t => `calc(${getCoordinatesForTime(t, isMobile).y}vh - 55px)`);
+  const bodyScale = useTransform(animatedTime, t => getCoordinatesForTime(t, isMobile).scale);
+  const sunOpac = useTransform(animatedTime, t => getCoordinatesForTime(t, isMobile).sunOpacity);
+  const moonOpac = useTransform(animatedTime, t => getCoordinatesForTime(t, isMobile).moonOpacity);
 
   return (
     <div className="hero-scenery-wrapper minimalist-sky" aria-hidden="true" style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
@@ -89,8 +138,8 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 2.5, ease: 'easeInOut' }}
-            style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(251, 146, 60, 0.4) 0%, rgba(147, 51, 234, 0.25) 40%, rgba(30, 27, 75, 0.6) 100%)', zIndex: 0 }}
+            transition={{ duration: 7, ease: 'easeInOut' }}
+            style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(251, 146, 60, 0.4) 0%, rgba(147, 51, 234, 0.25) 40%, rgba(30, 27, 75, 0.6) 100%)', zIndex: 0, willChange: 'opacity' }}
           />
         )}
         {isAfternoon && (
@@ -99,8 +148,8 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 2.5, ease: 'easeInOut' }}
-            style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 10%, rgba(186, 230, 253, 0.5) 0%, rgba(56, 189, 248, 0.15) 55%, transparent 85%)', zIndex: 0 }}
+            transition={{ duration: 7, ease: 'easeInOut' }}
+            style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 10%, rgba(186, 230, 253, 0.5) 0%, rgba(56, 189, 248, 0.15) 55%, transparent 85%)', zIndex: 0, willChange: 'opacity' }}
           />
         )}
         {isEvening && (
@@ -109,8 +158,8 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 2.5, ease: 'easeInOut' }}
-            style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(225, 29, 72, 0.4) 0%, rgba(147, 51, 234, 0.3) 50%, rgba(30, 27, 75, 0.2) 100%)', zIndex: 0 }}
+            transition={{ duration: 7, ease: 'easeInOut' }}
+            style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(225, 29, 72, 0.4) 0%, rgba(147, 51, 234, 0.3) 50%, rgba(30, 27, 75, 0.2) 100%)', zIndex: 0, willChange: 'opacity' }}
           />
         )}
         {isNight && (
@@ -119,8 +168,8 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 2.5, ease: 'easeInOut' }}
-            style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(3, 7, 18, 0.95) 0%, rgba(15, 23, 42, 0.9) 60%, rgba(30, 27, 75, 0.8) 100%)', zIndex: 0 }}
+            transition={{ duration: 7, ease: 'easeInOut' }}
+            style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(3, 7, 18, 0.95) 0%, rgba(15, 23, 42, 0.9) 60%, rgba(30, 27, 75, 0.8) 100%)', zIndex: 0, willChange: 'opacity' }}
           />
         )}
       </AnimatePresence>
@@ -185,7 +234,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
             }}
             exit={{ opacity: 0 }}
             transition={{ 
-              opacity: { duration: 2.5, ease: 'easeInOut' },
+              opacity: { duration: 3.5, ease: 'easeInOut' },
               y: { duration: 60, repeat: Infinity, ease: 'linear' }
             }}
             style={{ position: 'absolute', inset: -40, zIndex: 1 }}
@@ -218,7 +267,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 2 }}
+            transition={{ duration: 2.8 }}
             style={{ position: 'absolute', inset: 0, zIndex: 1.5 }}
           >
             {sparkles.map(sp => (
@@ -251,28 +300,21 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
         )}
       </AnimatePresence>
 
-      {/* Unified Celestial Body (Sun morphs into Moon) */}
+      {/* Main Celestial Body container: Will follow the arc perfectly via motion values */}
       <motion.div
         className="celestial-body-container"
-        initial={false}
-        animate={{
-          x: `calc(${targetState.body.x} - 55px)`,
-          y: `calc(${targetState.body.y} - 55px)`,
-          scale: targetState.body.scale,
+        style={{
+          position: 'absolute',
+          x: bodyX,
+          y: bodyY,
+          scale: bodyScale,
+          zIndex: 2,
+          willChange: 'transform'
         }}
-        transition={{
-          x: { type: 'tween', duration: 5, ease: 'linear' },
-          y: { type: 'tween', duration: 5, ease: (timeOfDay === 'morning' || timeOfDay === 'evening') ? 'easeIn' : 'easeOut' },
-          scale: { type: 'tween', duration: 5, ease: 'easeInOut' }
-        }}
-        style={{ zIndex: 2 }}
       >
         {/* Sun Visuals */}
         <motion.div
-          style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-          initial={false}
-          animate={{ opacity: targetState.sunOpacity }}
-          transition={{ duration: 2, ease: 'easeInOut' }}
+          style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: sunOpac }}
         >
           <div className="sun-core" />
           <div className="sun-glow-ring" />
@@ -280,10 +322,7 @@ export default function HeroScenery({ timeOfDay = 'noon' }) {
 
         {/* Moon Visuals */}
         <motion.div
-          style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-          initial={false}
-          animate={{ opacity: targetState.moonOpacity }}
-          transition={{ duration: 2, ease: 'easeInOut' }}
+          style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: moonOpac }}
         >
           <div className="moon-core">
             <div className="moon-crater crater-1" />

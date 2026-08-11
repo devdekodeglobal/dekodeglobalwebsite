@@ -53,23 +53,3 @@ export function isLikelyGibberish(value) {
     substantialWords.every(wordLooksRandom) &&
     words.length <= 3;
 }
-
-const CLARIFICATIONS = {
-  gathering_audience:
-    "I didn't quite understand that audience. Is this for customers, employees, students, patients, or another group?",
-  gathering_features:
-    "I didn't quite understand the feature request. Tell me one thing the product must let users do, such as sign in, make payments, book, search, or chat.",
-  gathering_timeline:
-    "I didn't catch the timeline. You can answer with something like “ASAP,” “in 3 months,” or “no fixed deadline.”",
-  custom_discovery_problem:
-    "I didn't quite understand the problem yet. In one sentence, what should this product help someone do?",
-  custom_discovery_platform:
-    "I didn't catch the platform. Should this be web, mobile, desktop, backend, or hardware?",
-  custom_discovery_complexity:
-    "I didn't quite understand that requirement. What is the hardest feature, integration, or technical constraint you expect?",
-};
-
-export function getIntakeClarification(step, value) {
-  if (!CLARIFICATIONS[step] || !isLikelyGibberish(value)) return null;
-  return CLARIFICATIONS[step];
-}

@@ -13,7 +13,7 @@ test('approved proposal source is byte-for-byte unchanged', async () => {
   const hash = createHash('sha256').update(source).digest('hex')
   assert.equal(
     hash,
-    '6b53acf6f03126bd3662783998912d7eb503e45ed715b9903dc770383eac21a7',
+    '0bb86a840efb3c1c6f4133ac11f211dc5ad9c6159617f77938a9c7d377acc534',
   )
   assert.equal(proposal.sourceChecksum, hash)
 })

@@ -38,6 +38,19 @@ test('company voice answers use approved knowledge and avoid invented pricing', 
   assert.match(pricing.text, /do not have an approved fixed price/i);
 });
 
+test('voice distinguishes DEKODE booking from a scheduling-product project', async () => {
+  const provider = new KnowledgeConversationProvider();
+  const context = { leadProfile: emptyLeadProfile() };
+  const booking = await provider.respond('book ameeting', context);
+  const project = await provider.respond('i want to create a meeting app', context);
+  const ambiguous = await provider.respond('Can I schedule a meeting app?', context);
+
+  assert.equal(booking.action, 'offer_meeting');
+  assert.equal(project.intent, 'project_discussion');
+  assert.equal(ambiguous.intent, 'meeting_project_clarification');
+  assert.match(ambiguous.text, /book a discovery call with DEKODE.*build a meeting\/calendar app/i);
+});
+
 test('unknown questions are bounded to DEKODE and project discovery', async () => {
   const provider = new KnowledgeConversationProvider();
   const response = await provider.respond('Who won the football match?', { leadProfile: emptyLeadProfile() });

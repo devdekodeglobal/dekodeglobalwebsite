@@ -88,7 +88,7 @@ const ProposalCFS = () => {
             Prototype
           </button>
           <button 
-            className={`sidebar-nav-btn ${view === 'logic' ? 'active' : ''}`}
+            className={`sidebar-nav-btn completed-step ${view === 'logic' ? 'active' : ''}`}
             onClick={() => setView('logic')}
           >
             Allocation Logic Flow
@@ -177,19 +177,7 @@ const ProposalCFS = () => {
                 <span style={{marginLeft: '12px', fontSize: '18px'}}>→</span>
               </a>
               
-              <div style={{ padding: '24px', backgroundColor: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '12px', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px' }}>Demo Access Credentials</div>
-                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                  <div style={{ flex: 1, backgroundColor: '#ffffff', padding: '12px 16px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', border: '1px solid #f1f5f9', minWidth: '130px' }}>
-                    <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px', fontWeight: '600' }}>Admin</div>
-                    <div style={{ fontSize: '15px', color: '#053364', fontWeight: '800', fontFamily: 'monospace' }}>dekode1234</div>
-                  </div>
-                  <div style={{ flex: 1, backgroundColor: '#ffffff', padding: '12px 16px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', border: '1px solid #f1f5f9', minWidth: '130px' }}>
-                    <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px', fontWeight: '600' }}>User</div>
-                    <div style={{ fontSize: '15px', color: '#053364', fontWeight: '800', fontFamily: 'monospace' }}>dekode5678</div>
-                  </div>
-                </div>
-              </div>
+
             </div>
 
             {/* Right Column: Image */}

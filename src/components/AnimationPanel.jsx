@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Server, Database, Cloud, Shield, ShoppingCart, GitMerge, FileText, MessageSquare, Bot, Wrench, Layers } from 'lucide-react';
-import { resolveVisualMode } from '../utils/visualIntent';
+import { CheckCircle2, Server, Database, Cloud, Shield, ShoppingCart, GitMerge, FileText, MessageSquare, Bot, Wrench, Layers, UserRound, Sparkles } from 'lucide-react';
+import { resolveVisualFeatures, resolveVisualMode } from '../utils/visualIntent';
 import BookingSummary from './BookingSummary.jsx';
 
 const CodeLine = ({ delay = 0, width = "100%", color = "rgba(255,255,255,0.2)" }) => (
@@ -12,6 +12,40 @@ const CodeLine = ({ delay = 0, width = "100%", color = "rgba(255,255,255,0.2)" }
     style={{ height: '6px', background: color, borderRadius: '3px', marginBottom: '8px' }}
   />
 );
+
+const ExperienceMapAnimation = ({ features, level }) => {
+  const visibleFeatures = (features.length ? features : ['Experience', 'Content', 'Action'])
+    .slice(0, Math.max(2, Math.min(features.length || 3, level + 1)));
+  return (
+    <div className="experience-map" aria-label="Visual map of the current project requirements">
+      <motion.div
+        className="experience-map-person"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+      >
+        <UserRound size={22} />
+        <span>Visitor</span>
+      </motion.div>
+      <div className="experience-map-path" aria-hidden="true">
+        <motion.span initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} />
+      </div>
+      <div className="experience-map-features">
+        {visibleFeatures.map((feature, index) => (
+          <motion.div
+            key={feature}
+            initial={{ opacity: 0, x: 18 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.12 * index }}
+            className="experience-map-feature"
+          >
+            <Sparkles size={15} />
+            <span>{feature}</span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 // --- Domain Specific Animations ---
 
@@ -348,6 +382,7 @@ export default function AnimationPanel({
   selectedMeetingDateKey = '',
   selectedMeetingSlotId,
   bookingComplete = false,
+  conversationSummary = '',
 }) {
   const [activeTab, setActiveTab] = React.useState('web');
 
@@ -368,6 +403,10 @@ export default function AnimationPanel({
 
   const isMobileAndWeb = projectType === 'Mobile & Web';
   const inferredMode = resolveVisualMode(projectType, messages);
+  const visualFeatures = resolveVisualFeatures([
+    ...messages,
+    ...(conversationSummary ? [{ sender: 'user', text: conversationSummary }] : []),
+  ]);
   const visualMode = isMobileAndWeb && ['web', 'mobile'].includes(inferredMode)
     ? activeTab
     : inferredMode;
@@ -444,6 +483,8 @@ export default function AnimationPanel({
               selectedSlotId={selectedMeetingSlotId}
               bookingComplete={bookingComplete}
             />
+          ) : visualMode === 'journey' ? (
+            <ExperienceMapAnimation features={visualFeatures} level={dynamicLevel} />
           ) : visualMode === 'ai' ? (
             <AIAgentAnimation level={dynamicLevel} />
           ) : visualMode === 'cloud' ? (

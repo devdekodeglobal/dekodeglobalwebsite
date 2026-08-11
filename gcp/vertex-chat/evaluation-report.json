@@ -1,0 +1,398 @@
+{
+  "generatedAt": "2026-08-07T09:02:36.913Z",
+  "cases": 34,
+  "lexical": {
+    "passed": 30,
+    "total": 34,
+    "rate": 0.8823529411764706
+  },
+  "hybrid": {
+    "passed": 0,
+    "total": 0,
+    "rate": null
+  },
+  "results": [
+    {
+      "id": "about-direct",
+      "question": "What does DEKODE do?",
+      "expected": "answer",
+      "lexicalIds": [],
+      "lexicalPass": false
+    },
+    {
+      "id": "about-paraphrase",
+      "question": "Tell me what kind of company you are",
+      "expected": "answer",
+      "lexicalIds": [
+        "company-about",
+        "case-food-manufacturing",
+        "legal-privacy"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "mission",
+      "question": "What is your mission?",
+      "expected": "answer",
+      "lexicalIds": [
+        "company-about"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "why-dekode",
+      "question": "Why should we choose your team?",
+      "expected": "answer",
+      "lexicalIds": [
+        "company-values",
+        "service-custom-ai",
+        "service-web-mobile",
+        "service-integrations",
+        "service-cloud-it"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "services-broad",
+      "question": "What services can you help us with?",
+      "expected": "answer",
+      "lexicalIds": [
+        "legal-privacy",
+        "service-ai-strategy",
+        "service-custom-ai",
+        "service-web-mobile",
+        "service-ecommerce"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "genai",
+      "question": "Can you build an internal generative AI copilot?",
+      "expected": "answer",
+      "lexicalIds": [
+        "solution-generative-ai",
+        "service-custom-ai",
+        "service-ai-strategy",
+        "service-web-mobile",
+        "service-ecommerce"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "agentic",
+      "question": "We need AI agents connected to approved business tools",
+      "expected": "answer",
+      "lexicalIds": [
+        "company-about",
+        "technologies",
+        "solution-agentic-ai",
+        "service-custom-ai",
+        "company-values"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "predictive",
+      "question": "Can machine learning forecast demand from our data?",
+      "expected": "answer",
+      "lexicalIds": [
+        "solution-predictive-ai",
+        "solution-analytical-ai",
+        "service-custom-ai",
+        "service-ai-strategy",
+        "service-cloud-it"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "analytical",
+      "question": "We want AI to find useful patterns in operational data",
+      "expected": "answer",
+      "lexicalIds": [
+        "company-about",
+        "solution-analytical-ai",
+        "service-ai-strategy",
+        "solution-ai-strategy",
+        "solution-predictive-ai"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "mobile",
+      "question": "Do you make iPhone and Android applications?",
+      "expected": "answer",
+      "lexicalIds": [
+        "contact",
+        "company-about",
+        "service-ai-strategy",
+        "service-web-mobile",
+        "solution-mobile-app"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "web",
+      "question": "Can DEKODE build an internal dashboard?",
+      "expected": "answer",
+      "lexicalIds": [
+        "service-custom-ai",
+        "service-web-mobile",
+        "company-about",
+        "service-ai-strategy",
+        "service-ecommerce"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "ecommerce",
+      "question": "We need a smarter online store with product recommendations",
+      "expected": "answer",
+      "lexicalIds": [
+        "service-ecommerce",
+        "service-ai-strategy",
+        "service-web-mobile",
+        "service-cloud-it",
+        "company-about"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "automation",
+      "question": "How can we remove repetitive manual finance workflows?",
+      "expected": "answer",
+      "lexicalIds": [
+        "service-integrations",
+        "process-overview",
+        "process-discover",
+        "process-run-optimise",
+        "solution-process-automation"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "integration",
+      "question": "Can you connect our CRM, payment and email systems?",
+      "expected": "answer",
+      "lexicalIds": [
+        "service-integrations",
+        "contact",
+        "solution-systems-integration",
+        "company-about",
+        "company-values"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "cloud",
+      "question": "Can you migrate and secure our cloud infrastructure?",
+      "expected": "answer",
+      "lexicalIds": [
+        "service-cloud-it",
+        "company-values",
+        "technologies",
+        "solution-web-app",
+        "solution-cloud-solutions"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "technology",
+      "question": "Which cloud platforms do you work with?",
+      "expected": "answer",
+      "lexicalIds": [
+        "technologies",
+        "industries",
+        "service-integrations",
+        "legal-terms",
+        "company-about"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "industries",
+      "question": "Which sectors have you worked in?",
+      "expected": "answer",
+      "lexicalIds": [
+        "industries"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "delivery",
+      "question": "How do you take a project from idea to ongoing support?",
+      "expected": "answer",
+      "lexicalIds": [
+        "process-overview",
+        "company-values",
+        "service-custom-ai",
+        "service-cloud-it",
+        "legal-privacy"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "security-stage",
+      "question": "When do you consider privacy and access control?",
+      "expected": "answer",
+      "lexicalIds": [
+        "legal-privacy",
+        "process-overview",
+        "process-secure",
+        "service-ai-strategy",
+        "service-cloud-it"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "food-case",
+      "question": "Show me your food manufacturing success story",
+      "expected": "answer",
+      "lexicalIds": [
+        "case-food-manufacturing",
+        "case-primary-school",
+        "company-values",
+        "industries",
+        "process-overview"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "school-case",
+      "question": "What did AttendMe achieve for the school?",
+      "expected": "answer",
+      "lexicalIds": [
+        "case-food-manufacturing",
+        "case-primary-school"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "location-paraphrase",
+      "question": "Where are your offices based?",
+      "expected": "answer",
+      "lexicalIds": [
+        "locations"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "location-country",
+      "question": "Do you have a presence in Australia and India?",
+      "expected": "answer",
+      "lexicalIds": [
+        "locations",
+        "service-ecommerce",
+        "legal-terms"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "contact-email",
+      "question": "What email should I use to reach your team?",
+      "expected": "answer",
+      "lexicalIds": [
+        "contact",
+        "company-values",
+        "service-web-mobile",
+        "service-integrations",
+        "legal-privacy"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "contact-typo",
+      "question": "How can I contat your teem?",
+      "expected": "answer",
+      "lexicalIds": [],
+      "lexicalPass": false
+    },
+    {
+      "id": "meeting",
+      "question": "I would like to arrange a discovery call",
+      "expected": "answer",
+      "lexicalIds": [
+        "contact"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "privacy",
+      "question": "How do you handle my personal data?",
+      "expected": "answer",
+      "lexicalIds": [
+        "legal-privacy",
+        "service-cloud-it",
+        "company-about",
+        "service-ai-strategy",
+        "solution-ai-strategy"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "terms",
+      "question": "What are your terms about intellectual property?",
+      "expected": "answer",
+      "lexicalIds": [
+        "legal-terms",
+        "legal-privacy"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "price-unknown",
+      "question": "What is the exact price of a mobile app?",
+      "expected": "answer",
+      "lexicalIds": [
+        "solution-mobile-app",
+        "company-about",
+        "service-web-mobile",
+        "solution-web-app",
+        "legal-terms"
+      ],
+      "lexicalPass": true
+    },
+    {
+      "id": "weather",
+      "question": "Will it rain in Delhi tomorrow?",
+      "expected": "refuse",
+      "lexicalIds": [
+        "locations",
+        "service-ai-strategy",
+        "legal-terms"
+      ],
+      "lexicalPass": false
+    },
+    {
+      "id": "recipe",
+      "question": "Give me a chocolate cake recipe",
+      "expected": "refuse",
+      "lexicalIds": [],
+      "lexicalPass": true
+    },
+    {
+      "id": "random",
+      "question": "quantum banana weather",
+      "expected": "refuse",
+      "lexicalIds": [],
+      "lexicalPass": true
+    },
+    {
+      "id": "politics",
+      "question": "Who should I vote for?",
+      "expected": "refuse",
+      "lexicalIds": [
+        "company-about",
+        "service-ai-strategy",
+        "faq-2"
+      ],
+      "lexicalPass": false
+    },
+    {
+      "id": "medical",
+      "question": "Diagnose this pain in my chest",
+      "expected": "refuse",
+      "lexicalIds": [],
+      "lexicalPass": true
+    }
+  ]
+}

@@ -60,8 +60,8 @@ export default function ProposalExperience({ proposal, onExit }) {
       button.setAttribute('aria-current', isCurrent ? 'step' : 'false')
       
       const btnIndex = proposal.sections.findIndex(s => normaliseText(s.navigationLabel) === buttonLabel)
-      // First 3 steps (Manual, OptiFlow, Prototype) always show ticks; rest show dots
-      if (btnIndex >= 0 && btnIndex < 3) {
+      // First 4 steps (Manual, OptiFlow, Prototype, Allocation Logic Flow) always show ticks; rest show dots
+      if (btnIndex >= 0 && btnIndex < 4) {
         button.classList.add('completed-step')
       } else {
         button.classList.remove('completed-step')

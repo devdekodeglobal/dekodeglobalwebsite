@@ -6,10 +6,13 @@ const PANEL_BY_TOPIC = {
   technologies: 'technologies',
   process: 'process',
   why: 'why',
+  origin: 'overview',
   contact: 'contact',
   location: 'location',
   privacy: 'privacy',
   terms: 'terms',
+  caseStudies: 'portfolio',
+  initiatives: 'overview',
 };
 
 export function getPanelForTopic(topic) {

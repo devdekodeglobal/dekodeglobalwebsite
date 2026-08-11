@@ -13,6 +13,8 @@ const interactiveContent = await readFile(new URL('../src/components/Interactive
 const interactiveStyles = await readFile(new URL('../src/components/interactive-content.css', import.meta.url), 'utf8');
 const meetingScheduler = await readFile(new URL('../src/components/MeetingScheduler.jsx', import.meta.url), 'utf8');
 const bookingSummary = await readFile(new URL('../src/components/BookingSummary.jsx', import.meta.url), 'utf8');
+const typewriterText = await readFile(new URL('../src/components/TypewriterText.jsx', import.meta.url), 'utf8');
+const companyKnowledgePanel = await readFile(new URL('../src/components/CompanyKnowledgePanel.jsx', import.meta.url), 'utf8');
 
 test('uses dynamic viewport units and safe-area spacing for app and voice surfaces', () => {
   assert.match(indexCss, /height:\s*100dvh/);
@@ -21,8 +23,10 @@ test('uses dynamic viewport units and safe-area spacing for app and voice surfac
   assert.match(voiceCss, /env\(safe-area-inset-bottom\)/);
 });
 
-test('keeps one responsive visual panel and removes the fixed 600px mobile frame', () => {
+test('keeps the visual panel restorable while disabling it in the current chat layout', () => {
   assert.equal((chatApp.match(/renderAnimationCard\('responsive-visual-panel'\)/g) || []).length, 1);
+  assert.match(chatApp, /SUPPORTING_VISUAL_PANEL_ENABLED = false/);
+  assert.match(chatApp, /SUPPORTING_VISUAL_PANEL_ENABLED && Boolean/);
   assert.doesNotMatch(chatApp, /renderAnimationCard\('mobile-only'\)/);
   assert.doesNotMatch(indexCss, /width:\s*600px\s*!important/);
   assert.doesNotMatch(indexCss, /\bzoom\s*:/);
@@ -59,8 +63,8 @@ test('keeps the composer responsive with rotating hints and separate voice typin
   assert.match(chatApp, /className="action-pill calendar-entry-button"/);
   assert.match(chatApp, /aria-label="Book a meeting"/);
   assert.match(chatApp, /setStep\('scheduling'\)/);
-  assert.match(chatApp, /companyIntent\.kind === "meeting"/);
-  assert.match(chatApp, /handleOpenMeetingScheduler\(userMessage\)/);
+  assert.match(chatApp, /result\.action === "open_calendar"/);
+  assert.match(chatApp, /activateMeetingScheduler\(\)/);
   assert.match(chatApp, /> Client Portal/);
   assert.doesNotMatch(chatApp, /Access Client Portal|Access client proposal/);
   assert.equal((projectOptions.match(/label:\s*"/g) || []).length, 4);
@@ -72,13 +76,19 @@ test('keeps the composer responsive with rotating hints and separate voice typin
   assert.match(indexCss, /\.contact-panel-grid \.knowledge-panel-button span,[\s\S]*overflow-wrap:\s*anywhere/);
 });
 
+test('caps long answer reveal time instead of typing every character slowly', () => {
+  assert.match(typewriterText, /maxAnimationDuration = 1800/);
+  assert.match(typewriterText, /charactersPerTick/);
+  assert.match(typewriterText, /text\.slice\(0, nextIndex\)/);
+});
+
 test('switches legal documents in one shared panel and tightens story spacing', () => {
   assert.match(interactiveContent, /activeLegalDocument/);
   assert.match(interactiveContent, /role="tablist"/);
   assert.match(interactiveContent, /role="tabpanel"/);
   assert.doesNotMatch(interactiveContent, /<details/);
   assert.match(interactiveStyles, /\.company-legal-toggle/);
-  assert.match(interactiveStyles, /padding: clamp\(3rem, 5vw, 4\.75rem\) 0/);
+  assert.match(interactiveStyles, /padding: clamp\(3rem, 6vw, 5\.5rem\) 0/);
   assert.match(interactiveStyles, /min-height: 380px/);
 });
 
@@ -94,15 +104,18 @@ test('renders composer inspiration only on the home screen', () => {
 });
 
 test('provides one translucent back-to-top control across every DEKODE layout', () => {
-  assert.match(app, /<BackToTopButton key=\{proposal \? 'proposal' : 'site'\}/);
+  assert.match(app, /<BackToTopButton[^>]*disabled=\{isChatActive && !proposal\}/);
+  assert.match(chatApp, /onChatModeChange\?\.\(step !== "centered"\)/);
+  assert.match(backToTop, /if \(disabled\)/);
+  assert.match(backToTop, /storySections\[2\]/);
   assert.match(backToTop, /\.app-container, \.chat-scroll-area, \.proposal-source-stage/);
   assert.match(backToTop, /document\.addEventListener\('scroll', handleScroll, true\)/);
   assert.match(backToTop, /aria-label="Back to top"/);
   assert.match(backToTop, /reduceMotion \? 'auto' : 'smooth'/);
   assert.match(indexCss, /\.back-to-top-button\s*\{[^}]*width:\s*44px[^}]*height:\s*44px/s);
-  assert.match(indexCss, /right:\s*calc\(32px \+ env\(safe-area-inset-right, 0px\)\)/);
-  assert.match(indexCss, /bottom:\s*calc\(32px \+ env\(safe-area-inset-bottom, 0px\)\)/);
-  assert.match(indexCss, /right:\s*calc\(20px \+ env\(safe-area-inset-right, 0px\)\)/);
+  assert.match(indexCss, /right:\s*calc\(40px \+ env\(safe-area-inset-right, 0px\)\)/);
+  assert.match(indexCss, /bottom:\s*calc\(40px \+ env\(safe-area-inset-bottom, 0px\)\)/);
+  assert.match(indexCss, /right:\s*calc\(24px \+ env\(safe-area-inset-right, 0px\)\)/);
   assert.match(indexCss, /background:\s*rgba\(5, 51, 100, 0\.72\)/);
 });
 
@@ -178,17 +191,83 @@ test('keeps booking controls accessible and motion-sensitive', () => {
 test('keeps consent aligned and resumes normal chat after booking', () => {
   assert.match(indexCss, /\.meeting-consent\s*\{[^}]*align-items:\s*center/);
   assert.match(indexCss, /\.meeting-consent input\s*\{[^}]*margin:\s*0/);
-  assert.match(chatApp, /const needsIntentRouting = \["centered", "triage", "company", "done"\]\.includes\(step\)/);
-  assert.match(chatApp, /step === "centered" \|\| step === "triage" \|\| step === "done"/);
-  assert.match(chatApp, /readOnly:\s*step === "scheduling"/);
-  assert.doesNotMatch(chatApp, /readOnly:\s*step === "scheduling" \|\| step === "done"/);
+  assert.match(chatApp, /handleModelPrompt\(userMessage\)/);
+  assert.match(chatApp, /result\.action === "open_calendar"/);
+  assert.match(chatApp, /activateMeetingScheduler\(\)/);
+  assert.doesNotMatch(chatApp, /readOnly:\s*step === "scheduling"/);
+  assert.doesNotMatch(chatApp, /if \(step === "scheduling" \|\| isTyping\) return/);
   assert.match(chatApp, /if \(step === "centered" \|\| step === "done"\) setStep\("company"\)/);
   assert.match(chatApp, /We have sent the invitation and meeting details to your email/);
   assert.doesNotMatch(chatApp, /Google Calendar has sent the invitation/);
 });
 
-test('shows numbered progress only during staged discovery questions', () => {
-  assert.match(chatApp, /const showDiscoveryProgress = \[/);
-  assert.match(chatApp, /\{showDiscoveryProgress && <div/);
-  assert.doesNotMatch(chatApp, /showDiscoveryProgress[^;]*"scheduling"/s);
+test('removes obsolete numbered progress from dynamic project conversations', () => {
+  assert.doesNotMatch(chatApp, /showDiscoveryProgress/);
+  assert.doesNotMatch(chatApp, /className="step-dot"/);
+});
+
+test('centers chat, aligns the shared header, and distinguishes message roles', () => {
+  assert.match(chatApp, /<header className="chat-header">/);
+  assert.match(indexCss, /--conversation-max-width:\s*880px/);
+  assert.match(indexCss, /\.chat-section\s*\{[^}]*max-width:\s*var\(--conversation-max-width\)[^}]*margin:\s*0 auto/s);
+  assert.match(indexCss, /\.chat-header\s*\{[^}]*display:\s*flex[^}]*align-items:\s*center[^}]*justify-content:\s*space-between/s);
+  assert.match(indexCss, /\.message-ai \.message-bubble\s*\{[^}]*background:\s*var\(--chat-ai-bg\)/s);
+  assert.match(indexCss, /\.message-user \.message-bubble\s*\{[^}]*background:\s*var\(--chat-user-bg\)/s);
+  assert.match(indexCss, /\.chat-input-wrapper \.input-container\s*\{\s*max-width:\s*none/);
+});
+
+test('renders contextual suggestions through the normal chat pipeline', () => {
+  assert.match(chatApp, /aria-label="Suggested follow-up questions"/);
+  assert.match(chatApp, /handleModelPrompt\(suggestion\.prompt\)/);
+  assert.match(chatApp, /usedSuggestions:/);
+  assert.match(chatApp, /suggestions:\s*result\.suggestions \|\| \[\]/);
+});
+
+test('uses a readable translucent booking surface', () => {
+  assert.match(indexCss, /\.meeting-scheduler\s*\{[^}]*background:\s*rgba\(7, 24, 45, 0\.3[48]\)[^}]*backdrop-filter:\s*blur/s);
+  assert.match(indexCss, /\.meeting-booking-fields\s*\{[^}]*background:\s*rgba\(8, 26, 49, 0\.42\)[^}]*backdrop-filter:\s*blur/s);
+});
+
+test('enters chat mode before waiting for the Gemini response', () => {
+  const handlerStart = chatApp.indexOf('const handleModelPrompt = async');
+  const handlerEnd = chatApp.indexOf('const handleProposalPrompt = async');
+  const modelHandler = chatApp.slice(handlerStart, handlerEnd);
+  assert.ok(handlerStart >= 0 && handlerEnd > handlerStart);
+  assert.ok(modelHandler.indexOf('if (step === "centered") setStep("triage")') >= 0);
+  assert.ok(
+    modelHandler.indexOf('setStep("triage")') < modelHandler.indexOf('fetch("/api/chat"'),
+    'chat mode should render before the model request completes',
+  );
+});
+
+test('presents Gemini answers with topic, lead, points, and a separated follow-up', () => {
+  assert.match(typewriterText, /className="answer-topic"/);
+  assert.match(typewriterText, /className="answer-lead"/);
+  assert.match(typewriterText, /className="answer-points"/);
+  assert.match(typewriterText, /className="answer-follow-up"/);
+  assert.match(chatApp, /topic=\{msg\.companyTopic\}/);
+  assert.match(typewriterText, /const sentenceCount = sentences\.length/);
+  assert.match(typewriterText, /const body = lead \? sentences\.join\(' '\) : ''/);
+  assert.match(typewriterText, /bullets\.slice\(0, 8\)/);
+  assert.match(typewriterText, /const bulletPattern/);
+});
+
+test('routes project evidence to a verified visual portfolio with real media', () => {
+  assert.match(chatApp, /const resolvedCompanyTopic/);
+  assert.match(chatApp, /const verifiedCompanyTopic/);
+  assert.match(chatApp, /verifiedCompanyTopic \|\| result\.topic/);
+  assert.match(typewriterText, /answer-presentation/);
+  assert.match(indexCss, /\.portfolio-card-rail/);
+  assert.match(indexCss, /scroll-snap-type:\s*x mandatory/);
+  assert.match(companyKnowledgePanel, /function PortfolioPanel/);
+  assert.match(companyKnowledgePanel, /case-study-food-manufacturing\.jpg/);
+  assert.match(companyKnowledgePanel, /portfolio\/chauffr\.jpg/);
+});
+
+test('opens the existing scheduler from an AI qualification action', () => {
+  assert.match(chatApp, /action\.type === "open_booking"/);
+  assert.match(chatApp, /handleOpenMeetingScheduler\(\)/);
+  assert.match(chatApp, /conversation: requestConversation/);
+  assert.match(chatApp, /setConversationMemory\(result\.conversation\)/);
+  assert.match(animationPanel, /conversationSummary/);
 });
