@@ -51,3 +51,63 @@ test('retrieves verified location and legal documents for Gemini grounding', () 
   assert.ok(termsMatches.some((match) => match.id === 'terms-of-service'));
   assert.match(privacyMatches.find((match) => match.id === 'privacy-policy').text, /pm@dekodeglobal\.com/);
 });
+
+test('retrieves CHAUFFR from the old-site portfolio catalogue', () => {
+  const { matches, context } = formatKnowledgeContext('Tell me about CHAUFFR');
+  assert.equal(matches[0]?.id, 'portfolio-chauffr');
+  assert.match(context, /Android and iOS devices/i);
+  assert.match(context, /integrated web portal/i);
+});
+
+test('retrieves verified case studies and portfolio work for broad project questions', () => {
+  const broadMatches = retrieveCompanyKnowledge('Show me DEKODE case studies and past work');
+  const projectMatches = retrieveCompanyKnowledge('what are dekode projects');
+  const foodMatches = retrieveCompanyKnowledge('What did DEKODE build for food manufacturing?');
+  const schoolMatches = retrieveCompanyKnowledge('Tell me about the AttendMe primary school project');
+
+  assert.equal(broadMatches[0]?.id, 'project-evidence-catalogue');
+  assert.equal(projectMatches[0]?.id, 'project-evidence-catalogue');
+  assert.ok(foodMatches.some((match) => match.id === 'case-study-food-manufacturing'));
+  assert.ok(schoolMatches.some((match) => match.id === 'case-study-primary-school'));
+  assert.match(projectMatches[0].text, /CHAUFFR/i);
+  assert.match(projectMatches[0].text, /SmartBroker/i);
+  assert.match(projectMatches[0].text, /Food Manufacturing Company/i);
+});
+
+test('prioritises project evidence across portfolio and case-study wording', () => {
+  const broadQueries = [
+    'what are dekode projects',
+    'show me your portfolio',
+    'what projects has dekode built',
+    'case studies',
+  ];
+
+  for (const question of broadQueries) {
+    const matches = retrieveCompanyKnowledge(question);
+    assert.equal(matches[0]?.id, 'project-evidence-catalogue', question);
+    assert.doesNotMatch(matches[0]?.id || '', /company-overview/, question);
+  }
+
+  assert.equal(retrieveCompanyKnowledge('tell me about Beston')[0]?.id, 'case-study-food-manufacturing');
+  assert.equal(retrieveCompanyKnowledge('what is CHAUFFR')[0]?.id, 'portfolio-chauffr');
+
+  const school = retrieveCompanyKnowledge('what platform was used for the primary school solution');
+  assert.equal(school[0]?.id, 'case-study-primary-school');
+  assert.match(school[0]?.text || '', /Amazon Web Services|AWS/i);
+});
+
+test('includes structured old-site evidence in project documents', () => {
+  const chauffr = retrieveCompanyKnowledge('what is CHAUFFR')[0];
+  const beston = retrieveCompanyKnowledge('tell me about Beston')[0];
+
+  assert.match(chauffr.text, /Platform: Android, iOS, and web/i);
+  assert.match(chauffr.text, /Deliverables:/i);
+  assert.match(beston.text, /Obstacles:/i);
+  assert.match(beston.text, /Delivery approach:/i);
+});
+
+test('retrieves reviewed delivery, Beston, and BRIDGE evidence', () => {
+  assert.equal(retrieveCompanyKnowledge('What happens during discovery?')[0]?.id, 'process-discover');
+  assert.equal(retrieveCompanyKnowledge('How did DEKODE help Beston?')[0]?.id, 'case-study-food-manufacturing');
+  assert.equal(retrieveCompanyKnowledge('What is BRIDGE?')[0]?.id, 'initiative-bridge');
+});

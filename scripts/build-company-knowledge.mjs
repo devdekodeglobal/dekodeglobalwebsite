@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sourceRoot = resolve(projectRoot, '..', 'Dekode');
 const outputFile = resolve(projectRoot, 'src', 'knowledge', 'companyKnowledge.json');
+const vertexOutputFile = resolve(projectRoot, 'gcp', 'vertex-chat', 'companyKnowledge.json');
 const optional = process.argv.includes('--optional');
 
 const sourceFiles = {
@@ -12,9 +13,13 @@ const sourceFiles = {
   services: resolve(sourceRoot, 'src', 'pages', 'Services.jsx'),
   home: resolve(sourceRoot, 'src', 'pages', 'Home.jsx'),
   delivery: resolve(sourceRoot, 'src', 'components', 'DeliveryFlow.jsx'),
+  foodManufacture: resolve(sourceRoot, 'src', 'pages', 'FoodManufacture.jsx'),
+  primarySchool: resolve(sourceRoot, 'src', 'pages', 'PrimarySchool.jsx'),
   contact: resolve(sourceRoot, 'src', 'pages', 'Contact.jsx'),
   privacy: resolve(sourceRoot, 'src', 'pages', 'PrivacyPolicy.jsx'),
   terms: resolve(sourceRoot, 'src', 'pages', 'TermsOfService.jsx'),
+  portfolio: resolve(sourceRoot, 'src', 'components', 'PortfolioShowcase.jsx'),
+  bridge: resolve(sourceRoot, 'src', 'components', 'BridgeTeaser.jsx'),
 };
 
 const missingSourceFiles = [];
@@ -131,6 +136,62 @@ const extractPrinciples = () => {
   )].map(([, name, description]) => ({ name: clean(name), description: clean(description) }));
 };
 
+const extractCaseStudy = ({ id, sourceKey, outcomeSection, sourceReference, aliases = [] }) => {
+  const source = entries[sourceKey];
+  const outcomeBlock = matchRaw(source, outcomeSection, `${id} case-study outcome`);
+  return {
+    id,
+    name: matchOne(source, /<h1[^>]*>([\s\S]*?)<\/h1>/, `${id} name`),
+    industry: matchOne(source, /<h3>Industry<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/, `${id} industry`),
+    platform: matchOne(source, /<h3>Solution Platform<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/, `${id} platform`),
+    challenge: matchOne(source, /<h3>Challenge<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/, `${id} challenge`),
+    solution: matchOne(source, /<h3>Solution<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/, `${id} solution`),
+    outcome: [...outcomeBlock.matchAll(/<p>([\s\S]*?)<\/p>/g)]
+      .map((match) => clean(match[1]))
+      .join(' '),
+    aliases,
+    sourceReference,
+  };
+};
+
+const extractInitiatives = () => {
+  const source = entries.bridge;
+  const regions = [...source.matchAll(
+    /<h3>([\s\S]*?)<\/h3>\s*<p>([\s\S]*?)<\/p>/g,
+  )].map(([, name, description]) => ({
+    name: clean(name),
+    description: clean(description),
+  }));
+  return [{
+    id: 'bridge',
+    name: 'BRIDGE',
+    title: matchOne(source, /<h2 className="bridge-title">([\s\S]*?)<\/h2>/, 'BRIDGE title'),
+    status: matchOne(source, /<div className="bridge-badge">([\s\S]*?)<\/div>/, 'BRIDGE status'),
+    summary: matchOne(source, /<p className="bridge-subtitle">([\s\S]*?)<\/p>/, 'BRIDGE summary'),
+    regions,
+    pillars: [...source.matchAll(/<div className="pillar">([\s\S]*?)<\/div>/g)]
+      .map((match) => clean(match[1])),
+    aliases: ['BRIDGE Initiative', 'Australia India bridge'],
+    sourceReference: 'DEKODE/src/components/BridgeTeaser.jsx',
+  }];
+};
+
+const extractPortfolioProjects = () => {
+  const block = matchRaw(entries.portfolio, /const projects = \[([\s\S]*?)\n  \];/, 'portfolio projects');
+  const projects = [...block.matchAll(
+    /\{\s*id:\s*\d+,[\s\S]*?title:\s*'([^']+)'[\s\S]*?paragraphs:\s*\[([\s\S]*?)\]\s*\}/g,
+  )].map(([, name, paragraphs]) => ({
+    id: clean(name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+    name: clean(name),
+    description: [...paragraphs.matchAll(/'([^']+)'/g)]
+      .map((match) => clean(match[1]))
+      .join(' '),
+    sourceReference: 'DEKODE/src/components/PortfolioShowcase.jsx',
+  }));
+  if (projects.length !== 6) throw new Error(`Expected 6 portfolio projects, found ${projects.length}`);
+  return projects;
+};
+
 const extractLegalSections = (source, expectedCount, label) => {
   const sections = [...source.matchAll(
     /<section className="[^"]*"[\s\S]*?<h2[^>]*>([\s\S]*?)<\/h2>([\s\S]*?)<\/section>/g,
@@ -164,6 +225,23 @@ const services = extractServices();
 const developmentProcess = extractProcess();
 const whyChooseUs = extractDifferences();
 const values = extractPrinciples();
+const caseStudies = [
+  extractCaseStudy({
+    id: 'food-manufacturing',
+    sourceKey: 'foodManufacture',
+    outcomeSection: /<section className="fm-outcomes-section[^"]*">([\s\S]*?)<\/section>/,
+    sourceReference: 'DEKODE/src/pages/FoodManufacture.jsx',
+    aliases: ['Beston'],
+  }),
+  extractCaseStudy({
+    id: 'primary-school',
+    sourceKey: 'primarySchool',
+    outcomeSection: /<section className="ps-help-section[^"]*">([\s\S]*?)<\/section>/,
+    sourceReference: 'DEKODE/src/pages/PrimarySchool.jsx',
+  }),
+];
+const portfolioProjects = extractPortfolioProjects();
+const initiatives = extractInitiatives();
 const solutionAreas = [
   {
     id: 'ai-strategy',
@@ -276,6 +354,9 @@ const knowledge = {
   capabilities: [...new Set(services.flatMap((service) => service.capabilities))],
   whyChooseUs,
   values,
+  caseStudies,
+  portfolioProjects,
+  initiatives,
   developmentProcess,
   contact: {
     email: entries.contact.match(/mailto:([^"]+)/)?.[1] || null,
@@ -335,6 +416,8 @@ const knowledge = {
     technologies: ['technology', 'technologies', 'tech', 'tech stack', 'stack', 'platforms', 'tools'],
     process: ['process', 'method', 'methodology', 'workflow', 'delivery', 'how you work', 'approach'],
     why: ['why choose', 'different', 'difference', 'values', 'culture', 'principles'],
+    caseStudies: ['case study', 'case studies', 'success story', 'success stories', 'portfolio', 'past work', 'projects', 'clients', 'food manufacturing', 'beston', 'primary school', 'attendme'],
+    initiatives: ['initiative', 'initiatives', 'bridge', 'bridge initiative', 'australia india bridge'],
     company: ['dekode', 'company', 'business', 'who are you', 'about you', 'what do you do'],
     contact: ['contact', 'contact us', 'email', 'phone', 'whatsapp', 'get in touch', 'reach you'],
     location: ['location', 'locations', 'located', 'address', 'office', 'offices', 'where is', 'where are you', 'where are you based', 'headquarters', 'hq'],
@@ -344,5 +427,9 @@ const knowledge = {
 };
 
 await mkdir(dirname(outputFile), { recursive: true });
-await writeFile(outputFile, `${JSON.stringify(knowledge, null, 2)}\n`, 'utf8');
-console.log(`Generated ${outputFile} from ${knowledge.source.files.length} DEKODE source files.`);
+const serializedKnowledge = `${JSON.stringify(knowledge, null, 2)}\n`;
+await Promise.all([
+  writeFile(outputFile, serializedKnowledge, 'utf8'),
+  writeFile(vertexOutputFile, serializedKnowledge, 'utf8'),
+]);
+console.log(`Generated synchronized website and Vertex knowledge from ${knowledge.source.files.length} DEKODE source files.`);

@@ -24,25 +24,34 @@ test("content actions bridge into the existing composer without auto-send", () =
 
 test("all requested story sections and state controls are present", () => {
   for (const label of [
-    "What DEKODE builds",
-    "Selected work",
-    "How DEKODE works",
-    "Industries and solutions",
-    "Have an idea?",
+    "Start a project",
+    "companyKnowledge.company.belief",
+    "companyKnowledge.company.about",
+    "The DEKODE standard",
+    "Capabilities",
+    "Success stories",
+    "Methodology",
+    'eyebrow="Services"',
     "Contact, locations and policies",
   ]) assert.match(sections, new RegExp(label.replace(/[?]/g, "\\?")));
   assert.match(sections, /activeCapability/);
   assert.match(sections, /activeProject/);
   assert.match(sections, /activeStage/);
   assert.match(sections, /activeIndustry/);
+  assert.ok(sections.indexOf('Start a project') < sections.indexOf('Capabilities'));
+  assert.ok(sections.indexOf('Capabilities') < sections.indexOf('Success stories'));
+  assert.ok(sections.indexOf('Success stories') < sections.indexOf('Methodology'));
+  assert.doesNotMatch(sections, /Built for adoption, not applause/);
 });
 
 test("structured content is sourced and responsive fallbacks are available", () => {
   assert.match(content, /sourceReference/);
   assert.match(content, /capabilities:/);
   assert.match(content, /selectedWork:/);
+  assert.doesNotMatch(content, /CHAUFFR/);
   assert.match(content, /deliveryProcess:/);
   assert.match(content, /industries:/);
+  assert.doesNotMatch(content, /CHAUFFR/);
   assert.match(sections, /companyKnowledge\.legal/);
   assert.match(sections, /companyKnowledge\.contact\.locations/);
   assert.match(sections, /role="tablist"/);
@@ -54,3 +63,25 @@ test("structured content is sourced and responsive fallbacks are available", () 
   assert.match(css, /content-visibility:\s*auto/);
 }
 );
+
+test("mobile content uses cover flow and centered stacked-card navigation", () => {
+  assert.match(sections, /className="star-coverflow-track"/);
+  assert.match(sections, /drag=\{shouldReduceMotion \? false : "x"\}/);
+  assert.match(sections, /onDragEnd=\{handleStarDragEnd\}/);
+  assert.match(sections, /ArrowLeft/);
+  assert.match(sections, /ArrowRight/);
+  assert.match(sections, /star-carousel-status/);
+  assert.match(sections, /getCoverflowClass/);
+  assert.match(sections, /stacked-card-rail/g);
+  assert.match(sections, /syncRailSelection/);
+  assert.doesNotMatch(sections, /Current stage|CheckCircle2/);
+  assert.doesNotMatch(sections, /Selected capability|Sparkles|capability-detail-mark/);
+  assert.match(css, /perspective:\s*1200px/);
+  assert.match(css, /transform-style:\s*preserve-3d/);
+  assert.match(css, /\.star-principles article\.is-next[^}]*rotateY\(-48deg\)/s);
+  assert.match(css, /\.conversion-actions\s*\{[^}]*width:\s*min\(100% - 1\.5rem, 19rem\)/s);
+  assert.match(css, /\.story-section\s*\{[^}]*text-align:\s*left/s);
+  assert.match(css, /\.star-section \.content-section-heading\s*\{[^}]*text-align:\s*center/s);
+  assert.match(css, /\.stacked-card-rail\s*\{[^}]*overflow-x:\s*auto[^}]*scroll-snap-type:\s*x mandatory/s);
+  assert.match(css, /\.methodology-detail\s*\{[^}]*align-items:\s*flex-start[^}]*border-top:\s*3px solid/s);
+});

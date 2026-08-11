@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback, Suspense } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Canvas } from "@react-three/fiber";
 import {
   Send,
   CheckCircle2,
@@ -10,14 +9,11 @@ import {
   ChevronDown,
   LockKeyhole,
   X,
-  Sun,
-  Moon,
 } from "lucide-react";
 import AnimationPanel from "./AnimationPanel";
 import CompanyKnowledgePanel from "./CompanyKnowledgePanel";
 import ParticleBackground from "./ParticleBackground";
-import TypewriterText from "./TypewriterText";
-import HeroRobotModel from "./HeroRobotModel";
+import TypewriterText, { FormattedText } from "./TypewriterText";
 import HeroScenery from "./HeroScenery";
 import DekodeVoiceEntry from "./voice/DekodeVoiceEntry";
 import DekodeVoiceSession from "./voice/DekodeVoiceSession";
@@ -25,28 +21,19 @@ import MeetingScheduler from "./MeetingScheduler";
 import { voiceConfig } from "../voice/config";
 import { BrowserSpeechToTextProvider } from "../voice/providers/browserSpeechToTextProvider";
 import { placeholderInterval, placeholderMessages } from "./chatComposerConfig";
+import { PROJECT_OPTIONS } from "../config/projectOptions";
 import {
-  findProjectOption,
-  PROJECT_OPTIONS,
-} from "../config/projectOptions";
-import {
-  extractDomain,
-  detectTone,
-  extractTag,
-  getTypingDelay,
-  generateAudienceResponse,
-  generateTimelineResponse,
-  isTooVague,
-  detectPlatform,
-  generateCustomPlatformQuestion,
-  generateCustomComplexityQuestion,
-} from "../utils/chatIntelligence";
-import { getIntakeClarification } from "../utils/messageQuality";
-import {
+  beginConversationTurn,
+  buildConversationDirective,
+  buildProjectConversationQuery,
   classifyCompanyIntent,
+  createConversationMemory,
+  completeConversationTurn,
   createCompanyConversationContext,
   generateCompanyResponse,
-  leaveCompanyConversation,
+  generateProjectResponse,
+  getSensitiveRequestRefusal,
+  markBookingInitiated,
   rememberCompanyTurn,
 } from "../knowledge";
 import {
@@ -107,6 +94,8 @@ const PROJECT_OPTION_ROWS = [
   PROJECT_OPTIONS,
 ];
 
+export const SUPPORTING_VISUAL_PANEL_ENABLED = false;
+
 export default function ChatApp({
   proposalContext = null,
   proposalChatEnabled = true,
@@ -115,9 +104,11 @@ export default function ChatApp({
   onProposalSection,
   onProposalClarification,
   onCloseProposalChat,
+  onChatModeChange,
   isProposalChatOpen = false,
 }) {
   const [messages, setMessages] = useState([]);
+  const [conversationMemory, setConversationMemory] = useState(() => createConversationMemory());
   const [realTime, setRealTime] = useState(() => {
     // Start 6 hours in the past to trigger the entrance animation
     const d = new Date();
@@ -125,8 +116,6 @@ export default function ChatApp({
     return d;
   });
 
-  const TIMES_OF_DAY = useMemo(() => ["morning", "noon", "evening", "night"], []);
-  
   const timeOfDay = useMemo(() => {
     const hour = realTime.getHours();
     if (hour >= 5 && hour < 11) return "morning";
@@ -167,11 +156,6 @@ export default function ChatApp({
   const [step, setStep] = useState("centered");
   const [projectType, setProjectType] = useState(null);
   const [gatheredTags, setGatheredTags] = useState([]);
-  const [chatContext, setChatContext] = useState({
-    projectType: null,
-    domain: null,
-    tone: "neutral",
-  });
   const [companyPanel, setCompanyPanel] = useState(null);
   const [meetingSlots, setMeetingSlots] = useState([]);
   const [selectedMeetingDateKey, setSelectedMeetingDateKey] = useState("");
@@ -188,6 +172,10 @@ export default function ChatApp({
   const speechProviderRef = useRef(null);
   const committedTranscriptRef = useRef("");
   const voiceStatusTimerRef = useRef(null);
+
+  useEffect(() => {
+    onChatModeChange?.(step !== "centered");
+  }, [onChatModeChange, step]);
 
   useEffect(() => {
     if (proposalContext) {
@@ -313,19 +301,11 @@ export default function ChatApp({
       );
   }, []);
 
-  const simulateAiTyping = (text, metadata = {}) => {
-    setIsTyping(true);
-    const delay = getTypingDelay(text);
-    setTimeout(() => {
-      setIsTyping(false);
-      setMessages((prev) => [
-        ...prev,
-        { id: Date.now(), sender: "ai", text: cleanAssistantText(text), ...metadata },
-      ]);
-    }, delay);
-  };
-
   const respondWithoutProject = (userMessage, responseText) => {
+    const intent = classifyCompanyIntent(userMessage, companyContextRef.current);
+    const turn = beginConversationTurn(conversationMemory, userMessage, intent.kind);
+    const directive = buildConversationDirective(turn);
+    setConversationMemory(completeConversationTurn(turn, responseText, directive));
     setMessages((prev) => [
       ...prev,
       { id: Date.now(), sender: "user", text: userMessage },
@@ -336,55 +316,32 @@ export default function ChatApp({
     setCompanyPanel(null);
   };
 
-  const startConversation = (initialMessage, preserveHistory = false) => {
-    const userEntry = { id: Date.now(), sender: "user", text: initialMessage };
-    setMessages((prev) =>
-      preserveHistory ? [...prev, userEntry] : [userEntry],
-    );
-    setCompanyPanel(null);
-    companyContextRef.current = leaveCompanyConversation(
-      companyContextRef.current,
-    );
-
-    const matchedOption = findProjectOption(initialMessage);
-    const finalProjectType = matchedOption?.label || "Custom Project";
-
-    setProjectType(finalProjectType);
-    setGatheredTags([finalProjectType]);
-    setChatContext((prev) => ({ ...prev, projectType: finalProjectType }));
-
-    if (finalProjectType === "Custom Project") {
-      setStep("custom_discovery_problem");
-      if (isTooVague(initialMessage)) {
-        simulateAiTyping(
-          "That sounds interesting! Could you describe it in a bit more detail? What's the core problem you're trying to solve?",
-        );
-      } else {
-        const prefix = initialMessage.split(" ").slice(0, 4).join(" ");
-        simulateAiTyping(
-          `A ${prefix}... that sounds unique! To help us plan the right architecture, what is the core problem this project solves?`,
-        );
-      }
-      return;
-    }
-
-    setStep("gathering_audience");
-
-    simulateAiTyping(matchedOption.openingQuestion);
+  const startConversation = (initialMessage) => {
+    handleModelPrompt(initialMessage);
   };
 
   const handleOptionSelect = (option) => {
     startConversation(option);
   };
 
-  const handleOpenMeetingScheduler = (requestedByUser = '') => {
-    const userMessage = typeof requestedByUser === 'string' ? requestedByUser.trim() : '';
+  const activateMeetingScheduler = () => {
     setCompanyPanel(null);
     setProjectType('Discovery Call');
     setGatheredTags(['Meeting']);
     setMeetingSlots([]);
     setSelectedMeetingDateKey("");
     setSelectedMeetingSlotId(null);
+    setConversationMemory((current) => {
+      const next = markBookingInitiated(current);
+      console.info('[DEKODE Chat] booking initiated', next.sessionId.slice(0, 12));
+      return next;
+    });
+    setStep('scheduling');
+  };
+
+  const handleOpenMeetingScheduler = (requestedByUser = '') => {
+    const userMessage = typeof requestedByUser === 'string' ? requestedByUser.trim() : '';
+    activateMeetingScheduler();
     setMessages((current) => [
       ...current,
       ...(userMessage ? [{ id: Date.now(), sender: 'user', text: userMessage }] : []),
@@ -394,7 +351,6 @@ export default function ChatApp({
         text: 'Here is our live calendar availability. Choose a date and time that works for you.',
       },
     ]);
-    setStep('scheduling');
   };
 
   const handleMeetingSlotsChange = useCallback((nextSlots) => {
@@ -427,11 +383,8 @@ export default function ChatApp({
       isCompanyRelated: true,
       topic: intent.topic || companyContextRef.current.lastTopic || "company",
     });
-
-    const history = messages.slice(-6).map((message) => ({
-      role: message.sender === "ai" ? "model" : "user",
-      text: message.text,
-    }));
+    const fallbackTurn = beginConversationTurn(conversationMemory, userMessage, intent.kind);
+    const fallbackDirective = buildConversationDirective(fallbackTurn);
 
     setMessages((prev) => [
       ...prev,
@@ -449,10 +402,18 @@ export default function ChatApp({
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ question: userMessage, history }),
+        body: JSON.stringify({
+          question: userMessage,
+          conversation: conversationMemory,
+          usedSuggestions: messages
+            .flatMap((message) => message.suggestions || [])
+            .map((suggestion) => suggestion.label)
+            .slice(-8),
+        }),
       });
       const result = await response.json();
       if (!response.ok || !result.answer) throw new Error(result.error);
+      if (result.conversation) setConversationMemory(result.conversation);
       setMessages((prev) => [
         ...prev,
         {
@@ -460,10 +421,16 @@ export default function ChatApp({
           sender: "ai",
           text: cleanAssistantText(result.answer),
           companyTopic: fallbackResponse.topic,
-          suggestions: fallbackResponse.suggestions,
+          suggestions: result.suggestions || [],
+          actions: result.actions || [],
         },
       ]);
     } catch {
+      setConversationMemory(completeConversationTurn(
+        fallbackTurn,
+        fallbackResponse.text,
+        fallbackDirective,
+      ));
       setMessages((prev) => [
         ...prev,
         {
@@ -471,8 +438,94 @@ export default function ChatApp({
           sender: "ai",
           text: cleanAssistantText(fallbackResponse.text),
           companyTopic: fallbackResponse.topic,
-          suggestions: fallbackResponse.suggestions,
+          suggestions: [],
         },
+      ]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
+  const handleModelPrompt = async (userMessage) => {
+    if (!userMessage.trim() || isTyping) return;
+    const requestConversation = conversationMemory;
+    setMessages((current) => [
+      ...current,
+      { id: Date.now(), sender: "user", text: userMessage },
+    ]);
+    if (step === "centered") setStep("triage");
+    setIsTyping(true);
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          question: userMessage,
+          conversation: requestConversation,
+          usedSuggestions: messages
+            .flatMap((message) => message.suggestions || [])
+            .map((suggestion) => suggestion.label)
+            .slice(-8),
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok || !result.answer) throw new Error(result.error);
+      if (result.conversation) setConversationMemory(result.conversation);
+
+      const visualIntent = classifyCompanyIntent(userMessage, companyContextRef.current);
+      const verifiedCompanyTopic = visualIntent.kind === "company" && visualIntent.topic;
+      if (result.action === "open_calendar") {
+        activateMeetingScheduler();
+      } else if (verifiedCompanyTopic || result.action === "show_company_panel" || [
+        "company_info", "pricing", "case_study", "methodology",
+      ].includes(result.intent)) {
+        const resolvedCompanyTopic = result.intent === "case_study"
+          ? "caseStudies"
+          : verifiedCompanyTopic || result.topic || "company";
+        const company = generateCompanyResponse(userMessage, {
+          ...visualIntent,
+          isCompanyRelated: true,
+          topic: resolvedCompanyTopic,
+        });
+        companyContextRef.current = rememberCompanyTurn(companyContextRef.current, company.topic);
+        setProjectType(null);
+        setCompanyPanel(company);
+        setStep("company");
+      } else if (result.action === "show_project_panel" || result.intent === "project_build") {
+        const project = generateProjectResponse(buildProjectConversationQuery(
+          userMessage,
+          requestConversation.recentMessages,
+        ));
+        setCompanyPanel(null);
+        setProjectType(project.projectType);
+        setGatheredTags([project.projectType]);
+        setStep("project");
+      } else if (!["scheduling", "done"].includes(step)) {
+        setCompanyPanel(null);
+        setProjectType(null);
+        setStep("triage");
+      }
+
+      setMessages((current) => [
+        ...current,
+        {
+          id: Date.now() + 1,
+          sender: "ai",
+          text: cleanAssistantText(result.answer),
+          companyTopic: result.topic,
+          suggestions: result.suggestions || [],
+          actions: result.actions || [],
+        },
+      ]);
+    } catch {
+      const intent = classifyCompanyIntent(userMessage, companyContextRef.current);
+      const fallback = intent.kind === "project"
+        ? generateProjectResponse(buildProjectConversationQuery(userMessage, requestConversation.recentMessages))
+        : generateCompanyResponse(userMessage, intent);
+      setMessages((current) => [
+        ...current,
+        { id: Date.now() + 1, sender: "ai", text: cleanAssistantText(fallback.text) },
       ]);
     } finally {
       setIsTyping(false);
@@ -524,7 +577,7 @@ export default function ChatApp({
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
-    if (step === "scheduling" || isTyping) return;
+    if (isTyping) return;
     if (isListening) {
       speechProviderRef.current?.stop();
       setIsListening(false);
@@ -544,174 +597,13 @@ export default function ChatApp({
       return;
     }
 
-    const companyIntent = classifyCompanyIntent(
-      userMessage,
-      companyContextRef.current,
-    );
-    if (companyIntent.kind === "meeting") {
-      handleOpenMeetingScheduler(userMessage);
-      return;
-    }
-    const isCompanyInformationQuestion =
-      companyIntent.isCompanyRelated ||
-      /\b(price|pricing|cost|budget|quote|timeline|deadline|portfolio|case stud(?:y|ies))\b/i.test(
-        userMessage,
-      );
-    if (isCompanyInformationQuestion) {
-      handleCompanyPrompt(userMessage);
+    const safetyAnswer = getSensitiveRequestRefusal(userMessage);
+    if (safetyAnswer) {
+      respondWithoutProject(userMessage, safetyAnswer);
       return;
     }
 
-    const needsIntentRouting = ["centered", "triage", "company", "done"].includes(step);
-
-    if (needsIntentRouting && companyIntent.kind === "out_of_scope") {
-      respondWithoutProject(
-        userMessage,
-        "I’m focused on DEKODE’s company information, services, and helping shape digital project ideas. I can’t reliably answer that topic, but I can explain what DEKODE does or help you explore something you want to build.",
-      );
-      return;
-    }
-
-    if (needsIntentRouting && (companyIntent.kind === "greeting" || companyIntent.kind === "ambiguous")) {
-      respondWithoutProject(
-        userMessage,
-        companyIntent.kind === "greeting"
-          ? "Hello! Are you here to learn about DEKODE and our services, or would you like help shaping something to build?"
-          : "I want to make sure I understand. Are you asking about DEKODE and our services, or do you have an idea you’d like to build?",
-      );
-      return;
-    }
-
-    if (step === "centered" || step === "triage" || step === "done") {
-      startConversation(userMessage);
-      return;
-    }
-
-    if (step === "company") {
-      if (companyIntent.kind === "project") {
-        startConversation(userMessage, true);
-      } else {
-        respondWithoutProject(
-          userMessage,
-          "Could you clarify whether you want information about DEKODE or help planning a project?",
-        );
-      }
-      return;
-    }
-
-    setCompanyPanel(null);
-    companyContextRef.current = leaveCompanyConversation(
-      companyContextRef.current,
-    );
-    setMessages((prev) => [
-      ...prev,
-      { id: Date.now(), sender: "user", text: userMessage },
-    ]);
-
-    const intakeClarification = getIntakeClarification(step, userMessage);
-    if (intakeClarification) {
-      simulateAiTyping(intakeClarification);
-      return;
-    }
-
-    // Custom Project Flow
-    if (step === "custom_discovery_problem") {
-      setChatContext((prev) => ({ ...prev, coreProblem: userMessage }));
-      setStep("custom_discovery_platform");
-      simulateAiTyping(generateCustomPlatformQuestion(userMessage));
-      setGatheredTags((prev) => [
-        ...prev,
-        extractTag(userMessage, "Problem Defined"),
-      ]);
-      return;
-    } else if (step === "custom_discovery_platform") {
-      const platform = detectPlatform(userMessage);
-      setChatContext((prev) => ({ ...prev, platform }));
-      setStep("custom_discovery_complexity");
-      simulateAiTyping(
-        generateCustomComplexityQuestion(userMessage, {
-          ...chatContext,
-          platform,
-        }),
-      );
-      setGatheredTags((prev) => [
-        ...prev,
-        extractTag(userMessage, "Platform Defined"),
-      ]);
-      return;
-    } else if (step === "custom_discovery_complexity") {
-      setStep("gathering_timeline");
-      simulateAiTyping(
-        "This is taking shape nicely. Last question — do you have a target timeline or launch deadline in mind for this?",
-      );
-      setGatheredTags((prev) => [
-        ...prev,
-        extractTag(userMessage, "Scope Defined"),
-      ]);
-      return;
-    }
-
-    // Standard State machine for gathering requirements
-    if (step === "gathering_audience") {
-      setStep("gathering_features");
-
-      const domain = extractDomain(userMessage);
-      const tone = detectTone(userMessage);
-      const newContext = {
-        ...chatContext,
-        domain: domain || chatContext.domain,
-        tone,
-      };
-      setChatContext(newContext);
-
-      const nextQuestion = generateAudienceResponse(userMessage, newContext);
-      const tagText = extractTag(userMessage, "Audience Defined");
-
-      setGatheredTags((prev) => [...prev, tagText]);
-      simulateAiTyping(nextQuestion);
-    } else if (step === "gathering_features") {
-      setStep("gathering_timeline");
-
-      let nextQuestion =
-        "Perfect. And do you have a specific timeline or deadline in mind for launching this?";
-      let defaultTag = "Core Features";
-      if (projectType === "Agentic AI") {
-        nextQuestion =
-          "Perfect. What's your ideal timeline for getting a prototype of this agent up and running?";
-        defaultTag = "Tools Integrated";
-      } else if (projectType.includes("AI")) {
-        nextQuestion =
-          "Perfect. What's your ideal timeline for validating the first AI pilot or prototype?";
-        defaultTag = "AI Requirements";
-      } else if (
-        projectType === "Process Automation" ||
-        projectType === "Systems Integration"
-      ) {
-        nextQuestion =
-          "Perfect. When would you like the first workflow or integration to be live?";
-        defaultTag = "Systems Defined";
-      } else if (projectType === "Cloud Solutions") {
-        nextQuestion =
-          "Perfect. When would you like to reach the first cloud delivery milestone?";
-        defaultTag = "Cloud Requirements";
-      } else if (projectType.includes("E-commerce")) {
-        nextQuestion = "Perfect. When are you aiming to launch the store?";
-        defaultTag = "Store Features";
-      }
-
-      const tagText = extractTag(userMessage, defaultTag);
-
-      setGatheredTags((prev) => [...prev, tagText]);
-      simulateAiTyping(nextQuestion);
-    } else if (step === "gathering_timeline") {
-      setStep("scheduling");
-
-      const tagText = extractTag(userMessage, "Timeline Set");
-      const nextQuestion = generateTimelineResponse(userMessage, chatContext);
-
-      setGatheredTags((prev) => [...prev, tagText]);
-      simulateAiTyping(nextQuestion);
-    }
+    handleModelPrompt(userMessage);
   };
 
   const handleMeetingBooked = (_result, slot) => {
@@ -910,26 +802,12 @@ export default function ChatApp({
 
   const getAnimationLevel = () => {
     if (step === "centered") return 0;
-    if (step === "gathering_audience") return 1;
-    if (step === "gathering_features") return 2;
-    if (step === "gathering_timeline") return 3;
-    if (step === "custom_discovery_problem") return 1;
-    if (step === "custom_discovery_platform") return 2;
-    if (step === "custom_discovery_complexity") return 3;
     if (step === "scheduling" || step === "done") return 4;
-    return 0;
+    return 1;
   };
 
-  const showDiscoveryProgress = [
-    "gathering_audience",
-    "gathering_features",
-    "gathering_timeline",
-    "custom_discovery_problem",
-    "custom_discovery_platform",
-    "custom_discovery_complexity",
-  ].includes(step);
   const isBookingExperience = projectType === "Discovery Call" && ["scheduling", "done"].includes(step);
-  const hasSupportingVisual = Boolean(companyPanel || projectType);
+  const hasSupportingVisual = SUPPORTING_VISUAL_PANEL_ENABLED && Boolean(companyPanel || projectType);
 
   const renderAnimationCard = (classNameExt = "") => (
     <motion.div
@@ -995,53 +873,6 @@ export default function ChatApp({
           </motion.div>
         ) : (
           <>
-            {/* Progress Tracker */}
-            {showDiscoveryProgress && <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                position: "relative",
-              }}
-            >
-              <div
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: 0,
-                  right: 0,
-                  height: "2px",
-                  background: "rgba(255,255,255,0.1)",
-                  zIndex: 0,
-                }}
-              />
-              {[1, 2, 3, 4].map((num) => (
-                <div
-                  key={num}
-                  className="step-dot"
-                  style={{
-                    width: "20px",
-                    height: "20px",
-                    borderRadius: "50%",
-                    background:
-                      getAnimationLevel() >= num
-                        ? "var(--color-brand-blue)"
-                        : "#0f172a",
-                    border: `2px solid ${getAnimationLevel() >= num ? "var(--color-brand-blue)" : "rgba(255,255,255,0.2)"}`,
-                    color: "white",
-                    fontSize: "10px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    zIndex: 1,
-                    transition: "all 0.3s ease",
-                  }}
-                >
-                  {num}
-                </div>
-              ))}
-            </div>}
-
             {/* Tag Chips */}
             <div
               className="tags-container"
@@ -1093,6 +924,7 @@ export default function ChatApp({
               selectedMeetingDateKey={selectedMeetingDateKey}
               selectedMeetingSlotId={selectedMeetingSlotId}
               bookingComplete={step === "done"}
+              conversationSummary={conversationMemory.summary}
             />
           )}
         </div>
@@ -1110,37 +942,39 @@ export default function ChatApp({
       <ParticleBackground timeOfDay={timeOfDay} />
       
       {step === "centered" && (
-        <HeroScenery 
-          timeOfDay={timeOfDay} 
+        <HeroScenery
+          timeOfDay={timeOfDay}
           realTime={realTime}
         />
       )}
 
-      <a className="brand-logo" href={import.meta.env.BASE_URL || "/"} aria-label="Go to DEKODE home">
-        DEKODE
-      </a>
-      {!proposalContext && (
-        <div className="top-right-actions">
-          <button
-            type="button"
-            className="action-pill calendar-entry-button"
-            onClick={handleOpenMeetingScheduler}
-            aria-label="Book a meeting"
-            title="Book a meeting"
-          >
-            <CalendarDays size={18} strokeWidth={2.5} />
-          </button>
-          {onOpenProposalAccess && (
+      <header className="chat-header">
+        <a className="brand-logo" href={import.meta.env.BASE_URL || "/"} aria-label="Go to DEKODE home">
+          DEKODE
+        </a>
+        {!proposalContext && (
+          <div className="top-right-actions">
             <button
               type="button"
-              className="action-pill proposal-entry-button client-portal-top-right"
-              onClick={onOpenProposalAccess}
+              className="action-pill calendar-entry-button"
+              onClick={handleOpenMeetingScheduler}
+              aria-label="Book a meeting"
+              title="Book a meeting"
             >
-              <LockKeyhole size={15} /> Client Portal
+              <CalendarDays size={18} strokeWidth={2.5} />
             </button>
-          )}
-        </div>
-      )}
+            {onOpenProposalAccess && (
+              <button
+                type="button"
+                className="action-pill proposal-entry-button client-portal-top-right"
+                onClick={onOpenProposalAccess}
+              >
+                <LockKeyhole size={15} /> Client Portal
+              </button>
+            )}
+          </div>
+        )}
+      </header>
       {proposalContext && (
         <div className="proposal-context-bar">
           <span id="proposal-chat-title"><i /> Proposal chat</span>
@@ -1219,7 +1053,7 @@ export default function ChatApp({
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className={`active-chat-layout ${isBookingExperience ? "is-booking-layout" : ""}`}
+            className={`active-chat-layout ${isBookingExperience && hasSupportingVisual ? "is-booking-layout" : ""} ${hasSupportingVisual ? "" : "chat-panel-hidden"}`}
           >
             <div className="chat-section">
               <div className="chat-scroll-area" ref={scrollRef}>
@@ -1239,9 +1073,9 @@ export default function ChatApp({
                       <div className="message-bubble">
                         {msg.sender === "ai" ? (
                           idx === messages.length - 1 ? (
-                            <TypewriterText text={msg.text} delay={30} />
+                            <TypewriterText text={msg.text} topic={msg.companyTopic} delay={30} />
                           ) : (
-                            msg.text
+                            <FormattedText text={msg.text} topic={msg.companyTopic} />
                           )
                         ) : (
                           msg.text
@@ -1252,17 +1086,41 @@ export default function ChatApp({
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
                             className="company-suggestion-chips"
+                            role="group"
+                            aria-label="Suggested follow-up questions"
                           >
                             {msg.suggestions.map((suggestion) => (
                               <button
                                 key={suggestion.label}
                                 type="button"
                                 onClick={() =>
-                                  handleCompanyPrompt(suggestion.prompt)
+                                  handleModelPrompt(suggestion.prompt)
                                 }
                                 disabled={isTyping}
                               >
                                 {suggestion.label}
+                              </button>
+                            ))}
+                          </motion.div>
+                        )}
+                        {msg.sender === "ai" && msg.actions?.length > 0 && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="company-suggestion-chips"
+                          >
+                            {msg.actions.map((action) => (
+                              <button
+                                key={`${action.type}-${action.label}`}
+                                type="button"
+                                onClick={() => {
+                                  if (action.type === "open_booking") handleOpenMeetingScheduler();
+                                }}
+                                disabled={isTyping}
+                              >
+                                <CalendarDays size={15} aria-hidden="true" />
+                                {action.label}
                               </button>
                             ))}
                           </motion.div>
@@ -1377,16 +1235,13 @@ export default function ChatApp({
                     onSubmit={handleSendMessage}
                   >
                     {renderDekodeVoiceButton()}
-                    {renderComposerInput({
-                      readOnly: step === "scheduling",
-                    })}
-                    {renderVoiceTypingButton(step === "scheduling")}
+                    {renderComposerInput()}
+                    {renderVoiceTypingButton(isTyping)}
                     <button
                       type="submit"
                       className={`chat-submit-btn ${isSending ? "shake-anim" : ""}`}
                       disabled={
                         !inputValue.trim() ||
-                        step === "scheduling" ||
                         isTyping
                       }
                       aria-label="Send message"

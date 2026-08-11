@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 
-export default function HeroScenery({ 
+export default function HeroScenery({
   timeOfDay = 'noon',
   realTime = new Date()
 }) {
@@ -63,7 +63,7 @@ export default function HeroScenery({
     while (normalizedTime >= 24) normalizedTime -= 24;
 
     const isDaytime = normalizedTime >= 6 && normalizedTime < 18;
-    
+
     let progress;
     if (isDaytime) {
       progress = (normalizedTime - 6) / 12;
@@ -74,7 +74,7 @@ export default function HeroScenery({
 
     const leftX = mobileState ? 15 : 25;
     const rightX = mobileState ? 85 : 75;
-    
+
     const edgeY = mobileState ? 20 : 32;
     const peakDayY = mobileState ? 10 : 12;
     const peakNightY = mobileState ? 12 : 20;
@@ -82,7 +82,7 @@ export default function HeroScenery({
     const currentX = leftX + (rightX - leftX) * progress;
 
     const peakY = isDaytime ? peakDayY : peakNightY;
-    const a = (edgeY - peakY) / 0.25; 
+    const a = (edgeY - peakY) / 0.25;
     const currentY = a * Math.pow(progress - 0.5, 2) + peakY;
 
     const scale = isDaytime ? 1 + (0.15 * Math.sin(progress * Math.PI)) : 1;
@@ -103,7 +103,7 @@ export default function HeroScenery({
     const hours = realTime.getHours();
     const minutes = realTime.getMinutes();
     let targetDecimal = hours + minutes / 60;
-    
+
     // Ensure we animate forward over the day transition correctly if it crosses midnight
     // e.g. 23:00 to 01:00 should animate forward, not backward.
     // For now, since it sweeps from -6 hours, it's a direct sweep.
@@ -116,7 +116,7 @@ export default function HeroScenery({
       duration: 7,
       ease: "easeInOut"
     });
-    
+
     return controls.stop;
   }, [realTime, animatedTime]);
 

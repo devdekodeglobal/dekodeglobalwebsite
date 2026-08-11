@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-08-07T09:15:59.739Z",
+  "cases": 1,
+  "lexical": {
+    "passed": 1,
+    "total": 1,
+    "rate": 1
+  },
+  "hybrid": {
+    "passed": 1,
+    "total": 1,
+    "rate": 1
+  },
+  "results": [
+    {
+      "id": "delivery",
+      "question": "How do you take a project from idea to ongoing support?",
+      "expected": "answer",
+      "lexicalIds": [
+        "process-overview",
+        "company-values",
+        "service-custom-ai",
+        "service-cloud-it",
+        "legal-privacy"
+      ],
+      "lexicalPass": true,
+      "hybridIds": [
+        "process-overview",
+        "faq-3",
+        "process-build",
+        "process-discover",
+        "process-design"
+      ],
+      "hybridPass": true,
+      "retrievalMode": "hybrid"
+    }
+  ]
+}

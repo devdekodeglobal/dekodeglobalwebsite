@@ -1,4 +1,5 @@
 import { loadCompanyKnowledge } from './companyKnowledgeLoader.js';
+import { normalizeVisitorMessage } from './messageNormalization.js';
 
 const knowledge = loadCompanyKnowledge();
 
@@ -15,10 +16,11 @@ const LEADERSHIP_PATTERNS = [
 const PRICING_PATTERNS = [
   /\b(how much|exact price|pricing|price list|hourly rate|day rate)\b/i,
   /\bwhat.{0,20}\b(cost|charge)\b/i,
+  /\b(tell|show|need|give|share)\b.{0,16}\b(price|pricing|cost|quote|estimate)\b/i,
 ];
 
 export function getKnowledgeGapResponse(message) {
-  const text = String(message ?? '').trim();
+  const text = normalizeVisitorMessage(message);
 
   if (FOUNDING_DATE_PATTERNS.some((pattern) => pattern.test(text))) {
     return `DEKODE's public company information does not list an exact founding date, so I can't confirm whether it started yesterday.\n\nWhat it does explain is why DEKODE was created: ${knowledge.company.origin}`;

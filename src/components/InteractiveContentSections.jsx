@@ -1,6 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowUpRight, Calendar, Mail, MapPin, MessageCircle, Mic, Phone, Scale, ShieldCheck, Sparkles } from "lucide-react";
+import {
+  ArrowUpRight,
+  Calendar,
+  Factory,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Mic,
+  Phone,
+  Scale,
+  School,
+  ShieldCheck,
+} from "lucide-react";
+import foodManufacturingImage from "../assets/case-study-food-manufacturing.jpg";
+import primarySchoolImage from "../assets/case-study-primary-school.jpg";
 import { interactiveSiteContent as content } from "../content/interactiveSiteContent";
 import { loadCompanyKnowledge } from "../knowledge/companyKnowledgeLoader";
 import {
@@ -11,19 +25,27 @@ import {
 import "./interactive-content.css";
 
 const reveal = {
-  initial: { opacity: 0, y: 22 },
+  initial: false,
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.16 },
-  transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
+  viewport: { once: true, amount: 0.12 },
+  transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
 };
 
 const companyKnowledge = loadCompanyKnowledge();
+const caseStudyImages = {
+  "food-manufacturing": foodManufacturingImage,
+  "primary-school": primarySchoolImage,
+};
+const caseStudyIcons = {
+  "food-manufacturing": Factory,
+  "primary-school": School,
+};
 
-function ChatAction({ section, item, label, intent }) {
+function ChatAction({ section, item, label, intent, className = "" }) {
   return (
     <button
       type="button"
-      className="content-chat-action"
+      className={`content-chat-action ${className}`.trim()}
       onClick={() =>
         sendContentToChat({
           sourceSection: section,
@@ -36,24 +58,40 @@ function ChatAction({ section, item, label, intent }) {
       }
     >
       <MessageCircle size={16} aria-hidden="true" />
-      {label}
+      <span>{label}</span>
       <ArrowUpRight size={15} aria-hidden="true" />
     </button>
   );
 }
 
-function SectionHeading({ eyebrow, title, description }) {
+function SectionHeading({ eyebrow, title, description, compact = false }) {
   return (
-    <header className="content-section-heading">
+    <header className={`content-section-heading ${compact ? "is-compact" : ""}`}>
       <span>{eyebrow}</span>
       <h2>{title}</h2>
-      <p>{description}</p>
+      {description && <p>{description}</p>}
     </header>
   );
 }
 
+function getWrappedOffset(index, activeIndex, total) {
+  let offset = index - activeIndex;
+  if (offset > total / 2) offset -= total;
+  if (offset < -total / 2) offset += total;
+  return offset;
+}
+
+function getCoverflowClass(offset) {
+  if (offset === 0) return "is-active";
+  if (offset === 1) return "is-next";
+  if (offset === 2) return "is-next-far";
+  if (offset < 0) return "is-previous";
+  return "is-hidden";
+}
+
 export default function InteractiveContentSections() {
   const shouldReduceMotion = useReducedMotion();
+  const [activeStar, setActiveStar] = useState(0);
   const [activeCapability, setActiveCapability] = useState(content.capabilities[0].id);
   const [activeProject, setActiveProject] = useState(content.selectedWork[0].id);
   const [activeStage, setActiveStage] = useState(content.deliveryProcess[0].id);
@@ -67,62 +105,216 @@ export default function InteractiveContentSections() {
   const project = content.selectedWork.find((item) => item.id === activeProject);
   const stage = content.deliveryProcess.find((item) => item.id === activeStage);
   const industry = content.industries.find((item) => item.id === activeIndustry);
+  const ProjectIcon = caseStudyIcons[project.id];
+  const starItems = companyKnowledge.whyChooseUs;
+
+  const rotateStar = (direction) => {
+    setActiveStar((current) => (current + direction + starItems.length) % starItems.length);
+  };
+
+  const handleStarDragEnd = (_event, info) => {
+    const intent = info.offset.x + info.velocity.x * 0.12;
+    if (Math.abs(intent) < 42) return;
+    rotateStar(intent < 0 ? 1 : -1);
+  };
+
+  const selectRailItem = (event, setter, id) => {
+    setter(id);
+    const button = event.currentTarget;
+    const rail = button.parentElement;
+    const left = button.offsetLeft - (rail.clientWidth - button.offsetWidth) / 2;
+    rail.scrollTo({ left, behavior: shouldReduceMotion ? "auto" : "smooth" });
+  };
+
+  const syncRailSelection = (event, setter) => {
+    const rail = event.currentTarget;
+    const railCenter = rail.scrollLeft + rail.clientWidth / 2;
+    const cards = [...rail.querySelectorAll("[data-rail-id]")];
+    const nearest = cards.reduce((best, card) => {
+      const distance = Math.abs(card.offsetLeft + card.offsetWidth / 2 - railCenter);
+      return !best || distance < best.distance ? { card, distance } : best;
+    }, null);
+    if (nearest) setter(nearest.card.dataset.railId);
+  };
 
   return (
     <main className="interactive-story" aria-label="Explore DEKODE">
-      <motion.section className="story-section capabilities-section" {...(shouldReduceMotion ? { initial: false } : reveal)}>
-        <SectionHeading
-          eyebrow="Capabilities"
-          title="What DEKODE builds"
-          description="Strategy, software and secure foundations—connected as one practical delivery capability."
-        />
-        <div className="capability-layout">
-          <div className="capability-map" aria-label="Select a DEKODE capability">
-            <div className="capability-core" aria-hidden="true">
-              <Sparkles size={19} />
-              <span>DEKODE</span>
+      <motion.section
+        className="story-section start-project-section"
+        {...(shouldReduceMotion ? { initial: false } : reveal)}
+      >
+        <div className="start-project-copy">
+          <span className="section-kicker">Start a project</span>
+          <h2>What should we make useful?</h2>
+          <p>Bring the idea, the friction or the unanswered question. We will help shape a practical next step.</p>
+          {sessionSummary && (
+            <div className="session-summary">
+              <span>Your conversation</span>
+              <p>{sessionSummary}</p>
             </div>
-            {content.capabilities.map((item, index) => (
-              <button
-                type="button"
-                key={item.id}
-                className={`capability-node node-${index + 1} ${item.id === activeCapability ? "is-active" : ""}`}
-                aria-pressed={item.id === activeCapability}
-                onClick={() => setActiveCapability(item.id)}
-              >
-                <span className="node-indicator" aria-hidden="true" />
-                <strong>{item.title}</strong>
-                <small>{item.shortDescription}</small>
-              </button>
-            ))}
-          </div>
-          <motion.article
-            key={capability.id}
-            className="expanded-panel"
-            initial={shouldReduceMotion ? false : { opacity: 0, x: 12 }}
-            animate={{ opacity: 1, x: 0 }}
+          )}
+        </div>
+        <div className="conversion-actions" aria-label="Ways to start with DEKODE">
+          <button
+            type="button"
+            onClick={() => sendContentToChat({
+              sourceSection: "start-project",
+              topic: "New project",
+              displayLabel: "Start chat",
+              suggestedPrompt: content.conversionPrompts.start,
+            })}
           >
-            <span className="panel-index">Selected capability</span>
-            <h3>{capability.title}</h3>
-            <p>{capability.fullDescription}</p>
-            <p className="panel-value">{capability.value}</p>
-            <div className="keyword-row">
-              {capability.keywords.map((keyword) => <span key={keyword}>{keyword}</span>)}
-            </div>
-            <ChatAction section="capabilities" item={capability} label={`Discuss ${capability.title}`} />
-          </motion.article>
+            <MessageCircle size={18} />
+            {sessionSummary ? "Continue the conversation" : "Start with an idea"}
+          </button>
+          <button type="button" onClick={() => openDekodeVoice()}>
+            <Mic size={18} /> Talk with DEKODE
+          </button>
+          <button
+            type="button"
+            onClick={() => sendContentToChat({
+              sourceSection: "start-project",
+              topic: "Meeting",
+              intent: "meeting_request",
+              displayLabel: "Book a meeting",
+              suggestedPrompt: content.conversionPrompts.meeting,
+            })}
+          >
+            <Calendar size={18} /> Book a meeting
+          </button>
         </div>
       </motion.section>
 
-      <motion.section className="story-section work-section" {...(shouldReduceMotion ? { initial: false } : reveal)}>
+      <motion.section
+        className="story-section company-statement-section"
+        {...(shouldReduceMotion ? { initial: false } : reveal)}
+      >
+        <p className="company-belief">{companyKnowledge.company.belief}</p>
+        <p className="company-about">{companyKnowledge.company.about}</p>
+      </motion.section>
+
+      <motion.section
+        className="story-section star-section"
+        {...(shouldReduceMotion ? { initial: false } : reveal)}
+      >
         <SectionHeading
-          eyebrow="Evidence"
-          title="Selected work"
-          description="Real operational problems, translated into digital systems people can use."
+          eyebrow="The DEKODE standard"
+          title="Simple enough to understand. Strong enough to rely on."
+          description="Four principles guide how we communicate, deliver and stay accountable."
         />
-        <div className="project-story">
-          <div className="project-rail" role="tablist" aria-label="Selected projects">
-            {content.selectedWork.map((item, index) => (
+        <div
+          className="star-principles"
+          aria-label="DEKODE STAR principles"
+          onKeyDown={(event) => {
+            if (event.key === "ArrowLeft") rotateStar(-1);
+            if (event.key === "ArrowRight") rotateStar(1);
+          }}
+        >
+          <motion.div
+            className="star-coverflow-track"
+            drag={shouldReduceMotion ? false : "x"}
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.08}
+            onDragEnd={handleStarDragEnd}
+          >
+            {starItems.map((item, index) => {
+              const offset = getWrappedOffset(index, activeStar, starItems.length);
+              return (
+                <article
+                  key={item.name}
+                  className={getCoverflowClass(offset)}
+                  data-number={`0${index + 1}`}
+                >
+                  <div className="star-accent-bar" aria-hidden="true" />
+                  <h3 className="star-wordmark">
+                    <span className="star-letter">{item.name[0]}</span>
+                    <span>{item.name.slice(1)}</span>
+                  </h3>
+                  <p>{item.description}</p>
+                </article>
+              );
+            })}
+          </motion.div>
+          <div className="star-carousel-status" aria-label={`STAR principle ${activeStar + 1} of ${starItems.length}`}>
+            {starItems.map((item, index) => (
+              <button
+                type="button"
+                key={item.name}
+                className={index === activeStar ? "is-active" : ""}
+                aria-label={`Show ${item.name}`}
+                aria-current={index === activeStar ? "true" : undefined}
+                onClick={() => setActiveStar(index)}
+              />
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
+      <motion.section
+        className="story-section capabilities-section"
+        {...(shouldReduceMotion ? { initial: false } : reveal)}
+      >
+        <SectionHeading
+          eyebrow="Capabilities"
+          title="One team across the digital journey"
+          description="Choose an area to see where DEKODE can create practical value."
+        />
+        <div
+          className="capability-switcher stacked-card-rail"
+          role="tablist"
+          aria-label="Select a DEKODE capability"
+          onScroll={(event) => syncRailSelection(event, setActiveCapability)}
+        >
+          {content.capabilities.map((item, index) => (
+            <button
+              type="button"
+              role="tab"
+              key={item.id}
+              data-rail-id={item.id}
+              aria-selected={item.id === activeCapability}
+              className={item.id === activeCapability ? "is-active" : ""}
+              onClick={(event) => selectRailItem(event, setActiveCapability, item.id)}
+            >
+              <span className="stacked-card-index">0{index + 1}</span>
+              <strong>{item.title}</strong>
+              <small>{item.shortDescription}</small>
+            </button>
+          ))}
+        </div>
+        <motion.article
+          key={capability.id}
+          className="capability-detail"
+          role="tabpanel"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <div className="capability-detail-copy">
+            <h3>{capability.title}</h3>
+            <p>{capability.fullDescription}</p>
+            <strong>{capability.value}</strong>
+          </div>
+          <div className="capability-detail-actions">
+            <div className="keyword-row">
+              {capability.keywords.map((keyword) => <span key={keyword}>{keyword}</span>)}
+            </div>
+            <ChatAction section="capabilities" item={capability} label="Discuss this capability" />
+          </div>
+        </motion.article>
+      </motion.section>
+
+      <motion.section
+        className="story-section work-section"
+        {...(shouldReduceMotion ? { initial: false } : reveal)}
+      >
+        <SectionHeading
+          eyebrow="Success stories"
+          title="Evidence from real operating problems"
+          description="Two published DEKODE case studies, focused on the challenge, the system and the result."
+        />
+        <div className="case-study-selector" role="tablist" aria-label="Select a DEKODE success story">
+          {content.selectedWork.map((item) => {
+            const Icon = caseStudyIcons[item.id];
+            return (
               <button
                 type="button"
                 role="tab"
@@ -131,122 +323,139 @@ export default function InteractiveContentSections() {
                 className={item.id === activeProject ? "is-active" : ""}
                 onClick={() => setActiveProject(item.id)}
               >
+                <Icon size={18} />
+                <span><strong>{item.title}</strong><small>{item.industry}</small></span>
+              </button>
+            );
+          })}
+        </div>
+        <motion.article
+          key={project.id}
+          className="case-study"
+          role="tabpanel"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <div className="case-study-media">
+            <img src={caseStudyImages[project.id]} alt={`${project.title} case study`} />
+            <span><ProjectIcon size={17} /> {project.industry}</span>
+          </div>
+          <div className="case-study-copy">
+            <span className="section-kicker">Published case study</span>
+            <h3>{project.title}</h3>
+            <dl>
+              <div><dt>Challenge</dt><dd>{project.challenge}</dd></div>
+              <div><dt>Solution</dt><dd>{project.solution}</dd></div>
+              <div className="case-study-outcome"><dt>Outcome</dt><dd>{project.outcome}</dd></div>
+            </dl>
+            <ChatAction section="selected-work" item={project} label="Discuss a similar project" />
+          </div>
+        </motion.article>
+      </motion.section>
+
+      <motion.section
+        className="story-section methodology-section"
+        {...(shouldReduceMotion ? { initial: false } : reveal)}
+      >
+        <SectionHeading
+          eyebrow="Methodology"
+          title="Progress you can see and understand"
+          description="Each stage answers a useful question before the next investment is made."
+        />
+        <div className="methodology-layout">
+          <div
+            className="methodology-rail stacked-card-rail"
+            role="tablist"
+            aria-label="DEKODE delivery stages"
+            onScroll={(event) => syncRailSelection(event, setActiveStage)}
+          >
+            {content.deliveryProcess.map((item, index) => (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={item.id === activeStage}
+                key={item.id}
+                data-rail-id={item.id}
+                className={item.id === activeStage ? "is-active" : ""}
+                onClick={(event) => selectRailItem(event, setActiveStage, item.id)}
+              >
                 <span>0{index + 1}</span>
                 <strong>{item.title}</strong>
-                <small>{item.industry}</small>
+                <small>{item.description}</small>
               </button>
             ))}
           </div>
           <motion.article
-            key={project.id}
-            className="project-scene"
+            key={stage.id}
+            className="methodology-detail"
             role="tabpanel"
-            initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.985 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, x: 8 }}
+            animate={{ opacity: 1, x: 0 }}
           >
-            <div className="project-signal" aria-hidden="true"><span /><span /><span /></div>
-            <span className="panel-index">{project.industry}</span>
-            <h3>{project.title}</h3>
-            <div className="project-detail-grid">
-              <div><strong>Challenge</strong><p>{project.challenge}</p></div>
-              <div><strong>Approach</strong><p>{project.approach}</p></div>
-              <div><strong>Solution</strong><p>{project.solution}</p></div>
-              <div><strong>Outcome</strong><p>{project.outcome}</p></div>
-            </div>
-            <div className="project-footer">
-              <span>{project.relatedCapability}</span>
-              <ChatAction section="selected-work" item={project} label="Discuss a similar project" />
-            </div>
+            <h3>{stage.title}</h3>
+            <p>{stage.description}</p>
+            <ChatAction section="delivery-process" item={stage} label={stage.question} intent="guided_discovery" />
           </motion.article>
         </div>
       </motion.section>
 
-      <motion.section className="story-section process-section" {...(shouldReduceMotion ? { initial: false } : reveal)}>
+      <motion.section
+        className="story-section industries-section"
+        {...(shouldReduceMotion ? { initial: false } : reveal)}
+      >
         <SectionHeading
-          eyebrow="Delivery"
-          title="How DEKODE works"
-          description="A clear, risk-reducing flow from the first question through ongoing improvement."
+          eyebrow="Services"
+          title="Good systems begin with context"
+          description="Select an industry to see how DEKODE connects capabilities around real operating needs."
         />
-        <div className="process-flow" role="tablist" aria-label="DEKODE delivery stages">
-          {content.deliveryProcess.map((item, index) => (
+        <div
+          className="industry-switcher stacked-card-rail"
+          role="tablist"
+          aria-label="Select an industry"
+          onScroll={(event) => syncRailSelection(event, setActiveIndustry)}
+        >
+          {content.industries.map((item, index) => (
             <button
               type="button"
               role="tab"
-              aria-selected={item.id === activeStage}
               key={item.id}
-              className={item.id === activeStage ? "is-active" : ""}
-              onClick={() => setActiveStage(item.id)}
+              data-rail-id={item.id}
+              aria-selected={item.id === activeIndustry}
+              className={item.id === activeIndustry ? "is-active" : ""}
+              onClick={(event) => selectRailItem(event, setActiveIndustry, item.id)}
             >
-              <span>0{index + 1}</span>
+              <span className="stacked-card-index">0{index + 1}</span>
               <strong>{item.title}</strong>
+              <small>{item.challenge}</small>
             </button>
           ))}
         </div>
-        <motion.article key={stage.id} className="process-detail" initial={shouldReduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }}>
+        <motion.article
+          key={industry.id}
+          className="industry-detail"
+          role="tabpanel"
+          initial={shouldReduceMotion ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
           <div>
-            <span className="panel-index">Current stage</span>
-            <h3>{stage.title}</h3>
-            <p>{stage.description}</p>
+            <span>Common challenge</span>
+            <p>{industry.challenge}</p>
           </div>
-          <ChatAction section="delivery-process" item={stage} label={stage.question} intent="guided_discovery" />
+          <div>
+            <span>Solution direction</span>
+            <p>{industry.solution}</p>
+          </div>
+          <div className="industry-capabilities">
+            {industry.capabilities.map((item) => <span key={item}>{item}</span>)}
+          </div>
+          <ChatAction section="industries" item={industry} label={`Discuss ${industry.title}`} />
         </motion.article>
       </motion.section>
 
-      <motion.section className="story-section industries-section" {...(shouldReduceMotion ? { initial: false } : reveal)}>
-        <SectionHeading
-          eyebrow="Business context"
-          title="Industries and solutions"
-          description="Select an industry to see how DEKODE capabilities connect around its operating context."
-        />
-        <div className="industry-layout">
-          <div className="industry-network" aria-label="Select an industry">
-            <div className="industry-core" aria-hidden="true"><span>DEKODE</span><small>Solution core</small></div>
-            {content.industries.map((item, index) => (
-              <button
-                type="button"
-                key={item.id}
-                className={`industry-node industry-${index + 1} ${item.id === activeIndustry ? "is-active" : ""}`}
-                aria-pressed={item.id === activeIndustry}
-                onClick={() => setActiveIndustry(item.id)}
-              >
-                {item.title}
-              </button>
-            ))}
-          </div>
-          <motion.article key={industry.id} className="expanded-panel industry-panel" initial={shouldReduceMotion ? false : { opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }}>
-            <span className="panel-index">Industry context</span>
-            <h3>{industry.title}</h3>
-            <strong>Common challenge</strong>
-            <p>{industry.challenge}</p>
-            <strong>Relevant capabilities</strong>
-            <div className="keyword-row">{industry.capabilities.map((item) => <span key={item}>{item}</span>)}</div>
-            <strong>Solution direction</strong>
-            <p>{industry.solution}</p>
-            <ChatAction section="industries" item={industry} label={`Discuss a solution in ${industry.title}`} />
-          </motion.article>
-        </div>
-      </motion.section>
-
-      <motion.section className="story-section start-project-section" {...(shouldReduceMotion ? { initial: false } : reveal)}>
-        <div className="conversion-glow" aria-hidden="true" />
-        <span className="panel-index">Start a project</span>
-        <h2>Have an idea?</h2>
-        <p>Tell DEKODE what you are building.</p>
-        {sessionSummary && <div className="session-summary"><span>Your conversation</span><p>{sessionSummary}</p></div>}
-        <div className="conversion-actions">
-          <button type="button" onClick={() => sendContentToChat({ sourceSection: "start-project", topic: "New project", displayLabel: "Start Chat", suggestedPrompt: content.conversionPrompts.start })}>
-            <MessageCircle size={18} /> {sessionSummary ? "Continue the conversation" : "Start Chat"}
-          </button>
-          <button type="button" onClick={() => openDekodeVoice()}>
-            <Mic size={18} /> Talk with DEKODE Voice
-          </button>
-          <button type="button" onClick={() => sendContentToChat({ sourceSection: "start-project", topic: "Meeting", intent: "meeting_request", displayLabel: "Request a Meeting", suggestedPrompt: content.conversionPrompts.meeting })}>
-            <Calendar size={18} /> Request a Meeting
-          </button>
-        </div>
-      </motion.section>
-
-      <motion.section className="story-section company-info-section" {...(shouldReduceMotion ? { initial: false } : reveal)}>
+      <motion.section
+        className="story-section company-info-section"
+        {...(shouldReduceMotion ? { initial: false } : reveal)}
+      >
         <SectionHeading
           eyebrow="Company information"
           title="Contact, locations and policies"
@@ -275,8 +484,8 @@ export default function InteractiveContentSections() {
           <section className="company-legal-switcher">
             <div className="company-legal-toggle" role="tablist" aria-label="DEKODE legal information">
               {[
-                ['privacy', ShieldCheck],
-                ['terms', Scale],
+                ["privacy", ShieldCheck],
+                ["terms", Scale],
               ].map(([type, Icon]) => {
                 const document = companyKnowledge.legal[type];
                 const isActive = activeLegalDocument === type;

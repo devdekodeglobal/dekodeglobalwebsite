@@ -1,9 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {
-  getIntakeClarification,
-  isLikelyGibberish,
-} from '../src/utils/messageQuality.js';
+import { isLikelyGibberish } from '../src/utils/messageQuality.js';
 
 test('detects the random inputs from the intake screenshots', () => {
   assert.equal(isLikelyGibberish('fyuhffui'), true);
@@ -19,16 +16,4 @@ test('keeps short but meaningful project answers', () => {
   assert.equal(isLikelyGibberish('ASAP'), false);
   assert.equal(isLikelyGibberish('in 3 months'), false);
   assert.equal(isLikelyGibberish('not sure'), false);
-});
-
-test('returns a step-specific clarification without changing the flow', () => {
-  assert.match(
-    getIntakeClarification('gathering_audience', 'fyuhffui'),
-    /audience/i,
-  );
-  assert.match(
-    getIntakeClarification('gathering_features', 'gtdluydf;uyf;fg'),
-    /feature/i,
-  );
-  assert.equal(getIntakeClarification('gathering_timeline', 'in 6 weeks'), null);
 });

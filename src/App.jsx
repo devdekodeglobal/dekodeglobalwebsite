@@ -14,6 +14,7 @@ export const INTERACTIVE_CONTENT_SECTIONS_ENABLED =
 export const CLIENT_PROPOSALS_ENABLED =
   import.meta.env.VITE_CLIENT_PROPOSALS_ENABLED !== 'false'
 function App() {
+  const [isChatActive, setIsChatActive] = useState(false)
   const [showProposalAccess, setShowProposalAccess] = useState(
     () => CLIENT_PROPOSALS_ENABLED && window.location.pathname.startsWith('/proposals/'),
   )
@@ -45,6 +46,7 @@ function App() {
         <ChatApp
           onOpenProposalAccess={() => setShowProposalAccess(true)}
           onExitProposal={exitProposal}
+          onChatModeChange={setIsChatActive}
         />
       </div>
       {proposal && (
@@ -64,7 +66,7 @@ function App() {
           onAccess={activateProposal}
         />
       )}
-      <BackToTopButton key={proposal ? 'proposal' : 'site'} />
+      <BackToTopButton key={proposal ? 'proposal' : 'site'} disabled={isChatActive && !proposal} />
     </div>
   )
 }

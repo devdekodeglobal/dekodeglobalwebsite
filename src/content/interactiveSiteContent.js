@@ -101,19 +101,6 @@ export const interactiveSiteContent = {
         "I want to discuss a project similar to DEKODE's school administration system.",
       sourceReference: "DEKODE/src/pages/PrimarySchool.jsx",
     },
-    {
-      id: "chauffr",
-      title: "CHAUFFR",
-      industry: "Transport",
-      challenge: "Chauffeurs needed to receive and manage bookings while on the go.",
-      approach:
-        "DEKODE designed a connected mobile and web experience for booking management.",
-      solution: "Android and iOS apps with an integrated web portal.",
-      outcome: "A unified experience for chauffeurs to receive and manage bookings.",
-      relatedCapability: "Web & Mobile Development",
-      chatPrompt: "I want to discuss a connected mobile and web product like CHAUFFR.",
-      sourceReference: "DEKODE/src/components/PortfolioShowcase.jsx",
-    },
   ],
   deliveryProcess: [
     {
