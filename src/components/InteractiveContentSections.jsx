@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import React, { useEffect, useState, useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowUpRight,
   Calendar,
@@ -28,7 +28,38 @@ const reveal = {
   initial: false,
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, amount: 0.12 },
-  transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
+  transition: { duration: 0.6, ease: "easeOut" },
+};
+
+const starContainerVariant = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const giantLetterVariant = {
+  hidden: { x: -80, opacity: 0, scale: 0.8 },
+  visible: {
+    x: 0,
+    opacity: 1,
+    scale: 1,
+    transition: { type: "spring", damping: 12, stiffness: 150 },
+  },
+};
+
+const wordmarkVariant = {
+  hidden: { opacity: 0, filter: "blur(4px)" },
+  visible: { opacity: 1, filter: "blur(0px)", transition: { duration: 0.5, ease: "easeOut" } },
+};
+
+const cardBodyVariant = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
 const companyKnowledge = loadCompanyKnowledge();
@@ -97,6 +128,31 @@ export default function InteractiveContentSections() {
   const [activeStage, setActiveStage] = useState(content.deliveryProcess[0].id);
   const [activeIndustry, setActiveIndustry] = useState(content.industries[0].id);
   const [activeLegalDocument, setActiveLegalDocument] = useState("privacy");
+  const starContainerRef = useRef(null);
+  const { scrollYProgress: starScrollProgress } = useScroll({
+    target: starContainerRef,
+    offset: ["start start", "end end"],
+  });
+
+  const letterSOffset = useTransform(starScrollProgress, [0, 0.4], ["-80vw", "0vw"]);
+  const letterTOffset = useTransform(starScrollProgress, [0, 0.4], ["80vw", "0vw"]);
+  const letterAOffset = useTransform(starScrollProgress, [0, 0.4], ["-80vh", "0vh"]);
+  const letterROffset = useTransform(starScrollProgress, [0, 0.4], ["80vh", "0vh"]);
+
+  const getLetterTransform = (index) => {
+    if (shouldReduceMotion) return {};
+    switch (index) {
+      case 0: return { x: letterSOffset };
+      case 1: return { x: letterTOffset };
+      case 2: return { y: letterAOffset };
+      case 3: return { y: letterROffset };
+      default: return {};
+    }
+  };
+
+  const cardRestOpacity = useTransform(starScrollProgress, [0.5, 0.8], [0, 1]);
+  const cardRestY = useTransform(starScrollProgress, [0.5, 0.8], [30, 0]);
+
   const [sessionSummary, setSessionSummary] = useState("");
 
   useEffect(() => subscribeToSessionSummary(setSessionSummary), []);
@@ -116,17 +172,6 @@ export default function InteractiveContentSections() {
     const intent = info.offset.x + info.velocity.x * 0.12;
     if (Math.abs(intent) < 42) return;
     rotateStar(intent < 0 ? 1 : -1);
-  };
-
-  const handleStarMouseMove = (e) => {
-    const cards = document.querySelectorAll(".star-principles article");
-    for (const card of cards) {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      card.style.setProperty("--mouse-x", `${x}px`);
-      card.style.setProperty("--mouse-y", `${y}px`);
-    }
   };
 
   const selectRailItem = (event, setter, id) => {
@@ -204,63 +249,52 @@ export default function InteractiveContentSections() {
         <p className="company-about">{companyKnowledge.company.about}</p>
       </motion.section>
 
-      <motion.section
-        className="story-section star-section"
-        {...(shouldReduceMotion ? { initial: false } : reveal)}
-      >
-        <SectionHeading
-          eyebrow="The DEKODE standard"
-          title="Simple enough to understand. Strong enough to rely on."
-          description="Four principles guide how we communicate, deliver and stay accountable."
-        />
-        <div
-          className="star-principles"
-          aria-label="DEKODE STAR principles"
-          onKeyDown={(event) => {
-            if (event.key === "ArrowLeft") rotateStar(-1);
-            if (event.key === "ArrowRight") rotateStar(1);
-          }}
-          onMouseMove={handleStarMouseMove}
-        >
-          <motion.div
-            className="star-coverflow-track"
-            drag={shouldReduceMotion ? false : "x"}
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.08}
-            onDragEnd={handleStarDragEnd}
+      <section ref={starContainerRef} style={{ height: "300vh", position: "relative" }}>
+        <div style={{ position: "sticky", top: 0, height: "100vh", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+          <motion.section
+            className="story-section star-section"
+            style={{ width: "100%" }}
+            {...(shouldReduceMotion ? { initial: false } : reveal)}
           >
-            {starItems.map((item, index) => {
-              const offset = getWrappedOffset(index, activeStar, starItems.length);
-              return (
-                <article
-                  key={item.name}
-                  className={getCoverflowClass(offset)}
-                  data-number={`0${index + 1}`}
-                >
-                  <div className="star-accent-bar" aria-hidden="true" />
-                  <h3 className="star-wordmark">
-                    <span className="star-letter">{item.name[0]}</span>
-                    <span>{item.name.slice(1)}</span>
-                  </h3>
-                  <p>{item.description}</p>
-                </article>
-              );
-            })}
-          </motion.div>
-          <div className="star-carousel-status" aria-label={`STAR principle ${activeStar + 1} of ${starItems.length}`}>
-            {starItems.map((item, index) => (
-              <button
-                type="button"
-                key={item.name}
-                className={index === activeStar ? "is-active" : ""}
-                aria-label={`Show ${item.name}`}
-                aria-current={index === activeStar ? "true" : undefined}
-                onClick={() => setActiveStar(index)}
-              />
-            ))}
-          </div>
+            <SectionHeading
+              eyebrow="The DEKODE standard"
+              title="Simple enough to understand. Strong enough to rely on."
+              description="Four principles guide how we communicate, deliver and stay accountable."
+            />
+            <div
+              className="star-principles"
+              aria-label="DEKODE STAR principles"
+            >
+              <div className="star-coverflow-track">
+                {starItems.map((item, index) => {
+                  return (
+                    <article
+                      key={item.name}
+                      className="is-active"
+                      data-number={`0${index + 1}`}
+                    >
+                      <h3 className="star-wordmark">
+                        <motion.span 
+                          className="star-letter" 
+                          style={getLetterTransform(index)}
+                        >
+                          {item.name[0]}
+                        </motion.span>
+                        <motion.span style={{ opacity: shouldReduceMotion ? 1 : cardRestOpacity }}>
+                          {item.name.slice(1)}
+                        </motion.span>
+                      </h3>
+                      <motion.p style={{ opacity: shouldReduceMotion ? 1 : cardRestOpacity, y: shouldReduceMotion ? 0 : cardRestY }}>
+                        {item.description}
+                      </motion.p>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          </motion.section>
         </div>
-      </motion.section>
+      </section>
 
       <motion.section
         className="story-section capabilities-section"
