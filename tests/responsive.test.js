@@ -57,8 +57,7 @@ test('keeps the composer responsive with rotating hints and separate voice typin
   assert.match(chatApp, /const handleOpenDekodeVoice = \(\) =>/);
   assert.match(chatApp, /onClick=\{handleSpeech\}/);
   assert.doesNotMatch(chatApp, /<DekodeVoiceEntry onClick=/);
-  assert.match(indexCss, /\.hero-title\s*\{[^}]*font-size:\s*clamp\(1\.65rem,\s*2\.4vw,\s*2\.2rem\)[^}]*max-width:\s*min\(1120px,\s*100%\)/s);
-  assert.match(indexCss, /@media \(min-width:\s*901px\)[\s\S]*\.hero-title\s*\{[^}]*white-space:\s*nowrap/s);
+  assert.match(indexCss, /\.hero-title\s*\{[^}]*font-size:\s*clamp\(1\.65rem,\s*2\.4vw,\s*2\.2rem\)[^}]*max-width:\s*min\(720px,\s*90%\)/s);
   assert.match(chatApp, /className="action-pill proposal-entry-button client-portal-top-right"/);
   assert.match(chatApp, /className="action-pill calendar-entry-button"/);
   assert.match(chatApp, /aria-label="Book a meeting"/);
@@ -218,9 +217,13 @@ test('centers chat, aligns the shared header, and distinguishes message roles', 
 
 test('renders contextual suggestions through the normal chat pipeline', () => {
   assert.match(chatApp, /aria-label="Suggested follow-up questions"/);
-  assert.match(chatApp, /handleModelPrompt\(suggestion\.prompt\)/);
+  assert.match(chatApp, /handleModelPrompt\(suggestion\.prompt,\s*\{/);
+  assert.match(chatApp, /type:\s*"suggestion"/);
   assert.match(chatApp, /usedSuggestions:/);
   assert.match(chatApp, /suggestions:\s*result\.suggestions \|\| \[\]/);
+  assert.match(chatApp, /suggestion\.kind === "discovery"/);
+  assert.match(chatApp, /suggestion-context-label/);
+  assert.match(indexCss, /\.company-suggestion-chips button\.is-discovery/);
 });
 
 test('uses a readable translucent booking surface', () => {
@@ -250,6 +253,8 @@ test('presents Gemini answers with topic, lead, points, and a separated follow-u
   assert.match(typewriterText, /const body = lead \? sentences\.join\(' '\) : ''/);
   assert.match(typewriterText, /bullets\.slice\(0, 8\)/);
   assert.match(typewriterText, /const bulletPattern/);
+  assert.match(typewriterText, /target="_blank" rel="noopener noreferrer"/);
+  assert.match(indexCss, /\.answer-presentation a\s*\{[^}]*overflow-wrap:\s*anywhere/s);
 });
 
 test('routes project evidence to a verified visual portfolio with real media', () => {

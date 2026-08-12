@@ -67,6 +67,12 @@ if (REBUILD_IDS.size) {
 const documentsToEmbed = REBUILD_IDS.size
   ? documents.filter((document) => REBUILD_IDS.has(document.id))
   : documents;
+const pendingIds = new Set(REBUILD_IDS);
+if (DEFER_REBUILD) {
+  documents
+    .filter((document) => !existingVectors.has(document.id))
+    .forEach((document) => pendingIds.add(document.id));
+}
 if (!DEFER_REBUILD && documentsToEmbed.length && !ACCESS_TOKEN) {
   throw new Error('GOOGLE_OAUTH_ACCESS_TOKEN is required.');
 }
@@ -81,7 +87,7 @@ for (let offset = 0; !DEFER_REBUILD && offset < documentsToEmbed.length; offset 
 }
 
 const vectors = documents
-  .filter((document) => !(DEFER_REBUILD && REBUILD_IDS.has(document.id)))
+  .filter((document) => !(DEFER_REBUILD && pendingIds.has(document.id)))
   .map((document) => ({
     id: document.id,
     values: rebuiltVectors.get(document.id) || existingVectors.get(document.id),
@@ -98,7 +104,7 @@ const index = {
   dimensions: DIMENSIONS,
   documentCount: documents.length,
   documentDigest: documentDigest(),
-  pendingDocumentIds: DEFER_REBUILD ? [...REBUILD_IDS] : [],
+  pendingDocumentIds: DEFER_REBUILD ? [...pendingIds] : [],
   vectors,
 };
 

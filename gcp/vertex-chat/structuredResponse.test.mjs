@@ -17,14 +17,14 @@ test('parses a complete structured Vertex response', () => {
     topic: 'methodology',
     answer: 'DEKODE uses a structured delivery methodology.',
     suggestions: [
-      { label: 'See the phases', prompt: 'Walk me through the delivery phases.' },
-      { label: 'See the phases', prompt: 'Duplicate label.' },
+      { label: 'See the phases', prompt: 'Walk me through the delivery phases.', kind: 'discovery' },
+      { label: 'See the phases', prompt: 'Duplicate label.', kind: 'follow_up' },
     ],
   }));
   assert.equal(result.intent, 'methodology');
   assert.equal(result.action, 'show_company_panel');
   assert.deepEqual(result.suggestions, [
-    { label: 'See the phases', prompt: 'Walk me through the delivery phases.' },
+    { label: 'See the phases', prompt: 'Walk me through the delivery phases.', kind: 'discovery' },
   ]);
 });
 

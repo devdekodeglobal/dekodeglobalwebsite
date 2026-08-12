@@ -15,7 +15,11 @@ const PROJECT_EVIDENCE_ALIASES = [
   'examples', 'case studies', 'success stories', 'clients', 'what have you built',
 ];
 
-const asksForProjectEvidence = (question) => /\b(projects?|portfolio|past work|previous work|client work|examples?|case studies|success stories|clients?|what have you built)\b/.test(normalize(question));
+const asksForProjectEvidence = (question) => {
+  const query = normalize(question);
+  if (/\b(methodology|delivery process|deliver projects?|how (?:do|does) .{0,16}work|project lifecycle)\b/.test(query)) return false;
+  return /\b(projects?|portfolio|past work|previous work|client work|examples?|case studies|success stories|clients?|what have you built)\b/.test(query);
+};
 
 const formatProject = (project) => [
   project.description,
@@ -44,6 +48,9 @@ export const normalize = (value) => String(value ?? '')
   .replace(/\bcalanders?\b|\bcalenders?\b/g, 'calendar')
   .replace(/\bscheduals?\b/g, 'schedule')
   .replace(/\bbussiness(?:es)?\b/g, 'business')
+  .replace(/\bautomashun\b/g, 'automation')
+  .replace(/\bmordern(?:ise|ize)?\b/g, 'modernise')
+  .replace(/\battendence\b/g, 'attendance')
   .replace(/\bmob\s+apps?\b/g, 'mobile app')
   .replace(/\be[\s-]?comm?erce\b/g, 'ecommerce')
   .replace(/\bu\b/g, 'you')
@@ -60,6 +67,7 @@ function createDocument(id, label, text, aliases = []) {
 }
 
 export function buildDocuments() {
+  const bridge = companyKnowledge.initiatives?.find((initiative) => initiative.id === 'bridge');
   const documents = [
     createDocument('company-about', 'About DEKODE', [
       companyKnowledge.company?.about,
@@ -67,11 +75,14 @@ export function buildDocuments() {
       `Mission: ${companyKnowledge.company?.mission}`,
       `Vision: ${companyKnowledge.company?.vision}`,
       `Belief: ${companyKnowledge.company?.belief}`,
-    ].filter(Boolean).join('\n'), companyKnowledge.aliases?.company),
+    ].filter(Boolean).join('\n'), [...(companyKnowledge.aliases?.company || []), 'what does dekode do', 'what kind of company', 'about dekode']),
     createDocument('company-values', 'Why choose DEKODE', [
       ...(companyKnowledge.whyChooseUs || []).map((item) => `${item.name}: ${item.description}`),
       ...(companyKnowledge.values || []).map((item) => `${item.name}: ${item.description}`),
-    ].join('\n'), companyKnowledge.aliases?.why),
+    ].join('\n'), [...(companyKnowledge.aliases?.why || []), 'star', 'star principles']),
+    createDocument('company-leadership', 'DEKODE founder and leadership',
+      `${companyKnowledge.company.leadership.founder.name} is DEKODE's ${companyKnowledge.company.leadership.founder.role}. LinkedIn: ${companyKnowledge.company.leadership.founder.linkedin}. The published source does not provide a longer founder biography.`,
+      companyKnowledge.aliases?.leadership),
     createDocument('industries', 'Industries DEKODE serves',
       `DEKODE works with businesses in ${join(companyKnowledge.industries)}.`,
       companyKnowledge.aliases?.industries),
@@ -88,6 +99,18 @@ export function buildDocuments() {
       ...(companyKnowledge.contact?.locations || []).map((location) => `${location.country}: ${location.address}`),
       companyKnowledge.contact?.operatingModel,
     ].filter(Boolean).join('\n'), companyKnowledge.aliases?.location),
+    createDocument('pricing', 'DEKODE pricing approach',
+      'DEKODE does not publish fixed pricing because scope depends on the problem, product, integrations, security, and support required. Accurate estimates are prepared after understanding the project.',
+      ['pricing', 'price', 'prices', 'cost', 'costs', 'quote', 'estimate', 'fixed price', 'time and materials']),
+    createDocument('discovery-bridge', 'Related DEKODE initiative: BRIDGE',
+      bridge ? bridge.title + '. ' + bridge.summary + ' Status: ' + bridge.status + '.' : '',
+      ['Australia', 'India', 'cross-border', 'global delivery', 'location', 'locations', 'talent exchange', 'R&D collaboration']),
+    createDocument('discovery-star', 'Related DEKODE trust signal: STAR',
+      'DEKODE works through four STAR principles: Simple, Transparent, Accountable, and Reliable.',
+      ['working style', 'delivery process', 'methodology', 'project risk', 'trust', 'why choose dekode']),
+    createDocument('discovery-portfolio', 'Related DEKODE public work',
+      'Verified portfolio examples include AttendMe, CHAUFFR, Smart Loan Helper, SmartBroker, Recycled Market, and Estrado. Published case studies cover Beston food manufacturing and Stella Maris Primary School.',
+      ['website', 'mobile app', 'ecommerce', 'automation', 'internal system', 'cloud solution', 'similar work', 'relevant project']),
   ];
 
   for (const service of companyKnowledge.services || []) {
@@ -106,14 +129,14 @@ export function buildDocuments() {
   documents.push(createDocument(
     'process-overview',
     'DEKODE delivery process',
-    `DEKODE takes projects from idea to ongoing support through five connected stages:\n${(companyKnowledge.developmentProcess || [])
+    `DEKODE takes projects from idea to ongoing improvement through six connected stages. Security, privacy, and maintainability apply throughout:\n${(companyKnowledge.developmentProcess || [])
       .map((step) => `${step.name}: ${step.description}`)
       .join('\n')}`,
     companyKnowledge.aliases?.process,
   ));
 
   for (const step of companyKnowledge.developmentProcess || []) {
-    const stepAliases = step.name === 'Discover' ? ['discover', 'discovery'] : [step.name];
+    const stepAliases = step.name === 'Discovery' ? ['discover', 'discovery'] : [step.name];
     documents.push(createDocument(
       `process-${normalize(step.name).replace(/[^a-z0-9]+/g, '-')}`,
       `${step.name} delivery stage`,
@@ -198,7 +221,11 @@ function lexicalScore(question, document) {
     : 0;
   const evidenceBoost = projectEvidenceQuery && /^(?:portfolio-|case-)/.test(document.id) ? 0.2 : 0;
   const overviewPenalty = projectEvidenceQuery && document.id === 'company-about' ? 0.8 : 0;
-  return Math.max(0, Math.min(1.75, coverage * 0.7 + phraseBoost + labelBoost + catalogueBoost + evidenceBoost - overviewPenalty));
+  const leadershipQuery = /\b(?:founder|founded|owner|leadership|who (?:started|founded|runs|is behind)|pankaj banga)\b/.test(query);
+  const leadershipBoost = leadershipQuery && document.id === 'company-leadership' ? 0.75 : 0;
+  const leadershipOverviewPenalty = leadershipQuery && document.id === 'company-about' ? 0.45 : 0;
+  return Math.max(0, Math.min(1.75, coverage * 0.7 + phraseBoost + labelBoost + catalogueBoost
+    + evidenceBoost + leadershipBoost - overviewPenalty - leadershipOverviewPenalty));
 }
 
 export function retrieveLexical(question, limit = 5) {
@@ -269,6 +296,7 @@ export function createHybridRetriever({
     const lexical = new Map(retrieveLexical(question, documents.length)
       .map((match) => [match.id, match.lexicalScore]));
     const projectEvidenceQuery = asksForProjectEvidence(question);
+    const leadershipQuery = /\b(?:founder|founded|owner|leadership|who (?:started|founded|runs|is behind)|pankaj banga)\b/.test(normalize(question));
 
     try {
       const indexedDocuments = await getDocumentEmbeddings();
@@ -280,11 +308,14 @@ export function createHybridRetriever({
         const catalogueBoost = projectEvidenceQuery && document.id === 'project-evidence-catalogue' ? 0.5 : 0;
         const evidenceBoost = projectEvidenceQuery && /^(?:portfolio-|case-)/.test(document.id) ? 0.15 : 0;
         const overviewPenalty = projectEvidenceQuery && document.id === 'company-about' ? 0.5 : 0;
+        const leadershipBoost = leadershipQuery && document.id === 'company-leadership' ? 0.45 : 0;
+        const leadershipOverviewPenalty = leadershipQuery && document.id === 'company-about' ? 0.3 : 0;
         return {
           ...document,
           semanticScore,
           lexicalScore: exactScore,
-          score: semanticScore * 0.82 + exactScore * 0.18 + catalogueBoost + evidenceBoost - overviewPenalty,
+          score: semanticScore * 0.82 + exactScore * 0.18 + catalogueBoost + evidenceBoost
+            + leadershipBoost - overviewPenalty - leadershipOverviewPenalty,
           retrievalMode: 'hybrid',
         };
       }).sort((left, right) => right.score - left.score);

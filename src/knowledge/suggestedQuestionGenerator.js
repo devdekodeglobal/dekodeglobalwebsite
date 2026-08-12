@@ -8,6 +8,7 @@ const questions = {
   why: ['Our Services', 'Industries', 'Development Process'],
   caseStudies: ['Our Services', 'Development Process', 'Why Choose DEKODE'],
   initiatives: ['Our Services', 'Development Process', 'Why Choose DEKODE'],
+  leadership: ['Our Services', 'Development Process', 'Why Choose DEKODE'],
   contact: ['Our Services', 'Why Choose DEKODE', 'Development Process'],
   location: ['Contact DEKODE', 'Privacy Policy', 'Terms & Conditions'],
   privacy: ['Contact DEKODE', 'DEKODE Locations', 'Terms & Conditions'],

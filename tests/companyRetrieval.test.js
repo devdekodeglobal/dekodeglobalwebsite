@@ -49,7 +49,8 @@ test('retrieves verified location and legal documents for Gemini grounding', () 
   assert.ok(locationMatches.some((match) => match.id === 'locations'));
   assert.ok(privacyMatches.some((match) => match.id === 'privacy-policy'));
   assert.ok(termsMatches.some((match) => match.id === 'terms-of-service'));
-  assert.match(privacyMatches.find((match) => match.id === 'privacy-policy').text, /pm@dekodeglobal\.com/);
+  assert.match(privacyMatches.find((match) => match.id === 'privacy-policy').text, /pankaj\.banga@dekodeglobal\.com/);
+  assert.doesNotMatch(privacyMatches.find((match) => match.id === 'privacy-policy').text, /pm@dekodeglobal\.com/);
 });
 
 test('retrieves CHAUFFR from the old-site portfolio catalogue', () => {
@@ -107,7 +108,29 @@ test('includes structured old-site evidence in project documents', () => {
 });
 
 test('retrieves reviewed delivery, Beston, and BRIDGE evidence', () => {
-  assert.equal(retrieveCompanyKnowledge('What happens during discovery?')[0]?.id, 'process-discover');
+  assert.equal(retrieveCompanyKnowledge('What happens during discovery?')[0]?.id, 'process-discovery');
   assert.equal(retrieveCompanyKnowledge('How did DEKODE help Beston?')[0]?.id, 'case-study-food-manufacturing');
   assert.equal(retrieveCompanyKnowledge('What is BRIDGE?')[0]?.id, 'initiative-bridge');
+});
+
+test('retrieves the six-stage methodology and verified founder details', () => {
+  const methodology = retrieveCompanyKnowledge('How does DEKODE deliver projects?')[0];
+  const founder = retrieveCompanyKnowledge('Who is behind DEKODE?')[0];
+  const directFounder = retrieveCompanyKnowledge('Who is founder of DEKODE company?')[0];
+  assert.equal(methodology.id, 'delivery-process');
+  assert.match(methodology.text, /Discovery:[\s\S]*Prototype:[\s\S]*Design:[\s\S]*Build:[\s\S]*Deploy:[\s\S]*Evolve:/);
+  assert.equal(founder.id, 'company-leadership');
+  assert.equal(directFounder.id, 'company-leadership');
+  assert.match(founder.text, /Pankaj Banga/);
+  assert.match(founder.text, /linkedin\.com\/in\/pankajbanga/);
+});
+
+test('retrieves one related DEKODE discovery opportunity from relevant context', () => {
+  const location = retrieveCompanyKnowledge('How do you work across Australia and India?');
+  const delivery = retrieveCompanyKnowledge('How do you reduce project risk?');
+  const product = retrieveCompanyKnowledge('We want to build a mobile app');
+
+  assert.ok(location.some((match) => match.id === 'discovery-bridge'));
+  assert.ok(delivery.some((match) => match.id === 'discovery-star'));
+  assert.ok(product.some((match) => match.id === 'discovery-portfolio'));
 });

@@ -946,6 +946,18 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
 
+.answer-presentation a {
+  color: #bfdbfe;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.answer-presentation a:hover {
+  color: #ffffff;
+}
+
 .answer-topic {
   display: inline-flex;
   align-items: center;
@@ -1573,6 +1585,15 @@ h1, h2, h3, h4, h5, h6 {
   border-top: 1px solid rgba(255,255,255,0.08);
 }
 
+.suggestion-context-label {
+  flex: 1 0 100%;
+  color: rgba(255,255,255,0.58);
+  font-size: 0.62rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
 .company-suggestion-chips button {
   border: 1px solid rgba(96,165,250,0.25);
   background: rgba(53,118,193,0.15);
@@ -1591,6 +1612,19 @@ h1, h2, h3, h4, h5, h6 {
 
 .company-suggestion-chips button:hover {
   background: rgba(53,118,193,0.3);
+}
+
+.company-suggestion-chips button.is-discovery {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-color: rgba(250,204,21,0.38);
+  background: rgba(250,204,21,0.11);
+  color: #fef3c7;
+}
+
+.company-suggestion-chips button.is-discovery:hover {
+  background: rgba(250,204,21,0.2);
 }
 
 /* Animations Content */
