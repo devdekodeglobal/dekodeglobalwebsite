@@ -24,7 +24,11 @@ const PROJECT_EVIDENCE_ALIASES = [
   'examples', 'case studies', 'success stories', 'clients', 'what have you built',
 ];
 
-const asksForProjectEvidence = (question) => /\b(projects?|portfolio|past work|previous work|client work|examples?|case studies|success stories|clients?|what have you built)\b/.test(normalise(question));
+const asksForProjectEvidence = (question) => {
+  const query = normalise(question);
+  if (/\b(methodology|delivery process|deliver projects?|how (?:do|does) .{0,16}work|project lifecycle)\b/.test(query)) return false;
+  return /\b(projects?|portfolio|past work|previous work|client work|examples?|case studies|success stories|clients?|what have you built)\b/.test(query);
+};
 
 const formatProject = (project) => [
   project.description,
@@ -47,11 +51,13 @@ const formatCaseStudy = (study) => [
 ].filter(Boolean).join('\n');
 
 function makeDocuments() {
+  const bridge = companyKnowledge.initiatives?.find((initiative) => initiative.id === 'bridge');
   const documents = [
     {
       id: 'company-overview',
       label: 'About DEKODE',
       text: `${companyKnowledge.company.about}\nMission: ${companyKnowledge.company.mission}\nWhy DEKODE exists: ${companyKnowledge.company.origin}\nVision: ${companyKnowledge.company.vision}\nBelief: ${companyKnowledge.company.belief}`,
+      aliases: [...(companyKnowledge.aliases.company || []), 'what does dekode do', 'what kind of company', 'about dekode'],
     },
     {
       id: 'service-catalogue',
@@ -59,6 +65,30 @@ function makeDocuments() {
       text: `DEKODE services and offerings:\n${companyKnowledge.services
         .map((service) => `${service.name}: ${service.summary}`)
         .join('\n')}`,
+    },
+    {
+      id: 'pricing',
+      label: 'DEKODE pricing approach',
+      text: 'DEKODE does not publish fixed pricing because scope depends on the problem, product, integrations, security, and support required. Accurate estimates are prepared after understanding the project.',
+      aliases: ['pricing', 'price', 'prices', 'cost', 'costs', 'quote', 'estimate', 'fixed price', 'time and materials'],
+    },
+    {
+      id: 'discovery-bridge',
+      label: 'Related DEKODE initiative: BRIDGE',
+      text: bridge ? bridge.title + '. ' + bridge.summary + ' Status: ' + bridge.status + '.' : '',
+      aliases: ['Australia', 'India', 'cross-border', 'global delivery', 'location', 'locations', 'talent exchange', 'R&D collaboration'],
+    },
+    {
+      id: 'discovery-star',
+      label: 'Related DEKODE trust signal: STAR',
+      text: 'DEKODE works through four STAR principles: Simple, Transparent, Accountable, and Reliable.',
+      aliases: ['working style', 'delivery process', 'methodology', 'project risk', 'trust', 'why choose dekode'],
+    },
+    {
+      id: 'discovery-portfolio',
+      label: 'Related DEKODE public work',
+      text: 'Verified portfolio examples include AttendMe, CHAUFFR, Smart Loan Helper, SmartBroker, Recycled Market, and Estrado. Published case studies cover Beston food manufacturing and Stella Maris Primary School.',
+      aliases: ['website', 'mobile app', 'ecommerce', 'automation', 'internal system', 'cloud solution', 'similar work', 'relevant project'],
     },
     ...companyKnowledge.services.map((service) => ({
       id: `service-${service.id}`,
@@ -89,6 +119,12 @@ function makeDocuments() {
         .join('\n')}`,
       aliases: PROJECT_EVIDENCE_ALIASES,
     },
+    {
+      id: 'company-leadership',
+      label: 'DEKODE founder and leadership',
+      text: `${companyKnowledge.company.leadership.founder.name} is DEKODE's ${companyKnowledge.company.leadership.founder.role}. LinkedIn: ${companyKnowledge.company.leadership.founder.linkedin}. The published source does not provide a longer founder biography.`,
+      aliases: companyKnowledge.aliases.leadership,
+    },
     ...(companyKnowledge.initiatives || []).map((initiative) => ({
       id: `initiative-${initiative.id}`,
       label: initiative.title,
@@ -99,24 +135,27 @@ function makeDocuments() {
       id: 'industries',
       label: 'Industries',
       text: `DEKODE works with small and medium businesses in: ${joinItems(companyKnowledge.industries)}.`,
+      aliases: companyKnowledge.aliases.industries,
     },
     {
       id: 'technology',
       label: 'Technology foundations',
       text: `Publicly named cloud platforms: ${joinItems(companyKnowledge.technologies)}. DEKODE selects technology around reliability, security, and maintainability.`,
+      aliases: companyKnowledge.aliases.technologies,
     },
     {
       id: 'delivery-process',
       label: 'Delivery process',
-      text: companyKnowledge.developmentProcess
+      text: `DEKODE's six-stage delivery methodology. Security, privacy, and maintainability apply throughout.\n${companyKnowledge.developmentProcess
         .map((step) => `${step.name}: ${step.description}`)
-        .join('\n'),
+        .join('\n')}`,
+      aliases: companyKnowledge.aliases.process,
     },
     ...companyKnowledge.developmentProcess.map((step) => ({
       id: `process-${normalise(step.name).replace(/[^a-z0-9]+/g, '-')}`,
       label: `${step.name} delivery stage`,
       text: step.description,
-      aliases: step.name === 'Discover' ? ['discover', 'discovery'] : [step.name],
+      aliases: step.name === 'Discovery' ? ['discover', 'discovery'] : [step.name],
     })),
     {
       id: 'case-study-catalogue',
@@ -138,11 +177,13 @@ function makeDocuments() {
       text: companyKnowledge.values
         .map((value) => `${value.name}: ${value.description}`)
         .join('\n'),
+      aliases: [...(companyKnowledge.aliases.why || []), 'star', 'star principles'],
     },
     {
       id: 'contact',
       label: 'Contact',
       text: `Email: ${companyKnowledge.contact.email}. Phone numbers: ${joinItems(companyKnowledge.contact.phones)}. WhatsApp: +${companyKnowledge.contact.whatsapp}.`,
+      aliases: companyKnowledge.aliases.contact,
     },
     {
       id: 'locations',
@@ -150,6 +191,7 @@ function makeDocuments() {
       text: `DEKODE office locations and addresses. ${companyKnowledge.contact.operatingModel}\n${companyKnowledge.contact.locations
         .map((location) => `${location.country}: ${location.address}`)
         .join('\n')}`,
+      aliases: companyKnowledge.aliases.location,
     },
     {
       id: 'privacy-policy',
@@ -157,6 +199,7 @@ function makeDocuments() {
       text: `${companyKnowledge.legal.privacy.summary}\nPrivacy contact: ${companyKnowledge.legal.privacy.contactEmail}.\n${companyKnowledge.legal.privacy.sections
         .map((section) => `${section.title}: ${section.summary}`)
         .join('\n')}`,
+      aliases: companyKnowledge.aliases.privacy,
     },
     {
       id: 'terms-of-service',
@@ -164,6 +207,7 @@ function makeDocuments() {
       text: `${companyKnowledge.legal.terms.summary}\n${companyKnowledge.legal.terms.sections
         .map((section) => `${section.title}: ${section.summary}`)
         .join('\n')}`,
+      aliases: companyKnowledge.aliases.terms,
     },
     ...companyKnowledge.faqs.map((faq, index) => ({
       id: `faq-${index + 1}`,
@@ -185,6 +229,12 @@ export function retrieveCompanyKnowledge(question, limit = 5) {
   const queryTerms = tokenize(question);
   const query = normalise(question);
   const projectEvidenceQuery = asksForProjectEvidence(query);
+  const asksAboutCompany = /\b(?:dekode|company|business)\b/.test(query)
+    && /\b(?:about|do|does|what|kind|company|work|provide|offer)\b/.test(query);
+  const asksAboutServices = /\b(?:services?|offerings?|capabilities|what (?:do|does) dekode (?:do|offer|provide))\b/.test(query);
+  const asksAboutDelivery = /\b(?:methodology|delivery process|deliver projects?|project lifecycle|how does dekode (?:deliver|work))\b/.test(query);
+  const asksAboutBridge = /\b(?:what is bridge|bridge initiative|dekode bridge)\b/.test(query);
+  const asksAboutLeadership = /\b(?:founder|founded|owner|leadership|who (?:started|founded|runs|is behind)|pankaj banga)\b/.test(query);
 
   const ranked = documents
     .map((document) => {
@@ -194,7 +244,21 @@ export function retrieveCompanyKnowledge(question, limit = 5) {
       const catalogueBonus = projectEvidenceQuery && document.id === 'project-evidence-catalogue' ? 6 : 0;
       const evidenceBonus = projectEvidenceQuery && /^(?:portfolio-|case-study-)/.test(document.id) ? 2 : 0;
       const overviewPenalty = projectEvidenceQuery && document.id === 'company-overview' ? 8 : 0;
-      return { ...document, score: overlap + nameBonus + aliasBonus + catalogueBonus + evidenceBonus - overviewPenalty };
+      const companyOverviewBonus = asksAboutCompany && document.id === 'company-overview' ? 8 : 0;
+      const faqOverviewBonus = asksAboutCompany && document.id === 'faq-1' ? 5 : 0;
+      const serviceCatalogueBonus = asksAboutServices && document.id === 'service-catalogue' ? 8 : 0;
+      const deliveryProcessBonus = asksAboutDelivery && document.id === 'delivery-process' ? 8 : 0;
+      const bridgeInitiativeBonus = asksAboutBridge && document.id === 'initiative-bridge' ? 8 : 0;
+      const leadershipBonus = asksAboutLeadership && document.id === 'company-leadership' ? 10 : 0;
+      const leadershipOverviewPenalty = asksAboutLeadership && document.id === 'company-overview' ? 5 : 0;
+      const discoveryPenalty = document.id.startsWith('discovery-') ? 2 : 0;
+      return {
+        ...document,
+        score: overlap + nameBonus + aliasBonus + catalogueBonus + evidenceBonus
+          + companyOverviewBonus + faqOverviewBonus + serviceCatalogueBonus
+          + deliveryProcessBonus + bridgeInitiativeBonus + leadershipBonus
+          - overviewPenalty - leadershipOverviewPenalty - discoveryPenalty,
+      };
     })
     .filter((document) => document.score > 0)
     .sort((left, right) => right.score - left.score || left.text.length - right.text.length)

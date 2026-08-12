@@ -40,15 +40,20 @@ const findDevelopmentStep = (message) => {
   const input = normalise(message);
   return (knowledge.developmentProcess || []).find((step) => {
     const name = normalise(step.name);
-    const terms = name === 'discover' ? ['discover', 'discovery'] : [name];
-    return terms.some((term) => new RegExp(`\\b${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(input));
+    const terms = name === 'discovery' ? ['discover', 'discovery'] : [name];
+    return terms.some((term) => {
+      const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const exactStage = new RegExp(`^(?:the\\s+)?${escaped}(?:\\s+stage)?$`).test(input);
+      const explicitStageReference = new RegExp(`(?:what happens|during|in the|explain|tell me about|stage|phase|step).{0,24}\\b${escaped}\\b|\\b${escaped}\\b.{0,24}(?:stage|phase|step)`).test(input);
+      return exactStage || explicitStageReference;
+    });
   });
 };
 
 const topicTerms = Object.fromEntries(
   Object.entries(knowledge.aliases).map(([topic, aliases]) => [
     topic,
-    [topic, ...aliases].map(normalise),
+    [...new Set([topic, ...aliases].map(normalise))],
   ]),
 );
 
@@ -57,7 +62,11 @@ export function findTopic(message) {
   let best = { topic: null, score: 0 };
 
   for (const [topic, terms] of Object.entries(topicTerms)) {
-    const score = terms.reduce((total, term) => total + (input.includes(term) ? term.split(' ').length : 0), 0);
+    const score = terms.reduce((total, term) => {
+      const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
+      const matches = new RegExp(`(?:^|\\b)${escaped}(?:$|\\b)`).test(input);
+      return total + (matches ? term.split(' ').length : 0);
+    }, 0);
     const replacesGenericCompanyTie = score === best.score && best.topic === 'company' && topic !== 'company';
     if (score > best.score || replacesGenericCompanyTie) best = { topic, score };
   }

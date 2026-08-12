@@ -8,6 +8,7 @@ import {
   CalendarDays,
   ChevronDown,
   LockKeyhole,
+  Sparkles,
   X,
 } from "lucide-react";
 import AnimationPanel from "./AnimationPanel";
@@ -446,7 +447,7 @@ export default function ChatApp({
     }
   };
 
-  const handleModelPrompt = async (userMessage) => {
+  const handleModelPrompt = async (userMessage, interaction = null) => {
     if (!userMessage.trim() || isTyping) return;
     const requestConversation = conversationMemory;
     setMessages((current) => [
@@ -467,6 +468,7 @@ export default function ChatApp({
             .flatMap((message) => message.suggestions || [])
             .map((suggestion) => suggestion.label)
             .slice(-8),
+          interaction,
         }),
       });
       const result = await response.json();
@@ -480,9 +482,10 @@ export default function ChatApp({
       } else if (verifiedCompanyTopic || result.action === "show_company_panel" || [
         "company_info", "pricing", "case_study", "methodology",
       ].includes(result.intent)) {
+        const verifiedTopicFallback = verifiedCompanyTopic || result.topic;
         const resolvedCompanyTopic = result.intent === "case_study"
           ? "caseStudies"
-          : verifiedCompanyTopic || result.topic || "company";
+          : result.topic || verifiedTopicFallback || "company";
         const company = generateCompanyResponse(userMessage, {
           ...visualIntent,
           isCompanyRelated: true,
@@ -1089,15 +1092,27 @@ export default function ChatApp({
                             role="group"
                             aria-label="Suggested follow-up questions"
                           >
+                            {msg.suggestions.some((suggestion) => suggestion.kind === "discovery") && (
+                              <span className="suggestion-context-label">Related to this</span>
+                            )}
                             {msg.suggestions.map((suggestion) => (
                               <button
                                 key={suggestion.label}
                                 type="button"
+                                className={suggestion.kind === "discovery" ? "is-discovery" : undefined}
                                 onClick={() =>
-                                  handleModelPrompt(suggestion.prompt)
+                                  handleModelPrompt(suggestion.prompt, {
+                                    type: "suggestion",
+                                    label: suggestion.label,
+                                    intent: suggestion.intent,
+                                    action: suggestion.action,
+                                  })
                                 }
                                 disabled={isTyping}
                               >
+                                {suggestion.kind === "discovery" && (
+                                  <Sparkles size={13} aria-hidden="true" />
+                                )}
                                 {suggestion.label}
                               </button>
                             ))}

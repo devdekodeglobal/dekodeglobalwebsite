@@ -13,7 +13,8 @@
       "src/pages/PrivacyPolicy.jsx",
       "src/pages/TermsOfService.jsx",
       "src/components/PortfolioShowcase.jsx",
-      "src/components/BridgeTeaser.jsx"
+      "src/components/BridgeTeaser.jsx",
+      "src/components/Footer.jsx"
     ],
     "generatedAt": "build-time"
   },
@@ -23,7 +24,15 @@
     "mission": "We make technology work for the people who use it.",
     "origin": "We started DEKODE because we kept seeing the same problem: businesses that knew they needed to evolve but couldn’t find a partner that made the process feel manageable. The big IT firms were too expensive, too impersonal, and spoke a language most teams couldn’t follow. Meanwhile, the technology gap kept growing. We believed there was a better way. Practical technology, delivered simply, at a price that respects your budget. No jargon. No bloated scopes. No disappearing after launch. That belief still drives everything we do.",
     "vision": "DEKODE is building toward becoming a trusted global technology partner for businesses navigating that shift. Our goal is simple: make digital transformation and AI adoption accessible, affordable, and genuinely useful for the people it’s meant to serve.",
-    "belief": "Progress only counts when it reaches everyone."
+    "belief": "Progress only counts when it reaches everyone.",
+    "leadership": {
+      "founder": {
+        "name": "Pankaj Banga",
+        "role": "Founder",
+        "linkedin": "https://www.linkedin.com/in/pankajbanga/",
+        "sourceReference": "DEKODE/src/components/Footer.jsx"
+      }
+    }
   },
   "services": [
     {
@@ -270,9 +279,7 @@
       "industry": "Food Manufacturing",
       "platform": "Microsoft Azure",
       "challenge": "Followed a traditional paper-based management system that constantly led to operational and management inefficiencies resulting in depleting business profitability and sustainability.",
-      "obstacles": "The Shepparton plant relied on paper records that were difficult to store and retrieve, disconnected from corporate reporting, time-consuming to reconcile, and unable to give management reliable visibility into procurement, waste, inventory, and production performance.",
       "solution": "Designed and developed digital Production Management System that increased productivity by 20% in Phase 1.",
-      "deliveryApproach": "DEKODE worked through understand, design, develop and iterate, and deploy stages: identifying loss-making operational gaps, designing a cloud-based information capture and management system with simple interfaces, a database, and reports, validating a prototype with client feedback, and deploying within the client's budget and timeframe with support.",
       "outcome": "By eliminating paper-based information management and moving to an Electronic Information Capturing and Production Management System, Beston reduced the manual efforts and associated costs by 20% in Phase 1 . Further, the information database will provide Beston with a rich source of information to find and test areas of operational improvement in future. The electronic system provides instant feedback which enables management to measure the impact and propose improvements along the way.",
       "aliases": [
         "Beston",
@@ -280,7 +287,9 @@
         "food manufacturing case study",
         "production management system"
       ],
-      "sourceReference": "DEKODE/src/pages/FoodManufacture.jsx"
+      "sourceReference": "DEKODE/src/pages/FoodManufacture.jsx",
+      "obstacles": "The Shepparton plant relied on paper records that were difficult to store and retrieve, disconnected from corporate reporting, time-consuming to reconcile, and unable to give management reliable visibility into procurement, waste, inventory, and production performance.",
+      "deliveryApproach": "DEKODE worked through understand, design, develop and iterate, and deploy stages: identifying loss-making operational gaps, designing a cloud-based information capture and management system with simple interfaces, a database, and reports, validating a prototype with client feedback, and deploying within the client's budget and timeframe with support."
     },
     {
       "id": "primary-school",
@@ -288,9 +297,7 @@
       "industry": "Educational Institution",
       "platform": "Cloud, Amazon Web Services",
       "challenge": "Followed a manual paper-based management and administration system that constantly led them to lose a lot of useful data and gradually saw in a decline in the safety of the school.",
-      "obstacles": "Stella Maris manually recorded administration data, visitors, child pickup and drop-off, staff, and incidents. Storing, locating, archiving, and reporting those records increased administrative cost and made compliance reporting inefficient.",
-      "solution": "Provided a fully automated management system called AttendMe.",
-      "deliveryApproach": "DEKODE replaced paper-based administration with an automated cloud information-capture system that supports record storage, retrieval, archiving, visitor and movement records, incident management, and compliance reporting.",
+      "solution": "Provided a fully automated management software called “AttendMe”.",
       "outcome": "By adopting an automated system, Stella Maris noticed a decline in the administrative overheads and eliminated the unnecessary time and energy spent maintaining records on paper. Through their information capturing system, Stella Maris was also able to archive, locate and report compliance to the authorities. This helped release a lot of administrative workload. By working with DEKODE, Stella Maris was able to smoothen their operations, further providing a safer environment for children and helping parents release any of their worries. Stella Maris looks forward to working with DEKODE to maintain its data management systems.",
       "aliases": [
         "Stella Maris",
@@ -299,7 +306,9 @@
         "primary school solution",
         "school case study"
       ],
-      "sourceReference": "DEKODE/src/pages/PrimarySchool.jsx"
+      "sourceReference": "DEKODE/src/pages/PrimarySchool.jsx",
+      "obstacles": "Stella Maris manually recorded administration data, visitors, child pickup and drop-off, staff, and incidents. Storing, locating, archiving, and reporting those records increased administrative cost and made compliance reporting inefficient.",
+      "deliveryApproach": "DEKODE replaced paper-based administration with an automated cloud information-capture system that supports record storage, retrieval, archiving, visitor and movement records, incident management, and compliance reporting."
     }
   ],
   "portfolioProjects": [
@@ -311,9 +320,18 @@
       "type": "Automated information and movement management system",
       "platform": "Cloud, Amazon Web Services",
       "clientContext": "Primary-school operations, including Stella Maris Primary School",
-      "deliverables": ["Child, staff, and visitor arrival and departure records", "Incident recording and reporting", "Automated record storage, retrieval, archiving, and compliance reporting"],
+      "deliverables": [
+        "Child, staff, and visitor arrival and departure records",
+        "Incident recording and reporting",
+        "Automated record storage, retrieval, archiving, and compliance reporting"
+      ],
       "outcome": "Reduced paper-based administrative overhead and made records easier to archive, locate, and report while supporting a safer school environment.",
-      "aliases": ["Attend Me", "school attendance system", "visitor management", "Stella Maris solution"],
+      "aliases": [
+        "Attend Me",
+        "school attendance system",
+        "visitor management",
+        "Stella Maris solution"
+      ],
       "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
     },
     {
@@ -324,8 +342,17 @@
       "type": "Mobile app and integrated web portal",
       "platform": "Android, iOS, and web",
       "clientContext": "Chauffeurs managing bookings while mobile",
-      "deliverables": ["Android mobile app", "iOS mobile app", "Integrated web portal", "On-the-go booking management"],
-      "aliases": ["chauffeur app", "chauffeur booking app", "driver booking management"],
+      "deliverables": [
+        "Android mobile app",
+        "iOS mobile app",
+        "Integrated web portal",
+        "On-the-go booking management"
+      ],
+      "aliases": [
+        "chauffeur app",
+        "chauffeur booking app",
+        "driver booking management"
+      ],
       "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
     },
     {
@@ -336,8 +363,19 @@
       "type": "Mobile application",
       "platform": "iOS and Android",
       "clientContext": "Smart Money Solutions, an independent Australian mortgage broker",
-      "deliverables": ["Unified home-loan calculators", "Borrowing-capacity calculations", "Repayment and stamp-duty calculations", "Saved mortgage calculations", "iOS and Android apps"],
-      "aliases": ["SmartLoan Helper", "home loan calculator app", "mortgage calculator", "Smart Money Solutions app"],
+      "deliverables": [
+        "Unified home-loan calculators",
+        "Borrowing-capacity calculations",
+        "Repayment and stamp-duty calculations",
+        "Saved mortgage calculations",
+        "iOS and Android apps"
+      ],
+      "aliases": [
+        "SmartLoan Helper",
+        "home loan calculator app",
+        "mortgage calculator",
+        "Smart Money Solutions app"
+      ],
       "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
     },
     {
@@ -348,8 +386,16 @@
       "type": "Web and mobile application",
       "platform": "Web and iOS",
       "clientContext": "A Melbourne start-up serving mortgage brokers and their clients",
-      "deliverables": ["Web application", "iOS application", "On-the-go broker and client relationship management"],
-      "aliases": ["Smart Broker", "mortgage broker app", "broker client platform"],
+      "deliverables": [
+        "Web application",
+        "iOS application",
+        "On-the-go broker and client relationship management"
+      ],
+      "aliases": [
+        "Smart Broker",
+        "mortgage broker app",
+        "broker client platform"
+      ],
       "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
     },
     {
@@ -360,8 +406,16 @@
       "type": "Responsive web marketplace",
       "platform": "Web",
       "clientContext": "An online marketplace for products made from recycled materials",
-      "deliverables": ["Browser-independent responsive web portal", "Integrated content management system", "Online product marketplace"],
-      "aliases": ["Recycled Marketplace", "recycled products marketplace", "sustainable ecommerce"],
+      "deliverables": [
+        "Browser-independent responsive web portal",
+        "Integrated content management system",
+        "Online product marketplace"
+      ],
+      "aliases": [
+        "Recycled Marketplace",
+        "recycled products marketplace",
+        "sustainable ecommerce"
+      ],
       "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
     },
     {
@@ -372,8 +426,16 @@
       "type": "Point-of-sale system and web management console",
       "platform": "iPad and web",
       "clientContext": "A Melbourne retail-technology start-up",
-      "deliverables": ["iPad-based point-of-sale system", "Web-based retailer management console"],
-      "aliases": ["Estrado POS", "point of sale", "retail POS system", "iPad POS"],
+      "deliverables": [
+        "iPad-based point-of-sale system",
+        "Web-based retailer management console"
+      ],
+      "aliases": [
+        "Estrado POS",
+        "point of sale",
+        "retail POS system",
+        "iPad POS"
+      ],
       "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
     }
   ],
@@ -411,24 +473,28 @@
   ],
   "developmentProcess": [
     {
-      "name": "Discover",
-      "description": "Align on goals, users, constraints, workflows, and actionable quick wins."
+      "name": "Discovery",
+      "description": "Align on goals, users, constraints, workflows, and the outcomes that will define success."
+    },
+    {
+      "name": "Prototype",
+      "description": "Turn the strongest direction into something tangible so assumptions, user flows, and technical choices can be tested early."
     },
     {
       "name": "Design",
-      "description": "Define solution architecture, UI/UX flows, delivery plan, and success measures."
+      "description": "Define the solution architecture, user experience, delivery plan, and measures of success."
     },
     {
       "name": "Build",
-      "description": "Implement, integrate, test, and document logic so it’s production-ready."
+      "description": "Implement, integrate, test, and document the solution with security and maintainability built in throughout."
     },
     {
-      "name": "Secure",
-      "description": "Embed privacy, access control, IT governance, and hardening from day one."
+      "name": "Deploy",
+      "description": "Release the production-ready solution with a practical rollout, operational readiness, and support plan."
     },
     {
-      "name": "Run & Optimise",
-      "description": "Support what we ship, monitor system performance, iterate, and optimise."
+      "name": "Evolve",
+      "description": "Monitor what was shipped, support users, learn from real usage, and improve the product over time."
     }
   ],
   "contact": {
@@ -458,7 +524,7 @@
   "legal": {
     "privacy": {
       "title": "Privacy Policy",
-      "contactEmail": "pm@dekodeglobal.com",
+      "contactEmail": "pankaj.banga@dekodeglobal.com",
       "summary": "At DEKODE Consultancy, we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, and safeguard your data.",
       "sections": [
         {
@@ -525,7 +591,7 @@
     },
     {
       "question": "How does DEKODE deliver projects?",
-      "answer": "DEKODE follows five stages: Discover, Design, Build, Secure, Run & Optimise."
+      "answer": "DEKODE follows six connected stages: Discovery, Prototype, Design, Build, Deploy, Evolve. Security, privacy, and maintainability are considered throughout."
     }
   ],
   "aliases": {
@@ -572,8 +638,24 @@
       "methodology",
       "workflow",
       "delivery",
+      "deliver projects",
       "how you work",
+      "how you build",
+      "build products",
+      "product lifecycle",
       "approach"
+    ],
+    "leadership": [
+      "founder",
+      "founded",
+      "owner",
+      "owns",
+      "leadership",
+      "who started",
+      "who is behind",
+      "who runs",
+      "pankaj banga",
+      "linkedin"
     ],
     "why": [
       "why choose",
@@ -581,6 +663,8 @@
       "difference",
       "values",
       "culture",
+      "star",
+      "star principles",
       "principles"
     ],
     "caseStudies": [
@@ -637,8 +721,11 @@
     "privacy": [
       "privacy",
       "privacy policy",
+      "privacy request",
       "personal data",
       "data protection",
+      "data protection inquiry",
+      "data request",
       "data security",
       "my data"
     ],

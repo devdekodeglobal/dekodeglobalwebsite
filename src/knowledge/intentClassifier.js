@@ -32,6 +32,7 @@ export function scoreCompetingIntents(message) {
   const hasProjectContext = PROJECT_CONTEXT.test(text);
   const isCapabilityQuestion = CAPABILITY_QUESTION.test(text);
   const hasBookingPair = hasBookingAction && hasBookingObject;
+  const hasExplicitBookingPurpose = /\b(?:book|schedule|reserve|arrange|set up)\b.{0,28}\b(?:discovery call|consultation|call|meeting)\b.{0,18}\b(?:with|to discuss|about|regarding)\b/i.test(text);
   const hasBookingTarget = /\b(?:book|schedule|arrange|meet|meeting|call|talk)\b.{0,36}\b(?:with|to)\s+(?:dekode|you|your team|the team|someone|a person|a human)\b/i.test(text)
     || /\b(?:meet|meeting|call|talk)\b.{0,24}\b(?:someone|team|person|human)\b/i.test(text)
     || /\b(?:your|dekode)\s+(?:availability|slots?)\b/i.test(text);
@@ -51,6 +52,7 @@ export function scoreCompetingIntents(message) {
 
   if (/^(?:please\s+)?book$/i.test(text)) bookingScore += 5;
   if (hasBookingPair) bookingScore += 5;
+  if (hasExplicitBookingPurpose) bookingScore += 6;
   if (hasInformalMeetingRequest) bookingScore += 4;
   if (hasDirectBookingNeed) bookingScore += 4;
   if (hasBookingTarget) bookingScore += 4;
@@ -64,7 +66,7 @@ export function scoreCompetingIntents(message) {
   if (hasProductNoun) projectScore += 1;
 
   let route = null;
-  if (strongProject && !hasBookingTarget) route = 'project';
+  if (strongProject && !hasBookingTarget && !hasExplicitBookingPurpose) route = 'project';
   else if (bookingScore >= 4 && projectScore >= 4 && Math.abs(bookingScore - projectScore) <= 2) route = 'clarify';
   else if (bookingScore >= 4 && bookingScore > projectScore) route = 'meeting';
   else if (projectScore >= 5 && projectScore >= bookingScore) route = 'project';
@@ -74,7 +76,7 @@ export function scoreCompetingIntents(message) {
     bookingScore,
     projectScore,
     route,
-    signals: { hasBookingTarget, hasDualUseTerm, hasProductNoun, strongProject },
+    signals: { hasBookingTarget, hasExplicitBookingPurpose, hasDualUseTerm, hasProductNoun, strongProject },
   };
 }
 
@@ -135,12 +137,13 @@ export function classifyCompanyIntent(message, context = {}) {
     /\b(what is|tell me about|do you|can you|offer|provide|help with|explain)\b/i.test(text);
   const asksAboutPortfolio = Boolean(match.portfolioProject);
   const asksAboutVerifiedEntity = Boolean(match.caseStudy || match.initiative || match.developmentStep);
+  const asksAboutKnownTopic = Boolean(match.topic && match.score > 0);
   const contextualFollowUp =
     context.isCompanyConversation &&
     (match.score > 0 || /^(what about|how about|and|also|tell me more|why|how|which|do you|can you)\b/i.test(text));
 
   const isShortCompanyTopic = SHORT_COMPANY_TOPICS.test(text);
-  const isCompanyRelated = hasCompanyCue || asksAboutSolution || asksAboutPortfolio || asksAboutVerifiedEntity || contextualFollowUp || isShortCompanyTopic;
+  const isCompanyRelated = hasCompanyCue || asksAboutSolution || asksAboutPortfolio || asksAboutVerifiedEntity || asksAboutKnownTopic || contextualFollowUp || isShortCompanyTopic;
 
   if (!isCompanyRelated && !match.topic && CLEAR_EXTERNAL_QUESTION.test(text)) {
     return { isCompanyRelated: false, topic: null, kind: 'out_of_scope' };

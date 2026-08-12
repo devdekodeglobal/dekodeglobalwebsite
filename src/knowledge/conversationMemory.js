@@ -69,7 +69,7 @@ export function createConversationMemory(sessionId = createId()) {
     askedFields: [],
     recentMessages: [],
     summary: '',
-    booking: { suggested: false, declined: false, initiated: false },
+    booking: { suggested: false, requested: false, declined: false, initiated: false },
   };
 }
 
@@ -105,6 +105,7 @@ export function normalizeConversationMemory(value, legacyHistory = []) {
     summary: clean(value?.summary, MAX_SUMMARY_LENGTH),
     booking: {
       suggested: Boolean(value?.booking?.suggested),
+      requested: Boolean(value?.booking?.requested),
       declined: Boolean(value?.booking?.declined),
       initiated: Boolean(value?.booking?.initiated),
     },
@@ -163,6 +164,7 @@ function buildSummary(memory) {
   }
   if (memory.askedFields.length) facts.push(`Discovery already covered: ${memory.askedFields.join(', ')}.`);
   if (memory.booking.declined) facts.push('The visitor declined or deferred booking; do not suggest it again unless they ask.');
+  if (memory.booking.requested) facts.push('The visitor explicitly selected or requested a discovery call with DEKODE; preserve the known project context and continue to booking.');
   return clean(facts.join(' '), MAX_SUMMARY_LENGTH);
 }
 
@@ -202,7 +204,7 @@ function coverage(memory) {
     .filter((field) => Boolean(memory.project[field])).length + (memory.project.constraints.length ? 1 : 0);
 }
 
-export function beginConversationTurn(value, message, intentKind = 'informational') {
+export function beginConversationTurn(value, message, intentKind = 'informational', interaction = null) {
   const previous = normalizeConversationMemory(value);
   const isProject = intentKind === 'project' || PROJECT_STATES.has(previous.state);
   const project = isProject ? mergeProjectFacts(previous.project, message) : previous.project;
@@ -210,6 +212,12 @@ export function beginConversationTurn(value, message, intentKind = 'informationa
     ? (previous.projectTurnCount ? 'requirement_discovery' : 'project_intent_detected')
     : (PROJECT_STATES.has(previous.state) ? previous.state : 'informational');
   const booking = { ...previous.booking };
+  const selectedBooking = interaction?.type === 'suggestion'
+    && (interaction.intent === 'book_meeting' || interaction.action === 'open_calendar');
+  if (selectedBooking || intentKind === 'meeting') {
+    booking.requested = true;
+    booking.declined = false;
+  }
   if (previous.booking.initiated) {
     state = 'booking_initiated';
   } else if (previous.booking.declined || isBookingDecline(message, previous)) {
@@ -302,7 +310,7 @@ export function markBookingInitiated(value) {
   const next = {
     ...memory,
     state: 'booking_initiated',
-    booking: { ...memory.booking, initiated: true },
+    booking: { ...memory.booking, requested: true, initiated: true },
   };
   next.summary = buildSummary(next);
   return next;

@@ -44,12 +44,12 @@ async function withDirectGemini(mockFetch, run) {
   }
 }
 
-async function ask(question, ip, conversation, usedSuggestions = []) {
+async function ask(question, ip, conversation, usedSuggestions = [], interaction = null) {
   const response = makeResponse();
   await handler({
     method: 'POST',
     headers: { 'x-forwarded-for': ip },
-    body: { question, conversation, usedSuggestions },
+    body: { question, conversation, usedSuggestions, interaction },
   }, response);
   return response;
 }
@@ -96,12 +96,53 @@ test('opens the calendar for model-confirmed booking intent', async () => {
       intent: 'book_meeting', confidence: 0.98, action: 'open_calendar', topic: 'discovery call', answer: 'Choose a date and time.',
     }),
   }), async () => {
-    for (const [index, question] of ['book ameeting', 'i want meet'].entries()) {
+    for (const [index, question] of [
+      'book ameeting',
+      'i want meet',
+      'I would like to book a discovery call to discuss my mobile app idea.',
+    ].entries()) {
       const response = await ask(question, `booking-${index}`);
       assert.equal(response.body.action, 'open_calendar');
       assert.deepEqual(response.body.actions, [{ type: 'open_booking', label: 'View available times' }]);
     }
   });
+});
+
+test('a selected booking suggestion keeps project context and opens the calendar', async () => {
+  let sawInteraction = false;
+  await withDirectGemini(async (_url, options) => {
+    const request = JSON.parse(options.body);
+    sawInteraction = request.contents.at(-1).parts[0].text.includes('"intent":"book_meeting"');
+    return {
+      ok: true,
+      status: 200,
+      json: async () => modelPayload({
+        intent: 'book_meeting', confidence: 0.98, action: 'open_calendar', topic: 'mobile app discovery call', answer: 'Choose a date and time for your mobile app discussion.',
+      }),
+    };
+  }, async () => {
+    const conversation = {
+      sessionId: 'pill-booking-context',
+      state: 'booking_suggested',
+      lastIntent: 'project',
+      project: { type: 'Mobile App', objective: 'Build an Android field app.' },
+      recentMessages: [
+        { role: 'user', text: 'I want to build an Android app for field staff.' },
+        { role: 'model', text: 'We can shape that mobile product with you.' },
+      ],
+    };
+    const response = await ask(
+      'I would like to book a discovery call to discuss my mobile app idea.',
+      'pill-booking',
+      conversation,
+      [],
+      { type: 'suggestion', label: 'Book a discovery call', intent: 'book_meeting', action: 'open_calendar' },
+    );
+    assert.equal(response.body.action, 'open_calendar');
+    assert.equal(response.body.conversation.booking.requested, true);
+    assert.match(response.body.conversation.summary, /Mobile App/);
+  });
+  assert.equal(sawInteraction, true);
 });
 
 test('post-model validation blocks calendar actions for product-building requests', async () => {
@@ -200,7 +241,7 @@ test('returns contextual suggestions and removes labels already shown', async ()
   }, async () => {
     const response = await ask('What is DEKODE?', 'suggestions', undefined, ['Explore services']);
     assert.deepEqual(response.body.suggestions, [
-      { label: 'See case studies', prompt: 'Show me DEKODE case studies.' },
+      { label: 'See case studies', prompt: 'Show me DEKODE case studies.', kind: 'follow_up' },
     ]);
   });
   assert.equal(promptIncludedUsedLabels, true);

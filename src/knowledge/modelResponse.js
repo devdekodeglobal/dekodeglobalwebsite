@@ -38,7 +38,17 @@ function sanitizeSuggestions(value) {
     const key = label.toLowerCase();
     if (!label || !prompt || seen.has(key)) return [];
     seen.add(key);
-    return [{ label, prompt }];
+    const suggestionRoute = scoreCompetingIntents(prompt).route;
+    const inferredIntent = suggestionRoute === 'meeting'
+      ? 'book_meeting'
+      : suggestionRoute === 'project' ? 'project_build' : undefined;
+    const inferredAction = suggestionRoute === 'meeting'
+      ? 'open_calendar'
+      : suggestionRoute === 'project' ? 'show_project_panel' : undefined;
+    const intent = MODEL_INTENTS.includes(suggestion?.intent) ? suggestion.intent : inferredIntent;
+    const action = MODEL_ACTIONS.includes(suggestion?.action) ? suggestion.action : inferredAction;
+    const kind = suggestion?.kind === 'discovery' ? 'discovery' : 'follow_up';
+    return [{ label, prompt, kind, ...(intent ? { intent } : {}), ...(action ? { action } : {}) }];
   }).slice(0, 4);
 }
 
@@ -54,7 +64,7 @@ export function parseStructuredModelText(value) {
   }
 }
 
-export function validateModelResponse(candidate, originalMessage) {
+export function validateModelResponse(candidate, originalMessage, context = {}) {
   const parsed = parseStructuredModelText(candidate) || {};
   const safetyAnswer = getSensitiveRequestRefusal(originalMessage);
   if (safetyAnswer) {
@@ -78,11 +88,16 @@ export function validateModelResponse(candidate, originalMessage) {
   if (!result.answer) throw new Error('MODEL_RESPONSE_ANSWER_MISSING');
 
   const competing = scoreCompetingIntents(originalMessage);
+  const selectedSuggestion = context?.interaction?.type === 'suggestion'
+    ? context.interaction
+    : null;
+  const resolvedBookingSelection = selectedSuggestion?.intent === 'book_meeting'
+    || selectedSuggestion?.action === 'open_calendar';
   if (result.action === 'open_calendar') {
     if (competing.route === 'project') {
       result.intent = 'project_build';
       result.action = 'show_project_panel';
-    } else if (competing.route !== 'meeting') {
+    } else if (competing.route !== 'meeting' && !resolvedBookingSelection) {
       result.intent = 'clarification';
       result.action = 'ask_clarification';
       result.topic = 'meeting or project';
@@ -90,7 +105,7 @@ export function validateModelResponse(candidate, originalMessage) {
     }
   }
 
-  if (competing.route === 'clarify' && result.intent === 'book_meeting') {
+  if (competing.route === 'clarify' && result.intent === 'book_meeting' && !resolvedBookingSelection) {
     result.intent = 'clarification';
     result.action = 'ask_clarification';
     result.topic = 'meeting or project';

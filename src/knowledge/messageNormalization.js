@@ -10,6 +10,9 @@ const REPLACEMENTS = [
   [/\bwebistes?\b|\bwesbites?\b/g, 'website'],
   [/\bwnat\b/g, 'want'],
   [/\bcreat\b/g, 'create'],
+  [/\bautomashun\b/g, 'automation'],
+  [/\bmordern(?:ise|ize)?\b/g, 'modernise'],
+  [/\battendence\b/g, 'attendance'],
   [/\bu\b/g, 'you'],
 ];
 
