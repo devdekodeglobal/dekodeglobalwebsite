@@ -51,39 +51,39 @@ function getTimeAwareGreeting(date = new Date()) {
 
   if (hour >= 0 && hour < 4) {
     options = [
-      "Burning the midnight oil? We're right here with you.",
-      "Quiet hours. Perfect for deep focus.",
-      "Still up? Let's get things done."
+      "Quiet hours for deep focus. Ready to strategize?",
+      "Building the future of AI, no matter the hour.",
+      "Late-night breakthrough? Let's refine your strategy."
     ];
   } else if (hour >= 4 && hour < 8) {
     options = [
-      "A fresh start to the day. Let's build something.",
-      "Early bird gets the worm. What's on today's agenda?",
-      "Good morning. Ready to tackle the day?"
+      "A fresh start. Let's map out your AI transformation.",
+      "Early focus. What strategic goals are we tackling today?",
+      "Starting early? Let's align your technology with your vision."
     ];
   } else if (hour >= 8 && hour < 12) {
     options = [
-      "Morning momentum. What's the main focus today?",
+      "Building momentum. What's the main focus today?",
       "Making good progress? Let's keep the productivity flowing.",
-      "Great morning. How can we assist you today?"
+      "Let's drive your digital transformation forward today."
     ];
   } else if (hour >= 12 && hour < 16) {
     options = [
-      "Midday check-in. Ready to keep the momentum going?",
-      "Post-lunch focus. What's next on the list?",
-      "Good afternoon. Let's make it a productive one."
+      "Midday check-in. Ready to scale your AI infrastructure?",
+      "Let's maintain focus and optimize your workflows.",
+      "Ready to elevate your business strategy today?"
     ];
   } else if (hour >= 16 && hour < 20) {
     options = [
-      "Winding down the day. Let's review our progress.",
-      "Great work today. Need anything else before logging off?",
-      "Evening check-in. Wrapping up today's goals?"
+      "Reviewing progress. How can we refine your AI models?",
+      "Great work today. Let's plan the next strategic move.",
+      "Wrapping up? Let's ensure your infrastructure is secure."
     ];
   } else {
     options = [
-      "Nighttime focus. What are we building tonight?",
-      "The day is winding down, but we're still here.",
-      "Late hours. Time for some quiet productivity?"
+      "Focused on the future. What are we building next?",
+      "The world slows down, but innovation doesn't.",
+      "Late hours. A perfect time for strategic planning."
     ];
   }
 
