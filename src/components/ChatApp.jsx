@@ -1005,7 +1005,7 @@ export default function ChatApp({
             className="centered-layout"
           >
             <h1 className="hero-title">
-              {proposalContext ? "Ask about your proposal" : "Making good progress? Let's keep the productivity flowing."}
+              {proposalContext ? "Ask about your proposal" : heroGreeting}
             </h1>
 
             <div className="input-container">
