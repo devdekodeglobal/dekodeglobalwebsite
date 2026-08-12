@@ -113,16 +113,19 @@ export default function ChatApp({
   const [realTime, setRealTime] = useState(() => {
     // Start 6 hours in the past to trigger the entrance animation
     const d = new Date();
-    d.setHours(d.getHours() - 6);
+    d.setHours(d.getHours() - 3);
     return d;
   });
 
   const timeOfDay = useMemo(() => {
     const hour = realTime.getHours();
-    if (hour >= 5 && hour < 11) return "morning";
-    if (hour >= 11 && hour < 17) return "noon";
-    if (hour >= 17 && hour < 21) return "evening";
-    return "night";
+    if (hour >= 4 && hour < 7) return "dawn";
+    if (hour >= 7 && hour < 10) return "morning";
+    if (hour >= 10 && hour < 15) return "noon";
+    if (hour >= 15 && hour < 18) return "golden";
+    if (hour >= 18 && hour < 20) return "evening";
+    if (hour >= 20 && hour < 24) return "night";
+    return "latenight";
   }, [realTime]);
 
   // Animate to current time on load, then monitor real time
@@ -937,10 +940,13 @@ export default function ChatApp({
 
   return (
     <>
+      <div className={`vibrant-background vibrant-background-dawn ${timeOfDay === "dawn" ? "active" : ""}`} />
       <div className={`vibrant-background vibrant-background-morning ${timeOfDay === "morning" ? "active" : ""}`} />
       <div className={`vibrant-background vibrant-background-noon ${timeOfDay === "noon" ? "active" : ""}`} />
+      <div className={`vibrant-background vibrant-background-golden ${timeOfDay === "golden" ? "active" : ""}`} />
       <div className={`vibrant-background vibrant-background-evening ${timeOfDay === "evening" ? "active" : ""}`} />
       <div className={`vibrant-background vibrant-background-night ${timeOfDay === "night" ? "active" : ""}`} />
+      <div className={`vibrant-background vibrant-background-latenight ${timeOfDay === "latenight" ? "active" : ""}`} />
       
       <ParticleBackground timeOfDay={timeOfDay} />
       
