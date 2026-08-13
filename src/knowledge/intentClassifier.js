@@ -42,6 +42,8 @@ export function scoreCompetingIntents(message) {
     && /\b(?:i|we)?\s*(?:want|need|would like|can i|could i|like)\b.{0,28}\b(?:calendar|booking)\b/i.test(text);
   const asksAvailability = /\b(?:meet|meeting|call|consultation|discovery call)\b.{0,32}\b(?:availability|available|slots?|times?)\b/i.test(text)
     || /\b(?:availability|available|slots?|times?)\b.{0,32}\b(?:meet|meeting|call|consultation|discovery call)\b/i.test(text);
+  const hasCallPreference = /\b(?:rather|prefer|instead)\b.{0,28}\b(?:on|in|over)?\s*a?\s*(?:call|meeting|talk)\b/i.test(text)
+    || /\b(?:do|talk|discuss)\s+(?:this|it)?\s*(?:on|over|in)\s+a\s+call\b/i.test(text);
   const hasProjectContainer = /\b(?:in|for|on)\s+(?:my|our)\s+(?:website|app|application|platform|system|software|product)\b/i.test(text);
   const hasOwnedProductRequest = /\b(?:i|we)\s+(?:want|need|would like)\b.{0,36}\b(?:app|application|website|platform|system|software|product|feature)\b/i.test(text);
   const strongProject = hasProjectContainer
@@ -53,6 +55,7 @@ export function scoreCompetingIntents(message) {
   if (/^(?:please\s+)?book$/i.test(text)) bookingScore += 5;
   if (hasBookingPair) bookingScore += 5;
   if (hasExplicitBookingPurpose) bookingScore += 6;
+  if (hasCallPreference) bookingScore += 6;
   if (hasInformalMeetingRequest) bookingScore += 4;
   if (hasDirectBookingNeed) bookingScore += 4;
   if (hasBookingTarget) bookingScore += 4;
@@ -66,7 +69,8 @@ export function scoreCompetingIntents(message) {
   if (hasProductNoun) projectScore += 1;
 
   let route = null;
-  if (strongProject && !hasBookingTarget && !hasExplicitBookingPurpose) route = 'project';
+  if (hasCallPreference) route = 'meeting';
+  else if (strongProject && !hasBookingTarget && !hasExplicitBookingPurpose) route = 'project';
   else if (bookingScore >= 4 && projectScore >= 4 && Math.abs(bookingScore - projectScore) <= 2) route = 'clarify';
   else if (bookingScore >= 4 && bookingScore > projectScore) route = 'meeting';
   else if (projectScore >= 5 && projectScore >= bookingScore) route = 'project';
@@ -89,7 +93,7 @@ const CLEAR_EXTERNAL_QUESTION = /^(who|what|when|where|why|how)\b/i;
 
 const COMPANY_CUES = [
   /\bdekode\b/i,
-  /\b(your|the)\s+(company|business|services?|capabilities|team|culture|values?|technolog(?:y|ies)|stack|process|clients?|industr(?:y|ies)|projects?|work|case studies|success stories|locations?|address|privacy|terms|polic(?:y|ies))\b/i,
+  /\b(your|the)\s+(company|business|services?|capabilities|team|culture|values?|technolog(?:y|ies)|stack|process|clients?|industr(?:y|ies)|projects?|works?|case studies|success stories|locations?|address|privacy|terms|polic(?:y|ies))\b/i,
   /\b(who are you|what do you do|why (?:should i )?choose you|how do you work)\b/i,
   /\bhow do you\s+(?:approach|deliver|manage|run|support|take)\b/i,
   /\b(do|can)\s+you\s+(build|provide|offer|support|work|help|develop|design)\b/i,

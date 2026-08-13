@@ -68,7 +68,7 @@ export function FormattedText({ text, topic }) {
       {followUp && (
         <p className="answer-follow-up">
           <ArrowRight size={15} aria-hidden="true" />
-          <InlineText text={followUp} />
+          <span><InlineText text={followUp} /></span>
         </p>
       )}
     </div>

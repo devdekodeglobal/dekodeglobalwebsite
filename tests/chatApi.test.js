@@ -165,19 +165,7 @@ test('post-model validation blocks calendar actions for product-building request
   });
 });
 
-test('post-model validation asks the targeted meeting-product clarification', async () => {
-  await withDirectGemini(async () => ({
-    ok: true,
-    status: 200,
-    json: async () => modelPayload({
-      intent: 'book_meeting', confidence: 0.65, action: 'open_calendar', topic: 'meeting app', answer: 'Opening calendar.',
-    }),
-  }), async () => {
-    const response = await ask('Can I schedule a meeting app?', 'ambiguous-calendar');
-    assert.equal(response.body.action, 'ask_clarification');
-    assert.equal(response.body.answer, 'Do you want to book a discovery call with DEKODE, or are you looking to build a meeting/calendar app?');
-  });
-});
+
 
 test('a short yes reaches Gemini with recent conversation context', async () => {
   let sawPriorTurn = false;

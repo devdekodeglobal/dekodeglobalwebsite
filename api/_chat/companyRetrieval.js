@@ -22,12 +22,15 @@ const joinItems = (items) => items.join(', ');
 const PROJECT_EVIDENCE_ALIASES = [
   'projects', 'project', 'portfolio', 'past work', 'previous work', 'client work',
   'examples', 'case studies', 'success stories', 'clients', 'what have you built',
+  'work done', 'your work', 'works done', 'what work', 'what have you done',
+  'what did you build', 'what did you make', 'show me your work', 'built before',
+  'built in the past', 'done before', 'done in the past', 'your projects', 'your clients',
 ];
 
 const asksForProjectEvidence = (question) => {
   const query = normalise(question);
   if (/\b(methodology|delivery process|deliver projects?|how (?:do|does) .{0,16}work|project lifecycle)\b/.test(query)) return false;
-  return /\b(projects?|portfolio|past work|previous work|client work|examples?|case studies|success stories|clients?|what have you built)\b/.test(query);
+  return /\b(projects?|portfolio|past work|previous work|client work|examples?|case studies|success stories|clients?|what have you built|work(?:s)? (?:done|have you done|did you do)|(?:show|see) (?:me )?(?:your )?work|what have you done|what did you (?:build|make|create|develop)|built (?:before|in the past)|done (?:before|in the past)|your (?:projects?|clients?|work))\b/.test(query);
 };
 
 const formatProject = (project) => [

@@ -43,7 +43,7 @@ import {
   subscribeToVoiceOpen,
 } from "../content/ContentToChatBridge";
 import { toLocalDateKey } from "../utils/calendarPresentation";
-import { cleanAssistantText } from "../utils/assistantText";
+import { cleanAssistantText, buildCleanProjectSummary } from "../utils/assistantText";
 
 function getTimeAwareGreeting(date = new Date()) {
   const hour = date.getHours();
@@ -1220,7 +1220,7 @@ export default function ChatApp({
                     animate={{ opacity: 1, y: 0 }}
                   >
                     <MeetingScheduler
-                      projectSummary={messages.filter((message) => message.sender === "user").map((message) => message.text).join(" ").slice(0, 2000)}
+                      projectSummary={buildCleanProjectSummary(messages)}
                       onBooked={handleMeetingBooked}
                       selectedDateKey={selectedMeetingDateKey}
                       onDateSelect={handleMeetingDateSelect}
