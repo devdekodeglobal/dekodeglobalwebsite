@@ -252,7 +252,7 @@ export default async function handler(request, response) {
     }
   }
 
-  const allKeys = [process.env.GEMINI_API_KEY, process.env.GEMINI_API_KEY_2, process.env.GEMINI_API_KEY_3].filter(Boolean);
+  const allKeys = [process.env.GEMINI_API_KEY, process.env.GEMINI_API_KEY_2, process.env.GEMINI_API_KEY_3, process.env.GEMINI_API_KEY_4, process.env.GEMINI_API_KEY_5].filter(Boolean);
   if (allKeys.length) {
     const apiKey = allKeys[Math.floor(Math.random() * allKeys.length)];
     const primaryModel = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
