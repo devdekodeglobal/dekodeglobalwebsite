@@ -24,7 +24,7 @@ function sentenceParts(text) {
 }
 
 function topicLabel(topic) {
-  const value = String(topic || '').trim();
+  const value = String(topic || '').trim().replace(/_/g, ' ');
   if (!value || ['general', 'safety'].includes(value.toLowerCase())) return '';
   return value.replace(/\b\w/g, (letter) => letter.toUpperCase());
 }

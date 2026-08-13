@@ -148,6 +148,15 @@ function fallbackAfterProviderFailure(question, history, verifiedIntent, interac
       intent: 'project_build', confidence: 0.5, action: 'show_project_panel', topic: project.topic, answer: project.text,
     }, question, { interaction });
   }
+  if (verifiedIntent.kind === 'meeting' || verifiedIntent.kind === 'meeting_project_ambiguous') {
+    return validateModelResponse({
+      intent: 'book_meeting',
+      confidence: 0.5,
+      action: 'open_calendar',
+      topic: 'booking',
+      answer: 'I would be happy to set up a call with you. I am opening our calendar so you can choose a convenient slot.',
+    }, question, { interaction });
+  }
   const company = generateCompanyResponse(question, verifiedIntent);
   return validateModelResponse({
     intent: verifiedIntent.kind === 'out_of_scope' ? 'out_of_scope' : 'company_info',

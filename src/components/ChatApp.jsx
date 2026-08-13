@@ -875,7 +875,7 @@ export default function ChatApp({
             className="knowledge-topic-label"
           >
             <span className="knowledge-live-dot" />
-            {companyPanel.topic === "why" ? "Why DEKODE" : companyPanel.topic}
+             {companyPanel.topic === "why" ? "Why DEKODE" : companyPanel.topic.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
           </motion.div>
         ) : (
           <>
