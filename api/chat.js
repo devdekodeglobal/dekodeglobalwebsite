@@ -135,7 +135,6 @@ async function requestGemini({ apiKey, model, question, normalizedQuestion, hist
         maxOutputTokens: 1_536,
         responseMimeType: 'application/json',
         responseSchema,
-        thinkingConfig: { thinkingBudget: 0 },
       },
     }),
   });
