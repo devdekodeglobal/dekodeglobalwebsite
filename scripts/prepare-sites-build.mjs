@@ -31,7 +31,7 @@ const clean = (value, limit = 4000) =>
 const proposal = ${JSON.stringify(proposal)};
 const proposalAssetBase64 = '${proposalAssetBase64}';
 const architectureAssetBase64 = '${architectureAssetBase64}';
-const PASSWORD_HASH = 'e2b2a70c40a9c3f48bcf4b844ebe9a509c34b44ea765aa49aa5b18dd3bd67c9e';
+const PASSWORD_HASH = '39fdc384e0f0696714f02040f714af1a2da8858fdf42de1834fa519c57428108';
 const PASSWORD_SALT = new TextEncoder().encode('dekode-cfs-access-v1');
 const SESSION_TTL = 7200;
 const attempts = new Map();
