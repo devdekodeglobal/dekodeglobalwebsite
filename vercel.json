@@ -2,7 +2,6 @@
   "buildCommand": "npm run build:vercel",
   "outputDirectory": "dist",
   "framework": "vite",
-  "regions": ["sin1", "syd1"],
   "rewrites": [
     { "source": "/proposals/:path*", "destination": "/index.html" }
   ],
