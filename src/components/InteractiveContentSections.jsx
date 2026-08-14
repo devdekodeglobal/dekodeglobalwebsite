@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowUpRight,
   Calendar,
+  ChevronDown,
   Factory,
   Mail,
   MapPin,
@@ -132,10 +133,7 @@ export default function InteractiveContentSections() {
 
   useEffect(() => subscribeToSessionSummary(setSessionSummary), []);
 
-  const capability = content.capabilities.find((item) => item.id === activeCapability);
   const project = content.selectedWork.find((item) => item.id === activeProject);
-  const stage = content.deliveryProcess.find((item) => item.id === activeStage);
-  const industry = content.industries.find((item) => item.id === activeIndustry);
   const ProjectIcon = caseStudyIcons[project.id];
   const starItems = companyKnowledge.whyChooseUs;
 
@@ -147,25 +145,6 @@ export default function InteractiveContentSections() {
     const intent = info.offset.x + info.velocity.x * 0.12;
     if (Math.abs(intent) < 42) return;
     rotateStar(intent < 0 ? 1 : -1);
-  };
-
-  const selectRailItem = (event, setter, id) => {
-    setter(id);
-    const button = event.currentTarget;
-    const rail = button.parentElement;
-    const left = button.offsetLeft - (rail.clientWidth - button.offsetWidth) / 2;
-    rail.scrollTo({ left, behavior: shouldReduceMotion ? "auto" : "smooth" });
-  };
-
-  const syncRailSelection = (event, setter) => {
-    const rail = event.currentTarget;
-    const railCenter = rail.scrollLeft + rail.clientWidth / 2;
-    const cards = [...rail.querySelectorAll("[data-rail-id]")];
-    const nearest = cards.reduce((best, card) => {
-      const distance = Math.abs(card.offsetLeft + card.offsetWidth / 2 - railCenter);
-      return !best || distance < best.distance ? { card, distance } : best;
-    }, null);
-    if (nearest) setter(nearest.card.dataset.railId);
   };
 
   return (
@@ -279,47 +258,44 @@ export default function InteractiveContentSections() {
           title="One team across the digital journey"
           description="Choose an area to see where DEKODE can create practical value."
         />
-        <div
-          className="capability-switcher stacked-card-rail"
-          role="tablist"
-          aria-label="Select a DEKODE capability"
-          onScroll={(event) => syncRailSelection(event, setActiveCapability)}
-        >
+        <div className="peek-accordion" aria-label="DEKODE capabilities">
           {content.capabilities.map((item, index) => (
-            <button
-              type="button"
-              role="tab"
-              key={item.id}
-              data-rail-id={item.id}
-              aria-selected={item.id === activeCapability}
-              className={item.id === activeCapability ? "is-active" : ""}
-              onClick={(event) => selectRailItem(event, setActiveCapability, item.id)}
-            >
-              <span className="stacked-card-index">0{index + 1}</span>
-              <strong>{item.title}</strong>
-              <small>{item.shortDescription}</small>
-            </button>
+            <article key={item.id} className={`peek-item ${item.id === activeCapability ? "is-open" : ""}`}>
+              <h3>
+                <button
+                  type="button"
+                  className="peek-header"
+                  aria-expanded={item.id === activeCapability}
+                  aria-controls={`capability-panel-${item.id}`}
+                  onClick={() => setActiveCapability((current) => current === item.id ? null : item.id)}
+                >
+                  <span className="peek-index">0{index + 1}</span>
+                  <span className="peek-header-copy">
+                    <strong>{item.title}</strong>
+                    <small>{item.shortDescription}</small>
+                  </span>
+                  <ChevronDown className="peek-chevron" size={18} aria-hidden="true" />
+                </button>
+              </h3>
+              <div id={`capability-panel-${item.id}`} className="peek-panel" aria-hidden={item.id !== activeCapability}>
+                <div className="peek-panel-inner">
+                  <div className="peek-content capability-peek-content">
+                    <div className="capability-detail-copy">
+                      <p>{item.fullDescription}</p>
+                      <strong>{item.value}</strong>
+                    </div>
+                    <div className="capability-detail-actions">
+                      <div className="keyword-row">
+                        {item.keywords.map((keyword) => <span key={keyword}>{keyword}</span>)}
+                      </div>
+                      <ChatAction section="capabilities" item={item} label="Discuss this capability" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
           ))}
         </div>
-        <motion.article
-          key={capability.id}
-          className="capability-detail"
-          role="tabpanel"
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <div className="capability-detail-copy">
-            <h3>{capability.title}</h3>
-            <p>{capability.fullDescription}</p>
-            <strong>{capability.value}</strong>
-          </div>
-          <div className="capability-detail-actions">
-            <div className="keyword-row">
-              {capability.keywords.map((keyword) => <span key={keyword}>{keyword}</span>)}
-            </div>
-            <ChatAction section="capabilities" item={capability} label="Discuss this capability" />
-          </div>
-        </motion.article>
       </motion.section>
 
       <motion.section
@@ -382,40 +358,35 @@ export default function InteractiveContentSections() {
           title="Progress you can see and understand"
           description="Each stage answers a useful question before the next investment is made."
         />
-        <div className="methodology-layout">
-          <div
-            className="methodology-rail stacked-card-rail"
-            role="tablist"
-            aria-label="DEKODE delivery stages"
-            onScroll={(event) => syncRailSelection(event, setActiveStage)}
-          >
+        <div className="peek-accordion" aria-label="DEKODE delivery stages">
             {content.deliveryProcess.map((item, index) => (
-              <button
-                type="button"
-                role="tab"
-                aria-selected={item.id === activeStage}
-                key={item.id}
-                data-rail-id={item.id}
-                className={item.id === activeStage ? "is-active" : ""}
-                onClick={(event) => selectRailItem(event, setActiveStage, item.id)}
-              >
-                <span>0{index + 1}</span>
-                <strong>{item.title}</strong>
-                <small>{item.description}</small>
-              </button>
+              <article key={item.id} className={`peek-item ${item.id === activeStage ? "is-open" : ""}`}>
+                <h3>
+                  <button
+                    type="button"
+                    className="peek-header"
+                    aria-expanded={item.id === activeStage}
+                    aria-controls={`methodology-panel-${item.id}`}
+                    onClick={() => setActiveStage((current) => current === item.id ? null : item.id)}
+                  >
+                    <span className="peek-index">0{index + 1}</span>
+                    <span className="peek-header-copy">
+                      <strong>{item.title}</strong>
+                      <small>{item.description}</small>
+                    </span>
+                    <ChevronDown className="peek-chevron" size={18} aria-hidden="true" />
+                  </button>
+                </h3>
+                <div id={`methodology-panel-${item.id}`} className="peek-panel" aria-hidden={item.id !== activeStage}>
+                  <div className="peek-panel-inner">
+                    <div className="peek-content methodology-peek-content">
+                      <p>{item.description}</p>
+                      <ChatAction section="delivery-process" item={item} label={item.question} intent="guided_discovery" />
+                    </div>
+                  </div>
+                </div>
+              </article>
             ))}
-          </div>
-          <motion.article
-            key={stage.id}
-            className="methodology-detail"
-            role="tabpanel"
-            initial={shouldReduceMotion ? false : { opacity: 0, x: 8 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <h3>{stage.title}</h3>
-            <p>{stage.description}</p>
-            <ChatAction section="delivery-process" item={stage} label={stage.question} intent="guided_discovery" />
-          </motion.article>
         </div>
       </motion.section>
 
@@ -428,48 +399,46 @@ export default function InteractiveContentSections() {
           title="Good systems begin with context"
           description="Select an industry to see how DEKODE connects capabilities around real operating needs."
         />
-        <div
-          className="industry-switcher stacked-card-rail"
-          role="tablist"
-          aria-label="Select an industry"
-          onScroll={(event) => syncRailSelection(event, setActiveIndustry)}
-        >
+        <div className="peek-accordion" aria-label="DEKODE services by industry">
           {content.industries.map((item, index) => (
-            <button
-              type="button"
-              role="tab"
-              key={item.id}
-              data-rail-id={item.id}
-              aria-selected={item.id === activeIndustry}
-              className={item.id === activeIndustry ? "is-active" : ""}
-              onClick={(event) => selectRailItem(event, setActiveIndustry, item.id)}
-            >
-              <span className="stacked-card-index">0{index + 1}</span>
-              <strong>{item.title}</strong>
-              <small>{item.challenge}</small>
-            </button>
+            <article key={item.id} className={`peek-item ${item.id === activeIndustry ? "is-open" : ""}`}>
+              <h3>
+                <button
+                  type="button"
+                  className="peek-header"
+                  aria-expanded={item.id === activeIndustry}
+                  aria-controls={`service-panel-${item.id}`}
+                  onClick={() => setActiveIndustry((current) => current === item.id ? null : item.id)}
+                >
+                  <span className="peek-index">0{index + 1}</span>
+                  <span className="peek-header-copy">
+                    <strong>{item.title}</strong>
+                    <small>{item.challenge}</small>
+                  </span>
+                  <ChevronDown className="peek-chevron" size={18} aria-hidden="true" />
+                </button>
+              </h3>
+              <div id={`service-panel-${item.id}`} className="peek-panel" aria-hidden={item.id !== activeIndustry}>
+                <div className="peek-panel-inner">
+                  <div className="peek-content industry-peek-content">
+                    <div>
+                      <span>Common challenge</span>
+                      <p>{item.challenge}</p>
+                    </div>
+                    <div>
+                      <span>Solution direction</span>
+                      <p>{item.solution}</p>
+                    </div>
+                    <div className="industry-capabilities">
+                      {item.capabilities.map((capabilityName) => <span key={capabilityName}>{capabilityName}</span>)}
+                    </div>
+                    <ChatAction section="industries" item={item} label={`Discuss ${item.title}`} />
+                  </div>
+                </div>
+              </div>
+            </article>
           ))}
         </div>
-        <motion.article
-          key={industry.id}
-          className="industry-detail"
-          role="tabpanel"
-          initial={shouldReduceMotion ? false : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          <div>
-            <span>Common challenge</span>
-            <p>{industry.challenge}</p>
-          </div>
-          <div>
-            <span>Solution direction</span>
-            <p>{industry.solution}</p>
-          </div>
-          <div className="industry-capabilities">
-            {industry.capabilities.map((item) => <span key={item}>{item}</span>)}
-          </div>
-          <ChatAction section="industries" item={industry} label={`Discuss ${industry.title}`} />
-        </motion.article>
       </motion.section>
 
       <motion.section
