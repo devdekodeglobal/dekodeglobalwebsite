@@ -16,6 +16,7 @@ import CompanyKnowledgePanel from "./CompanyKnowledgePanel";
 import ParticleBackground from "./ParticleBackground";
 import TypewriterText, { FormattedText } from "./TypewriterText";
 import HeroScenery from "./HeroScenery";
+import PlaneBanner from "./PlaneBanner";
 import DekodeVoiceEntry from "./voice/DekodeVoiceEntry";
 import DekodeVoiceSession from "./voice/DekodeVoiceSession";
 import MeetingScheduler from "./MeetingScheduler";
@@ -43,7 +44,7 @@ import {
   subscribeToVoiceOpen,
 } from "../content/ContentToChatBridge";
 import { toLocalDateKey } from "../utils/calendarPresentation";
-import { cleanAssistantText } from "../utils/assistantText";
+import { cleanAssistantText, buildCleanProjectSummary } from "../utils/assistantText";
 
 function getTimeAwareGreeting(date = new Date()) {
   const hour = date.getHours();
@@ -875,7 +876,7 @@ export default function ChatApp({
             className="knowledge-topic-label"
           >
             <span className="knowledge-live-dot" />
-            {companyPanel.topic === "why" ? "Why DEKODE" : companyPanel.topic}
+             {companyPanel.topic === "why" ? "Why DEKODE" : companyPanel.topic.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
           </motion.div>
         ) : (
           <>
@@ -951,10 +952,13 @@ export default function ChatApp({
       <ParticleBackground timeOfDay={timeOfDay} />
       
       {step === "centered" && (
-        <HeroScenery
-          timeOfDay={timeOfDay}
-          realTime={realTime}
-        />
+        <>
+          <HeroScenery
+            timeOfDay={timeOfDay}
+            realTime={realTime}
+          />
+          <PlaneBanner timeOfDay={timeOfDay} />
+        </>
       )}
 
       <header className="chat-header">
@@ -1220,7 +1224,7 @@ export default function ChatApp({
                     animate={{ opacity: 1, y: 0 }}
                   >
                     <MeetingScheduler
-                      projectSummary={messages.filter((message) => message.sender === "user").map((message) => message.text).join(" ").slice(0, 2000)}
+                      projectSummary={buildCleanProjectSummary(messages)}
                       onBooked={handleMeetingBooked}
                       selectedDateKey={selectedMeetingDateKey}
                       onDateSelect={handleMeetingDateSelect}

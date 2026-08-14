@@ -93,23 +93,12 @@ export function validateModelResponse(candidate, originalMessage, context = {}) 
     : null;
   const resolvedBookingSelection = selectedSuggestion?.intent === 'book_meeting'
     || selectedSuggestion?.action === 'open_calendar';
+
   if (result.action === 'open_calendar') {
     if (competing.route === 'project') {
       result.intent = 'project_build';
       result.action = 'show_project_panel';
-    } else if (competing.route !== 'meeting' && !resolvedBookingSelection) {
-      result.intent = 'clarification';
-      result.action = 'ask_clarification';
-      result.topic = 'meeting or project';
-      result.answer = MEETING_PROJECT_CLARIFICATION;
     }
-  }
-
-  if (competing.route === 'clarify' && result.intent === 'book_meeting' && !resolvedBookingSelection) {
-    result.intent = 'clarification';
-    result.action = 'ask_clarification';
-    result.topic = 'meeting or project';
-    result.answer = MEETING_PROJECT_CLARIFICATION;
   }
 
   return result;

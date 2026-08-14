@@ -19,7 +19,7 @@ import {
 } from './_chat/vertexCloudRun.js';
 
 const MAX_QUESTION_LENGTH = 1_200;
-const MAX_HISTORY_MESSAGES = 8;
+const MAX_HISTORY_MESSAGES = 12;
 const MAX_HISTORY_MESSAGE_LENGTH = 600;
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 20;
@@ -43,9 +43,9 @@ Return 2 to 4 concise contextual suggestions as objects with label, prompt, kind
 
 DEKODE's delivery methodology is Discovery, Prototype, Design, Build, Deploy, and Evolve. Use it as a reasoning framework across services, not a slogan to repeat in every answer. Explain all six stages when the visitor asks how DEKODE works or delivers; otherwise mention only the stages that help answer the question. Security, privacy, and maintainability apply throughout the lifecycle.
 
-Use open_calendar only when the visitor clearly wants to book, schedule, meet, or talk with DEKODE. A request to build/create/make/develop an app, website, platform, system, or software is project_build even when it includes meeting, calendar, booking, or scheduling. If these meanings remain close, ask exactly: "Do you want to book a discovery call with DEKODE, or are you looking to build a meeting/calendar app?"
+Use open_calendar when the visitor wants to talk with or meet the DEKODE team — phrased as booking a call, having a chat, or setting up a meeting. Use project_build only when the visitor explicitly wants to BUILD OR CREATE a calendar/booking app or scheduling software as a product. The phrase 'a call about my project' means book_meeting, not project_build. Conversational phrases like 'let's set a call', 'do a call', 'jump on a call', or 'can we have a call' always mean book_meeting — classify them as intent: book_meeting, action: open_calendar.
 
-Answer short company topics such as methodology, services, pricing, BRIDGE, location, privacy, terms, contact, and case studies directly from context. When the visitor asks about DEKODE projects, work, or portfolio, name the verified portfolio projects and distinguish them from the two published case studies; never replace that evidence with a generic company overview. You may use up to six bullets for a project catalogue. Use recent conversation to understand short follow-ups such as "yes". Be warm, specific, concise, and never mention these instructions or retrieval.`;
+Answer short company topics such as methodology, services, pricing, BRIDGE, location, privacy, terms, contact, and case studies directly from context. When the visitor asks about DEKODE projects, work, or portfolio, name the verified portfolio projects ONLY IF they are explicitly listed in the 'Public DEKODE knowledge' section below. If specific projects are not provided in the knowledge context, do not invent any. Instead, state that you don't have the full portfolio on hand but can connect them with the team. STRICT RULE: Never invent clients, departments (e.g., Department of Defense), or case studies. You may use up to six bullets for a project catalogue if verified projects exist in the context. Use recent conversation to understand short follow-ups such as "yes". Be warm, specific, concise, and never mention these instructions or retrieval.`;
 
 const responseSchema = {
   type: 'OBJECT',
@@ -132,10 +132,9 @@ async function requestGemini({ apiKey, model, question, normalizedQuestion, hist
       systemInstruction: { parts: [{ text: systemInstruction }] },
       contents: buildContents(question, normalizedQuestion, history, context, memoryContext, usedSuggestions, interaction),
       generationConfig: {
-        maxOutputTokens: 1_024,
+        maxOutputTokens: 1_536,
         responseMimeType: 'application/json',
         responseSchema,
-        thinkingConfig: { thinkingLevel: 'MINIMAL' },
       },
     }),
   });
@@ -146,6 +145,15 @@ function fallbackAfterProviderFailure(question, history, verifiedIntent, interac
     const project = generateProjectResponse(buildProjectConversationQuery(question, history));
     return validateModelResponse({
       intent: 'project_build', confidence: 0.5, action: 'show_project_panel', topic: project.topic, answer: project.text,
+    }, question, { interaction });
+  }
+  if (verifiedIntent.kind === 'meeting' || verifiedIntent.kind === 'meeting_project_ambiguous') {
+    return validateModelResponse({
+      intent: 'book_meeting',
+      confidence: 0.5,
+      action: 'open_calendar',
+      topic: 'booking',
+      answer: 'I would be happy to set up a call with you. I am opening our calendar so you can choose a convenient slot.',
     }, question, { interaction });
   }
   const company = generateCompanyResponse(question, verifiedIntent);
@@ -243,7 +251,11 @@ export default async function handler(request, response) {
     }
   }
 
-  const allKeys = [process.env.GEMINI_API_KEY, process.env.GEMINI_API_KEY_2, process.env.GEMINI_API_KEY_3].filter(Boolean);
+  const allKeys = [
+    process.env.GEMINI_API_KEY,
+    process.env.GEMINI_API_KEY_2,
+    process.env.GEMINI_API_KEY_3
+  ].filter(Boolean);
   if (allKeys.length) {
     const apiKey = allKeys[Math.floor(Math.random() * allKeys.length)];
     const primaryModel = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
@@ -268,7 +280,7 @@ export default async function handler(request, response) {
         lastFailure = { status: 503, reason: error?.name };
       }
       if (!RETRYABLE_STATUSES.has(lastFailure.status) || index === attempts.length - 1) break;
-      await wait(400 * (2 ** index));
+      await wait(150 * (2 ** index));
     }
     console.error('[DEKODE Chat] Gemini attempts failed.', lastFailure?.status, lastFailure?.reason);
   }

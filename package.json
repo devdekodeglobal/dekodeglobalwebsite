@@ -8,7 +8,7 @@
     "knowledge:build": "node scripts/build-company-knowledge.mjs",
     "knowledge:build:optional": "node scripts/build-company-knowledge.mjs --optional",
     "proposal:build": "node scripts/build-proposal-content.mjs",
-    "prebuild": "npm run knowledge:build && npm run proposal:build",
+    "prebuild": "npm run knowledge:build:optional && npm run proposal:build",
     "build": "vite build && node scripts/prepare-sites-build.mjs",
     "build:vercel": "vite build",
     "lint": "oxlint",
