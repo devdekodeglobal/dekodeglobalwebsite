@@ -16,7 +16,7 @@ import CompanyKnowledgePanel from "./CompanyKnowledgePanel";
 import ParticleBackground from "./ParticleBackground";
 import TypewriterText, { FormattedText } from "./TypewriterText";
 import HeroScenery from "./HeroScenery";
-// import PlaneBanner from "./PlaneBanner";
+import PlaneBanner from "./PlaneBanner";
 import DekodeVoiceEntry from "./voice/DekodeVoiceEntry";
 import DekodeVoiceSession from "./voice/DekodeVoiceSession";
 import MeetingScheduler from "./MeetingScheduler";
