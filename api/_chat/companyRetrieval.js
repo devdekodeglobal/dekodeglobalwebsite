@@ -227,7 +227,14 @@ function makeDocuments() {
   }));
 }
 
-const documents = makeDocuments();
+export const documents = makeDocuments();
+
+export function formatFullKnowledgeContext() {
+  return documents
+    .map((doc) => `[${doc.label}]\n${doc.text}`)
+    .join('\n\n')
+    .slice(0, 50000);
+}
 
 export function retrieveCompanyKnowledge(question, limit = 5) {
   const queryTerms = tokenize(question);
