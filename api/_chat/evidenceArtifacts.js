@@ -48,7 +48,7 @@ const portfolioItem = (project) => ({
   sections: [
     { label: 'About', value: project.description },
     project.deliverables?.length
-      ? { label: 'Delivered', value: project.deliverables.join(' | ') }
+      ? { label: 'Delivered', value: project.deliverables.join('; ') }
       : null,
     project.outcome ? { label: 'Outcome', value: project.outcome } : null,
   ].filter(Boolean),

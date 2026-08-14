@@ -59,3 +59,11 @@ test('renders an accessible single-open-item accordion with image-first details'
   assert.match(styles, /\.evidence-accordion\s*\{[\s\S]*background:\s*transparent/);
   assert.match(styles, /@media \(max-width:\s*700px\)[\s\S]*\.evidence-accordion-trigger/);
 });
+
+test('uses readable prose separators for portfolio deliverables', () => {
+  const artifact = buildEvidenceAccordion('show me your portfolio');
+  const attendMe = artifact.items.find((item) => item.name === 'AttendMe');
+  const delivered = attendMe.sections.find((section) => section.label === 'Delivered');
+  assert.match(delivered.value, /; /);
+  assert.doesNotMatch(delivered.value, /\|/);
+});

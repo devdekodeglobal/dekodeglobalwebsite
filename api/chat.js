@@ -218,9 +218,11 @@ export default async function handler(request, response) {
       ok: true,
       ...result,
       answer,
-      suggestions: (result.suggestions || [])
-        .filter((suggestion) => !usedSuggestions.includes(suggestion.label.toLowerCase()))
-        .slice(0, 4),
+      suggestions: evidenceAccordion
+        ? []
+        : (result.suggestions || [])
+          .filter((suggestion) => !usedSuggestions.includes(suggestion.label.toLowerCase()))
+          .slice(0, 4),
       ...responsePayload,
       conversation: completed,
       actions: result.action === 'open_calendar'
