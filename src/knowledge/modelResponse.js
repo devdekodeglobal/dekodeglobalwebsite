@@ -87,18 +87,5 @@ export function validateModelResponse(candidate, originalMessage, context = {}) 
   };
   if (!result.answer) throw new Error('MODEL_RESPONSE_ANSWER_MISSING');
 
-  if (result.action === 'open_calendar') {
-    const calendarRoute = resolveCalendarIntent(originalMessage, context);
-    if (calendarRoute === 'project') {
-      result.intent = 'project_build';
-      result.action = 'show_project_panel';
-    } else if (calendarRoute === 'clarify') {
-      result.intent = 'clarification';
-      result.action = 'ask_clarification';
-      result.topic = 'meeting intent';
-      result.answer = 'Would you like to arrange time with the DEKODE team, or are you planning meeting or booking functionality for a product?';
-    }
-  }
-
   return result;
 }
