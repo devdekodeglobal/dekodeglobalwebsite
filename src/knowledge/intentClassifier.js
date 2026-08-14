@@ -71,7 +71,7 @@ export function scoreCompetingIntents(message) {
   else if (bookingScore >= 4 && projectScore >= 4 && Math.abs(bookingScore - projectScore) <= 2) route = 'clarify';
   else if (bookingScore >= 4 && bookingScore > projectScore) route = 'meeting';
   else if (projectScore >= 5 && projectScore >= bookingScore) route = 'project';
-  else if (hasDualUseTerm) route = 'clarify';
+  else if (hasDualUseTerm) route = projectScore === 0 ? 'meeting' : 'clarify';
 
   return {
     bookingScore,
