@@ -26,7 +26,9 @@ const approvedEvidenceNames = [
 ].map(normalize).filter((name) => name.length >= 4);
 
 export function isProjectEvidenceQuestion(question) {
-  return PROJECT_EVIDENCE_PATTERN.test(normalizeVisitorMessage(question));
+  const query = normalizeVisitorMessage(question);
+  if (/\b(methodology|delivery process|deliver projects?|how (?:do|does) .{0,16}work|project lifecycle)\b/i.test(query)) return false;
+  return PROJECT_EVIDENCE_PATTERN.test(query);
 }
 
 export function requiresCompanyGrounding(result, question) {
