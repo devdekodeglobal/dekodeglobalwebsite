@@ -276,3 +276,15 @@ test('opens the existing scheduler from an AI qualification action', () => {
   assert.match(chatApp, /setConversationMemory\(result\.conversation\)/);
   assert.match(animationPanel, /conversationSummary/);
 });
+
+test('uses accessible peek accordions for capabilities, methodology, and services', () => {
+  assert.equal((interactiveContent.match(/className="peek-accordion"/g) || []).length, 3);
+  assert.match(interactiveContent, /aria-label="DEKODE capabilities"/);
+  assert.match(interactiveContent, /aria-label="DEKODE delivery stages"/);
+  assert.match(interactiveContent, /aria-label="DEKODE services by industry"/);
+  assert.match(interactiveContent, /aria-expanded=\{item\.id === activeCapability\}/);
+  assert.match(interactiveContent, /current === item\.id \? null : item\.id/);
+  assert.match(interactiveStyles, /\.peek-panel\s*\{[^}]*grid-template-rows:\s*0fr/s);
+  assert.match(interactiveStyles, /\.peek-item\.is-open \.peek-panel\s*\{[^}]*grid-template-rows:\s*1fr/s);
+  assert.match(interactiveStyles, /@media \(max-width: 600px\)[\s\S]*\.capability-peek-content,[\s\S]*\.industry-peek-content\s*\{[^}]*grid-template-columns:\s*1fr/);
+});
