@@ -7,6 +7,7 @@ import {
 } from '../api/_chat/evidenceArtifacts.js';
 
 const component = await readFile(new URL('../src/components/EvidenceAccordion.jsx', import.meta.url), 'utf8');
+const chatApp = await readFile(new URL('../src/components/ChatApp.jsx', import.meta.url), 'utf8');
 const styles = await readFile(new URL('../src/index.css', import.meta.url), 'utf8');
 
 test('limits broad case-study requests to the two published case studies', () => {
@@ -92,4 +93,10 @@ test('uses readable prose separators for portfolio deliverables', () => {
   const delivered = attendMe.sections.find((section) => section.label === 'Delivered');
   assert.match(delivered.value, /; /);
   assert.doesNotMatch(delivered.value, /\|/);
+});
+
+test('gives evidence responses a deliberate desktop width without changing normal bubbles', () => {
+  assert.match(chatApp, /message-evidence-\$\{msg\.evidenceAccordion\.mode\}/);
+  assert.match(styles, /\.message-ai\.message-evidence \.message-bubble\s*\{[^}]*width:\s*min\(680px,\s*92vw\)/s);
+  assert.match(styles, /\.message-ai\.message-evidence-catalogue \.message-bubble\s*\{[^}]*width:\s*min\(760px,\s*92vw\)/s);
 });

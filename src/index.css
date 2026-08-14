@@ -1357,6 +1357,15 @@ h1, h2, h3, h4, h5, h6 {
   background: transparent;
 }
 
+.message-ai.message-evidence .message-bubble {
+  width: min(680px, 92vw);
+  max-width: 100%;
+}
+
+.message-ai.message-evidence-catalogue .message-bubble {
+  width: min(760px, 92vw);
+}
+
 .evidence-accordion-label {
   margin: 0;
   padding: 0.75rem 0 0.45rem;

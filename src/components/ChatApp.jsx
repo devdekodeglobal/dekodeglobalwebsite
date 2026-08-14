@@ -1084,7 +1084,7 @@ export default function ChatApp({
                         stiffness: 250,
                         damping: 20,
                       }}
-                      className={`message-row ${msg.sender === "ai" ? "message-ai" : "message-user"}`}
+                      className={`message-row ${msg.sender === "ai" ? "message-ai" : "message-user"}${msg.evidenceAccordion ? ` message-evidence message-evidence-${msg.evidenceAccordion.mode}` : ""}`}
                     >
                       <div className="message-bubble">
                         {msg.sender === "ai" ? (
