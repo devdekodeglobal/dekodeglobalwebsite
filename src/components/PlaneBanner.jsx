@@ -73,51 +73,64 @@ const PiperCubPlane = () => (
   </svg>
 );
 
-export default function PlaneBanner({ timeOfDay = "night" }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+export default function PlaneBanner({ timeOfDay = "night", onBannerClick }) {
+  const [flights, setFlights] = useState([{ id: Date.now(), clientIndex: 0 }]);
 
   useEffect(() => {
-    const cycleInterval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % clients.length);
-    }, 32000); // 32s total: 26s flight across screen + 6s offscreen pause
+    let clientIndex = 0;
+    const spawnInterval = setInterval(() => {
+      clientIndex = (clientIndex + 1) % clients.length;
+      setFlights((prev) => [...prev, { id: Date.now(), clientIndex }]);
+    }, 15000); // spawn a new plane every 15s
 
-    return () => clearInterval(cycleInterval);
+    return () => clearInterval(spawnInterval);
   }, []);
+
+  const handleAnimationComplete = (id) => {
+    setFlights((prev) => prev.filter((flight) => flight.id !== id));
+  };
 
   return (
     <div className={`plane-banner-container time-${timeOfDay}`} aria-hidden="true">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentIndex}
-          className="plane-and-banner"
-          initial={{ x: "120vw" }}
-          animate={{ x: "-160vw" }}
-          exit={{ opacity: 0 }}
-          transition={{
-            duration: 26,
-            ease: "linear"
-          }}
-        >
-          <div className="plane-assembly">
-            {/* Red Piper Cub Plane */}
-            <div className="plane-wrapper">
-              <PiperCubPlane />
-            </div>
+      <AnimatePresence>
+        {flights.map((flight) => (
+          <motion.div
+            key={flight.id}
+            className="plane-and-banner"
+            initial={{ x: "120vw" }}
+            animate={{ x: "-160vw" }}
+            exit={{ opacity: 0 }}
+            transition={{
+              duration: 26,
+              ease: "linear"
+            }}
+            onAnimationComplete={() => handleAnimationComplete(flight.id)}
+          >
+            <div className="plane-assembly">
+              {/* Red Piper Cub Plane */}
+              <div className="plane-wrapper">
+                <PiperCubPlane />
+              </div>
 
-            {/* Banner Tow Harness & Lead Bar */}
-            <div className="banner-lead-bar">
-              <div className="grommet grommet-top"></div>
-              <div className="grommet grommet-bottom"></div>
-            </div>
+              {/* Banner Tow Harness & Lead Bar */}
+              <div className="banner-lead-bar">
+                <div className="grommet grommet-top"></div>
+                <div className="grommet grommet-bottom"></div>
+              </div>
 
-            {/* Realistic Wavy White Banner with Phase Lag */}
-            <div className="banner-cloth-wrapper">
-              <div className="banner-cloth">
-                <span className="banner-text">{clients[currentIndex]}</span>
+              {/* Realistic Wavy White Banner with Phase Lag */}
+              <div 
+                className="banner-cloth-wrapper"
+                onClick={() => onBannerClick && onBannerClick(clients[flight.clientIndex])}
+                style={{ cursor: "pointer" }}
+              >
+                <div className="banner-cloth">
+                  <span className="banner-text">{clients[flight.clientIndex]}</span>
+                </div>
               </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        ))}
       </AnimatePresence>
     </div>
   );

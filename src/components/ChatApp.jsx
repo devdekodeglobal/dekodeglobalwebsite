@@ -957,7 +957,14 @@ export default function ChatApp({
             timeOfDay={timeOfDay}
             realTime={realTime}
           />
-          <PlaneBanner timeOfDay={timeOfDay} />
+          <PlaneBanner 
+            timeOfDay={timeOfDay} 
+            onBannerClick={(clientWork) => {
+              setInputValue(`Can you tell me more about your work ${clientWork.toLowerCase()}?`);
+              const inputElement = document.querySelector(".chat-input");
+              if (inputElement) inputElement.focus();
+            }}
+          />
         </>
       )}
 
