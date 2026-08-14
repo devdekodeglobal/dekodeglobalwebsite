@@ -18,6 +18,7 @@ import {
   requestVertexCloudRun,
 } from './_chat/vertexCloudRun.js';
 import { isGroundedCompanyResult } from './_chat/responseGrounding.js';
+import { buildEvidenceAccordion, evidenceIntroduction } from './_chat/evidenceArtifacts.js';
 
 const MAX_QUESTION_LENGTH = 1_200;
 const MAX_HISTORY_MESSAGES = 12;
@@ -207,10 +208,16 @@ export default async function handler(request, response) {
     const memoryKind = result.intent === 'project_build' ? 'project' : result.intent === 'book_meeting' ? 'meeting' : 'company';
     const turn = beginConversationTurn(incomingMemory, question, memoryKind, interaction);
     const completed = completeConversationTurn(turn, result.answer, { mode: 'informational', action: null });
+    const evidenceAccordion = result.action === 'open_calendar' || result.intent === 'project_build'
+      ? null
+      : buildEvidenceAccordion(question);
+    const answer = evidenceAccordion
+      ? evidenceIntroduction(evidenceAccordion.scope)
+      : cleanAssistantText(result.answer);
     return response.status(200).json({
       ok: true,
       ...result,
-      answer: cleanAssistantText(result.answer),
+      answer,
       suggestions: (result.suggestions || [])
         .filter((suggestion) => !usedSuggestions.includes(suggestion.label.toLowerCase()))
         .slice(0, 4),
@@ -219,6 +226,7 @@ export default async function handler(request, response) {
       actions: result.action === 'open_calendar'
         ? [{ type: 'open_booking', label: 'View available times' }]
         : [],
+      evidenceAccordion,
     });
   };
 

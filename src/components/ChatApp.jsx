@@ -20,6 +20,7 @@ import HeroScenery from "./HeroScenery";
 import DekodeVoiceEntry from "./voice/DekodeVoiceEntry";
 import DekodeVoiceSession from "./voice/DekodeVoiceSession";
 import MeetingScheduler from "./MeetingScheduler";
+import EvidenceAccordion from "./EvidenceAccordion";
 import { voiceConfig } from "../voice/config";
 import { BrowserSpeechToTextProvider } from "../voice/providers/browserSpeechToTextProvider";
 import { placeholderInterval, placeholderMessages } from "./chatComposerConfig";
@@ -428,6 +429,7 @@ export default function ChatApp({
           companyTopic: fallbackResponse.topic,
           suggestions: result.suggestions || [],
           actions: result.actions || [],
+          evidenceAccordion: result.evidenceAccordion || null,
         },
       ]);
     } catch {
@@ -523,6 +525,7 @@ export default function ChatApp({
           companyTopic: result.topic,
           suggestions: result.suggestions || [],
           actions: result.actions || [],
+          evidenceAccordion: result.evidenceAccordion || null,
         },
       ]);
     } catch {
@@ -1127,6 +1130,9 @@ export default function ChatApp({
                               </button>
                             ))}
                           </motion.div>
+                        )}
+                        {msg.sender === "ai" && msg.evidenceAccordion && (
+                          <EvidenceAccordion artifact={msg.evidenceAccordion} />
                         )}
                         {msg.sender === "ai" && msg.actions?.length > 0 && (
                           <motion.div
