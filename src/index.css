@@ -1472,7 +1472,7 @@ h1, h2, h3, h4, h5, h6 {
 .evidence-facts dd {
   margin: 0.16rem 0 0;
   color: rgba(255, 255, 255, 0.78);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   line-height: 1.5;
 }
 
@@ -1488,13 +1488,13 @@ h1, h2, h3, h4, h5, h6 {
 
 .evidence-sections h4 {
   color: #fff;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
 }
 
 .evidence-sections p {
   margin-top: 0.22rem;
   color: rgba(255, 255, 255, 0.76);
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   line-height: 1.6;
 }
 
