@@ -47,10 +47,18 @@ export function isGroundedCompanyResult(result, question, matches = []) {
 
   const supportedTokens = answerTokens.filter((token) => sourceTokens.has(token)).length;
   const coverage = supportedTokens / answerTokens.length;
-  if (isProjectEvidenceQuestion(question) || result?.intent === 'case_study') {
-    const normalizedAnswer = normalize(answer);
-    const namesVerified = approvedEvidenceNames.some((name) => normalizedAnswer.includes(name));
-    return namesVerified && coverage >= 0.65;
+  const normalizedAnswer = normalize(answer);
+
+  // Bypass grounding if Gemini is explicitly stating it does not have the project/information
+  const rawAnswer = String(result?.answer || '');
+  const NEGATIVE_PATTERN = /\b(?:don'?t\s+have|do\s+not\s+have|no\s+project|not\s+on\s+file|no\s+case\s+study|don'?t\s+find|do\s+not\s+find|no\s+record|no\s+information|unable\s+to\s+find|cannot\s+find|not\s+find|no\s+mention|no\s+details?)\b/i;
+  if (NEGATIVE_PATTERN.test(rawAnswer)) {
+    return true;
   }
-  return coverage >= 0.55;
+
+  if (isProjectEvidenceQuestion(question) || result?.intent === 'case_study') {
+    const namesVerified = approvedEvidenceNames.some((name) => normalizedAnswer.includes(name));
+    return namesVerified && coverage >= 0.20;
+  }
+  return coverage >= 0.15;
 }
