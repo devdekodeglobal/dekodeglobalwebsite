@@ -22,7 +22,7 @@ const images = {
 };
 
 export default function EvidenceAccordion({ artifact }) {
-  const [openId, setOpenId] = useState(null);
+  const [openId, setOpenId] = useState(() => artifact?.autoOpen ? artifact.items?.[0]?.id : null);
   if (!artifact?.items?.length) return null;
 
   return (

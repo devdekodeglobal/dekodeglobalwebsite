@@ -7,6 +7,12 @@ const PORTFOLIO_QUERY = /\b(?:portfolio|past work|previous work|our work|your wo
 const PROJECT_CATALOGUE_QUERY = /^(?:show|share|list|see|what|which|tell me about|can i see|do you have|have you got)\b.*\b(?:projects|work|portfolio|examples)\b/i;
 const PROJECT_BUILD_QUERY = /\b(?:build|create|make|develop|design|launch)\b.*\b(?:app|website|web app|platform|system|software|product|feature)\b/i;
 
+const normalizeForMatch = (value) => String(value || '')
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, ' ')
+  .trim()
+  .replace(/\s+/g, ' ');
+
 export function detectEvidenceScope(question) {
   const normalized = String(question || '').trim().toLowerCase().replace(/\s+/g, ' ');
   if (!normalized || PROJECT_BUILD_QUERY.test(normalized)) return null;
@@ -54,7 +60,37 @@ const portfolioItem = (project) => ({
   ].filter(Boolean),
 });
 
+function findSpecificEvidence(question) {
+  const normalized = normalizeForMatch(question);
+  if (!normalized || PROJECT_BUILD_QUERY.test(normalized)) return null;
+
+  const namedProject = knowledge.portfolioProjects.find((project) =>
+    normalized.includes(normalizeForMatch(project.name))
+  );
+  if (namedProject) return portfolioItem(namedProject);
+
+  const caseStudyAliases = {
+    'food-manufacturing': ['beston', 'food manufacturing company', 'food manufacturing case study'],
+    'primary-school': ['stella maris', 'primary school case study', 'primary school solution'],
+  };
+  const namedStudy = knowledge.caseStudies.find((study) =>
+    caseStudyAliases[study.id]?.some((alias) => normalized.includes(alias))
+  );
+  return namedStudy ? caseStudyItem(namedStudy) : null;
+}
+
 export function buildEvidenceAccordion(question) {
+  const specificItem = findSpecificEvidence(question);
+  if (specificItem) {
+    return {
+      scope: 'specific',
+      mode: 'specific',
+      label: specificItem.kind,
+      autoOpen: true,
+      items: [specificItem],
+    };
+  }
+
   const scope = detectEvidenceScope(question);
   if (!scope) return null;
 
@@ -65,6 +101,7 @@ export function buildEvidenceAccordion(question) {
 
   return {
     scope,
+    mode: 'catalogue',
     label: scope === 'case_studies' ? 'Published case studies' : 'Verified DEKODE work',
     items,
   };

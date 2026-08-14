@@ -51,8 +51,34 @@ test('does not attach evidence UI to unrelated, specific, or build-intent messag
   for (const question of questions) assert.equal(detectEvidenceScope(question), null, question);
 });
 
+test('automatically opens verified media for a specifically named project or case study', () => {
+  const cases = [
+    ['tell me about CHAUFFR', 'CHAUFFR'],
+    ['what is AttendMe?', 'AttendMe'],
+    ['tell me about Beston', 'Food Manufacturing Company'],
+    ['show the Stella Maris case study', 'Primary School'],
+  ];
+  for (const [question, expectedName] of cases) {
+    const artifact = buildEvidenceAccordion(question);
+    assert.equal(artifact.mode, 'specific', question);
+    assert.equal(artifact.autoOpen, true, question);
+    assert.deepEqual(artifact.items.map((item) => item.name), [expectedName], question);
+    assert.ok(artifact.items[0].imageKey, question);
+  }
+});
+
+test('does not show named evidence media when the visitor is describing a new build', () => {
+  for (const question of [
+    'build an app like CHAUFFR',
+    'create a website for a primary school',
+    'develop an AttendMe-style visitor management app',
+  ]) {
+    assert.equal(buildEvidenceAccordion(question), null, question);
+  }
+});
+
 test('renders an accessible single-open-item accordion with image-first details', () => {
-  assert.match(component, /const \[openId, setOpenId\] = useState\(null\)/);
+  assert.match(component, /artifact\?\.autoOpen \? artifact\.items\?\.\[0\]\?\.id : null/);
   assert.match(component, /aria-expanded=\{isOpen\}/);
   assert.match(component, /aria-controls=\{panelId\}/);
   assert.match(component, /<img[\s\S]*<dl className="evidence-facts">/);

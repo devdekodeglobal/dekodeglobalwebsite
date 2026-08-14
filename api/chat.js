@@ -211,7 +211,7 @@ export default async function handler(request, response) {
     const evidenceAccordion = result.action === 'open_calendar' || result.intent === 'project_build'
       ? null
       : buildEvidenceAccordion(question);
-    const answer = evidenceAccordion
+    const answer = evidenceAccordion?.mode === 'catalogue'
       ? evidenceIntroduction(evidenceAccordion.scope)
       : cleanAssistantText(result.answer);
     return response.status(200).json({
