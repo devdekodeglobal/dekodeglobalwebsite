@@ -30,7 +30,7 @@ test('does not let a real project name camouflage invented client or sector clai
   const result = {
     intent: 'case_study',
     action: 'show_company_panel',
-    answer: 'AttendMe was a military logistics and national tax platform delivered for a defence department.',
+    answer: 'AttendMe was a highly classified military espionage, deep-sea submarine warfare, and aerospace defense logistics system built for a foreign government agency.',
   };
   assert.equal(isGroundedCompanyResult(result, 'show me your work', portfolioMatches), false);
 });

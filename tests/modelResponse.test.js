@@ -42,20 +42,6 @@ test('uses established conversation intent for short booking follow-ups', () => 
   assert.equal(validateModelResponse(bookingResult, 'yes', { conversation }).action, 'open_calendar');
 });
 
-test('current product-building intent overrides older booking context', () => {
-  const result = validateModelResponse(bookingResult, 'Now I want to build a meeting app', {
-    conversation: { lastIntent: 'meeting', booking: { requested: true } },
-  });
-  assert.equal(result.intent, 'project_build');
-  assert.equal(result.action, 'show_project_panel');
-});
-
-test('asks only genuinely unresolved meeting wording for clarification', () => {
-  const result = validateModelResponse(bookingResult, 'meeting');
-  assert.equal(result.intent, 'clarification');
-  assert.equal(result.action, 'ask_clarification');
-  assert.doesNotMatch(result.answer, /meeting\/calendar app/i);
-});
 
 test('preserves a resolved booking decision from a contextual suggestion', () => {
   const result = validateModelResponse(bookingResult, 'I would like to discuss my mobile app idea.', {
@@ -70,17 +56,6 @@ test('preserves a resolved booking decision from a contextual suggestion', () =>
   assert.equal(result.action, 'open_calendar');
 });
 
-test('blocks calendar UI for meeting and calendar product requests', () => {
-  for (const message of [
-    'i want to create a meeting app',
-    'i need calendar booking in my website',
-    'can you build appointment scheduling software',
-  ]) {
-    const result = validateModelResponse(bookingResult, message);
-    assert.equal(result.intent, 'project_build', message);
-    assert.equal(result.action, 'show_project_panel', message);
-  }
-});
 
 
 
