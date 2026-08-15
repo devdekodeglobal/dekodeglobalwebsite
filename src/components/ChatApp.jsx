@@ -963,7 +963,11 @@ export default function ChatApp({
 
       <header className="chat-header">
         <a className="brand-logo" href={import.meta.env.BASE_URL || "/"} aria-label="Go to DEKODE home">
-          DEKODE
+          <img 
+            src={`${import.meta.env.BASE_URL || "/"}brand_logo_tricolor.png`} 
+            alt="DEKODE" 
+            className="brand-logo-img" 
+          />
         </a>
         {!proposalContext && (
           <div className="top-right-actions">
