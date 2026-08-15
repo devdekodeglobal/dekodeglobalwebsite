@@ -145,7 +145,7 @@ function PortfolioPanel({ onSelect }) {
         ))}
       </div>
       <motion.p variants={itemMotion} className="portfolio-panel-note">
-        Swipe through the verified examples or select one for its challenge, solution, and outcome.
+        Browse the examples or select one for its challenge, solution, and outcome.
       </motion.p>
     </motion.div>
   );

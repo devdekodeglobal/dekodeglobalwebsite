@@ -448,7 +448,7 @@ export default function InteractiveContentSections() {
         <SectionHeading
           eyebrow="Company information"
           title="Contact, locations and policies"
-          description="Verified details from DEKODE's published company information."
+          description="Details from DEKODE's published company information."
         />
         <div className="company-info-grid">
           <section className="company-info-block">

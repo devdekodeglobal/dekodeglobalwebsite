@@ -27,7 +27,7 @@ export function getKnowledgeGapResponse(message) {
   }
 
   if (UNVERIFIED_LEADERSHIP_TITLE_PATTERNS.some((pattern) => pattern.test(text))) {
-    return "DEKODE's approved public company information names Pankaj Banga as Founder, but it does not name a CEO, director, or chairperson, so I won't assign an unsupported title.";
+    return "DEKODE's published company information names Pankaj Banga as Founder, but it does not name a CEO, director, or chairperson, so I won't assign an unsupported title.";
   }
 
   if (PRICING_PATTERNS.some((pattern) => pattern.test(text))) {

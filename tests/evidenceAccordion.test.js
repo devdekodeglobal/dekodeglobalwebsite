@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import {
   buildEvidenceAccordion,
   detectEvidenceScope,
+  evidenceIntroduction,
 } from '../api/_chat/evidenceArtifacts.js';
 
 const component = await readFile(new URL('../src/components/EvidenceAccordion.jsx', import.meta.url), 'utf8');
@@ -107,6 +108,9 @@ test('uses neutral portfolio wording and displays complete evidence images', () 
 
   assert.equal(artifact.label, 'DEKODE work');
   assert.equal(attendMe.kind, 'Portfolio project');
-  assert.doesNotMatch(JSON.stringify(artifact), /verified public|verified portfolio/i);
+  assert.doesNotMatch(
+    `${JSON.stringify(artifact)} ${evidenceIntroduction('portfolio')}`,
+    /\b(?:verified|approved|public)\b/i,
+  );
   assert.match(styles, /\.evidence-accordion-content\s*>\s*img\s*\{[^}]*object-fit:\s*contain/s);
 });
