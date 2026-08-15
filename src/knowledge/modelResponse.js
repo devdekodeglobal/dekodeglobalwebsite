@@ -77,15 +77,22 @@ export function validateModelResponse(candidate, originalMessage, context = {}) 
     };
   }
 
+  const parsedConfidence = Number(parsed.confidence);
+  const confidence = isNaN(parsedConfidence)
+    ? DEFAULT_RESULT.confidence
+    : Math.max(0, Math.min(1, parsedConfidence));
+
   const result = {
     intent: MODEL_INTENTS.includes(parsed.intent) ? parsed.intent : DEFAULT_RESULT.intent,
-    confidence: Math.max(0, Math.min(1, Number(parsed.confidence) || DEFAULT_RESULT.confidence)),
+    confidence,
     action: MODEL_ACTIONS.includes(parsed.action) ? parsed.action : DEFAULT_RESULT.action,
     topic: String(parsed.topic || DEFAULT_RESULT.topic).trim().slice(0, 80),
-    answer: String(parsed.answer || '').trim(),
+    answer: String(parsed.answer || '').trim() || "I'm sorry, I encountered an issue processing that response. How else can I help?",
     suggestions: sanitizeSuggestions(parsed.suggestions),
+    evidenceProjects: Array.isArray(parsed.evidenceProjects)
+      ? parsed.evidenceProjects.map((p) => String(p).trim()).filter(Boolean)
+      : [],
   };
-  if (!result.answer) throw new Error('MODEL_RESPONSE_ANSWER_MISSING');
 
   return result;
 }
