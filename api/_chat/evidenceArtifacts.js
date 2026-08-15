@@ -44,7 +44,7 @@ const caseStudyItem = (study) => ({
 const portfolioItem = (project) => ({
   id: project.id,
   name: project.name,
-  kind: 'Verified portfolio project',
+  kind: 'Portfolio project',
   imageKey: project.id,
   summary: project.description,
   facts: [
@@ -102,13 +102,13 @@ export function buildEvidenceAccordion(question) {
   return {
     scope,
     mode: 'catalogue',
-    label: scope === 'case_studies' ? 'Published case studies' : 'Verified DEKODE work',
+    label: scope === 'case_studies' ? 'Published case studies' : 'DEKODE work',
     items,
   };
 }
 
 export function evidenceIntroduction(scope) {
   return scope === 'case_studies'
-    ? 'Yes. DEKODE has two published case studies. Select one to view its verified challenge, solution, platform, and outcome.'
-    : "Here is DEKODE's verified public work. Select a project to view its approved details.";
+    ? 'Yes. DEKODE has two published case studies. Select one to view its challenge, solution, platform, and outcome.'
+    : "Here is a selection of DEKODE's work. Select a project to view its details.";
 }

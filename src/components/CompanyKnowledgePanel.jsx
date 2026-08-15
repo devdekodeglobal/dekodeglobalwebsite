@@ -115,7 +115,7 @@ function PortfolioPanel({ onSelect }) {
     })),
     ...knowledge.portfolioProjects.map((project) => ({
       ...project,
-      category: 'Verified portfolio',
+      category: 'Portfolio project',
       prompt: `Tell me about the ${project.name} project`,
     })),
   ];
@@ -123,7 +123,7 @@ function PortfolioPanel({ onSelect }) {
   return (
     <motion.div variants={stagger} initial="hidden" animate="show" className="portfolio-panel">
       <motion.div variants={itemMotion} className="portfolio-panel-heading">
-        <span><strong>Verified work</strong><small>Published DEKODE case studies and old-site portfolio projects</small></span>
+        <span><strong>Our work</strong><small>Published DEKODE case studies and portfolio projects</small></span>
         <span>{evidence.length}</span>
       </motion.div>
       <div className="portfolio-card-rail" aria-label="DEKODE project evidence">

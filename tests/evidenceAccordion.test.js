@@ -100,3 +100,13 @@ test('gives evidence responses a deliberate desktop width without changing norma
   assert.match(styles, /\.message-ai\.message-evidence \.message-bubble\s*\{[^}]*width:\s*min\(680px,\s*92vw\)/s);
   assert.match(styles, /\.message-ai\.message-evidence-catalogue \.message-bubble\s*\{[^}]*width:\s*min\(760px,\s*92vw\)/s);
 });
+
+test('uses neutral portfolio wording and displays complete evidence images', () => {
+  const artifact = buildEvidenceAccordion('show me your portfolio');
+  const attendMe = artifact.items.find((item) => item.name === 'AttendMe');
+
+  assert.equal(artifact.label, 'DEKODE work');
+  assert.equal(attendMe.kind, 'Portfolio project');
+  assert.doesNotMatch(JSON.stringify(artifact), /verified public|verified portfolio/i);
+  assert.match(styles, /\.evidence-accordion-content\s*>\s*img\s*\{[^}]*object-fit:\s*contain/s);
+});

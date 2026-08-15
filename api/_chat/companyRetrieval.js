@@ -89,8 +89,8 @@ function makeDocuments() {
     },
     {
       id: 'discovery-portfolio',
-      label: 'Related DEKODE public work',
-      text: 'Verified portfolio examples include AttendMe, CHAUFFR, Smart Loan Helper, SmartBroker, Recycled Market, and Estrado. Published case studies cover Beston food manufacturing and Stella Maris Primary School.',
+      label: 'Related DEKODE work',
+      text: 'Portfolio examples include AttendMe, CHAUFFR, Smart Loan Helper, SmartBroker, Recycled Market, and Estrado. Published case studies cover Beston food manufacturing and Stella Maris Primary School.',
       aliases: ['website', 'mobile app', 'ecommerce', 'automation', 'internal system', 'cloud solution', 'similar work', 'relevant project'],
     },
     ...companyKnowledge.services.map((service) => ({
@@ -272,7 +272,7 @@ export function retrieveCompanyKnowledge(question, limit = 5) {
 
 export function formatKnowledgeContext(question) {
   const matches = retrieveCompanyKnowledge(question);
-  if (!matches.length) return { matches, context: 'No directly relevant public DEKODE knowledge was found.' };
+  if (!matches.length) return { matches, context: 'No directly relevant DEKODE information was found.' };
 
   const context = matches
     .map((match) => `[${match.label}]\n${match.text}`)

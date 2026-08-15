@@ -332,7 +332,7 @@ export default function DekodeVoiceSession({ onClose, onSwitchToText, onTurn, on
             <div className="voice-stage">
               <VoiceOrb state={state} />
               <span className={`voice-status voice-status-${state}`} role="status">{stateLabels[state]}</span>
-              <p>{state === VOICE_STATES.LISTENING ? (micMuted ? 'Microphone muted — type below.' : 'Speak naturally, or use the text field.') : state === VOICE_STATES.PROCESSING ? 'Using approved DEKODE knowledge…' : 'You can interrupt at any time.'}</p>
+              <p>{state === VOICE_STATES.LISTENING ? (micMuted ? 'Microphone muted — type below.' : 'Speak naturally, or use the text field.') : state === VOICE_STATES.PROCESSING ? 'Preparing your answer…' : 'You can interrupt at any time.'}</p>
             </div>
             <div className="voice-transcript" aria-live="polite">
               {transcript.length === 0 && <p className="voice-transcript-empty">Your conversation transcript will appear here.</p>}

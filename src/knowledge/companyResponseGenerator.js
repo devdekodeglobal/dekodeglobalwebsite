@@ -34,7 +34,7 @@ function responseForTopic(topic, message, detectedService, detectedSolutionArea,
   }
 
   if (portfolioProject) {
-    return `${portfolioProject.name} is part of DEKODE's verified portfolio. ${portfolioProject.description}`;
+    return `${portfolioProject.name} is part of DEKODE's portfolio. ${portfolioProject.description}`;
   }
 
   if (solutionArea) {
@@ -82,7 +82,7 @@ function responseForTopic(topic, message, detectedService, detectedSolutionArea,
         return `${namedStudy.name} is a published DEKODE case study in ${namedStudy.industry}.\n\nChallenge: ${namedStudy.challenge}\n\nSolution: ${namedStudy.solution}\n\nOutcome: ${namedStudy.outcome}`;
       }
       if (asksForPortfolio) {
-        return `DEKODE's verified public portfolio includes:\n\n${bullets((knowledge.portfolioProjects || []).map((item) => `${item.name}: ${item.description}`))}\n\nPublished case studies:\n${bullets((knowledge.caseStudies || []).map((item) => `${item.name} (${item.industry}): ${item.outcome}`))}`;
+        return `DEKODE's portfolio includes:\n\n${bullets((knowledge.portfolioProjects || []).map((item) => `${item.name}: ${item.description}`))}\n\nPublished case studies:\n${bullets((knowledge.caseStudies || []).map((item) => `${item.name} (${item.industry}): ${item.outcome}`))}`;
       }
       return `DEKODE currently presents two published success stories:\n\n${bullets(knowledge.caseStudies.map((item) => `${item.name} (${item.industry}): ${item.outcome}`))}\n\nThese are the case studies confirmed in the public company information.`;
     }
