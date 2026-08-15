@@ -1467,9 +1467,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .evidence-media-attendme {
-  width: min(72%, 320px);
+  width: min(70%, 300px);
   max-height: none;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 3 / 4;
   justify-self: center;
 }
 
@@ -1541,7 +1541,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .evidence-media-attendme {
-    width: min(82%, 260px);
+    width: min(78%, 240px);
     max-height: none;
   }
 }

@@ -114,6 +114,6 @@ test('uses neutral portfolio wording and displays complete evidence images', () 
   );
   assert.match(component, /item\.id === 'attendme' \? ' evidence-media-attendme' : ''/);
   assert.match(styles, /\.evidence-media\s*>\s*img\s*\{[^}]*object-fit:\s*cover/s);
-  assert.match(styles, /\.evidence-media-attendme\s*\{[^}]*aspect-ratio:\s*4\s*\/\s*5/s);
+  assert.match(styles, /\.evidence-media-attendme\s*\{[^}]*aspect-ratio:\s*3\s*\/\s*4/s);
   assert.match(styles, /\.evidence-media-attendme\s*>\s*img\s*\{[^}]*transform:\s*scale\(1\.16\)/s);
 });
