@@ -112,5 +112,8 @@ test('uses neutral portfolio wording and displays complete evidence images', () 
     `${JSON.stringify(artifact)} ${evidenceIntroduction('portfolio')}`,
     /\b(?:verified|approved|public)\b/i,
   );
-  assert.match(styles, /\.evidence-accordion-content\s*>\s*img\s*\{[^}]*object-fit:\s*contain/s);
+  assert.match(component, /item\.id === 'attendme' \? ' evidence-media-attendme' : ''/);
+  assert.match(styles, /\.evidence-media\s*>\s*img\s*\{[^}]*object-fit:\s*cover/s);
+  assert.match(styles, /\.evidence-media-attendme\s*\{[^}]*aspect-ratio:\s*4\s*\/\s*5/s);
+  assert.match(styles, /\.evidence-media-attendme\s*>\s*img\s*\{[^}]*transform:\s*scale\(1\.16\)/s);
 });

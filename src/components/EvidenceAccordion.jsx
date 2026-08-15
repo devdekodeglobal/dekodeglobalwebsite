@@ -59,7 +59,9 @@ export default function EvidenceAccordion({ artifact }) {
                     transition={{ duration: 0.26, ease: 'easeOut' }}
                   >
                     <div className="evidence-accordion-content">
-                      <img src={images[item.imageKey]} alt={`${item.name} project`} />
+                      <div className={`evidence-media${item.id === 'attendme' ? ' evidence-media-attendme' : ''}`}>
+                        <img src={images[item.imageKey]} alt={`${item.name} project`} />
+                      </div>
                       {item.facts?.length > 0 && (
                         <dl className="evidence-facts">
                           {item.facts.map((fact) => (
