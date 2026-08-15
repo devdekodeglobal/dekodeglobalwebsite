@@ -30,7 +30,8 @@ const PROJECT_EVIDENCE_ALIASES = [
 const asksForProjectEvidence = (question) => {
   const query = normalise(question);
   if (/\b(methodology|delivery process|deliver projects?|how (?:do|does) .{0,16}work|project lifecycle)\b/.test(query)) return false;
-  return /\b(projects?|portfolio|past work|previous work|client work|examples?|case studies|success stories|clients?|what have you built|work(?:s)? (?:done|have you done|did you do)|(?:show|see) (?:me )?(?:your )?work|what have you done|what did you (?:build|make|create|develop)|built (?:before|in the past)|done (?:before|in the past)|your (?:projects?|clients?|work))\b/.test(query);
+  return /\b(projects?|portfolio|past work|previous work|client work|examples?|case studies|success stories|clients?|what have you built|work(?:s)? (?:done|have you done|did you do)|(?:show|see) (?:me )?(?:your )?work|what have you done|what did you (?:build|make|create|develop)|built (?:before|in the past)|done (?:before|in the past)|your (?:projects?|clients?|work))\b/.test(query)
+    || /\b(proj[a-z]{2,8}|portf[a-z]{3,8})\b/.test(query);
 };
 
 const formatProject = (project) => [
@@ -226,7 +227,14 @@ function makeDocuments() {
   }));
 }
 
-const documents = makeDocuments();
+export const documents = makeDocuments();
+
+export function formatFullKnowledgeContext() {
+  return documents
+    .map((doc) => `[${doc.label}]\n${doc.text}`)
+    .join('\n\n')
+    .slice(0, 50000);
+}
 
 export function retrieveCompanyKnowledge(question, limit = 5) {
   const queryTerms = tokenize(question);
@@ -271,8 +279,13 @@ export function retrieveCompanyKnowledge(question, limit = 5) {
 }
 
 export function formatKnowledgeContext(question) {
-  const matches = retrieveCompanyKnowledge(question);
-  if (!matches.length) return { matches, context: 'No directly relevant DEKODE information was found.' };
+  let matches = retrieveCompanyKnowledge(question);
+  if (!matches.length) {
+    const coreIds = ['company-overview', 'service-catalogue', 'project-evidence-catalogue'];
+    matches = documents
+      .filter((doc) => coreIds.includes(doc.id))
+      .map(({ id, label, text }) => ({ id, label, text }));
+  }
 
   const context = matches
     .map((match) => `[${match.label}]\n${match.text}`)

@@ -1,4 +1,4 @@
-import { formatKnowledgeContext } from './_chat/companyRetrieval.js';
+import { formatKnowledgeContext, formatFullKnowledgeContext, documents } from './_chat/companyRetrieval.js';
 import {
   beginConversationTurn,
   buildProjectConversationQuery,
@@ -241,7 +241,8 @@ export default async function handler(request, response) {
   const retrievalQuestion = history.length
     ? `${history.filter((entry) => entry.role === 'user').slice(-3).map((entry) => entry.text).join('\n')}\n${normalizedQuestion}`
     : normalizedQuestion;
-  const { matches, context } = formatKnowledgeContext(retrievalQuestion);
+  const { matches } = formatKnowledgeContext(retrievalQuestion);
+  const context = formatFullKnowledgeContext();
   const sources = matches.map(({ id, label }) => ({ id, label }));
 
   if (isVertexCloudRunConfigured()) {
@@ -262,7 +263,7 @@ export default async function handler(request, response) {
         model: result.model,
         retrievalMode: result.retrievalMode,
         provider: 'vertex-ai',
-        groundingMatches: matches,
+        groundingMatches: documents,
       });
     } catch (error) {
       console.error('[DEKODE Chat] Vertex Cloud Run request failed.', error?.message);
@@ -288,7 +289,7 @@ export default async function handler(request, response) {
         if (geminiResponse.ok) {
           const candidate = extractModelCandidate(payload);
           if (isCompleteModelCandidate(candidate)) {
-            return sendResult(candidate.answer, { sources, model, provider: 'gemini-api', groundingMatches: matches });
+            return sendResult(candidate.answer, { sources, model, provider: 'gemini-api', groundingMatches: documents });
           }
           lastFailure = { status: 502, reason: candidate.finishReason || 'EMPTY_RESPONSE' };
         } else {
