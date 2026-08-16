@@ -80,7 +80,41 @@ function findSpecificEvidence(question) {
   return namedStudy ? caseStudyItem(namedStudy) : null;
 }
 
-export function buildEvidenceAccordion(question) {
+export function buildEvidenceAccordion(question, evidenceProjects) {
+  // If Gemini explicitly selected specific projects, filter by those
+  if (Array.isArray(evidenceProjects) && evidenceProjects.length > 0) {
+    const normalizedSelected = evidenceProjects.map(normalizeForMatch);
+    const allItems = [
+      ...knowledge.caseStudies.map(caseStudyItem),
+      ...knowledge.portfolioProjects.map(portfolioItem),
+    ];
+    const filteredItems = allItems.filter((item) =>
+      normalizedSelected.some(
+        (selectedName) =>
+          normalizeForMatch(item.name).includes(selectedName) ||
+          selectedName.includes(normalizeForMatch(item.name))
+      )
+    );
+
+    if (filteredItems.length === 1) {
+      return {
+        scope: 'specific',
+        mode: 'specific',
+        label: filteredItems[0].kind,
+        autoOpen: true,
+        items: filteredItems,
+      };
+    } else if (filteredItems.length > 0) {
+      const containsCaseStudy = filteredItems.some((item) => item.kind === 'Published case study');
+      return {
+        scope: containsCaseStudy ? 'case_studies' : 'portfolio',
+        mode: 'catalogue',
+        label: 'DEKODE work',
+        items: filteredItems,
+      };
+    }
+  }
+
   const specificItem = findSpecificEvidence(question);
   if (specificItem) {
     return {
