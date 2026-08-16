@@ -81,6 +81,8 @@ test('does not show named evidence media when the visitor is describing a new bu
 
 test('renders an accessible single-open-item accordion with image-first details', () => {
   assert.match(component, /artifact\?\.autoOpen \? artifact\.items\?\.\[0\]\?\.id : null/);
+  assert.match(component, /className="evidence-accordion" aria-label=\{artifact\.label\}/);
+  assert.doesNotMatch(component, /evidence-accordion-label/);
   assert.match(component, /aria-expanded=\{isOpen\}/);
   assert.match(component, /aria-controls=\{panelId\}/);
   assert.match(component, /<img[\s\S]*<dl className="evidence-facts">/);

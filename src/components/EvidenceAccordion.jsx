@@ -27,7 +27,6 @@ export default function EvidenceAccordion({ artifact }) {
 
   return (
     <div className="evidence-accordion" aria-label={artifact.label}>
-      <p className="evidence-accordion-label">{artifact.label}</p>
       <div className="evidence-accordion-list">
         {artifact.items.map((item, index) => {
           const isOpen = openId === item.id;
