@@ -23,6 +23,12 @@ test('lexical retrieval grounds reviewed delivery, Beston, and BRIDGE questions'
   assert.equal(retrieveLexical('What is BRIDGE?')[0].id, 'initiative-bridge');
 });
 
+test('how DEKODE works retrieves the six-stage methodology', () => {
+  const methodology = retrieveLexical('How does DEKODE work?')[0];
+  assert.equal(methodology?.id, 'process-overview');
+  assert.match(methodology?.text || '', /Discovery:[\s\S]*Prototype:[\s\S]*Design:[\s\S]*Build:[\s\S]*Deploy:[\s\S]*Evolve:/);
+});
+
 test('direct founder questions prioritize verified leadership knowledge', () => {
   const matches = retrieveLexical('Who is founder of DEKODE company?');
   assert.equal(matches[0]?.id, 'company-leadership');

@@ -21,6 +21,8 @@ const asksForProjectEvidence = (question) => {
   return /\b(projects?|portfolio|past work|previous work|client work|examples?|case studies|success stories|clients?|what have you built)\b/.test(query);
 };
 
+const asksAboutDelivery = (question) => /\b(?:methodology|delivery process|deliver projects?|project lifecycle|how (?:do|does) (?:dekode|your team|you) (?:work|deliver|run projects?))\b/.test(normalize(question));
+
 const formatProject = (project) => [
   project.description,
   project.category && `Category: ${project.category}.`,
@@ -216,16 +218,20 @@ function lexicalScore(question, document) {
   const phraseBoost = document.aliases.some((alias) => query.includes(normalize(alias))) ? 0.35 : 0;
   const labelBoost = query.includes(normalize(document.label)) ? 0.25 : 0;
   const projectEvidenceQuery = asksForProjectEvidence(query);
+  const deliveryQuery = asksAboutDelivery(query);
   const catalogueBoost = document.id === 'project-evidence-catalogue' && projectEvidenceQuery
     ? 0.55
     : 0;
   const evidenceBoost = projectEvidenceQuery && /^(?:portfolio-|case-)/.test(document.id) ? 0.2 : 0;
   const overviewPenalty = projectEvidenceQuery && document.id === 'company-about' ? 0.8 : 0;
+  const deliveryBoost = deliveryQuery && document.id === 'process-overview' ? 0.9 : 0;
+  const deliveryOverviewPenalty = deliveryQuery && document.id === 'company-about' ? 0.65 : 0;
   const leadershipQuery = /\b(?:founder|founded|owner|leadership|who (?:started|founded|runs|is behind)|pankaj banga)\b/.test(query);
   const leadershipBoost = leadershipQuery && document.id === 'company-leadership' ? 0.75 : 0;
   const leadershipOverviewPenalty = leadershipQuery && document.id === 'company-about' ? 0.45 : 0;
   return Math.max(0, Math.min(1.75, coverage * 0.7 + phraseBoost + labelBoost + catalogueBoost
-    + evidenceBoost + leadershipBoost - overviewPenalty - leadershipOverviewPenalty));
+    + evidenceBoost + deliveryBoost + leadershipBoost
+    - overviewPenalty - deliveryOverviewPenalty - leadershipOverviewPenalty));
 }
 
 export function retrieveLexical(question, limit = 5) {
@@ -296,6 +302,7 @@ export function createHybridRetriever({
     const lexical = new Map(retrieveLexical(question, documents.length)
       .map((match) => [match.id, match.lexicalScore]));
     const projectEvidenceQuery = asksForProjectEvidence(question);
+    const deliveryQuery = asksAboutDelivery(question);
     const leadershipQuery = /\b(?:founder|founded|owner|leadership|who (?:started|founded|runs|is behind)|pankaj banga)\b/.test(normalize(question));
 
     try {
@@ -308,6 +315,8 @@ export function createHybridRetriever({
         const catalogueBoost = projectEvidenceQuery && document.id === 'project-evidence-catalogue' ? 0.5 : 0;
         const evidenceBoost = projectEvidenceQuery && /^(?:portfolio-|case-)/.test(document.id) ? 0.15 : 0;
         const overviewPenalty = projectEvidenceQuery && document.id === 'company-about' ? 0.5 : 0;
+        const deliveryBoost = deliveryQuery && document.id === 'process-overview' ? 0.55 : 0;
+        const deliveryOverviewPenalty = deliveryQuery && document.id === 'company-about' ? 0.4 : 0;
         const leadershipBoost = leadershipQuery && document.id === 'company-leadership' ? 0.45 : 0;
         const leadershipOverviewPenalty = leadershipQuery && document.id === 'company-about' ? 0.3 : 0;
         return {
@@ -315,7 +324,8 @@ export function createHybridRetriever({
           semanticScore,
           lexicalScore: exactScore,
           score: semanticScore * 0.82 + exactScore * 0.18 + catalogueBoost + evidenceBoost
-            + leadershipBoost - overviewPenalty - leadershipOverviewPenalty,
+            + deliveryBoost + leadershipBoost
+            - overviewPenalty - deliveryOverviewPenalty - leadershipOverviewPenalty,
           retrievalMode: 'hybrid',
         };
       }).sort((left, right) => right.score - left.score);

@@ -50,6 +50,8 @@ test("structured content is sourced and responsive fallbacks are available", () 
   assert.match(content, /selectedWork:/);
   assert.doesNotMatch(content, /CHAUFFR/);
   assert.match(content, /deliveryProcess:/);
+  assert.match(content, /title: "Discovery"[\s\S]*title: "Prototype"[\s\S]*title: "Design"[\s\S]*title: "Build"[\s\S]*title: "Deploy"[\s\S]*title: "Evolve"/);
+  assert.doesNotMatch(content, /title: "Secure"|title: "Run & Optimise"/);
   assert.match(content, /industries:/);
   assert.doesNotMatch(content, /CHAUFFR/);
   assert.match(sections, /companyKnowledge\.legal/);

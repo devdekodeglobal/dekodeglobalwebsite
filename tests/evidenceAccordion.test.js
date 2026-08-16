@@ -44,6 +44,8 @@ test('does not attach evidence UI to unrelated, specific, or build-intent messag
     'services',
     'pricing',
     'methodology',
+    'how does DEKODE work?',
+    'how does your team deliver projects?',
     'tell me about Beston',
     'what is CHAUFFR',
     'I want to build a meeting app',

@@ -3,9 +3,10 @@ import { loadCompanyKnowledge } from '../../src/knowledge/companyKnowledgeLoader
 const knowledge = loadCompanyKnowledge();
 
 const CASE_STUDY_QUERY = /\b(?:case stud(?:y|ies)|success stor(?:y|ies))\b/i;
-const PORTFOLIO_QUERY = /\b(?:portfolio|past work|previous work|our work|your work|ur work|dekode(?:'s)? work|project examples|work examples)\b/i;
+const PORTFOLIO_QUERY = /\b(?:portfolio|past work|previous work|our work|your work|ur work|dekode['’]s work|project examples|work examples)\b/i;
 const PROJECT_CATALOGUE_QUERY = /^(?:show|share|list|see|what|which|tell me about|can i see|do you have|have you got)\b.*\b(?:projects|work|portfolio|examples)\b/i;
 const PROJECT_BUILD_QUERY = /\b(?:build|create|make|develop|design|launch)\b.*\b(?:app|website|web app|platform|system|software|product|feature)\b/i;
+const DELIVERY_PROCESS_QUERY = /\b(?:methodology|delivery process|project lifecycle|how (?:do|does) (?:dekode|your team|you) (?:work|deliver|run projects?))\b/i;
 
 const normalizeForMatch = (value) => String(value || '')
   .toLowerCase()
@@ -15,7 +16,7 @@ const normalizeForMatch = (value) => String(value || '')
 
 export function detectEvidenceScope(question) {
   const normalized = String(question || '').trim().toLowerCase().replace(/\s+/g, ' ');
-  if (!normalized || PROJECT_BUILD_QUERY.test(normalized)) return null;
+  if (!normalized || PROJECT_BUILD_QUERY.test(normalized) || DELIVERY_PROCESS_QUERY.test(normalized)) return null;
   if (CASE_STUDY_QUERY.test(normalized)) return 'case_studies';
   if (PORTFOLIO_QUERY.test(normalized) || PROJECT_CATALOGUE_QUERY.test(normalized)) return 'portfolio';
   if (['projects', 'portfolio', 'case studies', 'success stories', 'our work'].includes(normalized)) {
