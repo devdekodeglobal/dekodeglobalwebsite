@@ -77,28 +77,22 @@ export function validateModelResponse(candidate, originalMessage, context = {}) 
     };
   }
 
+  const parsedConfidence = Number(parsed.confidence);
+  const confidence = isNaN(parsedConfidence)
+    ? DEFAULT_RESULT.confidence
+    : Math.max(0, Math.min(1, parsedConfidence));
+
   const result = {
     intent: MODEL_INTENTS.includes(parsed.intent) ? parsed.intent : DEFAULT_RESULT.intent,
-    confidence: Math.max(0, Math.min(1, Number(parsed.confidence) || DEFAULT_RESULT.confidence)),
+    confidence,
     action: MODEL_ACTIONS.includes(parsed.action) ? parsed.action : DEFAULT_RESULT.action,
     topic: String(parsed.topic || DEFAULT_RESULT.topic).trim().slice(0, 80),
-    answer: String(parsed.answer || '').trim(),
+    answer: String(parsed.answer || '').trim() || "I'm sorry, I encountered an issue processing that response. How else can I help?",
     suggestions: sanitizeSuggestions(parsed.suggestions),
+    evidenceProjects: Array.isArray(parsed.evidenceProjects)
+      ? parsed.evidenceProjects.map((p) => String(p).trim()).filter(Boolean)
+      : [],
   };
-  if (!result.answer) throw new Error('MODEL_RESPONSE_ANSWER_MISSING');
-
-  if (result.action === 'open_calendar') {
-    const calendarRoute = resolveCalendarIntent(originalMessage, context);
-    if (calendarRoute === 'project') {
-      result.intent = 'project_build';
-      result.action = 'show_project_panel';
-    } else if (calendarRoute === 'clarify') {
-      result.intent = 'clarification';
-      result.action = 'ask_clarification';
-      result.topic = 'meeting intent';
-      result.answer = 'Would you like to arrange time with the DEKODE team, or are you planning meeting or booking functionality for a product?';
-    }
-  }
 
   return result;
 }

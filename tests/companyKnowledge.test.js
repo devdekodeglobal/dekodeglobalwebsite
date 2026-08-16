@@ -302,7 +302,7 @@ test('answers founder and privacy questions from verified centralized knowledge'
     'Who should I email about a privacy request?',
     classifyCompanyIntent('Who should I email about a privacy request?'),
   );
-  assert.match(privacy.text, /pankaj\.banga@dekodeglobal\.com/);
+  assert.match(privacy.text, /contactus@dekodeglobal\.com/);
   assert.doesNotMatch(privacy.text, /pm@dekodeglobal\.com/);
 });
 

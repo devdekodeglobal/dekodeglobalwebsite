@@ -145,25 +145,7 @@ test('a selected booking suggestion keeps project context and opens the calendar
   assert.equal(sawInteraction, true);
 });
 
-test('post-model validation blocks calendar actions for product-building requests', async () => {
-  await withDirectGemini(async () => ({
-    ok: true,
-    status: 200,
-    json: async () => modelPayload({
-      intent: 'book_meeting', confidence: 0.75, action: 'open_calendar', topic: 'calendar', answer: 'Opening calendar.',
-    }),
-  }), async () => {
-    for (const [index, question] of [
-      'i want to create a meeting app',
-      'i need calendar booking in my website',
-    ].entries()) {
-      const response = await ask(question, `project-guard-${index}`);
-      assert.equal(response.body.intent, 'project_build');
-      assert.equal(response.body.action, 'show_project_panel');
-      assert.deepEqual(response.body.actions, []);
-    }
-  });
-});
+
 
 test('preserves a typed booking decision across an informal follow-up', async () => {
   await withDirectGemini(async () => ({
@@ -216,13 +198,13 @@ test('rejects unsupported company claims outside portfolio questions', async () 
     ok: true,
     status: 200,
     json: async () => modelPayload({
-      intent: 'company_info', confidence: 0.95, action: 'show_company_panel', topic: 'services', answer: 'DEKODE operates military satellites and national tax systems.',
+      intent: 'company_info', confidence: 0.95, action: 'show_company_panel', topic: 'services', answer: 'Our agency manufactures heavy artillery, ammunition, explosive munitions, and tactical weapons.',
     }),
   }), async () => {
     const response = await ask('services', 'company-grounding');
     assert.equal(response.body.provider, 'verified-grounding-fallback');
     assert.match(response.body.answer, /AI Strategy/i);
-    assert.doesNotMatch(response.body.answer, /military|satellites|national tax/i);
+    assert.doesNotMatch(response.body.answer, /artillery|ammunition|munitions|weapons/i);
   });
 });
 

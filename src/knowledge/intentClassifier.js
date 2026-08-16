@@ -71,7 +71,7 @@ export function scoreCompetingIntents(message) {
   else if (bookingScore >= 4 && projectScore >= 4 && Math.abs(bookingScore - projectScore) <= 2) route = 'clarify';
   else if (bookingScore >= 4 && bookingScore > projectScore) route = 'meeting';
   else if (projectScore >= 5 && projectScore >= bookingScore) route = 'project';
-  else if (hasDualUseTerm) route = 'clarify';
+  else if (hasDualUseTerm) route = projectScore === 0 ? 'meeting' : 'clarify';
 
   return {
     bookingScore,
@@ -98,6 +98,19 @@ export function resolveCalendarIntent(message, context = {}) {
   const current = scoreCompetingIntents(message);
   if (current.route === 'project') return 'project';
   if (current.route === 'meeting' || conversationConfirmsBooking(context)) return 'meeting';
+
+  const memory = context?.conversation;
+  const recent = Array.isArray(memory?.recentMessages) ? memory.recentMessages : [];
+  const lastMessage = recent[recent.length - 1];
+  const isClarifying = lastMessage && lastMessage.role === 'model' && lastMessage.text.includes('Would you like to arrange time with the DEKODE team');
+  if (isClarifying) {
+    const text = normalizeVisitorMessage(message);
+    const prefersProject = /\b(?:build|create|product|app|platform|system|feature|software|my app|my product)\b/i.test(text);
+    const prefersMeeting = /\b(?:meet|meeting|call|time|team|dekode|you|with you|discuss|talk|schedule|book)\b/i.test(text);
+    if (prefersProject && !prefersMeeting) return 'project';
+    if (prefersMeeting || text === 'yes' || text === 'first' || text === '1') return 'meeting';
+  }
+
   return 'clarify';
 }
 

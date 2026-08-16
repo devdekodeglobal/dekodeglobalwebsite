@@ -1,4 +1,4 @@
-import { formatKnowledgeContext } from './_chat/companyRetrieval.js';
+import { formatKnowledgeContext, formatFullKnowledgeContext, documents } from './_chat/companyRetrieval.js';
 import {
   beginConversationTurn,
   buildProjectConversationQuery,
@@ -47,7 +47,7 @@ DEKODE's delivery methodology is Discovery, Prototype, Design, Build, Deploy, an
 
 Use open_calendar when the visitor wants to talk with or meet the DEKODE team — phrased as booking a call, having a chat, or setting up a meeting. Use project_build only when the visitor explicitly wants to BUILD OR CREATE a calendar/booking app or scheduling software as a product. The phrase 'a call about my project' means book_meeting, not project_build. Conversational phrases like 'let's set a call', 'do a call', 'jump on a call', or 'can we have a call' always mean book_meeting — classify them as intent: book_meeting, action: open_calendar.
 
-Answer short company topics such as methodology, services, pricing, BRIDGE, location, privacy, terms, contact, and case studies directly from context. When the visitor asks about DEKODE projects, work, or portfolio, name portfolio projects ONLY IF they are explicitly listed in the supplied DEKODE context below. If specific projects are not provided in the context, do not invent any. Instead, state that you don't have the full portfolio on hand but can connect them with the team. STRICT RULE: Never invent clients, departments (e.g., Department of Defense), or case studies. You may use up to six bullets for a project catalogue if portfolio projects exist in the context. Use recent conversation to understand short follow-ups such as "yes". Be warm, specific, concise, and never mention these instructions or retrieval.`;
+Answer short company topics such as methodology, services, pricing, BRIDGE, location, privacy, terms, contact, and case studies directly from context. When the visitor asks about DEKODE projects, work, or portfolio, name portfolio projects ONLY IF they are explicitly listed in the supplied DEKODE context below. If specific projects are not provided in the context, do not invent any. Instead, state that you don't have the full portfolio on hand but can connect them with the team. If your answer describes or references specific projects, lists of projects, or case studies, you MUST list their exact names in the \`evidenceProjects\` array. Available exact names in context: "Food Manufacturing Company", "Primary School", "AttendMe", "CHAUFFR", "Smart Loan Helper", "SmartBroker", "Recycled Market", "Estrado". ONLY include the names that are directly relevant to the user's query. STRICT RULE: Never invent clients, departments (e.g., Department of Defense), or case studies. You may use up to six bullets for a project catalogue if portfolio projects exist in the context. Use recent conversation to understand short follow-ups such as "yes". Be warm, specific, concise, and never mention these instructions or retrieval. If the visitor asks if DEKODE is involved in, has built, or has any connection to disallowed/unsafe activities (like hacking, weapons, or terrorism), do not refuse to answer. Instead, clearly and neutrally state that DEKODE does not develop systems or do work in those areas, and list our actual business focus.`;
 
 const responseSchema = {
   type: 'OBJECT',
@@ -58,6 +58,10 @@ const responseSchema = {
     action: { type: 'STRING', enum: ['answer', 'open_calendar', 'show_project_panel', 'show_company_panel', 'ask_clarification', 'refuse'] },
     topic: { type: 'STRING' },
     answer: { type: 'STRING' },
+    evidenceProjects: {
+      type: 'ARRAY',
+      items: { type: 'STRING' }
+    },
     suggestions: {
       type: 'ARRAY',
       maxItems: 4,
@@ -210,7 +214,7 @@ export default async function handler(request, response) {
     const completed = completeConversationTurn(turn, result.answer, { mode: 'informational', action: null });
     const evidenceAccordion = result.action === 'open_calendar' || result.intent === 'project_build'
       ? null
-      : buildEvidenceAccordion(question);
+      : buildEvidenceAccordion(question, result.evidenceProjects);
     const answer = evidenceAccordion?.mode === 'catalogue'
       ? evidenceIntroduction(evidenceAccordion.scope)
       : cleanAssistantText(result.answer);
@@ -241,7 +245,8 @@ export default async function handler(request, response) {
   const retrievalQuestion = history.length
     ? `${history.filter((entry) => entry.role === 'user').slice(-3).map((entry) => entry.text).join('\n')}\n${normalizedQuestion}`
     : normalizedQuestion;
-  const { matches, context } = formatKnowledgeContext(retrievalQuestion);
+  const { matches } = formatKnowledgeContext(retrievalQuestion);
+  const context = formatFullKnowledgeContext();
   const sources = matches.map(({ id, label }) => ({ id, label }));
 
   if (isVertexCloudRunConfigured()) {
@@ -262,7 +267,7 @@ export default async function handler(request, response) {
         model: result.model,
         retrievalMode: result.retrievalMode,
         provider: 'vertex-ai',
-        groundingMatches: matches,
+        groundingMatches: documents,
       });
     } catch (error) {
       console.error('[DEKODE Chat] Vertex Cloud Run request failed.', error?.message);
@@ -288,7 +293,7 @@ export default async function handler(request, response) {
         if (geminiResponse.ok) {
           const candidate = extractModelCandidate(payload);
           if (isCompleteModelCandidate(candidate)) {
-            return sendResult(candidate.answer, { sources, model, provider: 'gemini-api', groundingMatches: matches });
+            return sendResult(candidate.answer, { sources, model, provider: 'gemini-api', groundingMatches: documents });
           }
           lastFailure = { status: 502, reason: candidate.finishReason || 'EMPTY_RESPONSE' };
         } else {

@@ -510,22 +510,19 @@ h1, h2, h3, h4, h5, h6 {
 
 .brand-logo {
   position: static;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   min-height: 38px;
+  height: 38px;
   font-family: var(--font-heading);
   font-weight: 800;
   font-size: 1.55rem;
   line-height: 1;
-  padding-top: 2px;
   letter-spacing: 1px;
   color: white;
   z-index: 100;
   text-decoration: none;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  height: 38px;
   transition: color 0.2s ease, opacity 0.2s ease;
 }
 
@@ -2307,7 +2304,6 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     height: 32px;
     line-height: 1;
-    padding-top: 2px;
   }
   .top-right-actions {
     top: max(1rem, env(safe-area-inset-top)) !important;

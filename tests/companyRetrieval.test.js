@@ -49,7 +49,7 @@ test('retrieves verified location and legal documents for Gemini grounding', () 
   assert.ok(locationMatches.some((match) => match.id === 'locations'));
   assert.ok(privacyMatches.some((match) => match.id === 'privacy-policy'));
   assert.ok(termsMatches.some((match) => match.id === 'terms-of-service'));
-  assert.match(privacyMatches.find((match) => match.id === 'privacy-policy').text, /pankaj\.banga@dekodeglobal\.com/);
+  assert.match(privacyMatches.find((match) => match.id === 'privacy-policy').text, /contactus@dekodeglobal\.com/);
   assert.doesNotMatch(privacyMatches.find((match) => match.id === 'privacy-policy').text, /pm@dekodeglobal\.com/);
 });
 
