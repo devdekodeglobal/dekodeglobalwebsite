@@ -372,7 +372,6 @@ export default function InteractiveContentSections() {
                     <span className="peek-index">0{index + 1}</span>
                     <span className="peek-header-copy">
                       <strong>{item.title}</strong>
-                      <small>{item.description}</small>
                     </span>
                     <ChevronDown className="peek-chevron" size={18} aria-hidden="true" />
                   </button>
