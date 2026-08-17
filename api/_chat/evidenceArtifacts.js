@@ -81,7 +81,7 @@ function findSpecificEvidence(question) {
   return namedStudy ? caseStudyItem(namedStudy) : null;
 }
 
-export function buildEvidenceAccordion(question, evidenceProjects) {
+export function buildEvidenceAccordion(question, evidenceProjects, useFallbackRegex = true) {
   // If Gemini explicitly selected specific projects, filter by those
   if (Array.isArray(evidenceProjects) && evidenceProjects.length > 0) {
     const normalizedSelected = evidenceProjects.map(normalizeForMatch);
@@ -115,6 +115,8 @@ export function buildEvidenceAccordion(question, evidenceProjects) {
       };
     }
   }
+  
+  if (!useFallbackRegex) return null;
 
   const specificItem = findSpecificEvidence(question);
   if (specificItem) {

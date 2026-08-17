@@ -215,9 +215,11 @@ export default async function handler(request, response) {
     const memoryKind = result.intent === 'project_build' ? 'project' : result.intent === 'book_meeting' ? 'meeting' : 'company';
     const turn = beginConversationTurn(incomingMemory, question, memoryKind, interaction);
     const completed = completeConversationTurn(turn, result.answer, { mode: 'informational', action: null });
+    const provider = responsePayload.provider || payload.provider;
+    const isFallback = provider === 'verified-fallback' || provider === 'verified-grounding-fallback';
     const evidenceAccordion = result.action === 'open_calendar' || result.intent === 'project_build'
       ? null
-      : buildEvidenceAccordion(question, result.evidenceProjects);
+      : buildEvidenceAccordion(question, result.evidenceProjects, isFallback);
     const answer = cleanAssistantText(result.answer);
     return response.status(200).json({
       ok: true,
