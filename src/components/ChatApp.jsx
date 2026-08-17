@@ -434,6 +434,7 @@ export default function ChatApp({
           usedSuggestions: messages
             .flatMap((message) => message.suggestions || [])
             .map((suggestion) => suggestion.label)
+            .filter((label) => label !== "LinkedIn Profile")
             .slice(-8),
         }),
       });
@@ -493,6 +494,7 @@ export default function ChatApp({
           usedSuggestions: messages
             .flatMap((message) => message.suggestions || [])
             .map((suggestion) => suggestion.label)
+            .filter((label) => label !== "LinkedIn Profile")
             .slice(-8),
           interaction,
         }),

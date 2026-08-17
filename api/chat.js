@@ -251,7 +251,10 @@ export default async function handler(request, response) {
           }
         }
         return list
-          .filter((suggestion) => !usedSuggestions.includes(suggestion.label.toLowerCase()))
+          .filter((suggestion) => {
+            if (suggestion.label === 'LinkedIn Profile') return true;
+            return !usedSuggestions.includes(suggestion.label.toLowerCase());
+          })
           .slice(0, 4);
       })(),
       ...responsePayload,
