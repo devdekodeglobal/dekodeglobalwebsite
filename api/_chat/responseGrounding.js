@@ -28,6 +28,7 @@ const approvedEvidenceNames = [
 export function isProjectEvidenceQuestion(question) {
   const query = normalizeVisitorMessage(question);
   if (/\b(methodology|delivery process|deliver projects?|how (?:do|does) .{0,16}work|project lifecycle)\b/i.test(query)) return false;
+  if (/\b(?:domain|industry|industries|sector)s?\b/i.test(query) && !/\b(?:projects?|case stud(?:y|ies))\b/i.test(query)) return false;
   return PROJECT_EVIDENCE_PATTERN.test(query);
 }
 

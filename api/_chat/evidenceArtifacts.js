@@ -17,6 +17,7 @@ const normalizeForMatch = (value) => String(value || '')
 export function detectEvidenceScope(question) {
   const normalized = String(question || '').trim().toLowerCase().replace(/\s+/g, ' ');
   if (!normalized || PROJECT_BUILD_QUERY.test(normalized) || DELIVERY_PROCESS_QUERY.test(normalized)) return null;
+  if (/\b(?:domain|industry|industries|sector)s?\b/i.test(normalized) && !/\b(?:projects?|case stud(?:y|ies))\b/i.test(normalized)) return null;
   if (CASE_STUDY_QUERY.test(normalized)) return 'case_studies';
   if (PORTFOLIO_QUERY.test(normalized) || PROJECT_CATALOGUE_QUERY.test(normalized)) return 'portfolio';
   if (['projects', 'portfolio', 'case studies', 'success stories', 'our work', 'testimonials', 'testimonial', 'reviews', 'review'].includes(normalized)) {
