@@ -35,6 +35,14 @@ test('direct founder questions prioritize verified leadership knowledge', () => 
   assert.match(matches[0]?.text || '', /Pankaj Banga/);
 });
 
+test('lexical retrieval includes approved contact-page FAQ answers', () => {
+  assert.ok(retrieveLexical('How quickly do you respond?').some((match) => /Typically within 24 hours on business days/i.test(match.text)));
+  assert.ok(retrieveLexical('Do you work with businesses outside Australia?').some((match) => /work globally/i.test(match.text)));
+  assert.ok(retrieveLexical('How much does it cost?').some((match) => /clear, transparent estimate after the discovery call/i.test(match.text)));
+  assert.ok(retrieveLexical('Do I need to know what I want before reaching out?').some((match) => /rough idea or a problem/i.test(match.text)));
+  assert.ok(retrieveLexical('Can you work with our existing team or tools?').some((match) => /integrate with your stack, your workflows, and your people/i.test(match.text)));
+});
+
 test('broad project questions retrieve the complete verified evidence catalogue first', () => {
   const matches = retrieveLexical('what are dekode projects');
   assert.equal(matches[0].id, 'project-evidence-catalogue');

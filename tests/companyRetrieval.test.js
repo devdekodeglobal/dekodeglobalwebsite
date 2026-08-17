@@ -125,6 +125,20 @@ test('retrieves the six-stage methodology and verified founder details', () => {
   assert.match(founder.text, /linkedin\.com\/in\/pankajbanga/);
 });
 
+test('retrieves approved contact-page FAQ answers', () => {
+  const responseTime = retrieveCompanyKnowledge('How quickly do you respond?');
+  const outsideAustralia = retrieveCompanyKnowledge('Do you work with businesses outside Australia?');
+  const pricing = retrieveCompanyKnowledge('How much does it cost?');
+  const roughIdea = retrieveCompanyKnowledge('Do I need to know what I want before reaching out?');
+  const existingTools = retrieveCompanyKnowledge('Can you work with our existing team or tools?');
+
+  assert.ok(responseTime.some((match) => /Typically within 24 hours on business days/i.test(match.text)));
+  assert.ok(outsideAustralia.some((match) => /work globally/i.test(match.text)));
+  assert.ok(pricing.some((match) => /clear, transparent estimate after the discovery call/i.test(match.text)));
+  assert.ok(roughIdea.some((match) => /rough idea or a problem/i.test(match.text)));
+  assert.ok(existingTools.some((match) => /integrate with your stack, your workflows, and your people/i.test(match.text)));
+});
+
 test('retrieves one related DEKODE discovery opportunity from relevant context', () => {
   const location = retrieveCompanyKnowledge('How do you work across Australia and India?');
   const delivery = retrieveCompanyKnowledge('How do you reduce project risk?');

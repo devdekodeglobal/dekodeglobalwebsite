@@ -596,6 +596,26 @@
     {
       "question": "How does DEKODE deliver projects?",
       "answer": "DEKODE follows six connected stages: Discovery, Prototype, Design, Build, Deploy, Evolve. Security, privacy, and maintainability are considered throughout."
+    },
+    {
+      "question": "How quickly do you respond?",
+      "answer": "Typically within 24 hours on business days. For urgent requests, WhatsApp is fastest."
+    },
+    {
+      "question": "Do you work with businesses outside Australia?",
+      "answer": "Yes. We work globally and our team is experienced in remote and cross-timezone delivery."
+    },
+    {
+      "question": "How much does it cost?",
+      "answer": "It depends on the scope. We'll give you a clear, transparent estimate after the discovery call. No hidden fees, no surprises."
+    },
+    {
+      "question": "Do I need to know what I want before reaching out?",
+      "answer": "Not at all. Many of our clients start with a rough idea or a problem they need help defining. That's exactly what the discovery call is for."
+    },
+    {
+      "question": "Can you work with our existing team or tools?",
+      "answer": "Absolutely. We integrate with your stack, your workflows, and your people. We're here to complement what you already have, not replace it."
     }
   ],
   "aliases": {
