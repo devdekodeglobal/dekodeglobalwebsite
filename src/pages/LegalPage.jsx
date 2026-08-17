@@ -40,12 +40,12 @@ export default function LegalPage({ type }) {
           <div className="company-info-grid" style={{ gridTemplateColumns: '1fr', display: 'block' }}>
             <section className="company-legal-switcher" style={{ margin: 0 }}>
               <article className="company-legal-content">
-                <p>{document.summary}</p>
+                <p style={{ fontSize: '1rem', lineHeight: '1.6', color: 'var(--story-muted)' }}>{document.summary}</p>
                 
                 {document.sections.map((section) => (
                   <div key={section.title}>
-                    <h4>{section.title}</h4>
-                    <p>{section.summary}</p>
+                    <h4 style={{ fontSize: '1.05rem', marginBottom: '0.4rem', color: 'white' }}>{section.title}</h4>
+                    <p style={{ fontSize: '0.95rem', lineHeight: '1.65', color: 'var(--story-muted)' }}>{section.summary}</p>
                   </div>
                 ))}
 
