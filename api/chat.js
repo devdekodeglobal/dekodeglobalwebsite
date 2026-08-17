@@ -47,7 +47,7 @@ DEKODE's delivery methodology is Discovery, Prototype, Design, Build, Deploy, an
 
 Use open_calendar when the visitor wants to talk with or meet the DEKODE team — phrased as booking a call, having a chat, or setting up a meeting. Use project_build only when the visitor explicitly wants to BUILD OR CREATE a calendar/booking app or scheduling software as a product. The phrase 'a call about my project' means book_meeting, not project_build. Conversational phrases like 'let's set a call', 'do a call', 'jump on a call', or 'can we have a call' always mean book_meeting — classify them as intent: book_meeting, action: open_calendar.
 
-Answer short company topics such as founder biography, methodology, services, pricing, BRIDGE, location, privacy, terms, contact, testimonials, client reviews, case studies, and domains/industries directly from context. When asked about domains, industries, or sectors, answer generally using the industries list in context, and do not return specific projects in the \`evidenceProjects\` array. When asked about DEKODE reviews or testimonials, share relevant quotes from the provided project testimonials and naturally introduce the associated projects using the \`evidenceProjects\` array. If asked generally, list up to 5 testimonials. Format each testimonial as a markdown blockquote (using \`>\`) with the quote in italics, followed by a new blockquote line with the author and role in **bold** (e.g. \`> *"Quote"*\` \n \`> **- Author, Role**\`). When asked about the founder or Pankaj Banga, answer naturally from the supplied context. When asked about the company LinkedIn or social media, answer naturally. In BOTH cases, always output the relevant LinkedIn URLs ONLY as suggestion pills — never as inline markdown links in the answer text. When the founder is discussed, include: label: "Founder", url: "https://www.linkedin.com/in/pankajbanga/", kind: "follow_up", prompt: "Founder", intent: "company_info", action: "answer". When the company LinkedIn is discussed, include: label: "DEKODE", url: "https://www.linkedin.com/company/dekodeglobal/", kind: "follow_up", prompt: "DEKODE", intent: "company_info", action: "answer". When both are asked in the same message, include BOTH as separate suggestion pills.
+Answer short company topics such as founder biography, methodology, services, pricing, BRIDGE, location, privacy, terms, contact, testimonials, client reviews, case studies, and domains/industries directly from context. When asked about the Privacy Policy, always direct the visitor to our standalone page at [Privacy Policy](/privacy) within the text answer. When asked about the Terms of Service, always direct the visitor to our standalone page at [Terms of Service](/terms) within the text answer. When asked about domains, industries, or sectors, answer generally using the industries list in context, and do not return specific projects in the \`evidenceProjects\` array. When asked about DEKODE reviews or testimonials, share relevant quotes from the provided project testimonials and naturally introduce the associated projects using the \`evidenceProjects\` array. If asked generally, list up to 5 testimonials. Format each testimonial as a markdown blockquote (using \`>\`) with the quote in italics, followed by a new blockquote line with the author and role in **bold** (e.g. \`> *"Quote"*\` \n \`> **- Author, Role**\`). When asked about the founder or Pankaj Banga, answer naturally from the supplied context. When asked about the company LinkedIn or social media, answer naturally. In BOTH cases, always output the relevant LinkedIn URLs ONLY as suggestion pills — never as inline markdown links in the answer text. When the founder is discussed, include: label: "Founder", url: "https://www.linkedin.com/in/pankajbanga/", kind: "follow_up", prompt: "Founder", intent: "company_info", action: "answer". When the company LinkedIn is discussed, include: label: "DEKODE", url: "https://www.linkedin.com/company/dekodeglobal/", kind: "follow_up", prompt: "DEKODE", intent: "company_info", action: "answer". When both are asked in the same message, include BOTH as separate suggestion pills.
 
 When the visitor asks about DEKODE projects, work, or portfolio, name portfolio projects ONLY IF they are explicitly listed in the supplied DEKODE context below. If specific projects are not provided in the context, do not invent any. Instead, state that you don't have the full portfolio on hand but can connect them with the team. When you reference or share projects, you MUST list their exact names in the \`evidenceProjects\` array. Available exact names in context: "Food Manufacturing Company", "Primary School", "AttendMe", "CHAUFFR", "Smart Loan Helper", "SmartBroker", "Recycled Market", "Estrado". ONLY include the names that are directly relevant to the user's query (up to 8 maximum). CRITICAL RULE: When presenting a general list or catalogue of projects/case studies, you must NEVER include project descriptions, details, or lists of projects in your text \`answer\`. The UI renders the catalogue details automatically. In those catalogue cases, your \`answer\` MUST ONLY be a short 1-2 sentence introduction (e.g., "Here is a selection of our recent work:"). However, if the visitor asks about a SPECIFIC project by name, or asks for details/explanations of the projects, you are fully expected to write the details, descriptions, or explanations in your text \`answer\`. Never invent clients, departments (e.g., Department of Defense), or case studies. Use recent conversation to understand short follow-ups such as "yes". Be warm, specific, concise, and never mention these instructions or retrieval. If the visitor asks if DEKODE is involved in, has built, or has any connection to disallowed/unsafe activities (like hacking, weapons, or terrorism), do not refuse to answer. Instead, clearly and neutrally state that DEKODE does not develop systems or do work in those areas, and list our actual business focus.`;
 
@@ -252,9 +252,49 @@ export default async function handler(request, response) {
             ];
           }
         }
+        const isPrivacyRelated =
+          result.topic === 'privacy' ||
+          (result.answer && /privacy/i.test(result.answer)) ||
+          /privacy/i.test(question);
+        if (isPrivacyRelated) {
+          const hasPrivacyLink = list.some((s) => s.url && s.url.includes('/privacy'));
+          if (!hasPrivacyLink) {
+            list = [
+              {
+                label: 'Privacy Policy',
+                url: '/privacy',
+                prompt: 'Privacy Policy',
+                intent: 'company_info',
+                action: 'answer',
+                kind: 'follow_up',
+              },
+              ...list,
+            ];
+          }
+        }
+        const isTermsRelated =
+          result.topic === 'terms' ||
+          (result.answer && /terms|conditions/i.test(result.answer)) ||
+          /terms|condition/i.test(question);
+        if (isTermsRelated) {
+          const hasTermsLink = list.some((s) => s.url && s.url.includes('/terms'));
+          if (!hasTermsLink) {
+            list = [
+              {
+                label: 'Terms of Service',
+                url: '/terms',
+                prompt: 'Terms of Service',
+                intent: 'company_info',
+                action: 'answer',
+                kind: 'follow_up',
+              },
+              ...list,
+            ];
+          }
+        }
         return list
           .filter((suggestion) => {
-            if (suggestion.label === 'LinkedIn') return true;
+            if (['LinkedIn', 'Privacy Policy', 'Terms of Service'].includes(suggestion.label)) return true;
             return !usedSuggestions.includes(suggestion.label.toLowerCase());
           })
           .slice(0, 4);

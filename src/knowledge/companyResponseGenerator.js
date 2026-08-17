@@ -110,13 +110,13 @@ function responseForTopic(topic, message, detectedService, detectedSolutionArea,
       return `${knowledge.contact.operatingModel}\n\n${bullets(knowledge.contact.locations.map((location) => `${location.country}: ${location.address}`))}`;
     case 'privacy': {
       const section = findLegalSection(knowledge.legal.privacy, message);
-      if (section) return `${section.title}\n\n${section.summary}`;
-      return `${knowledge.legal.privacy.summary}\n\nThe policy covers:\n${bullets(knowledge.legal.privacy.sections.map((section) => section.title))}\n\nFor privacy questions or requests, contact ${knowledge.legal.privacy.contactEmail}.`;
+      if (section) return `${section.title}\n\n${section.summary}\n\nYou can view the full document at [Privacy Policy](/privacy).`;
+      return `${knowledge.legal.privacy.summary}\n\nThe policy covers:\n${bullets(knowledge.legal.privacy.sections.map((section) => section.title))}\n\nFor privacy questions or requests, contact ${knowledge.legal.privacy.contactEmail}. You can view the full document at [Privacy Policy](/privacy).`;
     }
     case 'terms': {
       const section = findLegalSection(knowledge.legal.terms, message);
-      if (section) return `${section.title}\n\n${section.summary}`;
-      return `${knowledge.legal.terms.summary}\n\nThe terms cover:\n${bullets(knowledge.legal.terms.sections.map((section) => section.title))}\n\nThe full terms are available in the Company information section below.`;
+      if (section) return `${section.title}\n\n${section.summary}\n\nYou can view the full document at [Terms of Service](/terms).`;
+      return `${knowledge.legal.terms.summary}\n\nThe terms cover:\n${bullets(knowledge.legal.terms.sections.map((section) => section.title))}\n\nYou can view the full document at [Terms of Service](/terms).`;
     }
     case 'company':
     default:
