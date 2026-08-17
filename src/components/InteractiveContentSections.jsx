@@ -320,7 +320,7 @@ export default function InteractiveContentSections() {
         {...(shouldReduceMotion ? { initial: false } : reveal)}
       >
         <SectionHeading
-          eyebrow="SUCCESS STORIES"
+          eyebrow="Success stories"
           title="REAL WORK. REAL OUTCOMES."
           description="Two case studies. The problem we walked into, what we built, and what changed."
         />
@@ -429,7 +429,6 @@ export default function InteractiveContentSections() {
                   <span className="peek-index">0{index + 1}</span>
                   <span className="peek-header-copy">
                     <strong>{item.title}</strong>
-                    <small>{item.challenge}</small>
                   </span>
                   <ChevronDown className="peek-chevron" size={18} aria-hidden="true" />
                 </button>
@@ -463,7 +462,7 @@ export default function InteractiveContentSections() {
       >
         <SectionHeading
           eyebrow="GET IN TOUCH"
-          title="Our contact details, office locations, and policies"
+          title="Contact, locations and policies"
           description="Where we are and how to reach us"
         />
         <div className="company-info-grid">
