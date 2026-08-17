@@ -20,6 +20,7 @@
   },
   "company": {
     "name": "DEKODE",
+    "linkedin": "https://www.linkedin.com/company/dekodeglobal/",
     "about": "DEKODE helps businesses and communities modernise their systems, adopt AI with confidence, and build digital products that teams actually want to use. We handle the complexity so you don’t have to: from strategy and architecture through to build, security, and long-term support.",
     "mission": "We make technology work for the people who use it.",
     "origin": "We started DEKODE because we kept seeing the same problem: businesses that knew they needed to evolve but couldn’t find a partner that made the process feel manageable. The big IT firms were too expensive, too impersonal, and spoke a language most teams couldn’t follow. Meanwhile, the technology gap kept growing. We believed there was a better way. Practical technology, delivered simply, at a price that respects your budget. No jargon. No bloated scopes. No disappearing after launch. That belief still drives everything we do.",
@@ -657,8 +658,7 @@
       "who started",
       "who is behind",
       "who runs",
-      "pankaj banga",
-      "linkedin"
+      "pankaj banga"
     ],
     "why": [
       "why choose",
@@ -697,7 +697,8 @@
       "business",
       "who are you",
       "about you",
-      "what do you do"
+      "what do you do",
+      "linkedin"
     ],
     "contact": [
       "contact",
