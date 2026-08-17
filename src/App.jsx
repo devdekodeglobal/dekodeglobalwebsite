@@ -48,15 +48,14 @@ function App() {
     <div
       className={`app-container ${INTERACTIVE_CONTENT_SECTIONS_ENABLED && !proposal ? 'interactive-content-enabled' : ''} ${proposal ? 'proposal-mode' : ''}`}
     >
-      {!legalType && (
-        <div className="chat-viewport" id="dekode-chat">
-          <ChatApp
-            onOpenProposalAccess={() => setShowProposalAccess(true)}
-            onExitProposal={exitProposal}
-            onChatModeChange={setIsChatActive}
-          />
-        </div>
-      )}
+      <div className="chat-viewport" id="dekode-chat">
+        <ChatApp
+          onOpenProposalAccess={() => setShowProposalAccess(true)}
+          onExitProposal={exitProposal}
+          onChatModeChange={setIsChatActive}
+          isBackgroundOnly={!!legalType}
+        />
+      </div>
       {proposal && (
         <ProposalExperience
           proposal={proposal}
