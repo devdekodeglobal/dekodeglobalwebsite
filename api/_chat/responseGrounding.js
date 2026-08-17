@@ -59,6 +59,13 @@ export function isGroundedCompanyResult(result, question, matches = []) {
   }
 
   if (isProjectEvidenceQuestion(question) || result?.intent === 'case_study') {
+    const hasEvidenceProjects = Array.isArray(result?.evidenceProjects) && result.evidenceProjects.length > 0;
+    const evidenceProjectsVerified = hasEvidenceProjects && result.evidenceProjects.some((projName) =>
+      approvedEvidenceNames.some((approvedName) => approvedName.includes(normalize(projName)) || normalize(projName).includes(approvedName))
+    );
+    if (evidenceProjectsVerified) {
+      return true;
+    }
     const namesVerified = approvedEvidenceNames.some((name) => normalizedAnswer.includes(name));
     return namesVerified && coverage >= 0.20;
   }
