@@ -3,7 +3,11 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
-    { "source": "/proposals/:path*", "destination": "/index.html" }
+    { "source": "/proposals/:path*", "destination": "/index.html" },
+    { "source": "/privacy", "destination": "/index.html" },
+    { "source": "/privacy-policy", "destination": "/index.html" },
+    { "source": "/terms", "destination": "/index.html" },
+    { "source": "/terms-of-service", "destination": "/index.html" }
   ],
   "headers": [
     {
