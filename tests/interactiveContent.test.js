@@ -23,23 +23,28 @@ test("content actions bridge into the existing composer without auto-send", () =
 });
 
 test("all requested story sections and state controls are present", () => {
-  for (const label of [
+  const expectedOrder = [
     "Start a project",
     "companyKnowledge.company.belief",
     "companyKnowledge.company.about",
     "The STAR standard",
-    "eyebrow=\"Services\"",
+    "What we deliver",
     "Success stories",
     "How we work",
     'eyebrow="Our Domains"',
     "Contact, locations and policies",
-  ]) assert.match(sections, new RegExp(label.replace(/[?]/g, "\\?")));
+  ];
+
+  for (const label of expectedOrder) {
+    assert.match(sections, new RegExp(label.replace(/[?]/g, "\\?")));
+  }
+  
   assert.match(sections, /activeCapability/);
   assert.match(sections, /activeProject/);
   assert.match(sections, /activeStage/);
   assert.match(sections, /activeIndustry/);
-  assert.ok(sections.indexOf('Start a project') < sections.indexOf('eyebrow="Services"'));
-  assert.ok(sections.indexOf('eyebrow="Services"') < sections.indexOf('Success stories'));
+  assert.ok(sections.indexOf('Start a project') < sections.indexOf('What we deliver'));
+  assert.ok(sections.indexOf('What we deliver') < sections.indexOf('Success stories'));
   assert.ok(sections.indexOf('Success stories') < sections.indexOf('How we work'));
   assert.doesNotMatch(sections, /Built for adoption, not applause/);
   assert.match(sections, /Every stage earns the next one before you invest on it\./);

@@ -271,7 +271,7 @@ export default function InteractiveContentSections() {
         {...(shouldReduceMotion ? { initial: false } : reveal)}
       >
         <SectionHeading
-          eyebrow="Services"
+          eyebrow="What we deliver"
           title="One team across the digital journey"
           description="Choose an area to see where DEKODE can create practical value."
         />
