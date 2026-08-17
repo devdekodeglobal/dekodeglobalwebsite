@@ -27,10 +27,10 @@ test("all requested story sections and state controls are present", () => {
     "Start a project",
     "companyKnowledge.company.belief",
     "companyKnowledge.company.about",
-    "The DEKODE standard",
-    "Capabilities",
+    "The STAR standard",
+    "What we deliver",
     "Success stories",
-    "Methodology",
+    "How we work",
     'eyebrow="Services"',
     "Contact, locations and policies",
   ]) assert.match(sections, new RegExp(label.replace(/[?]/g, "\\?")));
@@ -38,10 +38,12 @@ test("all requested story sections and state controls are present", () => {
   assert.match(sections, /activeProject/);
   assert.match(sections, /activeStage/);
   assert.match(sections, /activeIndustry/);
-  assert.ok(sections.indexOf('Start a project') < sections.indexOf('Capabilities'));
-  assert.ok(sections.indexOf('Capabilities') < sections.indexOf('Success stories'));
-  assert.ok(sections.indexOf('Success stories') < sections.indexOf('Methodology'));
+  assert.ok(sections.indexOf('Start a project') < sections.indexOf('What we deliver'));
+  assert.ok(sections.indexOf('What we deliver') < sections.indexOf('Success stories'));
+  assert.ok(sections.indexOf('Success stories') < sections.indexOf('How we work'));
   assert.doesNotMatch(sections, /Built for adoption, not applause/);
+  assert.match(sections, /Every stage earns the next one before you invest on it\./);
+  assert.doesNotMatch(sections, /<small>\{item\.description\}<\/small>/);
 });
 
 test("structured content is sourced and responsive fallbacks are available", () => {
@@ -50,6 +52,10 @@ test("structured content is sourced and responsive fallbacks are available", () 
   assert.match(content, /selectedWork:/);
   assert.doesNotMatch(content, /CHAUFFR/);
   assert.match(content, /deliveryProcess:/);
+  assert.match(content, /title: "AI-Powered E-Commerce Solutions"/);
+  assert.match(content, /title: "Integration & Automation"/);
+  assert.match(content, /title: "Cloud, Security & Managed IT Solutions"/);
+  assert.doesNotMatch(content, /title: "E-Commerce \+ AI"|title: "Integrations \+ Automation"|title: "Cloud, IT \+ Security"/);
   assert.match(content, /title: "Discovery"[\s\S]*title: "Prototype"[\s\S]*title: "Design"[\s\S]*title: "Build"[\s\S]*title: "Deploy"[\s\S]*title: "Evolve"/);
   assert.doesNotMatch(content, /title: "Secure"|title: "Run & Optimise"/);
   assert.match(content, /industries:/);
@@ -75,4 +81,6 @@ test("mobile content uses cover flow navigation", () => {
   assert.match(css, /\.star-section \.content-section-heading\s*\{[^}]*text-align:\s*center/s);
   assert.match(css, /\.stacked-card-rail\s*\{[^}]*overflow-x:\s*auto[^}]*scroll-snap-type:\s*x mandatory/s);
   assert.match(css, /\.methodology-detail\s*\{[^}]*align-items:\s*flex-start[^}]*border-top:\s*3px solid/s);
+  assert.match(css, /\.peek-content \.content-chat-action\s*\{[^}]*min-height:\s*34px[^}]*font-size:\s*0\.7rem/s);
+  assert.doesNotMatch(css, /\.capability-peek-content \.content-chat-action\s*\{/);
 });

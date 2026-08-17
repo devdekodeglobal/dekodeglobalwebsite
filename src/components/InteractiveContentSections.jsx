@@ -208,7 +208,7 @@ export default function InteractiveContentSections() {
         {...(shouldReduceMotion ? { initial: false } : reveal)}
       >
         <SectionHeading
-          eyebrow="The DEKODE standard"
+          eyebrow="The STAR standard"
           title="Simple enough to understand. Strong enough to rely on."
           description="Four principles guide how we communicate, deliver and stay accountable."
         />
@@ -254,7 +254,7 @@ export default function InteractiveContentSections() {
         {...(shouldReduceMotion ? { initial: false } : reveal)}
       >
         <SectionHeading
-          eyebrow="Capabilities"
+          eyebrow="What we deliver"
           title="One team across the digital journey"
           description="Choose an area to see where DEKODE can create practical value."
         />
@@ -354,9 +354,9 @@ export default function InteractiveContentSections() {
         {...(shouldReduceMotion ? { initial: false } : reveal)}
       >
         <SectionHeading
-          eyebrow="Methodology"
+          eyebrow="How we work"
           title="Progress you can see and understand"
-          description="Each stage answers a useful question before the next investment is made."
+          description="Every stage earns the next one before you invest on it."
         />
         <div className="peek-accordion" aria-label="DEKODE delivery stages">
             {content.deliveryProcess.map((item, index) => (

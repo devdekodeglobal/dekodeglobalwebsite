@@ -175,13 +175,13 @@
 
 .star-principles article {
   min-width: 0;
-  min-height: 210px;
+  min-height: 230px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-content: flex-start;
   gap: 0.85rem;
-  padding: 1.25rem;
+  padding: 1.4rem;
   border: 1px solid var(--story-border);
   border-right: 0;
   background: rgba(255, 255, 255, 0.025);
@@ -196,7 +196,7 @@
 .star-letter {
   color: var(--story-yellow);
   font-family: var(--font-heading);
-  font-size: clamp(2.5rem, 5vw, 4.4rem);
+  font-size: clamp(3.2rem, 5.5vw, 5.4rem);
   font-weight: 700;
   line-height: 0.8;
 }
@@ -206,8 +206,8 @@
 /* Optical kerning for the 'T' in Transparent */
 .star-principles article:nth-child(2) .star-wordmark { margin-left: -0.1em; }
 .star-principles article:nth-child(2) .star-wordmark span:last-child { margin-left: -0.35em; }
-.star-principles h3 { margin-top: 0.25rem; font-size: 0.95rem; }
-.star-principles p { margin-top: 0.45rem; color: var(--story-muted); font-size: 0.78rem; line-height: 1.5; }
+.star-principles h3 { margin-top: 0.25rem; font-size: 1.05rem; }
+.star-principles p { margin-top: 0.55rem; color: var(--story-muted); font-size: 0.9rem; line-height: 1.6; }
 .star-carousel-status { display: none; }
 
 /* Peek accordions */
@@ -298,6 +298,18 @@
   margin-top: 0.55rem;
   color: white;
   font-size: 0.8rem;
+}
+
+.peek-content .content-chat-action {
+  min-height: 34px;
+  gap: 0.35rem;
+  padding: 0.38rem 0.62rem;
+  font-size: 0.7rem;
+}
+
+.peek-content .content-chat-action svg {
+  width: 13px;
+  height: 13px;
 }
 
 .methodology-peek-content { display: grid; gap: 1rem; justify-items: start; }
