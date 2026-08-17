@@ -30,6 +30,7 @@
         "name": "Pankaj Banga",
         "role": "Founder",
         "linkedin": "https://www.linkedin.com/in/pankajbanga/",
+        "bio": "Pankaj founded DEKODE Global after two decades as a developer, architect, and business strategist - long enough to watch expensive systems sit unused because they answered questions nobody in the business was actually asking. That's the problem DEKODE exists to solve: not more technology, but technology that works the way your business actually needs it to. Pankaj also founded the Second Innings Foundation, working with special children - a reminder that real impact doesn't stop at the office door.",
         "sourceReference": "DEKODE/src/components/Footer.jsx"
       }
     }
@@ -499,27 +500,29 @@
   ],
   "contact": {
     "email": "contactus@dekodeglobal.com",
-    "phone": "+61421196363",
+    "emailIN": "contactus@dekodeglobal.com",
+    "emailAU": "pankaj.banga@dekode.au",
+    "phone": "+918882848489",
     "phones": [
-      "+61421196363",
-      "+918882848489"
+      "+918882848489",
+      "+61421196363"
     ],
     "phoneLabels": [
-      "+61 421 196 363",
-      "+91 88828 48489"
+      "+91 88828 48489",
+      "+61 421 196 363"
     ],
     "whatsapp": "61421196363",
     "locations": [
       {
-        "country": "Australia",
-        "address": "DEKODE - Little Collins Street, Melbourne, Vic 3000"
+        "country": "IN",
+        "address": "DEKODE Global LLP - Janak Puri, New Delhi 110058"
       },
       {
-        "country": "India",
-        "address": "DEKODE Global LLP - Janak Puri, New Delhi 110058"
+        "country": "AU",
+        "address": "DEKODE - Little Collins Street, Melbourne, Vic 3000"
       }
     ],
-    "operatingModel": "DEKODE operates across Australia and India, delivering remotely and on-site depending on what the project needs. Our team is distributed, responsive, and built to work across time zones."
+    "operatingModel": "DEKODE operates directly in India and reaches the Australian market through channel partners, with a distributed team built to work responsively across time zones."
   },
   "legal": {
     "privacy": {

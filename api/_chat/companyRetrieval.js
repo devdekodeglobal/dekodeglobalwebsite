@@ -126,7 +126,7 @@ function makeDocuments() {
     {
       id: 'company-leadership',
       label: 'DEKODE founder and leadership',
-      text: `${companyKnowledge.company.leadership.founder.name} is DEKODE's ${companyKnowledge.company.leadership.founder.role}. LinkedIn: ${companyKnowledge.company.leadership.founder.linkedin}. The published source does not provide a longer founder biography.`,
+      text: `${companyKnowledge.company.leadership.founder.name} is DEKODE's ${companyKnowledge.company.leadership.founder.role}. LinkedIn: ${companyKnowledge.company.leadership.founder.linkedin}. Biography: ${companyKnowledge.company.leadership.founder.bio}`,
       aliases: companyKnowledge.aliases.leadership,
     },
     ...(companyKnowledge.initiatives || []).map((initiative) => ({
@@ -186,7 +186,7 @@ function makeDocuments() {
     {
       id: 'contact',
       label: 'Contact',
-      text: `Email: ${companyKnowledge.contact.email}. Phone numbers: ${joinItems(companyKnowledge.contact.phones)}. WhatsApp: +${companyKnowledge.contact.whatsapp}.`,
+      text: `Contact Emails - India: ${companyKnowledge.contact.emailIN}, Australia: ${companyKnowledge.contact.emailAU}. Phone numbers: ${joinItems(companyKnowledge.contact.phones)}. WhatsApp: +${companyKnowledge.contact.whatsapp}.`,
       aliases: companyKnowledge.aliases.contact,
     },
     {

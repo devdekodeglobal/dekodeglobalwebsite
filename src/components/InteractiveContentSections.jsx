@@ -303,9 +303,9 @@ export default function InteractiveContentSections() {
         {...(shouldReduceMotion ? { initial: false } : reveal)}
       >
         <SectionHeading
-          eyebrow="Success stories"
-          title="Evidence from real operating problems"
-          description="Two published DEKODE case studies, focused on the challenge, the system and the result."
+          eyebrow="SUCCESS STORIES"
+          title="REAL WORK. REAL OUTCOMES."
+          description="Two case studies. The problem we walked into, what we built, and what changed."
         />
         <div className="case-study-selector" role="tablist" aria-label="Select a DEKODE success story">
           {content.selectedWork.map((item) => {
@@ -445,24 +445,27 @@ export default function InteractiveContentSections() {
         {...(shouldReduceMotion ? { initial: false } : reveal)}
       >
         <SectionHeading
-          eyebrow="Company information"
-          title="Contact, locations and policies"
-          description="Details from DEKODE's published company information."
+          eyebrow="GET IN TOUCH"
+          title="Our contact details, office locations, and policies"
+          description="Where we are and how to reach us"
         />
         <div className="company-info-grid">
           <section className="company-info-block">
-            <h3><Mail size={18} /> Contact DEKODE</h3>
-            <a href={`mailto:${companyKnowledge.contact.email}`}>{companyKnowledge.contact.email}</a>
-            {companyKnowledge.contact.phones.map((phone, index) => (
-              <a href={`tel:${phone}`} key={phone}><Phone size={15} /> {companyKnowledge.contact.phoneLabels[index]}</a>
-            ))}
-            <a href={`https://wa.me/${companyKnowledge.contact.whatsapp}`} target="_blank" rel="noreferrer">
-              <MessageCircle size={15} /> WhatsApp {companyKnowledge.contact.phoneLabels[0]}
-            </a>
+            <h3><Mail size={18} /> Contact</h3>
+            <div className="contact-country-group">
+              <span className="country-label">IN</span>
+              <a href="mailto:contactus@dekodeglobal.com">contactus@dekodeglobal.com</a>
+              <a href="tel:+918882848489"><Phone size={15} /> +91 88828 48489</a>
+            </div>
+            <div className="contact-country-group">
+              <span className="country-label">AU</span>
+              <a href="mailto:pankaj.banga@dekode.au">pankaj.banga@dekode.au</a>
+              <a href="tel:+61421196363"><Phone size={15} /> +61 421 196 363</a>
+            </div>
           </section>
 
           <section className="company-info-block">
-            <h3><MapPin size={18} /> Where we work</h3>
+            <h3><MapPin size={18} /> Location</h3>
             <p>{companyKnowledge.contact.operatingModel}</p>
             {companyKnowledge.contact.locations.map((location) => (
               <p key={location.country}><strong>{location.country}</strong><span>{location.address}</span></p>

@@ -424,8 +424,8 @@
 .case-study-copy h3 { margin-top: 0.45rem; font-family: var(--font-heading); font-size: clamp(1.35rem, 2.6vw, 2rem); }
 .case-study-copy dl { margin: 1.1rem 0 1.4rem; }
 .case-study-copy dl > div { display: grid; grid-template-columns: 86px 1fr; gap: 0.75rem; padding: 0.7rem 0; border-top: 1px solid rgba(255,255,255,.08); }
-.case-study-copy dt { color: var(--story-blue); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; }
-.case-study-copy dd { color: var(--story-muted); font-size: 0.8rem; line-height: 1.55; }
+.case-study-copy dt { color: var(--story-blue); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; }
+.case-study-copy dd { color: var(--story-muted); font-size: 0.88rem; line-height: 1.6; }
 .case-study-copy .case-study-outcome dd { color: white; }
 
 /* Methodology */
@@ -501,6 +501,25 @@
 .company-info-block p strong,
 .company-info-block p span { display: block; }
 .company-info-block p strong { color: white; margin-bottom: 0.18rem; }
+.contact-country-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  width: 100%;
+}
+.contact-country-group + .contact-country-group {
+  margin-top: 0.75rem;
+  border-top: 1px solid var(--story-border);
+  padding-top: 0.75rem;
+}
+.country-label {
+  color: var(--story-yellow);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.1rem;
+}
 .company-legal-switcher { grid-column: 1 / -1; }
 .company-legal-toggle { width: min(100%, 560px); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .3rem; padding: .28rem; border: 1px solid var(--story-border); border-radius: 999px; background: rgba(4,27,51,.55); }
 .company-legal-toggle button { min-width: 0; min-height: 44px; padding: .6rem .85rem; border: 0; border-radius: 999px; background: transparent; display: flex; align-items: center; justify-content: center; gap: .45rem; color: var(--story-muted); font: inherit; font-size: .8rem; font-weight: 700; cursor: pointer; }

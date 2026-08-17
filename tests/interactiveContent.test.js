@@ -29,18 +29,18 @@ test("all requested story sections and state controls are present", () => {
     "companyKnowledge.company.about",
     "The DEKODE standard",
     "Capabilities",
-    "Success stories",
+    "SUCCESS STORIES",
     "Methodology",
     'eyebrow="Services"',
-    "Contact, locations and policies",
+    "Our contact details, office locations, and policies",
   ]) assert.match(sections, new RegExp(label.replace(/[?]/g, "\\?")));
   assert.match(sections, /activeCapability/);
   assert.match(sections, /activeProject/);
   assert.match(sections, /activeStage/);
   assert.match(sections, /activeIndustry/);
   assert.ok(sections.indexOf('Start a project') < sections.indexOf('Capabilities'));
-  assert.ok(sections.indexOf('Capabilities') < sections.indexOf('Success stories'));
-  assert.ok(sections.indexOf('Success stories') < sections.indexOf('Methodology'));
+  assert.ok(sections.indexOf('Capabilities') < sections.indexOf('SUCCESS STORIES'));
+  assert.ok(sections.indexOf('SUCCESS STORIES') < sections.indexOf('Methodology'));
   assert.doesNotMatch(sections, /Built for adoption, not applause/);
 });
 
