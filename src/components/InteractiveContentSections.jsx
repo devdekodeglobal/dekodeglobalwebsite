@@ -171,7 +171,7 @@ export default function InteractiveContentSections() {
         <div className="start-project-copy">
           <span className="section-kicker">Start a project</span>
           <h2>What should we make useful?</h2>
-          <p>Bring the idea, the friction or the unanswered question. We will help shape a practical next step.</p>
+          <p>Bring the idea, the problem, or the question you haven't solved yet. We'll help you shape it into a practical next step.</p>
           {sessionSummary && (
             <div className="session-summary">
               <span>Your conversation</span>
@@ -223,7 +223,7 @@ export default function InteractiveContentSections() {
         {...(shouldReduceMotion ? { initial: false } : reveal)}
       >
         <SectionHeading
-          eyebrow="The DEKODE standard"
+          eyebrow="The STAR standard"
           title="Simple enough to understand. Strong enough to rely on."
           description="Four principles guide how we communicate, deliver and stay accountable."
         />
@@ -243,7 +243,9 @@ export default function InteractiveContentSections() {
                   className="is-active"
                   data-number={`0${index + 1}`}
                 >
-                  <motion.h3 className="star-wordmark">
+                  <motion.h3
+                    className={`star-wordmark ${item.name === "Transparent" ? "is-transparent-wordmark" : ""}`}
+                  >
                     <motion.span 
                       className="star-letter" 
                       variants={giantLetterVariant}
@@ -269,7 +271,7 @@ export default function InteractiveContentSections() {
         {...(shouldReduceMotion ? { initial: false } : reveal)}
       >
         <SectionHeading
-          eyebrow="Capabilities"
+          eyebrow="What we deliver"
           title="One team across the digital journey"
           description="Choose an area to see where DEKODE can create practical value."
         />
@@ -369,9 +371,9 @@ export default function InteractiveContentSections() {
         {...(shouldReduceMotion ? { initial: false } : reveal)}
       >
         <SectionHeading
-          eyebrow="Methodology"
+          eyebrow="How we work"
           title="Progress you can see and understand"
-          description="Each stage answers a useful question before the next investment is made."
+          description="Every stage earns the next one before you invest on it."
         />
         <div className="peek-accordion" aria-label="DEKODE delivery stages">
             {content.deliveryProcess.map((item, index) => (
