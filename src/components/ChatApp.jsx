@@ -123,7 +123,6 @@ export default function ChatApp({
   onCloseProposalChat,
   onChatModeChange,
   isProposalChatOpen = false,
-  isBackgroundOnly = false,
 }) {
   const [messages, setMessages] = useState([]);
   const [conversationMemory, setConversationMemory] = useState(() => createConversationMemory());
@@ -958,55 +957,6 @@ export default function ChatApp({
       </div>
     </motion.div>
   );
-
-  if (isBackgroundOnly) {
-    return (
-      <>
-        <div className={`vibrant-background vibrant-background-dawn ${timeOfDay === "dawn" ? "active" : ""}`} />
-        <div className={`vibrant-background vibrant-background-morning ${timeOfDay === "morning" ? "active" : ""}`} />
-        <div className={`vibrant-background vibrant-background-noon ${timeOfDay === "noon" ? "active" : ""}`} />
-        <div className={`vibrant-background vibrant-background-golden ${timeOfDay === "golden" ? "active" : ""}`} />
-        <div className={`vibrant-background vibrant-background-evening ${timeOfDay === "evening" ? "active" : ""}`} />
-        <div className={`vibrant-background vibrant-background-night ${timeOfDay === "night" ? "active" : ""}`} />
-        <div className={`vibrant-background vibrant-background-latenight ${timeOfDay === "latenight" ? "active" : ""}`} />
-        
-        <ParticleBackground timeOfDay={timeOfDay} />
-        
-        <HeroScenery
-          timeOfDay={timeOfDay}
-          realTime={realTime}
-        />
-
-        <header className="chat-header">
-          <a className="brand-logo" href={import.meta.env.BASE_URL || "/"} aria-label="Go to DEKODE home">
-            DEKODE
-          </a>
-          {!proposalContext && (
-            <div className="top-right-actions">
-              <button
-                type="button"
-                className="action-pill calendar-entry-button"
-                onClick={handleOpenMeetingScheduler}
-                aria-label="Book a meeting"
-                title="Book a meeting"
-              >
-                <CalendarDays size={18} strokeWidth={2.5} />
-              </button>
-              {onOpenProposalAccess && (
-                <button
-                  type="button"
-                  className="action-pill proposal-entry-button client-portal-top-right"
-                  onClick={onOpenProposalAccess}
-                >
-                  <LockKeyhole size={15} /> Client Portal
-                </button>
-              )}
-            </div>
-          )}
-        </header>
-      </>
-    );
-  }
 
   return (
     <>
