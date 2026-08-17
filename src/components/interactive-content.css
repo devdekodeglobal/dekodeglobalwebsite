@@ -175,13 +175,13 @@
 
 .star-principles article {
   min-width: 0;
-  min-height: 230px;
+  min-height: 210px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-content: flex-start;
   gap: 0.85rem;
-  padding: 1.4rem;
+  padding: 1.25rem;
   border: 1px solid var(--story-border);
   border-right: 0;
   background: rgba(255, 255, 255, 0.025);
@@ -196,17 +196,19 @@
 .star-letter {
   color: var(--story-yellow);
   font-family: var(--font-heading);
-  font-size: clamp(3.2rem, 5.5vw, 5.4rem);
+  font-size: clamp(3.2rem, 5vw, 4.8rem);
   font-weight: 700;
   line-height: 0.8;
 }
 
-.star-wordmark { display: flex; align-items: baseline; gap: .1rem; }
+.star-wordmark { display: flex; align-items: baseline; gap: .16rem; }
 .star-wordmark span { display: inline-block; vertical-align: baseline; }
-/* Optical kerning for the 'T' in Transparent */
-.star-principles article:nth-child(2) .star-wordmark { margin-left: -0.1em; }
-.star-principles article:nth-child(2) .star-wordmark span:last-child { margin-left: -0.35em; }
-.star-principles h3 { margin-top: 0.25rem; font-size: 1.05rem; }
+.star-wordmark span:last-child {
+  font-size: clamp(1.25rem, 1.7vw, 1.55rem);
+  font-weight: 700;
+  line-height: 1;
+}
+.star-principles h3 { margin-top: 0.25rem; }
 .star-principles p { margin-top: 0.55rem; color: var(--story-muted); font-size: 0.9rem; line-height: 1.6; }
 .star-carousel-status { display: none; }
 

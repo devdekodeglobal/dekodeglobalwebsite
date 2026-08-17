@@ -79,6 +79,7 @@ test("mobile content uses cover flow navigation", () => {
   assert.match(css, /\.conversion-actions\s*\{[^}]*width:\s*min\(100% - 1\.5rem, 19rem\)/s);
   assert.match(css, /\.story-section\s*\{[^}]*text-align:\s*left/s);
   assert.match(css, /\.star-section \.content-section-heading\s*\{[^}]*text-align:\s*center/s);
+  assert.match(css, /\.star-wordmark span:last-child\s*\{[^}]*font-size:\s*clamp\(1\.25rem, 1\.7vw, 1\.55rem\)/s);
   assert.match(css, /\.stacked-card-rail\s*\{[^}]*overflow-x:\s*auto[^}]*scroll-snap-type:\s*x mandatory/s);
   assert.match(css, /\.methodology-detail\s*\{[^}]*align-items:\s*flex-start[^}]*border-top:\s*3px solid/s);
   assert.match(css, /\.peek-content \.content-chat-action\s*\{[^}]*min-height:\s*34px[^}]*font-size:\s*0\.7rem/s);
