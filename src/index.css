@@ -1813,7 +1813,8 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0;
 }
 
-.company-suggestion-chips button {
+.company-suggestion-chips button,
+.company-suggestion-chips a {
   border: 1px solid rgba(96,165,250,0.25);
   background: rgba(53,118,193,0.15);
   color: #bfdbfe;
@@ -1827,13 +1828,16 @@ h1, h2, h3, h4, h5, h6 {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
+  text-decoration: none;
 }
 
-.company-suggestion-chips button:hover {
+.company-suggestion-chips button:hover,
+.company-suggestion-chips a:hover {
   background: rgba(53,118,193,0.3);
 }
 
-.company-suggestion-chips button.is-discovery {
+.company-suggestion-chips button.is-discovery,
+.company-suggestion-chips a.is-discovery {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
@@ -2406,7 +2410,8 @@ h1, h2, h3, h4, h5, h6 {
   .message-bubble { max-width: 92%; padding: 0.8rem 0.9rem; font-size: 0.9rem; }
   .message-user .message-bubble { max-width: 84%; }
   .company-suggestion-chips { gap: 0.4rem; }
-  .company-suggestion-chips button { padding: 0.45rem 0.6rem; }
+  .company-suggestion-chips button,
+  .company-suggestion-chips a { padding: 0.45rem 0.6rem; }
 
   .chat-input-wrapper {
     padding: 0.65rem max(0.75rem, env(safe-area-inset-right)) max(0.65rem, env(safe-area-inset-bottom)) max(0.75rem, env(safe-area-inset-left));
@@ -2485,7 +2490,8 @@ h1, h2, h3, h4, h5, h6 {
 @media (hover: none) {
   .action-pill:hover,
   .knowledge-panel-button:hover,
-  .company-suggestion-chips button:hover { transform: none; }
+  .company-suggestion-chips button:hover,
+  .company-suggestion-chips a:hover { transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

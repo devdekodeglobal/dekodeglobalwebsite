@@ -1109,25 +1109,37 @@ export default function ChatApp({
                               <span className="suggestion-context-label">Related to this</span>
                             )}
                             {msg.suggestions.map((suggestion) => (
-                              <button
-                                key={suggestion.label}
-                                type="button"
-                                className={suggestion.kind === "discovery" ? "is-discovery" : undefined}
-                                onClick={() =>
-                                  handleModelPrompt(suggestion.prompt, {
-                                    type: "suggestion",
-                                    label: suggestion.label,
-                                    intent: suggestion.intent,
-                                    action: suggestion.action,
-                                  })
-                                }
-                                disabled={isTyping}
-                              >
-                                {suggestion.kind === "discovery" && (
-                                  <Sparkles size={13} aria-hidden="true" />
-                                )}
-                                {suggestion.label}
-                              </button>
+                              suggestion.url ? (
+                                <a
+                                  key={suggestion.label}
+                                  href={suggestion.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className={suggestion.kind === "discovery" ? "is-discovery" : undefined}
+                                >
+                                  {suggestion.label}
+                                </a>
+                              ) : (
+                                <button
+                                  key={suggestion.label}
+                                  type="button"
+                                  className={suggestion.kind === "discovery" ? "is-discovery" : undefined}
+                                  onClick={() =>
+                                    handleModelPrompt(suggestion.prompt, {
+                                      type: "suggestion",
+                                      label: suggestion.label,
+                                      intent: suggestion.intent,
+                                      action: suggestion.action,
+                                    })
+                                  }
+                                  disabled={isTyping}
+                                >
+                                  {suggestion.kind === "discovery" && (
+                                    <Sparkles size={13} aria-hidden="true" />
+                                  )}
+                                  {suggestion.label}
+                                </button>
+                              )
                             ))}
                           </motion.div>
                         )}

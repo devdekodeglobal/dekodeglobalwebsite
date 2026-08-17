@@ -34,7 +34,7 @@ function sanitizeSuggestions(value) {
   const seen = new Set();
   return value.flatMap((suggestion) => {
     const label = String(suggestion?.label || '').trim().slice(0, 42);
-    const prompt = String(suggestion?.prompt || '').trim().slice(0, 180);
+    const prompt = String(suggestion?.prompt || suggestion?.url || '').trim().slice(0, 180);
     const key = label.toLowerCase();
     if (!label || !prompt || seen.has(key)) return [];
     seen.add(key);
@@ -48,7 +48,15 @@ function sanitizeSuggestions(value) {
     const intent = MODEL_INTENTS.includes(suggestion?.intent) ? suggestion.intent : inferredIntent;
     const action = MODEL_ACTIONS.includes(suggestion?.action) ? suggestion.action : inferredAction;
     const kind = suggestion?.kind === 'discovery' ? 'discovery' : 'follow_up';
-    return [{ label, prompt, kind, ...(intent ? { intent } : {}), ...(action ? { action } : {}) }];
+    const url = suggestion?.url ? String(suggestion.url).trim() : undefined;
+    return [{
+      label,
+      prompt,
+      kind,
+      ...(intent ? { intent } : {}),
+      ...(action ? { action } : {}),
+      ...(url ? { url } : {}),
+    }];
   }).slice(0, 4);
 }
 
