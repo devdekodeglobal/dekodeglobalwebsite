@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { Mail } from 'lucide-react';
 import { loadCompanyKnowledge } from '../knowledge/companyKnowledgeLoader';
 import '../components/interactive-content.css';
 
@@ -23,30 +22,23 @@ export default function LegalPage({ type }) {
           </a>
         </div>
         
-        <div className="content-section-heading">
-          <p className="section-eyebrow">LEGAL</p>
-          <h2>{document.title}</h2>
-        </div>
-        
         <div className="company-info-grid" style={{ gridTemplateColumns: '1fr' }}>
           <section className="company-info-block">
-            <article className="company-legal-content" style={{ marginTop: 0 }}>
-              <p style={{ fontSize: '1.05rem', color: 'white', marginBottom: '1.5rem', lineHeight: 1.6 }}>{document.summary}</p>
-              
+            <article className="company-legal-content">
+              <h3>{document.title}</h3>
+              <p>{document.summary}</p>
               {document.contactEmail && (
                 <a className="company-legal-contact" href={`mailto:${document.contactEmail}`}>
-                  <Mail size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} /> Enquiries: {document.contactEmail}
+                  {type === 'privacy' ? 'Privacy enquiries: ' : 'Terms enquiries: '}
+                  {document.contactEmail}
                 </a>
               )}
-              
-              <div style={{ marginTop: '2rem' }}>
-                {document.sections.map((section) => (
-                  <div key={section.title} style={{ padding: '1.25rem 0', borderTop: '1px solid rgba(255,255,255,.08)' }}>
-                    <h4 style={{ fontSize: '1.1rem', color: 'var(--story-yellow)', marginBottom: '0.75rem' }}>{section.title}</h4>
-                    <p style={{ color: 'var(--story-muted)', fontSize: '0.9rem', lineHeight: 1.65 }}>{section.summary}</p>
-                  </div>
-                ))}
-              </div>
+              {document.sections.map((section) => (
+                <div key={section.title}>
+                  <h4>{section.title}</h4>
+                  <p>{section.summary}</p>
+                </div>
+              ))}
             </article>
           </section>
         </div>
