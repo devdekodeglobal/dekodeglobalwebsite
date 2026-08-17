@@ -49,7 +49,7 @@
 .start-project-copy h2 {
   margin-top: 0.65rem;
   font-family: var(--font-heading);
-  font-size: clamp(1.75rem, 4vw, 3.2rem);
+  font-size: clamp(1.9rem, 4.1vw, 3.35rem);
   line-height: 1.07;
   letter-spacing: 0;
 }
@@ -638,7 +638,7 @@
   }
   .content-section-heading { margin: 0 0 1.5rem; text-align: left; }
   .content-section-heading h2,
-  .start-project-copy h2 { font-size: 1.72rem; }
+  .start-project-copy h2 { font-size: 1.82rem; }
   .start-project-copy > p,
   .content-section-heading p { font-size: .88rem; }
   .start-project-copy,

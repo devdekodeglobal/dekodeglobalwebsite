@@ -156,7 +156,7 @@ export default function InteractiveContentSections() {
         <div className="start-project-copy">
           <span className="section-kicker">Start a project</span>
           <h2>What should we make useful?</h2>
-          <p>Bring the idea, the friction or the unanswered question. We will help shape a practical next step.</p>
+          <p>Bring the idea, the problem, or the question you haven't solved yet. We'll help you shape it into a practical next step.</p>
           {sessionSummary && (
             <div className="session-summary">
               <span>Your conversation</span>
