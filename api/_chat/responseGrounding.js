@@ -8,7 +8,11 @@ const STOP_WORDS = new Set([
   'about', 'after', 'also', 'answer', 'because', 'been', 'being', 'could', 'does',
   'from', 'have', 'help', 'into', 'more', 'only', 'other', 'that', 'their', 'there',
   'these', 'they', 'this', 'through', 'what', 'when', 'where', 'which', 'with',
-  'would', 'your', 'dekode',
+  'would', 'your', 'dekode', 'hello', 'sure', 'glad', 'here', 'please', 'thanks',
+  'thank', 'welcome', 'great', 'good', 'morning', 'afternoon', 'evening', 'happy',
+  'like', 'want', 'need', 'would', 'could', 'should', 'will', 'going', 'does',
+  'doing', 'done', 'make', 'made', 'take', 'taken', 'give', 'given', 'find',
+  'found', 'show', 'shown', 'yes', 'no', 'okay', 'well', 'many', 'very', 'just',
 ]);
 
 const normalize = (value) => String(value || '')

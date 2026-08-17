@@ -165,7 +165,11 @@ function fallbackAfterProviderFailure(question, history, verifiedIntent, interac
       answer: 'I would be happy to set up a call with you. I am opening our calendar so you can choose a convenient slot.',
     }, question, { interaction });
   }
-  const company = generateCompanyResponse(question, verifiedIntent);
+  const normalizedQuestion = normalizeVisitorMessage(question);
+  const retrievalQuestion = history.length
+    ? `${history.filter((entry) => entry.role === 'user').slice(-3).map((entry) => entry.text).join('\n')}\n${normalizedQuestion}`
+    : normalizedQuestion;
+  const company = generateCompanyResponse(retrievalQuestion, verifiedIntent);
   return validateModelResponse({
     intent: verifiedIntent.kind === 'out_of_scope' ? 'out_of_scope' : 'company_info',
     confidence: 0.4,
