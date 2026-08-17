@@ -94,7 +94,15 @@ function responseForTopic(topic, message, detectedService, detectedSolutionArea,
     case 'origin':
       return knowledge.company.origin;
     case 'leadership': {
-      return `Pankaj founded DEKODE Global after two decades as a developer, architect, and business strategist - long enough to watch expensive systems sit unused because they answered questions nobody in the business was actually asking. That's the problem DEKODE exists to solve: not more technology, but technology that works the way your business actually needs it to. Pankaj also founded the Second Innings Foundation, working with special children - a reminder that real impact doesn't stop at the office door.`;
+      const isInitialBioQuery = /founder|who is|biography|about pankaj|who founded/i.test(message);
+      if (isInitialBioQuery) {
+        return `Pankaj founded DEKODE Global after two decades as a developer, architect, and business strategist - long enough to watch expensive systems sit unused because they answered questions nobody in the business was actually asking. That's the problem DEKODE exists to solve: not more technology, but technology that works the way your business actually needs it to. Pankaj also founded the Second Innings Foundation, working with special children - a reminder that real impact doesn't stop at the office door.`;
+      }
+      return `Pankaj solved this by building DEKODE around a simple principle: focusing on practical technology that solves real business problems, rather than pushing expensive, bloated software that teams don't actually need or know how to use.\n\nKey areas:\n${bullets([
+        'Two decades of hands-on experience as a developer, architect, and strategist',
+        'Direct observation of why complex systems fail and sit unused',
+        'A commitment to transparent, affordable, and usable technology',
+      ])}\n\nWould you like to learn more about our delivery approach?`;
     }
     case 'contact':
       return `You can reach DEKODE at ${knowledge.contact.email}.\n\nAustralia: ${knowledge.contact.phoneLabels[0]}\nIndia: ${knowledge.contact.phoneLabels[1]}\nWhatsApp: ${knowledge.contact.phoneLabels[0]}\n\nTell us what you are exploring and we will help recommend a practical next step.`;
