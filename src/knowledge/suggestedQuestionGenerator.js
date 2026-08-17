@@ -28,22 +28,29 @@ const promptByLabel = {
   'Terms & Conditions': "What are DEKODE's terms and conditions?",
 };
 
-export function getSuggestedQuestions(topic) {
+export function getSuggestedQuestions(topic, message = '', responseText = '') {
   const list = (questions[topic] || questions.company).map((label) => ({
     label,
     prompt: promptByLabel[label],
   }));
-  if (topic === 'leadership') {
-    return [
-      {
-        label: 'LinkedIn Profile',
-        url: 'https://www.linkedin.com/in/pankajbanga/',
-        prompt: 'LinkedIn Profile',
-        intent: 'company_info',
-        action: 'answer',
-      },
-      ...list,
-    ].slice(0, 4);
+  const isFounderRelated =
+    topic === 'leadership' ||
+    /founder|pankaj/i.test(message) ||
+    /pankaj/i.test(responseText);
+  if (isFounderRelated) {
+    const hasLinkedin = list.some((s) => s.url && s.url.includes('linkedin.com'));
+    if (!hasLinkedin) {
+      return [
+        {
+          label: 'LinkedIn Profile',
+          url: 'https://www.linkedin.com/in/pankajbanga/',
+          prompt: 'LinkedIn Profile',
+          intent: 'company_info',
+          action: 'answer',
+        },
+        ...list,
+      ].slice(0, 4);
+    }
   }
   return list;
 }

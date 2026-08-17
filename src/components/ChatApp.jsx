@@ -10,6 +10,7 @@ import {
   LockKeyhole,
   Sparkles,
   X,
+  Linkedin,
 } from "lucide-react";
 import AnimationPanel from "./AnimationPanel";
 import CompanyKnowledgePanel from "./CompanyKnowledgePanel";
@@ -1117,6 +1118,9 @@ export default function ChatApp({
                                   rel="noopener noreferrer"
                                   className={suggestion.kind === "discovery" ? "is-discovery" : undefined}
                                 >
+                                  {suggestion.url.includes("linkedin.com") && (
+                                    <Linkedin size={13} aria-hidden="true" />
+                                  )}
                                   {suggestion.label}
                                 </a>
                               ) : (

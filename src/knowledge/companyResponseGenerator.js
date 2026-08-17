@@ -132,6 +132,6 @@ export function generateCompanyResponse(message, intent) {
     text,
     topic,
     panel: getPanelForTopic(topic),
-    suggestions: getSuggestedQuestions(topic),
+    suggestions: getSuggestedQuestions(topic, message, text),
   };
 }

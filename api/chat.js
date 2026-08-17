@@ -227,11 +227,33 @@ export default async function handler(request, response) {
       ok: true,
       ...result,
       answer,
-      suggestions: evidenceAccordion
-        ? []
-        : (result.suggestions || [])
+      suggestions: (() => {
+        if (evidenceAccordion) return [];
+        let list = result.suggestions || [];
+        const isFounderRelated =
+          result.topic === 'leadership' ||
+          (result.answer && /Pankaj/i.test(result.answer)) ||
+          /founder|pankaj/i.test(question);
+        if (isFounderRelated) {
+          const hasLinkedin = list.some((s) => s.url && s.url.includes('linkedin.com'));
+          if (!hasLinkedin) {
+            list = [
+              {
+                label: 'LinkedIn Profile',
+                url: 'https://www.linkedin.com/in/pankajbanga/',
+                prompt: 'LinkedIn Profile',
+                intent: 'company_info',
+                action: 'answer',
+                kind: 'follow_up',
+              },
+              ...list,
+            ];
+          }
+        }
+        return list
           .filter((suggestion) => !usedSuggestions.includes(suggestion.label.toLowerCase()))
-          .slice(0, 4),
+          .slice(0, 4);
+      })(),
       ...responsePayload,
       conversation: completed,
       actions: result.action === 'open_calendar'
