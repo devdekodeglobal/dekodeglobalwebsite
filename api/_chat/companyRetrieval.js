@@ -42,6 +42,7 @@ const formatProject = (project) => [
   project.clientContext && `Client or context: ${project.clientContext}.`,
   project.deliverables?.length && `Deliverables: ${joinItems(project.deliverables)}.`,
   project.outcome && `Outcome: ${project.outcome}`,
+  project.testimonials?.length && `Testimonials: ${project.testimonials.map(t => `"${t.quote}" - ${t.author}, ${t.role}`).join(' | ')}`,
 ].filter(Boolean).join('\n');
 
 const formatCaseStudy = (study) => [
@@ -52,6 +53,7 @@ const formatCaseStudy = (study) => [
   `Solution: ${study.solution}`,
   study.deliveryApproach && `Delivery approach: ${study.deliveryApproach}`,
   `Outcome: ${study.outcome}`,
+  study.testimonials?.length && `Testimonials: ${study.testimonials.map(t => `"${t.quote}" - ${t.author}, ${t.role}`).join(' | ')}`,
 ].filter(Boolean).join('\n');
 
 function makeDocuments() {

@@ -3,12 +3,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import foodManufacturingImage from '../assets/case-study-food-manufacturing.jpg';
 import primarySchoolImage from '../assets/case-study-primary-school.jpg';
-import attendMeImage from '../assets/portfolio/attendme.jpg';
-import chauffrImage from '../assets/portfolio/chauffr.jpg';
-import smartLoanImage from '../assets/portfolio/smart-loan.jpg';
+import attendMeImage from '../assets/portfolio/attendme.png';
+import chauffrImage from '../assets/portfolio/chauffr.png';
+import smartLoanImage from '../assets/portfolio/smart-loan.png';
 import smartBrokerImage from '../assets/portfolio/smartbroker.png';
 import recycledMarketImage from '../assets/portfolio/recycled-market.png';
-import estradoImage from '../assets/portfolio/estrado.jpg';
+import estradoImage from '../assets/portfolio/estrado.png';
 
 const images = {
   'food-manufacturing': foodManufacturingImage,
@@ -58,7 +58,7 @@ export default function EvidenceAccordion({ artifact }) {
                     transition={{ duration: 0.26, ease: 'easeOut' }}
                   >
                     <div className="evidence-accordion-content">
-                      <div className={`evidence-media${item.id === 'attendme' ? ' evidence-media-attendme' : ''}`}>
+                      <div className={`evidence-media${item.id === 'attendme' ? ' evidence-media-attendme' : ''}${item.kind === 'Portfolio project' && item.id !== 'attendme' ? ' evidence-media-contain' : ''}`}>
                         <img src={images[item.imageKey]} alt={`${item.name} project`} />
                       </div>
                       {item.facts?.length > 0 && (

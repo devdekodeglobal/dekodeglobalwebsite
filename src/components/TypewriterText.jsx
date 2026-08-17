@@ -3,9 +3,14 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 import { normalizeAssistantLists } from '../utils/assistantText.js';
 
 function InlineText({ text }) {
-  return text.split(/(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|https?:\/\/[^\s)]+)/g).filter(Boolean).flatMap((part, index) => {
+  // Strip leading > from blockquote lines if any leaked through
+  const cleaned = text.replace(/^>\s*/, '');
+  return cleaned.split(/(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|\*[^*]+\*|https?:\/\/[^\s)]+)/g).filter(Boolean).flatMap((part, index) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       return <strong key={`strong-${index}`}>{part.slice(2, -2)}</strong>;
+    }
+    if (part.startsWith('*') && part.endsWith('*') && part.length > 2) {
+      return <em key={`em-${index}`}>{part.slice(1, -1)}</em>;
     }
     const mdLink = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
     if (mdLink) {
@@ -19,7 +24,7 @@ function InlineText({ text }) {
         trailing,
       ];
     }
-    return part.replaceAll('**', '');
+    return part.replaceAll('**', '').replaceAll('*', '');
   });
 }
 
@@ -37,11 +42,35 @@ export function FormattedText({ text, topic }) {
   const normalizedText = normalizeAssistantLists(text)
     .replace(/\s+([*-])\s+(?=\*\*[^*]+\*\*\s*:)/g, '\n$1 ');
   const bulletPattern = /^(?:[-*•]|\d+[.)])\s+/;
+  const blockquotePattern = /^>\s*/;
+
   const lines = normalizedText.split('\n').map((line) => line.trim()).filter(Boolean);
-  const bullets = lines
-    .filter((line) => bulletPattern.test(line))
-    .map((line) => line.replace(bulletPattern, ''));
-  const prose = lines.filter((line) => !bulletPattern.test(line)).join(' ');
+
+  // Classify lines into segments: prose, bullet, blockquote
+  const segments = [];
+  for (const line of lines) {
+    if (blockquotePattern.test(line)) {
+      const last = segments.at(-1);
+      if (last?.type === 'blockquote') {
+        last.lines.push(line.replace(blockquotePattern, ''));
+      } else {
+        segments.push({ type: 'blockquote', lines: [line.replace(blockquotePattern, '')] });
+      }
+    } else if (bulletPattern.test(line)) {
+      segments.push({ type: 'bullet', text: line.replace(bulletPattern, '') });
+    } else {
+      const last = segments.at(-1);
+      if (last?.type === 'prose') {
+        last.text += ' ' + line;
+      } else {
+        segments.push({ type: 'prose', text: line });
+      }
+    }
+  }
+
+  // Collect all prose for lead/body/followUp splitting
+  const proseSegments = segments.filter((s) => s.type === 'prose');
+  const prose = proseSegments.map((s) => s.text).join(' ');
   const sentences = sentenceParts(prose);
   const sentenceCount = sentences.length;
   const followUp = sentences.length > 1 && sentences.at(-1).endsWith('?')
@@ -50,6 +79,11 @@ export function FormattedText({ text, topic }) {
   const lead = sentenceCount > 1 && sentences.length > 0 ? sentences.shift() : '';
   const body = lead ? sentences.join(' ') : '';
   const label = topicLabel(topic);
+
+  // Collect bullets
+  const bullets = segments.filter((s) => s.type === 'bullet').map((s) => s.text);
+  const blockquotes = segments.filter((s) => s.type === 'blockquote');
+  const hasBlockquotes = blockquotes.length > 0;
 
   return (
     <div className="answer-presentation">
@@ -61,7 +95,15 @@ export function FormattedText({ text, topic }) {
       )}
       {lead && <p className="answer-lead"><InlineText text={lead} /></p>}
       {body && <p className="answer-body"><InlineText text={body} /></p>}
-      {!lead && prose && <p className="answer-body"><InlineText text={prose} /></p>}
+      {!lead && prose && !hasBlockquotes && <p className="answer-body"><InlineText text={prose} /></p>}
+      {!lead && prose && hasBlockquotes && <p className="answer-body"><InlineText text={prose} /></p>}
+      {blockquotes.map((bq, bqIndex) => (
+        <blockquote key={`bq-${bqIndex}`} className="answer-blockquote">
+          {bq.lines.map((line, lineIndex) => (
+            <p key={`bq-${bqIndex}-line-${lineIndex}`}><InlineText text={line} /></p>
+          ))}
+        </blockquote>
+      ))}
       {bullets.length > 0 && (
         <ul className="answer-points">
           {bullets.slice(0, 8).map((bullet, index) => (
@@ -78,6 +120,7 @@ export function FormattedText({ text, topic }) {
     </div>
   );
 }
+
 
 export default function TypewriterText({ text, topic, delay = 20, onComplete }) {
   const [displayedText, setDisplayedText] = useState('');

@@ -1,0 +1,495 @@
+
+> dekode_conversational_ai@0.0.0 test
+> node --test --test-concurrency=1 tests/*.test.js
+
+✔ calendar configuration remains server-only and uses safe defaults (4.464333ms)
+✔ calendar presentation groups local dates and formats existing slots without changing them (17.282583ms)
+✔ candidate slots follow business hours and busy intervals remove buffered conflicts (1.542834ms)
+✔ same-day booking keeps future slots available when no notice period is configured (0.596417ms)
+✔ Kolkata availability keeps today bookable and starts the next business day at 9 AM (7.228292ms)
+✔ availability reads free-busy data and returns visitor-timezone labels (1.739ms)
+✔ booking rechecks availability before creating the event and attendee invite (2.803416ms)
+✔ sends short company topics through Gemini with retrieved DEKODE context (33.739375ms)
+✔ opens the calendar for model-confirmed booking intent (2.299792ms)
+✔ a selected booking suggestion keeps project context and opens the calendar (2.295708ms)
+✔ preserves a typed booking decision across an informal follow-up (1.470084ms)
+✔ rejects invented DEKODE projects and falls back to verified portfolio knowledge (4.316583ms)
+✔ rejects unsupported company claims outside portfolio questions (3.469375ms)
+✔ a short yes reaches Gemini with recent conversation context (1.99ms)
+✔ sensitive requests are refused before a model call (0.581709ms)
+✔ returns contextual suggestions and removes labels already shown (2.492292ms)
+✔ retries a transient Gemini failure before returning an answer (154.399458ms)
+✔ rejects visibly incomplete model candidates (0.168167ms)
+✔ classifies representative company questions without capturing general chat (24.130125ms)
+✔ maintains company context for short follow-ups but permits explicit general requests (0.701959ms)
+✔ maps each knowledge topic to its intended visual panel (0.106792ms)
+✔ triages first-turn company, project, ambiguous, and out-of-scope messages (1.09525ms)
+✔ routes explicit meeting requests directly to live calendar availability (0.478125ms)
+✔ keeps scheduling-product requests out of the DEKODE booking flow (0.152416ms)
+✔ normalizes common visitor misspellings and shorthand before routing (1.328ms)
+✔ refuses account intrusion and secret disclosure explicitly (0.701166ms)
+✔ keeps safe bold headings while removing unsupported markdown (0.41425ms)
+✔ answers verified contact, location, privacy, and terms questions (4.96775ms)
+✔ routes direct location and contact wording to verified company details (0.978833ms)
+✔ answers a requested legal section instead of repeating the whole document overview (0.691083ms)
+✔ changes project visuals when the latest user intent changes (1.382917ms)
+✔ generates evidence-bound responses and suggestions from loaded knowledge (0.788583ms)
+✔ loads the generated knowledge object once (0.1045ms)
+✔ keeps the two approved old-site case studies in the knowledge corpus (0.797375ms)
+✔ answers CHAUFFR questions from portfolio knowledge without adding it to case studies (0.587291ms)
+✔ answers unsupported company facts directly instead of returning an overview (0.891583ms)
+✔ does not invent a SaaS offering absent from the company profile (0.728958ms)
+✔ answers each new solution area with its specific approved knowledge (3.533083ms)
+✔ answers published case-study questions without inventing portfolio work (1.061958ms)
+✔ normalizes inline model bullets into distinct list lines (0.136709ms)
+✔ answers founder and privacy questions from verified centralized knowledge (2.4455ms)
+✔ explains all six methodology stages when asked about delivery (0.456167ms)
+✔ answers an exact case-study platform field when requested (0.408667ms)
+✔ uses only the approved company origin text for why DEKODE started (0.1275ms)
+✔ answers the three verified knowledge questions from live review (1.291459ms)
+✔ retrieves the most relevant service knowledge instead of the whole website (2.140792ms)
+✔ grounds broad service questions in the DEKODE service catalogue (0.969833ms)
+✔ builds a bounded context from relevant public knowledge (0.453291ms)
+✔ includes the old website origin story in company context (0.291875ms)
+✔ retrieves focused knowledge for the new solution labels (1.167334ms)
+✔ retrieves verified location and legal documents for Gemini grounding (0.669709ms)
+✔ retrieves CHAUFFR from the old-site portfolio catalogue (0.346ms)
+✔ retrieves verified case studies and portfolio work for broad project questions (0.865583ms)
+✔ prioritises project evidence across portfolio and case-study wording (1.446209ms)
+✔ includes structured old-site evidence in project documents (0.463375ms)
+✔ retrieves reviewed delivery, Beston, and BRIDGE evidence (0.477208ms)
+✔ retrieves the six-stage methodology and verified founder details (0.508375ms)
+✔ retrieves one related DEKODE discovery opportunity from relevant context (0.517833ms)
+✔ keeps durable facts while bounding a twenty-turn conversation (17.9715ms)
+✔ qualifies a normal project after useful discovery without repeating fields (1.938917ms)
+✔ does not treat vague acknowledgements as useful discovery answers (0.595333ms)
+✔ qualifies a detailed first message immediately (0.233458ms)
+✔ company questions do not trigger project discovery or booking (0.125292ms)
+✔ a declined meeting is remembered and not suggested again (0.303667ms)
+✔ booking initiation uses the existing state envelope (0.346125ms)
+✔ records a booking suggestion selection without losing project facts (0.432084ms)
+✔ sessions remain isolated and malformed client state is sanitized (0.589709ms)
+✔ limits broad case-study requests to the two published case studies (2.383834ms)
+✔ shows the full approved evidence catalogue for broad portfolio requests (0.720666ms)
+✔ does not attach evidence UI to unrelated, specific, or build-intent messages (0.244417ms)
+✔ automatically opens verified media for a specifically named project or case study (0.775708ms)
+✔ does not show named evidence media when the visitor is describing a new build (0.110667ms)
+✔ renders an accessible single-open-item accordion with image-first details (0.451125ms)
+✔ uses readable prose separators for portfolio deliverables (0.135041ms)
+✔ gives evidence responses a deliberate desktop width without changing normal bubbles (0.206292ms)
+✔ uses neutral portfolio wording and displays complete evidence images (0.442834ms)
+✔ feature flag preserves the original chat-only render path (0.74925ms)
+✔ content actions bridge into the existing composer without auto-send (0.171875ms)
+✔ all requested story sections and state controls are present (0.370375ms)
+✔ structured content is sourced and responsive fallbacks are available (0.402083ms)
+✔ mobile content uses cover flow navigation (0.616125ms)
+✔ Vite development serves the existing proposal API without exposing credentials (3.582417ms)
+✔ detects the random inputs from the intake screenshots (0.984833ms)
+✔ keeps short but meaningful project answers (0.145167ms)
+✔ parses structured JSON with or without a markdown fence (0.744375ms)
+✔ allows calendar UI only for clear scheduling-with-DEKODE intent (2.535959ms)
+✔ uses established conversation intent for short booking follow-ups (0.190917ms)
+✔ preserves a resolved booking decision from a contextual suggestion (0.207417ms)
+✔ deterministic safety refusal wins over a model action (0.277666ms)
+✔ sanitizes contextual suggestion metadata without breaking older responses (4.33475ms)
+✔ preserves one discovery suggestion as a normal contextual prompt (0.158583ms)
+✔ uses the approved project labels exactly once (1.256166ms)
+✔ maps common wording to the right project category (0.391125ms)
+✔ understands an explicit website request without asking for the platform again (0.900792ms)
+✔ tolerates common spelling mistakes in project intent (0.368083ms)
+✔ recognises a shared operational problem as a project conversation (1.567625ms)
+✔ keeps capability questions in the company-information route (0.083708ms)
+✔ preserves a project brief across short conversational follow-ups (1.236458ms)
+✔ does not absorb a clear company-information switch into project context (0.10575ms)
+✔ builds the supporting visual from accumulated visitor requirements (1.354583ms)
+✔ approved proposal text is absent from the client source tree (4.565709ms)
+✔ proposal access remains independently disableable without a proposal chat mode (1.339166ms)
+✔ proposal access is password-only and uses the hosted runtime PBKDF2 limit (1.08425ms)
+✔ approved proposal source is byte-for-byte unchanged (4.325542ms)
+✔ protected proposal image is byte-for-byte unchanged (1.061166ms)
+✔ protected architecture diagram is byte-for-byte unchanged (1.274583ms)
+✔ section order and approved metadata stay pinned (0.680541ms)
+✔ generated content and diagram structure match their snapshots (0.184958ms)
+✔ proposal renders the approved old DEKODE presentation directly (1.211709ms)
+✔ original sidebar navigation switches all five protected sections (0.141417ms)
+✔ approved workflow filters retain the original interactive paths (0.300792ms)
+✔ proposal chrome is confidential and contains no client chat controls (0.303375ms)
+✔ restored proposal remains responsive, keyboard-visible, and motion-safe (0.434875ms)
+[Proposal audit] Access granted. {
+  proposalId: 'cfs-2026-optiflow',
+  version: '1.1.0',
+  at: '2026-08-17T09:56:23.273Z'
+}
+[Proposal audit] Access granted. {
+  proposalId: 'cfs-2026-optiflow',
+  version: '1.1.0',
+  at: '2026-08-17T09:56:23.276Z'
+}
+✔ invalid access is generic and never sets a session (34.252167ms)
+✔ valid access creates an HttpOnly proposal-scoped session (2.956209ms)
+✔ content and proposal chat reject unauthorised requests (0.563208ms)
+[Proposal audit] Access granted. {
+  proposalId: 'cfs-2026-optiflow',
+  version: '1.1.0',
+  at: '2026-08-17T09:56:23.281Z'
+}
+[Proposal audit] Access granted. {
+  proposalId: 'cfs-2026-optiflow',
+  version: '1.1.0',
+  at: '2026-08-17T09:56:23.282Z'
+}
+✔ authorised architecture diagram stays behind the proposal session (4.348959ms)
+✔ authorised content is isolated and query answers only from proposal (1.268792ms)
+✔ unsupported answers use the contact fallback (0.731209ms)
+✔ logout invalidates the browser cookie (0.147875ms)
+✔ accepts portfolio answers that name retrieved DEKODE evidence (2.582ms)
+✔ rejects invented project catalogues even when they sound plausible (1.420917ms)
+✔ does not let a real project name camouflage invented client or sector claims (0.417417ms)
+✔ does not constrain ordinary reasoning about a visitor project (0.260792ms)
+✔ uses dynamic viewport units and safe-area spacing for app and voice surfaces (1.033875ms)
+✔ keeps the visual panel restorable while disabling it in the current chat layout (0.352875ms)
+✔ provides content-driven breakpoints, touch targets, and reduced motion (0.505833ms)
+✔ uses multiline keyboard-aware composers and an accessible visual-panel control (0.14025ms)
+✔ keeps the composer responsive with rotating hints and separate voice typing (0.815ms)
+✔ caps long answer reveal time instead of typing every character slowly (0.0875ms)
+✔ switches legal documents in one shared panel and tightens story spacing (0.121041ms)
+✔ pauses rotating hints for active voice typing states (0.079166ms)
+✔ renders composer inspiration only on the home screen (0.169667ms)
+✔ provides one translucent back-to-top control across every DEKODE layout (0.474459ms)
+✔ guides booking from date to time, summary, and details (1.493ms)
+✔ communicates availability, timezone conversion, progress, and mobile ordering (0.814916ms)
+✔ keeps booking controls accessible and motion-sensitive (0.1815ms)
+✔ keeps consent aligned and resumes normal chat after booking (0.432584ms)
+✔ removes obsolete numbered progress from dynamic project conversations (0.120583ms)
+✔ centers chat, aligns the shared header, and distinguishes message roles (0.381792ms)
+✔ renders contextual suggestions through the normal chat pipeline (0.281708ms)
+✔ uses a readable translucent booking surface (0.206166ms)
+✔ enters chat mode before waiting for the Gemini response (0.093041ms)
+✔ presents Gemini answers with topic, lead, points, and a separated follow-up (0.169375ms)
+✖ routes project evidence to a verified visual portfolio with real media (1.449416ms)
+✔ opens the existing scheduler from an AI qualification action (0.111875ms)
+✔ uses accessible peek accordions for capabilities, methodology, and services (0.282875ms)
+✔ enables the Vertex route only when its Cloud Run URL is configured (0.649167ms)
+✔ fails closed when a Vercel function has no OIDC token (0.643708ms)
+[DEKODE Voice] Mock lead request prepared. { submittedAt: '2026-08-17T09:56:23.678Z' }
+✔ feature flag can disable voice without changing the legacy path (0.687166ms)
+✔ voice session supports permission, listening, speaking, interruption, and ending transitions (0.155458ms)
+✔ company voice answers use approved knowledge and avoid invented pricing (22.563416ms)
+✔ voice distinguishes DEKODE booking from a scheduling-product project (1.0655ms)
+✔ unknown questions are bounded to DEKODE and project discovery (0.4055ms)
+✔ lead profile extracts contact, project, timeline, and recommendations (0.32325ms)
+✔ authenticated profile data is reused only after consent (0.711792ms)
+✔ mock slots are future weekday ISO values with visitor timezone labels (21.404083ms)
+✔ guest enquiry form is editable and requires valid fields plus consent (0.737875ms)
+✔ lead payload is sanitised and mock submission never claims delivery (1.457708ms)
+✔ voice typing reports unsupported browsers without affecting manual input (0.959291ms)
+✔ voice typing requests permission and returns interim and final editable transcripts (0.3045ms)
+✔ voice typing surfaces permission denial and recognition errors safely (0.325917ms)
+ℹ tests 162
+ℹ suites 0
+ℹ pass 161
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1899.464833
+
+✖ failing tests:
+
+test at tests/responsive.test.js:260:1
+✖ routes project evidence to a verified visual portfolio with real media (1.449416ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /portfolio\/chauffr\.jpg/. Input:
+  
+  "import React from 'react';\n" +
+    "import { motion, AnimatePresence } from 'framer-motion';\n" +
+    'import {\n' +
+    '  Bot,\n' +
+    '  BrainCircuit,\n' +
+    '  CheckCircle2,\n' +
+    '  Cloud,\n' +
+    '  Code2,\n' +
+    '  Layers3,\n' +
+    '  Mail,\n' +
+    '  MapPin,\n' +
+    '  MessageCircle,\n' +
+    '  Phone,\n' +
+    '  Scale,\n' +
+    '  ShieldCheck,\n' +
+    '  Sparkles,\n' +
+    '  Workflow,\n' +
+    "} from 'lucide-react';\n" +
+    "import { loadCompanyKnowledge } from '../knowledge/companyKnowledgeLoader';\n" +
+    "import foodManufacturingImage from '../assets/case-study-food-manufacturing.jpg';\n" +
+    "import primarySchoolImage from '../assets/case-study-primary-school.jpg';\n" +
+    "import attendMeImage from '../assets/portfolio/attendme.jpg';\n" +
+    "import chauffrImage from '../assets/portfolio/chauffr.png';\n" +
+    "import smartLoanImage from '../assets/portfolio/smart-loan.png';\n" +
+    "import smartBrokerImage from '../assets/portfolio/smartbroker.png';\n" +
+    "import recycledMarketImage from '../assets/portfolio/recycled-market.png';\n" +
+    "import estradoImage from '../assets/portfolio/estrado.png';\n" +
+    '\n' +
+    'const knowledge = loadCompanyKnowledge();\n' +
+    '\n' +
+    'const serviceIcons = [BrainCircuit, Bot, Code2, Sparkles, Workflow, Cloud];\n' +
+    '\n' +
+    'const evidenceImages = {\n' +
+    "  'food-manufacturing': foodManufacturingImage,\n" +
+    "  'primary-school': primarySchoolImage,\n" +
+    '  attendme: attendMeImage,\n' +
+    '  chauffr: chauffrImage,\n' +
+    "  'smart-loan-helper': smartLoanImage,\n" +
+    '  smartbroker: smartBrokerImage,\n' +
+    "  'recycled-market': recycledMarketImage,\n" +
+    '  estrado: estradoImage,\n' +
+    '};\n' +
+    '\n' +
+    'const stagger = {\n' +
+    '  show: { transition: { staggerChildren: 0.08 } },\n' +
+    '};\n' +
+    '\n' +
+    'const itemMotion = {\n' +
+    '  hidden: { opacity: 0, y: 14, scale: 0.96 },\n' +
+    '  show: { opacity: 1, y: 0, scale: 1 },\n' +
+    '};\n' +
+    '\n' +
+    "function PanelButton({ children, prompt, onSelect, className = '' }) {\n" +
+    '  return (\n' +
+    '    <motion.button\n' +
+    '      variants={itemMotion}\n' +
+    '      whileHover={{ y: -3, scale: 1.02 }}\n' +
+    '      whileTap={{ scale: 0.98 }}\n' +
+    '      className={`knowledge-panel-button ${className}`}\n' +
+    '      onClick={() => onSelect(prompt)}\n' +
+    '      type="button"\n' +
+    '    >\n' +
+    '      {children}\n' +
+    '    </motion.button>\n' +
+    '  );\n' +
+    '}\n' +
+    '\n' +
+    'function OverviewPanel({ onSelect }) {\n' +
+    '  const milestones = [\n' +
+    "    ['Mission', knowledge.company.mission],\n" +
+    "    ['Capabilities', 'Strategy, products, automation, cloud, and security'],\n" +
+    "    ['Services', `${knowledge.services.length} connected service families`],\n" +
+    "    ['Industries', `${knowledge.industries.length} sectors named in the company profile`],\n" +
+    "    ['Innovation', 'Accessible, useful AI and digital transformation'],\n" +
+    '  ];\n' +
+    '\n' +
+    '  return (\n' +
+    '    <motion.div variants={stagger} initial="hidden" animate="show" className="knowledge-timeline">\n' +
+    '      {milestones.map(([title, description], index) => (\n' +
+    '        <PanelButton key={title} prompt={title === \'Mission\' ? \'Tell me about DEKODE\' : `Tell me about your ${title}`} onSelect={onSelect} className="timeline-card">\n' +
+    `          <span className="timeline-index">{String(index + 1).padStart(2, '0')}</span>\n` +
+    '          <span>\n' +
+    '            <strong>{title}</strong>\n' +
+    '            <small>{description}</small>\n' +
+    '          </span>\n' +
+    '        </PanelButton>\n' +
+    '      ))}\n' +
+    '    </motion.div>\n' +
+    '  );\n' +
+    '}\n' +
+    '\n' +
+    'function ServicesPanel({ onSelect }) {\n' +
+    '  return (\n' +
+    '    <motion.div variants={stagger} initial="hidden" animate="show" className="knowledge-card-grid services-panel-grid">\n' +
+    '      {knowledge.services.map((service, index) => {\n' +
+    '        const Icon = serviceIcons[index % serviceIcons.length];\n' +
+    '        return (\n' +
+    '          <PanelButton key={service.id} prompt={`Tell me more about ${service.name}`} onSelect={onSelect}>\n' +
+    '            <Icon size={18} />\n' +
+    "            <span>{service.name.replace(' Development', '').replace(' & Consulting', '')}</span>\n" +
+    '          </PanelButton>\n' +
+    '        );\n' +
+    '      })}\n' +
+    '    </motion.div>\n' +
+    '  );\n' +
+    '}\n' +
+    '\n' +
+    'function PortfolioPanel({ onSelect }) {\n' +
+    '  const evidence = [\n' +
+    '    ...knowledge.caseStudies.map((study) => ({\n' +
+    '      ...study,\n' +
+    "      category: 'Published case study',\n" +
+    '      description: study.solution,\n' +
+    '      prompt: `Tell me about the ${study.name} case study`,\n' +
+    '    })),\n' +
+    '    ...knowledge.portfolioProjects.map((project) => ({\n' +
+    '      ...project,\n' +
+    "      category: 'Portfolio project',\n" +
+    '      prompt: `Tell me about the ${project.name} project`,\n' +
+    '    })),\n' +
+    '  ];\n' +
+    '\n' +
+    '  return (\n' +
+    '    <motion.div variants={stagger} initial="hidden" animate="show" className="portfolio-panel">\n' +
+    '      <motion.div variants={itemMotion} className="portfolio-panel-heading">\n' +
+    '        <span><strong>Our work</strong><small>Published DEKODE case studies and portfolio projects</small></span>\n' +
+    '        <span>{evidence.length}</span>\n' +
+    '      </motion.div>\n' +
+    '      <div className="portfolio-card-rail" aria-label="DEKODE project evidence">\n' +
+    '        {evidence.map((item) => (\n' +
+    '          <motion.button\n' +
+    '            variants={itemMotion}\n' +
+    '            type="button"\n' +
+    '            className="portfolio-card"\n' +
+    '            key={`${item.category}-${item.id}`}\n' +
+    '            onClick={() => onSelect(item.prompt)}\n' +
+    '          >\n' +
+    '            <img src={evidenceImages[item.id]} alt={`${item.name} project`} />\n' +
+    '            <span className="portfolio-card-copy">\n' +
+    '              <small>{item.category}</small>\n' +
+    '              <strong>{item.name}</strong>\n' +
+    '              <span>{item.description}</span>\n' +
+    '            </span>\n' +
+    '          </motion.button>\n' +
+    '        ))}\n' +
+    '      </div>\n' +
+    '      <motion.p variants={itemMotion} className="portfolio-panel-note">\n' +
+    '        Browse the examples or select one for its challenge, solution, and outcome.\n' +
+    '      </motion.p>\n' +
+    '    </motion.div>\n' +
+    '  );\n' +
+    '}\n' +
+    '\n' +
+    'function IndustriesPanel({ onSelect }) {\n' +
+    '  return (\n' +
+    '    <motion.div variants={stagger} initial="hidden" animate="show" className="knowledge-card-grid industry-panel-grid">\n' +
+    '      {knowledge.industries.map((industry) => (\n' +
+    '        <PanelButton key={industry} prompt={`Tell me about your work in ${industry}`} onSelect={onSelect}>\n' +
+    '          <Layers3 size={16} />\n' +
+    '          <span>{industry}</span>\n' +
+    '        </PanelButton>\n' +
+    '      ))}\n' +
+    '    </motion.div>\n' +
+    '  );\n' +
+    '}\n' +
+    '\n' +
+    'function TechnologiesPanel({ onSelect }) {\n' +
+    "  const technologies = [...knowledge.technologies, 'AI', 'Machine Learning', 'Generative AI', 'APIs'];\n" +
+    '  return (\n' +
+    '    <div className="tech-orbit">\n' +
+    '      <div className="tech-orbit-core"><Code2 size={22} /><span>Practical stack</span></div>\n' +
+    '      {technologies.map((technology, index) => (\n' +
+    '        <motion.button\n' +
+    '          key={technology}\n' +
+    '          type="button"\n' +
+    '          className="tech-badge"\n' +
+    "          style={{ '--tech-index': index }}\n" +
+    '          initial={{ opacity: 0, scale: 0 }}\n' +
+    '          animate={{ opacity: 1, scale: 1, y: [0, -5, 0] }}\n' +
+    '          transition={{ opacity: { delay: index * 0.08 }, scale: { delay: index * 0.08 }, y: { repeat: Infinity, duration: 2.4 + index * 0.12 } }}\n' +
+    '          onClick={() => onSelect(`Tell me about your ${technology} capabilities`)}\n' +
+    '        >\n' +
+    '          {technology}\n' +
+    '        </motion.button>\n' +
+    '      ))}\n' +
+    '    </div>\n' +
+    '  );\n' +
+    '}\n' +
+    '\n' +
+    'function ProcessPanel({ onSelect }) {\n' +
+    '  return (\n' +
+    '    <motion.div variants={stagger} initial="hidden" animate="show" className="process-panel">\n' +
+    '      {knowledge.developmentProcess.map((step, index) => (\n' +
+    '        <React.Fragment key={step.name}>\n' +
+    '          <PanelButton prompt={`Tell me more about the ${step.name} stage`} onSelect={onSelect} className="process-step-card">\n' +
+    '            <span className="process-step-number">{index + 1}</span>\n' +
+    '            <span>{step.name}</span>\n' +
+    '          </PanelButton>\n' +
+    '          {index < knowledge.developmentProcess.length - 1 && <motion.div variants={itemMotion} className="process-connector" />}\n' +
+    '        </React.Fragment>\n' +
+    '      ))}\n' +
+    '    </motion.div>\n' +
+    '  );\n' +
+    '}\n' +
+    '\n' +
+    'function WhyPanel({ onSelect }) {\n' +
+    '  return (\n' +
+    '    <motion.div variants={stagger} initial="hidden" animate="show" className="why-panel">\n' +
+    '      {knowledge.whyChooseUs.map((item) => (\n' +
+    '        <PanelButton key={item.name} prompt={`What does ${item.name} mean at DEKODE?`} onSelect={onSelect}>\n' +
+    '          <CheckCircle2 size={18} />\n' +
+    '          <span>\n' +
+    '            <strong>{item.name}</strong>\n' +
+    '            <small>{item.description}</small>\n' +
+    '          </span>\n' +
+    '        </PanelButton>\n' +
+    '      ))}\n' +
+    '    </motion.div>\n' +
+    '  );\n' +
+    '}\n' +
+    '\n' +
+    'function AiPanel({ onSelect }) {\n' +
+    "  const nodes = ['Strategy', 'Custom AI', 'Copilots', 'Knowledge', 'Automation'];\n" +
+    '  return (\n' +
+    '    <div className="ai-knowledge-graph">\n' +
+    '      <motion.button\n' +
+    '        type="button"\n' +
+    '        className="ai-graph-core"\n' +
+    '        initial={{ scale: 0 }}\n' +
+    "        animate={{ scale: 1, boxShadow: ['0 0 0 rgba(53,118,193,0)', '0 0 28px rgba(53,118,193,.55)', '0 0 0 rgba(53,118,193,0)'] }}\n" +
+    "        transition={{ scale: { type: 'spring' }, boxShadow: { repeat: Infinity, duration: 2.5 } }}\n" +
+    "        onClick={() => onSelect('Tell me about your AI services')}\n" +
+    '      >\n' +
+    '        <BrainCircuit size={26} />\n' +
+    '        <span>AI</span>\n' +
+    '      </motion.button>\n' +
+    '      {nodes.map((node, index) => (\n' +
+    '        <React.Fragment key={node}>\n' +
+    '          <motion.span className={`ai-graph-line ai-line-${index + 1}`} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.2 + index * 0.08 }} />\n' +
+    '          <motion.button\n' +
+    '            type="button"\n' +
+    '            className={`ai-graph-node ai-node-${index + 1}`}\n' +
+    '            initial={{ opacity: 0, scale: 0 }}\n' +
+    '            animate={{ opacity: 1, scale: 1 }}\n' +
+    "            transition={{ type: 'spring', delay: 0.25 + index * 0.08 }}\n" +
+    '            onClick={() => onSelect(`Tell me about ${node}`)}\n' +
+    '          >\n' +
+    '            {node}\n' +
+    '          </motion.button>\n' +
+    '        </React.Fragment>\n' +
+    '      ))}\n' +
+    '    </div>\n' +
+    '  );\n' +
+    '}\n' +
+    '\n' +
+    'function RecommendationsPanel({ onSelect }) {\n' +
+    '  return (\n' +
+    '    <motion.div variants={stagger} initial="hidden" animate="show" className="knowledge-card-grid services-panel-grid">\n' +
+    '      {knowledge.services.slice(0, 6).map((service, index) => {\n' +
+    '        const Icon = serviceIcons[index % serviceIcons.length];\n' +
+    '        return (\n' +
+    '          <PanelButton key={service.id} prompt={`Tell me more about ${service.name}`} onSelect={onSelect}>\n' +
+    '            <Icon size={18} />\n' +
+    '            <span>\n' +
+    '              <strong>{service.name}</strong>\n' +
+    '              <small>{service.summary}</small>\n' +
+    '            </span>\n' +
+    '          </PanelButton>\n' +
+    '        );\n' +
+    '      })}\n' +
+    '    </motion.div>\n' +
+    '  );\n' +
+    '}\n' +
+    '\n' +
+    'function MeetingPanel({ onSelect }) {\n' +
+    '  return (\n' +
+    '    <motion.div variants={stagger} initial="hidden" animate="show" className="why-panel">\n' +
+    '      <PanelButton prompt="I would like to request a meeting" onSelect={onSele'... 3995 more characters
+  
+      at TestContext.<anonymous> (file:///Users/vanosski/Main/Projects/Dekode/dekodeglobalwebsite/tests/responsive.test.js:269:10)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'import React from \'react\';\nimport { motion, AnimatePresence } from \'framer-motion\';\nimport {\n  Bot,\n  BrainCircuit,\n  CheckCircle2,\n  Cloud,\n  Code2,\n  Layers3,\n  Mail,\n  MapPin,\n  MessageCircle,\n  Phone,\n  Scale,\n  ShieldCheck,\n  Sparkles,\n  Workflow,\n} from \'lucide-react\';\nimport { loadCompanyKnowledge } from \'../knowledge/companyKnowledgeLoader\';\nimport foodManufacturingImage from \'../assets/case-study-food-manufacturing.jpg\';\nimport primarySchoolImage from \'../assets/case-study-primary-school.jpg\';\nimport attendMeImage from \'../assets/portfolio/attendme.jpg\';\nimport chauffrImage from \'../assets/portfolio/chauffr.png\';\nimport smartLoanImage from \'../assets/portfolio/smart-loan.png\';\nimport smartBrokerImage from \'../assets/portfolio/smartbroker.png\';\nimport recycledMarketImage from \'../assets/portfolio/recycled-market.png\';\nimport estradoImage from \'../assets/portfolio/estrado.png\';\n\nconst knowledge = loadCompanyKnowledge();\n\nconst serviceIcons = [BrainCircuit, Bot, Code2, Sparkles, Workflow, Cloud];\n\nconst evidenceImages = {\n  \'food-manufacturing\': foodManufacturingImage,\n  \'primary-school\': primarySchoolImage,\n  attendme: attendMeImage,\n  chauffr: chauffrImage,\n  \'smart-loan-helper\': smartLoanImage,\n  smartbroker: smartBrokerImage,\n  \'recycled-market\': recycledMarketImage,\n  estrado: estradoImage,\n};\n\nconst stagger = {\n  show: { transition: { staggerChildren: 0.08 } },\n};\n\nconst itemMotion = {\n  hidden: { opacity: 0, y: 14, scale: 0.96 },\n  show: { opacity: 1, y: 0, scale: 1 },\n};\n\nfunction PanelButton({ children, prompt, onSelect, className = \'\' }) {\n  return (\n    <motion.button\n      variants={itemMotion}\n      whileHover={{ y: -3, scale: 1.02 }}\n      whileTap={{ scale: 0.98 }}\n      className={`knowledge-panel-button ${className}`}\n      onClick={() => onSelect(prompt)}\n      type="button"\n    >\n      {children}\n    </motion.button>\n  );\n}\n\nfunction OverviewPanel({ onSelect }) {\n  const milestones = [\n    [\'Mission\', knowledge.company.mission],\n    [\'Capabilities\', \'Strategy, products, automation, cloud, and security\'],\n    [\'Services\', `${knowledge.services.length} connected service families`],\n    [\'Industries\', `${knowledge.industries.length} sectors named in the company profile`],\n    [\'Innovation\', \'Accessible, useful AI and digital transformation\'],\n  ];\n\n  return (\n    <motion.div variants={stagger} initial="hidden" animate="show" className="knowledge-timeline">\n      {milestones.map(([title, description], index) => (\n        <PanelButton key={title} prompt={title === \'Mission\' ? \'Tell me about DEKODE\' : `Tell me about your ${title}`} onSelect={onSelect} className="timeline-card">\n          <span className="timeline-index">{String(index + 1).padStart(2, \'0\')}</span>\n          <span>\n            <strong>{title}</strong>\n            <small>{description}</small>\n          </span>\n        </PanelButton>\n      ))}\n    </motion.div>\n  );\n}\n\nfunction ServicesPanel({ onSelect }) {\n  return (\n    <motion.div variants={stagger} initial="hidden" animate="show" className="knowledge-card-grid services-panel-grid">\n      {knowledge.services.map((service, index) => {\n        const Icon = serviceIcons[index % serviceIcons.length];\n        return (\n          <PanelButton key={service.id} prompt={`Tell me more about ${service.name}`} onSelect={onSelect}>\n            <Icon size={18} />\n            <span>{service.name.replace(\' Development\', \'\').replace(\' & Consulting\', \'\')}</span>\n          </PanelButton>\n        );\n      })}\n    </motion.div>\n  );\n}\n\nfunction PortfolioPanel({ onSelect }) {\n  const evidence = [\n    ...knowledge.caseStudies.map((study) => ({\n      ...study,\n      category: \'Published case study\',\n      description: study.solution,\n      prompt: `Tell me about the ${study.name} case study`,\n    })),\n    ...knowledge.portfolioProjects.map((project) => ({\n      ...project,\n      category: \'Portfolio project\',\n      prompt: `Tell me about the ${project.name} project`,\n    })),\n  ];\n\n  return (\n    <motion.div variants={stagger} initial="hidden" animate="show" className="portfolio-panel">\n      <motion.div variants={itemMotion} className="portfolio-panel-heading">\n        <span><strong>Our work</strong><small>Published DEKODE case studies and portfolio projects</small></span>\n        <span>{evidence.length}</span>\n      </motion.div>\n      <div className="portfolio-card-rail" aria-label="DEKODE project evidence">\n        {evidence.map((item) => (\n          <motion.button\n            variants={itemMotion}\n            type="button"\n            className="portfolio-card"\n            key={`${item.category}-${item.id}`}\n            onClick={() => onSelect(item.prompt)}\n          >\n            <img src={evidenceImages[item.id]} alt={`${item.name} project`} />\n            <span className="portfolio-card-copy">\n              <small>{item.category}</small>\n              <strong>{item.name}</strong>\n              <span>{item.description}</span>\n            </span>\n          </motion.button>\n        ))}\n      </div>\n      <motion.p variants={itemMotion} className="portfolio-panel-note">\n        Browse the examples or select one for its challenge, solution, and outcome.\n      </motion.p>\n    </motion.div>\n  );\n}\n\nfunction IndustriesPanel({ onSelect }) {\n  return (\n    <motion.div variants={stagger} initial="hidden" animate="show" className="knowledge-card-grid industry-panel-grid">\n      {knowledge.industries.map((industry) => (\n        <PanelButton key={industry} prompt={`Tell me about your work in ${industry}`} onSelect={onSelect}>\n          <Layers3 size={16} />\n          <span>{industry}</span>\n        </PanelButton>\n      ))}\n    </motion.div>\n  );\n}\n\nfunction TechnologiesPanel({ onSelect }) {\n  const technologies = [...knowledge.technologies, \'AI\', \'Machine Learning\', \'Generative AI\', \'APIs\'];\n  return (\n    <div className="tech-orbit">\n      <div className="tech-orbit-core"><Code2 size={22} /><span>Practical stack</span></div>\n      {technologies.map((technology, index) => (\n        <motion.button\n          key={technology}\n          type="button"\n          className="tech-badge"\n          style={{ \'--tech-index\': index }}\n          initial={{ opacity: 0, scale: 0 }}\n          animate={{ opacity: 1, scale: 1, y: [0, -5, 0] }}\n          transition={{ opacity: { delay: index * 0.08 }, scale: { delay: index * 0.08 }, y: { repeat: Infinity, duration: 2.4 + index * 0.12 } }}\n          onClick={() => onSelect(`Tell me about your ${technology} capabilities`)}\n        >\n          {technology}\n        </motion.button>\n      ))}\n    </div>\n  );\n}\n\nfunction ProcessPanel({ onSelect }) {\n  return (\n    <motion.div variants={stagger} initial="hidden" animate="show" className="process-panel">\n      {knowledge.developmentProcess.map((step, index) => (\n        <React.Fragment key={step.name}>\n          <PanelButton prompt={`Tell me more about the ${step.name} stage`} onSelect={onSelect} className="process-step-card">\n            <span className="process-step-number">{index + 1}</span>\n            <span>{step.name}</span>\n          </PanelButton>\n          {index < knowledge.developmentProcess.length - 1 && <motion.div variants={itemMotion} className="process-connector" />}\n        </React.Fragment>\n      ))}\n    </motion.div>\n  );\n}\n\nfunction WhyPanel({ onSelect }) {\n  return (\n    <motion.div variants={stagger} initial="hidden" animate="show" className="why-panel">\n      {knowledge.whyChooseUs.map((item) => (\n        <PanelButton key={item.name} prompt={`What does ${item.name} mean at DEKODE?`} onSelect={onSelect}>\n          <CheckCircle2 size={18} />\n          <span>\n            <strong>{item.name}</strong>\n            <small>{item.description}</small>\n          </span>\n        </PanelButton>\n      ))}\n    </motion.div>\n  );\n}\n\nfunction AiPanel({ onSelect }) {\n  const nodes = [\'Strategy\', \'Custom AI\', \'Copilots\', \'Knowledge\', \'Automation\'];\n  return (\n    <div className="ai-knowledge-graph">\n      <motion.button\n        type="button"\n        className="ai-graph-core"\n        initial={{ scale: 0 }}\n        animate={{ scale: 1, boxShadow: [\'0 0 0 rgba(53,118,193,0)\', \'0 0 28px rgba(53,118,193,.55)\', \'0 0 0 rgba(53,118,193,0)\'] }}\n        transition={{ scale: { type: \'spring\' }, boxShadow: { repeat: Infinity, duration: 2.5 } }}\n        onClick={() => onSelect(\'Tell me about your AI services\')}\n      >\n        <BrainCircuit size={26} />\n        <span>AI</span>\n      </motion.button>\n      {nodes.map((node, index) => (\n        <React.Fragment key={node}>\n          <motion.span className={`ai-graph-line ai-line-${index + 1}`} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.2 + index * 0.08 }} />\n          <motion.button\n            type="button"\n            className={`ai-graph-node ai-node-${index + 1}`}\n            initial={{ opacity: 0, scale: 0 }}\n            animate={{ opacity: 1, scale: 1 }}\n            transition={{ type: \'spring\', delay: 0.25 + index * 0.08 }}\n            onClick={() => onSelect(`Tell me about ${node}`)}\n          >\n            {node}\n          </motion.button>\n        </React.Fragment>\n      ))}\n    </div>\n  );\n}\n\nfunction RecommendationsPanel({ onSelect }) {\n  return (\n    <motion.div variants={stagger} initial="hidden" animate="show" className="knowledge-card-grid services-panel-grid">\n      {knowledge.services.slice(0, 6).map((service, index) => {\n        const Icon = serviceIcons[index % serviceIcons.length];\n        return (\n          <PanelButton key={service.id} prompt={`Tell me more about ${service.name}`} onSelect={onSelect}>\n            <Icon size={18} />\n            <span>\n              <strong>{service.name}</strong>\n              <small>{service.summary}</small>\n            </span>\n          </PanelButton>\n        );\n      })}\n    </motion.div>\n  );\n}\n\nfunction MeetingPanel({ onSelect }) {\n  return (\n    <motion.div variants={stagger} initial="hidden" animate="show" className="why-panel">\n      <PanelButton prompt="I would like to request a meeting" onSelect={onSele'... 3995 more characters,
+    expected: /portfolio\/chauffr\.jpg/,
+    operator: 'match',
+    diff: 'simple'
+  }

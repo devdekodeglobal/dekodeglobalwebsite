@@ -266,7 +266,7 @@ test('routes project evidence to a verified visual portfolio with real media', (
   assert.match(indexCss, /scroll-snap-type:\s*x mandatory/);
   assert.match(companyKnowledgePanel, /function PortfolioPanel/);
   assert.match(companyKnowledgePanel, /case-study-food-manufacturing\.jpg/);
-  assert.match(companyKnowledgePanel, /portfolio\/chauffr\.jpg/);
+  assert.match(companyKnowledgePanel, /portfolio\/chauffr\.png/);
 });
 
 test('opens the existing scheduler from an AI qualification action', () => {

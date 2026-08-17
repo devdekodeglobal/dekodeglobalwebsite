@@ -271,7 +271,7 @@ export default function InteractiveContentSections() {
         {...(shouldReduceMotion ? { initial: false } : reveal)}
       >
         <SectionHeading
-          eyebrow="What we deliver"
+          eyebrow="Services"
           title="One team across the digital journey"
           description="Choose an area to see where DEKODE can create practical value."
         />
@@ -411,7 +411,7 @@ export default function InteractiveContentSections() {
         {...(shouldReduceMotion ? { initial: false } : reveal)}
       >
         <SectionHeading
-          eyebrow="Services"
+          eyebrow="Our Domains"
           title="Good systems begin with context"
           description="Select an industry to see how DEKODE connects capabilities around real operating needs."
         />

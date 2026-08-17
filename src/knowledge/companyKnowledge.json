@@ -291,7 +291,14 @@
       ],
       "sourceReference": "DEKODE/src/pages/FoodManufacture.jsx",
       "obstacles": "The Shepparton plant relied on paper records that were difficult to store and retrieve, disconnected from corporate reporting, time-consuming to reconcile, and unable to give management reliable visibility into procurement, waste, inventory, and production performance.",
-      "deliveryApproach": "DEKODE worked through understand, design, develop and iterate, and deploy stages: identifying loss-making operational gaps, designing a cloud-based information capture and management system with simple interfaces, a database, and reports, validating a prototype with client feedback, and deploying within the client's budget and timeframe with support."
+      "deliveryApproach": "DEKODE worked through understand, design, develop and iterate, and deploy stages: identifying loss-making operational gaps, designing a cloud-based information capture and management system with simple interfaces, a database, and reports, validating a prototype with client feedback, and deploying within the client's budget and timeframe with support.",
+      "testimonials": [
+        {
+          "quote": "DEKODE delivered to us a progressive and sustainable platform for strong growth ahead. They guided us step by step at every stage of the project which enabled us simplify and strategies our production, inventory and reporting process and ensured timely delivery of the expectations.",
+          "author": "Vinesh Narula",
+          "role": "Commercial Manager, Provincial Food Group (Subsidiary of Beston)"
+        }
+      ]
     },
     {
       "id": "primary-school",
@@ -310,7 +317,19 @@
       ],
       "sourceReference": "DEKODE/src/pages/PrimarySchool.jsx",
       "obstacles": "Stella Maris manually recorded administration data, visitors, child pickup and drop-off, staff, and incidents. Storing, locating, archiving, and reporting those records increased administrative cost and made compliance reporting inefficient.",
-      "deliveryApproach": "DEKODE replaced paper-based administration with an automated cloud information-capture system that supports record storage, retrieval, archiving, visitor and movement records, incident management, and compliance reporting."
+      "deliveryApproach": "DEKODE replaced paper-based administration with an automated cloud information-capture system that supports record storage, retrieval, archiving, visitor and movement records, incident management, and compliance reporting.",
+      "testimonials": [
+        {
+          "quote": "We engaged DEKODE to develop our check in/check out an app for our new office area which opened in 2016. DEKODE recommended their AttendMe App to replace our paper based method of maintaining visitors log, late arrival and early departure of students, teachers attendance and sick bay. They were very responsive to our specific needs in a very tight time frame. Excellent follow up service has allowed us to have a useful and stable tool for use in the school environment.",
+          "author": "Leon Colla",
+          "role": "Principal, St Mary of the Cross Catholic School"
+        },
+        {
+          "quote": "We asked DEKODE to develop a product for us, a product where we could have our staff log in and out, our visitors log in and out and for our parents to enter in Late Arrivals or Early Dismissals. That was it, no further information was given. DEKODE provided us within a matter of a week a platform that was exactly what we had asked for. The completed product was then delivered in full within 3 weeks. The follow up customer service after installation is quality, I would highly recommend DEKODE to any other business with which we have already done.",
+          "author": "Kirsty Palimaka",
+          "role": "Admin, St Mary of the Cross Catholic Primary School"
+        }
+      ]
     }
   ],
   "portfolioProjects": [
@@ -398,7 +417,14 @@
         "mortgage broker app",
         "broker client platform"
       ],
-      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
+      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx",
+      "testimonials": [
+        {
+          "quote": "I like to work with people who understand the problem we are trying to solve and can provide input that will help the project succeed. This requires understanding, not just the provided requirements but, the user and the workflow in full and become almost an SME in the subject. Team at DEKODE did this very well.",
+          "author": "Vijay Mani",
+          "role": "Founder, Smart Broker"
+        }
+      ]
     },
     {
       "id": "recycled-market",
@@ -418,7 +444,14 @@
         "recycled products marketplace",
         "sustainable ecommerce"
       ],
-      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
+      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx",
+      "testimonials": [
+        {
+          "quote": "The team at DEKODE displayed true professionalism at the time the Recycled Market needed a saviour. With their regular one on one communication approach we felt truly valued as a customer and their after service continues to astound us.",
+          "author": "Lester Louis",
+          "role": "Recycled Market"
+        }
+      ]
     },
     {
       "id": "estrado",

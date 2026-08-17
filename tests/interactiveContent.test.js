@@ -28,18 +28,18 @@ test("all requested story sections and state controls are present", () => {
     "companyKnowledge.company.belief",
     "companyKnowledge.company.about",
     "The STAR standard",
-    "What we deliver",
+    "eyebrow=\"Services\"",
     "Success stories",
     "How we work",
-    'eyebrow="Services"',
+    'eyebrow="Our Domains"',
     "Contact, locations and policies",
   ]) assert.match(sections, new RegExp(label.replace(/[?]/g, "\\?")));
   assert.match(sections, /activeCapability/);
   assert.match(sections, /activeProject/);
   assert.match(sections, /activeStage/);
   assert.match(sections, /activeIndustry/);
-  assert.ok(sections.indexOf('Start a project') < sections.indexOf('What we deliver'));
-  assert.ok(sections.indexOf('What we deliver') < sections.indexOf('Success stories'));
+  assert.ok(sections.indexOf('Start a project') < sections.indexOf('eyebrow="Services"'));
+  assert.ok(sections.indexOf('eyebrow="Services"') < sections.indexOf('Success stories'));
   assert.ok(sections.indexOf('Success stories') < sections.indexOf('How we work'));
   assert.doesNotMatch(sections, /Built for adoption, not applause/);
   assert.match(sections, /Every stage earns the next one before you invest on it\./);

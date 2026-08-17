@@ -19,12 +19,12 @@ import {
 import { loadCompanyKnowledge } from '../knowledge/companyKnowledgeLoader';
 import foodManufacturingImage from '../assets/case-study-food-manufacturing.jpg';
 import primarySchoolImage from '../assets/case-study-primary-school.jpg';
-import attendMeImage from '../assets/portfolio/attendme.jpg';
-import chauffrImage from '../assets/portfolio/chauffr.jpg';
-import smartLoanImage from '../assets/portfolio/smart-loan.jpg';
+import attendMeImage from '../assets/portfolio/attendme.png';
+import chauffrImage from '../assets/portfolio/chauffr.png';
+import smartLoanImage from '../assets/portfolio/smart-loan.png';
 import smartBrokerImage from '../assets/portfolio/smartbroker.png';
 import recycledMarketImage from '../assets/portfolio/recycled-market.png';
-import estradoImage from '../assets/portfolio/estrado.jpg';
+import estradoImage from '../assets/portfolio/estrado.png';
 
 const knowledge = loadCompanyKnowledge();
 
