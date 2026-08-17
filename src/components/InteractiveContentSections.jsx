@@ -14,6 +14,21 @@ import {
   School,
   ShieldCheck,
 } from "lucide-react";
+
+const LinkedInIcon = ({ size = 13, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    style={{ display: "inline-block", verticalAlign: "middle" }}
+    {...props}
+  >
+    <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z" />
+  </svg>
+);
+
 import foodManufacturingImage from "../assets/case-study-food-manufacturing.jpg";
 import primarySchoolImage from "../assets/case-study-primary-school.jpg";
 import { interactiveSiteContent as content } from "../content/interactiveSiteContent";
@@ -461,6 +476,7 @@ export default function InteractiveContentSections() {
               <span className="country-label">AU</span>
               <a href="mailto:pankaj.banga@dekode.au">pankaj.banga@dekode.au</a>
               <a href="tel:+61421196363"><Phone size={15} /> +61 421 196 363</a>
+              <a href="https://www.linkedin.com/in/pankajbanga/" target="_blank" rel="noopener noreferrer"><LinkedInIcon size={15} /> LinkedIn</a>
             </div>
           </section>
 
