@@ -228,7 +228,9 @@ export default function InteractiveContentSections() {
                   className="is-active"
                   data-number={`0${index + 1}`}
                 >
-                  <motion.h3 className="star-wordmark">
+                  <motion.h3
+                    className={`star-wordmark ${item.name === "Transparent" ? "is-transparent-wordmark" : ""}`}
+                  >
                     <motion.span 
                       className="star-letter" 
                       variants={giantLetterVariant}

@@ -230,7 +230,7 @@
 .star-wordmark {
   display: flex;
   align-items: baseline;
-  gap: 0.16rem;
+  gap: 0.04rem;
 }
 .star-wordmark span {
   display: inline-block;
@@ -240,6 +240,9 @@
   font-size: clamp(1.25rem, 1.7vw, 1.55rem);
   font-weight: 700;
   line-height: 1;
+}
+.star-wordmark.is-transparent-wordmark span:last-child {
+  margin-left: -0.06rem;
 }
 .star-principles h3 {
   margin-top: 0.25rem;
