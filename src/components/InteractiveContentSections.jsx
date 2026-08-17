@@ -478,7 +478,7 @@ export default function InteractiveContentSections() {
               <a href="tel:+61421196363"><Phone size={15} /> +61 421 196 363</a>
             </div>
             <div className="contact-country-group">
-              <a href="https://www.linkedin.com/in/pankajbanga/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile"><LinkedInIcon size={15} /></a>
+              <a href="https://www.linkedin.com/company/dekodeglobal/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile"><LinkedInIcon size={15} /></a>
             </div>
           </section>
 
