@@ -476,6 +476,8 @@ export default function InteractiveContentSections() {
               <span className="country-label">AU</span>
               <a href="mailto:pankaj.banga@dekode.au">pankaj.banga@dekode.au</a>
               <a href="tel:+61421196363"><Phone size={15} /> +61 421 196 363</a>
+            </div>
+            <div className="contact-country-group">
               <a href="https://www.linkedin.com/in/pankajbanga/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile"><LinkedInIcon size={15} /></a>
             </div>
           </section>
