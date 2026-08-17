@@ -165,7 +165,7 @@ export const interactiveSiteContent = {
     },
     {
       id: "finance",
-      title: "Finance + Accounting",
+      title: "Finance & Accounting",
       challenge: "Manual processes, disconnected data and complex customer journeys.",
       capabilities: ["AI", "Integrations", "Web & Mobile"],
       solution: "Connected tools that streamline decisions and customer workflows.",
@@ -181,7 +181,7 @@ export const interactiveSiteContent = {
     },
     {
       id: "food-agriculture",
-      title: "Food + Agriculture",
+      title: "Food & Agriculture",
       challenge: "Paper-based operations and limited visibility across production processes.",
       capabilities: ["Automation", "Cloud", "Data Platforms"],
       solution: "Digital information capture and operational management systems.",
