@@ -427,8 +427,8 @@ export default function ChatApp({
           conversation: conversationMemory,
           usedSuggestions: messages
             .flatMap((message) => message.suggestions || [])
+            .filter((suggestion) => !suggestion.url)
             .map((suggestion) => suggestion.label)
-            .filter((label) => label !== "LinkedIn")
             .slice(-8),
         }),
       });
@@ -487,8 +487,8 @@ export default function ChatApp({
           conversation: requestConversation,
           usedSuggestions: messages
             .flatMap((message) => message.suggestions || [])
+            .filter((suggestion) => !suggestion.url)
             .map((suggestion) => suggestion.label)
-            .filter((label) => label !== "LinkedIn")
             .slice(-8),
           interaction,
         }),
@@ -1132,6 +1132,7 @@ export default function ChatApp({
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className={suggestion.kind === "discovery" ? "is-discovery" : undefined}
+                                  aria-label={suggestion.label}
                                 >
                                   {suggestion.url.includes("linkedin.com") && (
                                     <LinkedInIcon size={13} aria-hidden="true" />

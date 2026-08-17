@@ -3,9 +3,13 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 import { normalizeAssistantLists } from '../utils/assistantText.js';
 
 function InlineText({ text }) {
-  return text.split(/(\*\*[^*]+\*\*|https?:\/\/[^\s]+)/g).filter(Boolean).flatMap((part, index) => {
+  return text.split(/(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|https?:\/\/[^\s)]+)/g).filter(Boolean).flatMap((part, index) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       return <strong key={`strong-${index}`}>{part.slice(2, -2)}</strong>;
+    }
+    const mdLink = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (mdLink) {
+      return <a key={`mdlink-${index}`} href={mdLink[2]} target="_blank" rel="noopener noreferrer">{mdLink[1]}</a>;
     }
     if (/^https?:\/\//i.test(part)) {
       const url = part.replace(/[),.;!?]+$/, '');
