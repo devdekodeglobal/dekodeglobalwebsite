@@ -8,6 +8,7 @@ import './proposals/proposal.css'
 const InteractiveContentSections = lazy(
   () => import('./components/InteractiveContentSections'),
 )
+const LegalPage = lazy(() => import('./pages/LegalPage'))
 
 export const INTERACTIVE_CONTENT_SECTIONS_ENABLED =
   import.meta.env.VITE_INTERACTIVE_CONTENT_SECTIONS_ENABLED !== 'false'
@@ -38,6 +39,11 @@ function App() {
     window.history.replaceState({}, '', '/')
   }
 
+  const path = window.location.pathname
+  const isPrivacyPage = path === '/privacy' || path === '/privacy-policy'
+  const isTermsPage = path === '/terms' || path === '/terms-of-service'
+  const legalType = isPrivacyPage ? 'privacy' : isTermsPage ? 'terms' : null
+
   return (
     <div
       className={`app-container ${INTERACTIVE_CONTENT_SECTIONS_ENABLED && !proposal ? 'interactive-content-enabled' : ''} ${proposal ? 'proposal-mode' : ''}`}
@@ -55,9 +61,14 @@ function App() {
           onExit={exitProposal}
         />
       )}
-      {INTERACTIVE_CONTENT_SECTIONS_ENABLED && !proposal && (
+      {INTERACTIVE_CONTENT_SECTIONS_ENABLED && !proposal && !legalType && (
         <Suspense fallback={<div className="interactive-section-placeholder" aria-hidden="true" />}>
           <InteractiveContentSections />
+        </Suspense>
+      )}
+      {legalType && (
+        <Suspense fallback={<div className="interactive-section-placeholder" aria-hidden="true" />}>
+          <LegalPage type={legalType} />
         </Suspense>
       )}
       {CLIENT_PROPOSALS_ENABLED && showProposalAccess && !proposal && (
