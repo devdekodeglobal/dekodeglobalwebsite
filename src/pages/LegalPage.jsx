@@ -21,10 +21,10 @@ export default function LegalPage({ type }) {
         </a>
       </header>
 
-      <main className="content-container interactive-content-enabled" style={{ height: '100%', overflowY: 'auto', paddingTop: '80px', paddingBottom: '4rem', display: 'flex', flexDirection: 'column' }}>
-        <section className="story-section company-info-section" style={{ maxWidth: '800px', margin: '0 auto', flex: 1, width: '100%' }}>
+      <main className="content-container interactive-content-enabled" style={{ height: '100%', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto', flex: 1, width: '100%', padding: '120px 20px 4rem' }}>
           <div className="company-info-grid" style={{ gridTemplateColumns: '1fr', display: 'block' }}>
-            <section className="company-legal-switcher" style={{ marginTop: '2rem', marginBottom: '2rem' }}>
+            <section className="company-legal-switcher" style={{ margin: 0 }}>
               <article className="company-legal-content">
                 <h3>{document.title}</h3>
                 <p>{document.summary}</p>
@@ -42,7 +42,7 @@ export default function LegalPage({ type }) {
               </article>
             </section>
           </div>
-        </section>
+        </div>
       </main>
     </>
   );
