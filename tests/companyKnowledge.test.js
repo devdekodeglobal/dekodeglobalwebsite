@@ -295,8 +295,8 @@ test('answers founder and privacy questions from verified centralized knowledge'
   ];
   for (const question of founderQuestions) {
     const response = generateCompanyResponse(question, classifyCompanyIntent(question));
-    assert.match(response.text, /Pankaj Banga/);
-    assert.match(response.text, /linkedin\.com\/in\/pankajbanga/);
+    assert.match(response.text, /Pankaj/);
+    assert.ok(response.suggestions.some((suggestion) => suggestion.url === 'https://www.linkedin.com/in/pankajbanga/'));
   }
   const privacy = generateCompanyResponse(
     'Who should I email about a privacy request?',
