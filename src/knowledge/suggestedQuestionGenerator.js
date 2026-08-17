@@ -42,9 +42,9 @@ export function getSuggestedQuestions(topic, message = '', responseText = '') {
     if (!hasLinkedin) {
       return [
         {
-          label: 'LinkedIn Profile',
+          label: 'LinkedIn',
           url: 'https://www.linkedin.com/in/pankajbanga/',
-          prompt: 'LinkedIn Profile',
+          prompt: 'LinkedIn',
           intent: 'company_info',
           action: 'answer',
         },

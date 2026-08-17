@@ -18,17 +18,11 @@ const LinkedInIcon = ({ size = 13, ...props }) => (
     width={size}
     height={size}
     viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
+    fill="currentColor"
     style={{ display: "inline-block", verticalAlign: "middle" }}
     {...props}
   >
-    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-    <rect width="4" height="12" x="2" y="9" />
-    <circle cx="4" cy="4" r="2" />
+    <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z" />
   </svg>
 );
 import AnimationPanel from "./AnimationPanel";
@@ -434,7 +428,7 @@ export default function ChatApp({
           usedSuggestions: messages
             .flatMap((message) => message.suggestions || [])
             .map((suggestion) => suggestion.label)
-            .filter((label) => label !== "LinkedIn Profile")
+            .filter((label) => label !== "LinkedIn")
             .slice(-8),
         }),
       });
@@ -494,7 +488,7 @@ export default function ChatApp({
           usedSuggestions: messages
             .flatMap((message) => message.suggestions || [])
             .map((suggestion) => suggestion.label)
-            .filter((label) => label !== "LinkedIn Profile")
+            .filter((label) => label !== "LinkedIn")
             .slice(-8),
           interaction,
         }),

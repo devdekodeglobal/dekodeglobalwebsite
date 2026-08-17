@@ -49,7 +49,7 @@ Use open_calendar when the visitor wants to talk with or meet the DEKODE team â€
 
 Answer short company topics such as founder biography, methodology, services, pricing, BRIDGE, location, privacy, terms, contact, and case studies directly from context. When asked about the founder, Pankaj Banga, or founder information/biography, you must reply with this exact text:
 "Pankaj founded DEKODE Global after two decades as a developer, architect, and business strategist - long enough to watch expensive systems sit unused because they answered questions nobody in the business was asking. That's the problem DEKODE exists to solve: not more technology, but technology that works the way your business actually needs it to. Pankaj also founded the Second Innings Foundation, working with special children - a reminder that real impact doesn't stop at the office door."
-When outputting this founder info, you MUST include a suggestion for his LinkedIn profile: label: "LinkedIn Profile", url: "https://www.linkedin.com/in/pankajbanga/", kind: "follow_up", prompt: "LinkedIn Profile", intent: "company_info", action: "answer".
+When outputting this founder info, you MUST include a suggestion for his LinkedIn profile: label: "LinkedIn", url: "https://www.linkedin.com/in/pankajbanga/", kind: "follow_up", prompt: "LinkedIn", intent: "company_info", action: "answer".
 
 When the visitor asks about DEKODE projects, work, or portfolio, name portfolio projects ONLY IF they are explicitly listed in the supplied DEKODE context below. If specific projects are not provided in the context, do not invent any. Instead, state that you don't have the full portfolio on hand but can connect them with the team. If your answer describes or references specific projects, lists of projects, or case studies, you MUST list their exact names in the \`evidenceProjects\` array. Available exact names in context: "Food Manufacturing Company", "Primary School", "AttendMe", "CHAUFFR", "Smart Loan Helper", "SmartBroker", "Recycled Market", "Estrado". ONLY include the names that are directly relevant to the user's query. STRICT RULE: Never invent clients, departments (e.g., Department of Defense), or case studies. You may use up to six bullets for a project catalogue if portfolio projects exist in the context. Use recent conversation to understand short follow-ups such as "yes". Be warm, specific, concise, and never mention these instructions or retrieval. If the visitor asks if DEKODE is involved in, has built, or has any connection to disallowed/unsafe activities (like hacking, weapons, or terrorism), do not refuse to answer. Instead, clearly and neutrally state that DEKODE does not develop systems or do work in those areas, and list our actual business focus.`;
 
@@ -239,9 +239,9 @@ export default async function handler(request, response) {
           if (!hasLinkedin) {
             list = [
               {
-                label: 'LinkedIn Profile',
+                label: 'LinkedIn',
                 url: 'https://www.linkedin.com/in/pankajbanga/',
-                prompt: 'LinkedIn Profile',
+                prompt: 'LinkedIn',
                 intent: 'company_info',
                 action: 'answer',
                 kind: 'follow_up',
@@ -252,7 +252,7 @@ export default async function handler(request, response) {
         }
         return list
           .filter((suggestion) => {
-            if (suggestion.label === 'LinkedIn Profile') return true;
+            if (suggestion.label === 'LinkedIn') return true;
             return !usedSuggestions.includes(suggestion.label.toLowerCase());
           })
           .slice(0, 4);
