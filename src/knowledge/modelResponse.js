@@ -102,5 +102,13 @@ export function validateModelResponse(candidate, originalMessage, context = {}) 
       : [],
   };
 
+  const calendarIntent = resolveCalendarIntent(originalMessage, context);
+  if (calendarIntent === 'meeting') {
+    result.intent = 'book_meeting';
+    result.action = 'open_calendar';
+  } else if (calendarIntent === 'project') {
+    result.intent = 'project_build';
+  }
+
   return result;
 }
