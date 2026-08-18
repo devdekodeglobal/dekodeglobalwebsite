@@ -1963,7 +1963,7 @@ h1, h2, h3, h4, h5, h6 {
 .meeting-booking-fields input:not([type="checkbox"]) { border-radius: 999px; }
 .meeting-booking-fields textarea { border-radius: 18px; }
 .meeting-booking-fields input:not([type="checkbox"]):focus, .meeting-booking-fields textarea:focus { outline: 2px solid rgba(199, 243, 107, 0.5); border-color: #c7f36b; }
-.meeting-summary-field, .meeting-consent, .meeting-book-btn { grid-column: 1 / -1; }
+.meeting-summary-field, .meeting-consent, .meeting-consent-hint, .meeting-book-action, .meeting-book-btn { grid-column: 1 / -1; }
 .meeting-consent { display: flex !important; align-items: center; gap: 0.55rem !important; }
 .meeting-consent input { flex: 0 0 16px; width: 16px; height: 16px; margin: 0; accent-color: #c7f36b; }
 .meeting-consent > span { line-height: 1.35; }
@@ -2201,6 +2201,14 @@ h1, h2, h3, h4, h5, h6 {
 .meeting-booking-fields textarea:hover { background: rgba(255, 255, 255, 0.075); border-color: rgba(255, 255, 255, 0.22); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.11), inset 0 -2px 4px rgba(0, 0, 0, 0.16), 0 7px 15px rgba(0, 0, 0, 0.18); }
 .meeting-booking-fields input:not([type="checkbox"]):focus,
 .meeting-booking-fields textarea:focus { transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 18px rgba(0, 0, 0, 0.2); }
+.meeting-floating-field.has-error > input:not([type="checkbox"]),
+.meeting-floating-field.has-error > textarea { border-color: rgba(248, 113, 113, 0.68); background: rgba(127, 29, 29, 0.16); }
+.meeting-field-hint,
+.meeting-submit-hint { display: block; margin: 0.38rem 0 0 0.12rem; color: #fecaca; font-size: 0.68rem; font-weight: 700; line-height: 1.35; }
+.meeting-consent.has-error { color: #fecaca; }
+.meeting-consent-hint { margin-top: -0.2rem; }
+.meeting-book-action { display: grid; gap: 0.38rem; }
+.meeting-submit-hint { margin: 0; text-align: center; color: rgba(255, 255, 255, 0.72); }
 .meeting-book-btn { min-height: 46px; background: #facc15; }
 .meeting-book-btn:hover:not(:disabled) { background: #fde047; }
 

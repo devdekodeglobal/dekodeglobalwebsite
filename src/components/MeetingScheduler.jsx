@@ -41,6 +41,8 @@ export default function MeetingScheduler({
   const [error, setError] = useState('');
   const [consent, setConsent] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', company: '', phone: '', projectSummary, website: '' });
+  const [touched, setTouched] = useState({});
+  const [showValidationHints, setShowValidationHints] = useState(false);
   const timeSectionRef = useRef(null);
   const timeRailRef = useRef(null);
   const detailsHeadingRef = useRef(null);
@@ -90,6 +92,16 @@ export default function MeetingScheduler({
     day: 'numeric',
   });
   const projectSummaryValue = form.projectSummary || '';
+  const fieldErrors = useMemo(() => ({
+    slot: selectedSlot ? '' : 'Choose a meeting time first.',
+    name: form.name.trim().length >= 2 ? '' : 'Add your name.',
+    email: emailPattern.test(form.email) ? '' : 'Enter a valid email address.',
+    company: form.company.trim().length >= 2 ? '' : 'Company name is required.',
+    phone: phonePattern.test(form.phone.trim()) ? '' : 'Enter a valid phone number. Include the country code if needed.',
+    projectSummary: projectSummaryValue.trim().length >= 4 ? '' : 'Add a short project summary.',
+    consent: consent ? '' : 'Please confirm consent before booking.',
+  }), [consent, form.company, form.email, form.name, form.phone, projectSummaryValue, selectedSlot]);
+  const firstValidationHint = Object.values(fieldErrors).find(Boolean) || '';
   const isFormComplete = Boolean(
     selectedSlot
     && form.name.trim().length >= 2
@@ -153,9 +165,15 @@ export default function MeetingScheduler({
     return () => cancelAnimationFrame(frame);
   }, [selectedSlot]);
 
-  const update = (key, value) => setForm((current) => ({ ...current, [key]: value }));
+  const update = (key, value) => {
+    setForm((current) => ({ ...current, [key]: value }));
+    setError('');
+  };
+  const markTouched = (key) => setTouched((current) => ({ ...current, [key]: true }));
+  const shouldShowFieldError = (key) => Boolean((showValidationHints || touched[key]) && fieldErrors[key]);
   const submit = async (event) => {
     event.preventDefault();
+    setShowValidationHints(true);
     if (!selectedSlot) return setError('Choose a meeting time first.');
     if (form.name.trim().length < 2 || !emailPattern.test(form.email) || form.company.trim().length < 2 || !phonePattern.test(form.phone.trim()) || projectSummaryValue.trim().length < 4) {
       return setError('Add your name, valid email, company, phone number, and a short project summary.');
@@ -279,14 +297,38 @@ export default function MeetingScheduler({
               )}
             </div>
             <fieldset className="meeting-booking-fields" disabled={!selectedSlot} aria-disabled={!selectedSlot}>
-              <label className="meeting-floating-field"><span>Name <i aria-hidden="true">*</i></span><input required placeholder=" " value={form.name} onChange={(event) => update('name', event.target.value)} autoComplete="name" /></label>
-              <label className="meeting-floating-field"><span>Email <i aria-hidden="true">*</i></span><input required type="email" placeholder=" " value={form.email} onChange={(event) => update('email', event.target.value)} autoComplete="email" /></label>
-              <label className="meeting-floating-field"><span>Company <i aria-hidden="true">*</i></span><input required placeholder=" " value={form.company} onChange={(event) => update('company', event.target.value)} autoComplete="organization" /></label>
-              <label className="meeting-floating-field"><span>Phone number <i aria-hidden="true">*</i></span><input required type="tel" placeholder=" " value={form.phone} onChange={(event) => update('phone', event.target.value)} autoComplete="tel" inputMode="tel" /></label>
-              <label className="meeting-summary-field meeting-floating-field"><span>Project summary <i aria-hidden="true">*</i></span><textarea required rows="3" placeholder=" " value={projectSummaryValue} onChange={(event) => update('projectSummary', event.target.value)} /></label>
+              <label className={`meeting-floating-field ${shouldShowFieldError('name') ? 'has-error' : ''}`}>
+                <span>Name <i aria-hidden="true">*</i></span>
+                <input required placeholder=" " value={form.name} onBlur={() => markTouched('name')} onChange={(event) => update('name', event.target.value)} autoComplete="name" aria-invalid={shouldShowFieldError('name')} aria-describedby={shouldShowFieldError('name') ? 'meeting-name-error' : undefined} />
+                {shouldShowFieldError('name') && <small id="meeting-name-error" className="meeting-field-hint">{fieldErrors.name}</small>}
+              </label>
+              <label className={`meeting-floating-field ${shouldShowFieldError('email') ? 'has-error' : ''}`}>
+                <span>Email <i aria-hidden="true">*</i></span>
+                <input required type="email" placeholder=" " value={form.email} onBlur={() => markTouched('email')} onChange={(event) => update('email', event.target.value)} autoComplete="email" aria-invalid={shouldShowFieldError('email')} aria-describedby={shouldShowFieldError('email') ? 'meeting-email-error' : undefined} />
+                {shouldShowFieldError('email') && <small id="meeting-email-error" className="meeting-field-hint">{fieldErrors.email}</small>}
+              </label>
+              <label className={`meeting-floating-field ${shouldShowFieldError('company') ? 'has-error' : ''}`}>
+                <span>Company <i aria-hidden="true">*</i></span>
+                <input required placeholder=" " value={form.company} onBlur={() => markTouched('company')} onChange={(event) => update('company', event.target.value)} autoComplete="organization" aria-invalid={shouldShowFieldError('company')} aria-describedby={shouldShowFieldError('company') ? 'meeting-company-error' : undefined} />
+                {shouldShowFieldError('company') && <small id="meeting-company-error" className="meeting-field-hint">{fieldErrors.company}</small>}
+              </label>
+              <label className={`meeting-floating-field ${shouldShowFieldError('phone') ? 'has-error' : ''}`}>
+                <span>Phone number <i aria-hidden="true">*</i></span>
+                <input required type="tel" placeholder=" " value={form.phone} onBlur={() => markTouched('phone')} onChange={(event) => update('phone', event.target.value)} autoComplete="tel" inputMode="tel" aria-invalid={shouldShowFieldError('phone')} aria-describedby={shouldShowFieldError('phone') ? 'meeting-phone-error' : undefined} />
+                {shouldShowFieldError('phone') && <small id="meeting-phone-error" className="meeting-field-hint">{fieldErrors.phone}</small>}
+              </label>
+              <label className={`meeting-summary-field meeting-floating-field ${shouldShowFieldError('projectSummary') ? 'has-error' : ''}`}>
+                <span>Project summary <i aria-hidden="true">*</i></span>
+                <textarea required rows="3" placeholder=" " value={projectSummaryValue} onBlur={() => markTouched('projectSummary')} onChange={(event) => update('projectSummary', event.target.value)} aria-invalid={shouldShowFieldError('projectSummary')} aria-describedby={shouldShowFieldError('projectSummary') ? 'meeting-summary-error' : undefined} />
+                {shouldShowFieldError('projectSummary') && <small id="meeting-summary-error" className="meeting-field-hint">{fieldErrors.projectSummary}</small>}
+              </label>
               <label className="meeting-honeypot" aria-hidden="true"><span>Website</span><input tabIndex="-1" autoComplete="off" value={form.website} onChange={(event) => update('website', event.target.value)} /></label>
-              <label className="meeting-consent"><input required type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} /><span>I consent to DEKODE using these details to arrange this meeting. <i aria-hidden="true">*</i></span></label>
-              <button type="submit" className="meeting-book-btn" disabled={!canSubmit}>{status === 'booking' ? <><LoaderCircle className="meeting-spin" size={17} /> Booking...</> : 'Confirm meeting'}</button>
+              <label className={`meeting-consent ${shouldShowFieldError('consent') ? 'has-error' : ''}`}><input required type="checkbox" checked={consent} onBlur={() => markTouched('consent')} onChange={(event) => { setConsent(event.target.checked); setError(''); }} /><span>I consent to DEKODE using these details to arrange this meeting. <i aria-hidden="true">*</i></span></label>
+              {shouldShowFieldError('consent') && <small className="meeting-field-hint meeting-consent-hint">{fieldErrors.consent}</small>}
+              <div className="meeting-book-action" onClick={() => { if (!canSubmit) setShowValidationHints(true); }}>
+                <button type="submit" className="meeting-book-btn" disabled={!canSubmit} aria-describedby={!canSubmit && firstValidationHint ? 'meeting-submit-hint' : undefined}>{status === 'booking' ? <><LoaderCircle className="meeting-spin" size={17} /> Booking...</> : 'Confirm meeting'}</button>
+                {!canSubmit && firstValidationHint && selectedSlot && <small id="meeting-submit-hint" className="meeting-submit-hint">{firstValidationHint}</small>}
+              </div>
             </fieldset>
         </motion.div>
       )}
