@@ -149,8 +149,10 @@ test('guides booking from date to time, summary, and details', () => {
   assert.match(indexCss, /\.meeting-details-stage\.is-locked \.meeting-booking-fields\s*\{[^}]*pointer-events:\s*none/);
   assert.match(meetingScheduler, /Review and complete your details/);
   assert.doesNotMatch(meetingScheduler, /Company <small>\(optional\)<\/small>/);
-  assert.match(meetingScheduler, /<span>Company<\/span><input required/);
-  assert.match(meetingScheduler, /<span>Phone number<\/span><input required type="tel"/);
+  assert.match(meetingScheduler, /<span>Company <i aria-hidden="true">\*<\/i><\/span><input required/);
+  assert.match(meetingScheduler, /<span>Phone number <i aria-hidden="true">\*<\/i><\/span><input required type="tel"/);
+  assert.match(meetingScheduler, /const isFormComplete = Boolean/);
+  assert.match(meetingScheduler, /disabled=\{!canSubmit\}/);
   assert.match(chatApp, /meetingSlots=\{meetingSlots\}/);
   assert.match(chatApp, /selectedDateKey=\{selectedMeetingDateKey\}/);
   assert.match(chatApp, /selectedSlotId=\{selectedMeetingSlotId\}/);
