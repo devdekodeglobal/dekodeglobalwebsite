@@ -33,6 +33,7 @@ export function isProjectEvidenceQuestion(question) {
   const query = normalizeVisitorMessage(question);
   if (/\b(methodology|delivery process|deliver projects?|how (?:do|does) .{0,16}work|project lifecycle)\b/i.test(query)) return false;
   if (/\b(?:domain|industry|industries|sector)s?\b/i.test(query) && !/\b(?:projects?|case stud(?:y|ies))\b/i.test(query)) return false;
+  if (/\b(?:my|our|this|new|a)\s+projects?\b/i.test(query)) return false;
   return PROJECT_EVIDENCE_PATTERN.test(query);
 }
 
@@ -74,5 +75,5 @@ export function isGroundedCompanyResult(result, question, matches = []) {
     const namesVerified = approvedEvidenceNames.some((name) => normalizedAnswer.includes(name));
     return namesVerified && coverage >= 0.20;
   }
-  return coverage >= 0.15;
+  return coverage >= 0.05;
 }

@@ -59,6 +59,16 @@ const formatCaseStudy = (study) => [
 
 function makeDocuments() {
   const bridge = companyKnowledge.initiatives?.find((initiative) => initiative.id === 'bridge');
+  
+  const allTestimonials = [
+    ...(companyKnowledge.portfolioProjects || []).flatMap((p) => 
+      (p.testimonials || []).map((t) => `Project: ${p.name} (ID: portfolio-${p.id})\nQuote: "${t.quote}" - ${t.author}, ${t.role}`)
+    ),
+    ...(companyKnowledge.caseStudies || []).flatMap((c) => 
+      (c.testimonials || []).map((t) => `Project: ${c.name} (ID: case-study-${c.id})\nQuote: "${t.quote}" - ${t.author}, ${t.role}`)
+    )
+  ];
+
   const documents = [
     {
       id: 'company-overview',
@@ -221,6 +231,12 @@ function makeDocuments() {
       label: 'FAQ',
       text: `Question: ${faq.question}\nAnswer: ${faq.answer}`,
     })),
+    {
+      id: 'testimonials-catalogue',
+      label: 'DEKODE Client Testimonials and Reviews',
+      text: `Client reviews and testimonials for DEKODE projects:\n\n${allTestimonials.join('\n\n')}`,
+      aliases: ['reviews', 'testimonials', 'feedback', 'client reviews', 'customer reviews', 'what clients say', 'review', 'testimonial'],
+    },
   ];
 
   return documents.map((document) => ({
@@ -249,6 +265,7 @@ export function retrieveCompanyKnowledge(question, limit = 5) {
   const asksAboutDelivery = /\b(?:methodology|delivery process|deliver projects?|project lifecycle|how does dekode (?:deliver|work))\b/.test(query);
   const asksAboutBridge = /\b(?:what is bridge|bridge initiative|dekode bridge)\b/.test(query);
   const asksAboutLeadership = /\b(?:founder|founded|owner|leadership|who (?:started|founded|runs|is behind)|pankaj banga)\b/.test(query);
+  const asksAboutTestimonials = /\b(?:testimonials?|reviews?|feedback|what (?:do|are) (?:clients?|people|customers?) (?:say|think)|how (?:good|well) (?:is|are) dekode|client (?:stories|quotes))\b/.test(query);
 
   const ranked = documents
     .map((document) => {
@@ -265,13 +282,14 @@ export function retrieveCompanyKnowledge(question, limit = 5) {
       const bridgeInitiativeBonus = asksAboutBridge && document.id === 'initiative-bridge' ? 8 : 0;
       const leadershipBonus = asksAboutLeadership && document.id === 'company-leadership' ? 10 : 0;
       const leadershipOverviewPenalty = asksAboutLeadership && document.id === 'company-overview' ? 5 : 0;
+      const testimonialsCatalogueBonus = asksAboutTestimonials && document.id === 'testimonials-catalogue' ? 15 : 0;
       const discoveryPenalty = document.id.startsWith('discovery-') ? 2 : 0;
       return {
         ...document,
         score: overlap + nameBonus + aliasBonus + catalogueBonus + evidenceBonus
           + companyOverviewBonus + faqOverviewBonus + serviceCatalogueBonus
           + deliveryProcessBonus + bridgeInitiativeBonus + leadershipBonus
-          - overviewPenalty - leadershipOverviewPenalty - discoveryPenalty,
+          + testimonialsCatalogueBonus - overviewPenalty - leadershipOverviewPenalty - discoveryPenalty,
       };
     })
     .filter((document) => document.score > 0)

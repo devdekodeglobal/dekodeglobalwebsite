@@ -38,9 +38,28 @@ export function buildCleanProjectSummary(messages = []) {
       .map((m) => m.topic)
   )];
 
-  const topicPrefix = topics.length > 0 ? `Topics discussed: ${topics.join(', ')}. ` : '';
-  const requirements = relevantInputs.join(' → ');
+  const topicPrefix = topics.length > 0 ? `Topics discussed: ${topics.join(', ')}.\n\n` : '';
+  
+  const labels = [
+    'Project Type',
+    'Industry/Context',
+    'Goal/Purpose',
+    'Target Audience',
+    'Brand Status',
+  ];
 
-  return `${topicPrefix}Visitor requirements: ${requirements}`.slice(0, 1500);
+  const details = [];
+  relevantInputs.forEach((input, index) => {
+    if (index < labels.length) {
+      details.push(`- ${labels[index]}: ${input}`);
+    } else {
+      if (index === labels.length) {
+        details.push('- Additional Requirements & Features:');
+      }
+      details.push(`  * ${input}`);
+    }
+  });
+
+  return `${topicPrefix}Project Discovery Details:\n${details.join('\n')}`.slice(0, 1500);
 }
 
