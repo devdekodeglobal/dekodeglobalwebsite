@@ -89,6 +89,17 @@ export default function MeetingScheduler({
     month: 'long',
     day: 'numeric',
   });
+  const projectSummaryValue = form.projectSummary || '';
+  const isFormComplete = Boolean(
+    selectedSlot
+    && form.name.trim().length >= 2
+    && emailPattern.test(form.email)
+    && form.company.trim().length >= 2
+    && phonePattern.test(form.phone.trim())
+    && projectSummaryValue.trim().length >= 4
+    && consent
+  );
+  const canSubmit = isFormComplete && status !== 'booking';
 
   const selectSlot = useCallback((slot) => {
     setLocalSelectedSlotId(slot?.id || null);
@@ -146,7 +157,7 @@ export default function MeetingScheduler({
   const submit = async (event) => {
     event.preventDefault();
     if (!selectedSlot) return setError('Choose a meeting time first.');
-    if (form.name.trim().length < 2 || !emailPattern.test(form.email) || form.company.trim().length < 2 || !phonePattern.test(form.phone.trim()) || form.projectSummary.trim().length < 4) {
+    if (form.name.trim().length < 2 || !emailPattern.test(form.email) || form.company.trim().length < 2 || !phonePattern.test(form.phone.trim()) || projectSummaryValue.trim().length < 4) {
       return setError('Add your name, valid email, company, phone number, and a short project summary.');
     }
     if (!consent) return setError('Please confirm consent before booking.');
@@ -268,14 +279,14 @@ export default function MeetingScheduler({
               )}
             </div>
             <fieldset className="meeting-booking-fields" disabled={!selectedSlot} aria-disabled={!selectedSlot}>
-              <label className="meeting-floating-field"><span>Name</span><input required placeholder=" " value={form.name} onChange={(event) => update('name', event.target.value)} autoComplete="name" /></label>
-              <label className="meeting-floating-field"><span>Email</span><input required type="email" placeholder=" " value={form.email} onChange={(event) => update('email', event.target.value)} autoComplete="email" /></label>
-              <label className="meeting-floating-field"><span>Company</span><input required placeholder=" " value={form.company} onChange={(event) => update('company', event.target.value)} autoComplete="organization" /></label>
-              <label className="meeting-floating-field"><span>Phone number</span><input required type="tel" placeholder=" " value={form.phone} onChange={(event) => update('phone', event.target.value)} autoComplete="tel" inputMode="tel" /></label>
-              <label className="meeting-summary-field meeting-floating-field"><span>Project summary</span><textarea required rows="3" placeholder=" " value={form.projectSummary} onChange={(event) => update('projectSummary', event.target.value)} /></label>
+              <label className="meeting-floating-field"><span>Name <i aria-hidden="true">*</i></span><input required placeholder=" " value={form.name} onChange={(event) => update('name', event.target.value)} autoComplete="name" /></label>
+              <label className="meeting-floating-field"><span>Email <i aria-hidden="true">*</i></span><input required type="email" placeholder=" " value={form.email} onChange={(event) => update('email', event.target.value)} autoComplete="email" /></label>
+              <label className="meeting-floating-field"><span>Company <i aria-hidden="true">*</i></span><input required placeholder=" " value={form.company} onChange={(event) => update('company', event.target.value)} autoComplete="organization" /></label>
+              <label className="meeting-floating-field"><span>Phone number <i aria-hidden="true">*</i></span><input required type="tel" placeholder=" " value={form.phone} onChange={(event) => update('phone', event.target.value)} autoComplete="tel" inputMode="tel" /></label>
+              <label className="meeting-summary-field meeting-floating-field"><span>Project summary <i aria-hidden="true">*</i></span><textarea required rows="3" placeholder=" " value={projectSummaryValue} onChange={(event) => update('projectSummary', event.target.value)} /></label>
               <label className="meeting-honeypot" aria-hidden="true"><span>Website</span><input tabIndex="-1" autoComplete="off" value={form.website} onChange={(event) => update('website', event.target.value)} /></label>
-              <label className="meeting-consent"><input type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} /><span>I consent to DEKODE using these details to arrange this meeting.</span></label>
-              <button type="submit" className="meeting-book-btn" disabled={status === 'booking'}>{status === 'booking' ? <><LoaderCircle className="meeting-spin" size={17} /> Booking...</> : 'Confirm meeting'}</button>
+              <label className="meeting-consent"><input required type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} /><span>I consent to DEKODE using these details to arrange this meeting. <i aria-hidden="true">*</i></span></label>
+              <button type="submit" className="meeting-book-btn" disabled={!canSubmit}>{status === 'booking' ? <><LoaderCircle className="meeting-spin" size={17} /> Booking...</> : 'Confirm meeting'}</button>
             </fieldset>
         </motion.div>
       )}
