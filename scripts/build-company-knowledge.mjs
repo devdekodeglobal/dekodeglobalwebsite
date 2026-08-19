@@ -181,10 +181,10 @@ const extractPortfolioProjects = () => {
   const metadata = {
     attendme: {
       category: 'School administration and safety', type: 'Automated information and movement management system', platform: 'Cloud, Amazon Web Services',
-      clientContext: 'Primary-school operations, including Stella Maris Primary School',
+      clientContext: 'Primary-school operations, including Primary School',
       deliverables: ['Child, staff, and visitor arrival and departure records', 'Incident recording and reporting', 'Automated record storage, retrieval, archiving, and compliance reporting'],
       outcome: 'Reduced paper-based administrative overhead and made records easier to archive, locate, and report while supporting a safer school environment.',
-      aliases: ['Attend Me', 'school attendance system', 'visitor management', 'Stella Maris solution'],
+      aliases: ['Attend Me', 'school attendance system', 'visitor management', 'Primary school solution'],
     },
     chauffr: {
       category: 'Transport and booking management', type: 'Mobile app and integrated web portal', platform: 'Android, iOS, and web',
@@ -313,9 +313,9 @@ const caseStudies = [
     sourceKey: 'primarySchool',
     outcomeSection: /<section className="ps-help-section[^"]*">([\s\S]*?)<\/section>/,
     sourceReference: 'DEKODE/src/pages/PrimarySchool.jsx',
-    aliases: ['Stella Maris', 'Stella Maris Primary School', 'AttendMe', 'primary school solution', 'school case study'],
+    aliases: ['Primary school', 'Primary School', 'AttendMe', 'primary school solution', 'school case study'],
     }),
-    obstacles: 'Stella Maris manually recorded administration data, visitors, child pickup and drop-off, staff, and incidents. Storing, locating, archiving, and reporting those records increased administrative cost and made compliance reporting inefficient.',
+    obstacles: 'Primary school manually recorded administration data, visitors, child pickup and drop-off, staff, and incidents. Storing, locating, archiving, and reporting those records increased administrative cost and made compliance reporting inefficient.',
     deliveryApproach: 'DEKODE replaced paper-based administration with an automated cloud information-capture system that supports record storage, retrieval, archiving, visitor and movement records, incident management, and compliance reporting.',
   },
 ];

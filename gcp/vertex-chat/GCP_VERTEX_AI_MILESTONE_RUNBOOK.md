@@ -1357,7 +1357,7 @@ The old `PortfolioShowcase.jsx`, `FoodManufacture.jsx`, `PrimarySchool.jsx`, and
 Vercel and Cloud Run knowledge copies now carry structured details for AttendMe,
 CHAUFFR, Smart Loan Helper, SmartBroker, Recycled Market, and Estrado, including
 known platforms, client context, deliverables, aliases, and source references.
-The Beston and Stella Maris case studies now also preserve their obstacles,
+The Beston and Primary school case studies now also preserve their obstacles,
 delivery approach, platforms, and verified outcomes. Unknown project outcomes
 remain unstated.
 

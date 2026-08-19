@@ -298,16 +298,16 @@
       "platform": "Cloud, Amazon Web Services",
       "challenge": "Followed a manual paper-based management and administration system that constantly led them to lose a lot of useful data and gradually saw in a decline in the safety of the school.",
       "solution": "Provided a fully automated management software called “AttendMe”.",
-      "outcome": "By adopting an automated system, Stella Maris noticed a decline in the administrative overheads and eliminated the unnecessary time and energy spent maintaining records on paper. Through their information capturing system, Stella Maris was also able to archive, locate and report compliance to the authorities. This helped release a lot of administrative workload. By working with DEKODE, Stella Maris was able to smoothen their operations, further providing a safer environment for children and helping parents release any of their worries. Stella Maris looks forward to working with DEKODE to maintain its data management systems.",
+      "outcome": "By adopting an automated system, Primary school noticed a decline in the administrative overheads and eliminated the unnecessary time and energy spent maintaining records on paper. Through their information capturing system, Primary school was also able to archive, locate and report compliance to the authorities. This helped release a lot of administrative workload. By working with DEKODE, Primary school was able to smoothen their operations, further providing a safer environment for children and helping parents release any of their worries. Primary school looks forward to working with DEKODE to maintain its data management systems.",
       "aliases": [
-        "Stella Maris",
-        "Stella Maris Primary School",
+        "Primary school",
+        "Primary School",
         "AttendMe",
         "primary school solution",
         "school case study"
       ],
       "sourceReference": "DEKODE/src/pages/PrimarySchool.jsx",
-      "obstacles": "Stella Maris manually recorded administration data, visitors, child pickup and drop-off, staff, and incidents. Storing, locating, archiving, and reporting those records increased administrative cost and made compliance reporting inefficient.",
+      "obstacles": "Primary school manually recorded administration data, visitors, child pickup and drop-off, staff, and incidents. Storing, locating, archiving, and reporting those records increased administrative cost and made compliance reporting inefficient.",
       "deliveryApproach": "DEKODE replaced paper-based administration with an automated cloud information-capture system that supports record storage, retrieval, archiving, visitor and movement records, incident management, and compliance reporting."
     }
   ],
@@ -319,7 +319,7 @@
       "category": "School administration and safety",
       "type": "Automated information and movement management system",
       "platform": "Cloud, Amazon Web Services",
-      "clientContext": "Primary-school operations, including Stella Maris Primary School",
+      "clientContext": "Primary-school operations, including Primary School",
       "deliverables": [
         "Child, staff, and visitor arrival and departure records",
         "Incident recording and reporting",
@@ -330,7 +330,7 @@
         "Attend Me",
         "school attendance system",
         "visitor management",
-        "Stella Maris solution"
+        "Primary school solution"
       ],
       "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
     },

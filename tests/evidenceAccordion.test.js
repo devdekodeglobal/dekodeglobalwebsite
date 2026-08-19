@@ -59,7 +59,7 @@ test('automatically opens verified media for a specifically named project or cas
     ['tell me about CHAUFFR', 'CHAUFFR'],
     ['what is AttendMe?', 'AttendMe'],
     ['tell me about Beston', 'Food Manufacturing Company'],
-    ['show the Stella Maris case study', 'Primary School'],
+    ['show the Primary school case study', 'Primary School'],
   ];
   for (const [question, expectedName] of cases) {
     const artifact = buildEvidenceAccordion(question);

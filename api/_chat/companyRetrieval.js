@@ -104,7 +104,7 @@ function makeDocuments() {
     {
       id: 'discovery-portfolio',
       label: 'Related DEKODE work',
-      text: 'Portfolio examples include AttendMe, CHAUFFR, Smart Loan Helper, SmartBroker, Recycled Market, and Estrado. Published case studies cover Beston food manufacturing and Stella Maris Primary School.',
+      text: 'Portfolio examples include AttendMe, CHAUFFR, Smart Loan Helper, SmartBroker, Recycled Market, and Estrado. Published case studies cover Beston food manufacturing and Primary School.',
       aliases: ['website', 'mobile app', 'ecommerce', 'automation', 'internal system', 'cloud solution', 'similar work', 'relevant project'],
     },
     ...companyKnowledge.services.map((service) => ({
