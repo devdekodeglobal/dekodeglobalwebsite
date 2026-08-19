@@ -99,7 +99,7 @@ function makeDocuments() {
       id: 'discovery-star',
       label: 'Related DEKODE trust signal: STAR',
       text: 'DEKODE works through four STAR principles: Simple, Transparent, Accountable, and Reliable.',
-      aliases: ['working style', 'delivery process', 'methodology', 'project risk', 'trust', 'why choose dekode'],
+      aliases: ['working style', 'trust', 'trust dekode', 'why choose dekode', 'what makes dekode different', 'reliable partner', 'transparent delivery', 'accountability', 'clear communication'],
     },
     {
       id: 'discovery-portfolio',

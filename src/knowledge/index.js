@@ -11,6 +11,11 @@ export {
   validateModelResponse,
 } from './modelResponse.js';
 export { getSensitiveRequestRefusal } from './safetyResponse.js';
+export {
+  isStarTrustIntent,
+  routeStarTrustSuggestion,
+  STAR_TRUST_SUGGESTION,
+} from './starRecommendation.js';
 export { generateCompanyResponse } from './companyResponseGenerator.js';
 export {
   buildProjectRetrievalQuery,
