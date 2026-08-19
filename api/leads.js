@@ -73,10 +73,10 @@ export default async function handler(request, response) {
     });
 
     await transporter.sendMail({
-      from: \`"DEKODE Website" <\${process.env.SMTP_USER}>\`,
+      from: `"DEKODE Website" <${process.env.SMTP_USER}>`,
       to: process.env.SMTP_USER,
       replyTo: safePayload.visitorEmail,
-      subject: \`New Lead: \${safePayload.company} - \${safePayload.visitorName}\`,
+      subject: `New Lead: ${safePayload.company} - ${safePayload.visitorName}`,
       html: htmlContent,
     });
 
