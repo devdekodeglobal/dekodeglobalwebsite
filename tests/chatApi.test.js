@@ -278,6 +278,36 @@ test('returns contextual suggestions and removes labels already shown', async ()
   assert.equal(promptIncludedUsedLabels, true);
 });
 
+test('adds one STAR discovery pill only for DEKODE trust evaluation', async () => {
+  await withDirectGemini(async () => ({
+    ok: true,
+    status: 200,
+    json: async () => modelPayload({
+      intent: 'company_info',
+      confidence: 0.95,
+      action: 'show_company_panel',
+      topic: 'values',
+      answer: 'DEKODE works through Simple, Transparent, Accountable, and Reliable principles.',
+      suggestions: [
+        { label: 'See a case study', prompt: 'Show me a relevant case study.', kind: 'discovery' },
+        { label: 'View services', prompt: 'What services does DEKODE offer?', kind: 'follow_up' },
+      ],
+    }),
+  }), async () => {
+    const response = await ask('What makes DEKODE different from other agencies?', 'star-trust-routing');
+    assert.deepEqual(response.body.suggestions, [
+      {
+        label: 'Why clients trust DEKODE',
+        prompt: "What are DEKODE's STAR principles?",
+        kind: 'discovery',
+        intent: 'company_info',
+        action: 'show_company_panel',
+      },
+      { label: 'View services', prompt: 'What services does DEKODE offer?', kind: 'follow_up' },
+    ]);
+  });
+});
+
 test('retries a transient Gemini failure before returning an answer', async () => {
   let calls = 0;
   await withDirectGemini(async () => {

@@ -109,7 +109,7 @@ export function buildDocuments() {
       ['Australia', 'India', 'cross-border', 'global delivery', 'location', 'locations', 'talent exchange', 'R&D collaboration']),
     createDocument('discovery-star', 'Related DEKODE trust signal: STAR',
       'DEKODE works through four STAR principles: Simple, Transparent, Accountable, and Reliable.',
-      ['working style', 'delivery process', 'methodology', 'project risk', 'trust', 'why choose dekode']),
+      ['working style', 'trust', 'trust dekode', 'why choose dekode', 'what makes dekode different', 'reliable partner', 'transparent delivery', 'accountability', 'clear communication']),
     createDocument('discovery-portfolio', 'Related DEKODE work',
       'Portfolio examples include AttendMe, CHAUFFR, Smart Loan Helper, SmartBroker, Recycled Market, and Estrado. Published case studies cover Food manufacturer food manufacturing and Primary School.',
       ['website', 'mobile app', 'ecommerce', 'automation', 'internal system', 'cloud solution', 'similar work', 'relevant project']),
