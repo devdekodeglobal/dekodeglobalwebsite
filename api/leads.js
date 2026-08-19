@@ -43,15 +43,56 @@ export default async function handler(request, response) {
     submittedAt: new Date().toISOString(),
   };
 
-  // Development delivery only. Connect mail/CRM credentials here on the server.
-  console.info('[DEKODE Voice] Validated mock lead request.', {
-    submittedAt: safePayload.submittedAt,
-    hasMeetingPreference: Boolean(safePayload.selectedMeetingPreference),
-  });
-  return response.status(202).json({
-    ok: true,
-    delivered: false,
-    mode: 'mock',
-    message: 'The request was validated but no email or booking was sent.',
-  });
+  const htmlContent = `
+    <h2>New Discovery Lead</h2>
+    <p><strong>Name:</strong> ${safePayload.visitorName}</p>
+    <p><strong>Email:</strong> ${safePayload.visitorEmail}</p>
+    <p><strong>Phone:</strong> ${safePayload.phone}</p>
+    <p><strong>Company:</strong> ${safePayload.company}</p>
+    <br/>
+    <p><strong>Project Summary:</strong><br/>${safePayload.projectSummary.replace(/\n/g, '<br/>')}</p>
+    <p><strong>Timeline:</strong> ${safePayload.timeline || 'Not specified'}</p>
+    <p><strong>Budget Range:</strong> ${safePayload.budgetRange || 'Not specified'}</p>
+    <p><strong>Services:</strong> ${safePayload.services.join(', ') || 'Not specified'}</p>
+    <br/>
+    <p><strong>Meeting Preference:</strong> ${safePayload.selectedMeetingPreference || 'No specific time selected'}</p>
+    <p><strong>Timezone:</strong> ${safePayload.timezone}</p>
+    <br/>
+    <p><strong>Conversation Summary:</strong><br/>${safePayload.conversationSummary?.replace(/\n/g, '<br/>') || 'No summary available'}</p>
+  `;
+
+  try {
+    const transporter = (await import('nodemailer')).default.createTransport({
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      port: Number(process.env.SMTP_PORT) || 465,
+      secure: Number(process.env.SMTP_PORT) === 465,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
+    await transporter.sendMail({
+      from: \`"DEKODE Website" <\${process.env.SMTP_USER}>\`,
+      to: process.env.SMTP_USER,
+      replyTo: safePayload.visitorEmail,
+      subject: \`New Lead: \${safePayload.company} - \${safePayload.visitorName}\`,
+      html: htmlContent,
+    });
+
+    return response.status(200).json({
+      ok: true,
+      delivered: true,
+      mode: 'live',
+      message: 'Lead received and email sent successfully.',
+    });
+  } catch (error) {
+    console.error('[Leads API] Email failed to send:', error);
+    return response.status(500).json({
+      ok: false,
+      delivered: false,
+      mode: 'error',
+      message: 'Lead received but failed to send email notification.',
+    });
+  }
 }
