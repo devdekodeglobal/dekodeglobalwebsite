@@ -73,7 +73,7 @@ function findSpecificEvidence(question) {
 
   const caseStudyAliases = {
     'food-manufacturing': ['beston', 'food manufacturing company', 'food manufacturing case study'],
-    'primary-school': ['stella maris', 'primary school case study', 'primary school solution'],
+    'primary-school': ['primary school case study', 'primary school solution'],
   };
   const namedStudy = knowledge.caseStudies.find((study) =>
     caseStudyAliases[study.id]?.some((alias) => normalized.includes(alias))
