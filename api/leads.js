@@ -76,7 +76,7 @@ export default async function handler(request, response) {
       from: `"DEKODE Website" <${process.env.SMTP_USER}>`,
       to: process.env.SMTP_USER,
       replyTo: safePayload.visitorEmail,
-      subject: `New Lead: ${safePayload.company} - ${safePayload.visitorName}`,
+      subject: `🚀 New DEKODE Discovery Lead: ${safePayload.visitorName} from ${safePayload.company}`,
       html: htmlContent,
     });
 

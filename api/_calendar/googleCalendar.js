@@ -213,8 +213,11 @@ export async function createCalendarBooking(config, booking, fetchImpl = fetch) 
     method: 'POST',
     headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      summary: `DEKODE discovery call - ${booking.visitorName}`,
+      summary: `DEKODE Discovery Call: ${booking.company || booking.visitorName} & DEKODE`,
       description: [
+        `Hi ${booking.visitorName},`,
+        `Thanks for booking a discovery call with DEKODE! We're looking forward to learning more about ${booking.company || 'your business'} and discussing your project.`,
+        `Your submitted details:`,
         `Company: ${booking.company}`,
         `Phone: ${booking.phone}`,
         booking.projectSummary ? `Project: ${booking.projectSummary}` : '',
