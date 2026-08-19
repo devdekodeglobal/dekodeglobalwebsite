@@ -106,12 +106,16 @@ export function buildEvidenceAccordion(question, evidenceProjects, useFallbackRe
         items: filteredItems,
       };
     } else if (filteredItems.length > 0) {
-      const containsCaseStudy = filteredItems.some((item) => item.kind === 'Published case study');
+      // Always include all published case studies when showing a broad catalogue
+      const caseStudyItems = knowledge.caseStudies.map(caseStudyItem);
+      const uniquePortfolioItems = filteredItems.filter((item) => item.kind !== 'Published case study');
+      const finalItems = [...caseStudyItems, ...uniquePortfolioItems];
+
       return {
-        scope: containsCaseStudy ? 'case_studies' : 'portfolio',
+        scope: 'portfolio',
         mode: 'catalogue',
         label: 'DEKODE work',
-        items: filteredItems,
+        items: finalItems,
       };
     }
   }
