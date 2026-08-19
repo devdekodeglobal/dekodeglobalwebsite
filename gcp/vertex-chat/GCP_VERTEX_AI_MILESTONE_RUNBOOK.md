@@ -1132,14 +1132,14 @@ delivery phrasing could otherwise be mistaken for an external question.
 Only focused demo checks were run after deployment to conserve free-trial
 credits. The historical full-suite result remains 33/34; it was not rerun and
 must not be presented as a newly measured 34/34.
-## 14. Live Knowledge Review: Discovery, Beston, and BRIDGE
+## 14. Live Knowledge Review: Discovery, Food manufacturer, and BRIDGE
 
 Three live-preview questions exposed different knowledge-routing gaps:
 
 | Question | Incorrect behaviour | Root cause | Correction |
 | --- | --- | --- | --- |
 | `What happens during discovery?` | Rejected as outside DEKODE | The classifier did not recognise a named delivery stage without an explicit DEKODE cue | Delivery stages are now structured entities; `discovery` resolves to the approved Discover stage |
-| `How did DEKODE help Beston?` | Said the relationship could not be confirmed | The case study used the generic title `Food Manufacturing Company`; Beston existed only inside its outcome text | `Beston` is now a verified alias of the food-manufacturing case study |
+| `How did DEKODE help Food manufacturer?` | Said the relationship could not be confirmed | The case study used the generic title `Food Manufacturing Company`; Food manufacturer existed only inside its outcome text | `Food manufacturer` is now a verified alias of the food-manufacturing case study |
 | `What is BRIDGE?` | Rejected as outside DEKODE | `BridgeTeaser.jsx` was not part of the generated knowledge corpus | BRIDGE is now generated as a structured DEKODE initiative from the old website source |
 
 The fix is entity-based rather than three hard-coded answers. Named delivery
@@ -1357,7 +1357,7 @@ The old `PortfolioShowcase.jsx`, `FoodManufacture.jsx`, `PrimarySchool.jsx`, and
 Vercel and Cloud Run knowledge copies now carry structured details for AttendMe,
 CHAUFFR, Smart Loan Helper, SmartBroker, Recycled Market, and Estrado, including
 known platforms, client context, deliverables, aliases, and source references.
-The Beston and Primary school case studies now also preserve their obstacles,
+The Food manufacturer and Primary school case studies now also preserve their obstacles,
 delivery approach, platforms, and verified outcomes. Unknown project outcomes
 remain unstated.
 
@@ -1365,7 +1365,7 @@ Project retrieval recognizes portfolio, past work, previous work, examples,
 case studies, success stories, clients, and `what have you built`. These queries
 boost the complete evidence catalogue and individual project documents while
 penalizing the generic company overview. Client and product aliases are attached
-only to their corresponding evidence document, preventing Beston or AttendMe
+only to their corresponding evidence document, preventing Food manufacturer or AttendMe
 from making every case study appear equally relevant.
 
 Post-model visual validation now lets a verified company-project topic override
@@ -1375,7 +1375,7 @@ supports all eight public examples, and prevents a one-sentence response from
 being rendered twice.
 
 Regression coverage includes broad projects, portfolio, built-work, case-study,
-Beston, CHAUFFR, and primary-school platform questions in both retrieval stacks.
+Food manufacturer, CHAUFFR, and primary-school platform questions in both retrieval stacks.
 The full application suite continues to have only the seven inherited protected-
 proposal snapshot and local-secret failures; all relevant chat, retrieval, UI,
 Cloud Run, lint, and production-build checks pass.

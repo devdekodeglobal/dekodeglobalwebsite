@@ -57,7 +57,7 @@
 ✔ retrieves verified case studies and portfolio work for broad project questions (0.865583ms)
 ✔ prioritises project evidence across portfolio and case-study wording (1.446209ms)
 ✔ includes structured old-site evidence in project documents (0.463375ms)
-✔ retrieves reviewed delivery, Beston, and BRIDGE evidence (0.477208ms)
+✔ retrieves reviewed delivery, Food manufacturer, and BRIDGE evidence (0.477208ms)
 ✔ retrieves the six-stage methodology and verified founder details (0.508375ms)
 ✔ retrieves one related DEKODE discovery opportunity from relevant context (0.517833ms)
 ✔ keeps durable facts while bounding a twenty-turn conversation (17.9715ms)

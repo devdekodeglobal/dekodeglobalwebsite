@@ -111,7 +111,7 @@ export function buildDocuments() {
       'DEKODE works through four STAR principles: Simple, Transparent, Accountable, and Reliable.',
       ['working style', 'delivery process', 'methodology', 'project risk', 'trust', 'why choose dekode']),
     createDocument('discovery-portfolio', 'Related DEKODE work',
-      'Portfolio examples include AttendMe, CHAUFFR, Smart Loan Helper, SmartBroker, Recycled Market, and Estrado. Published case studies cover Beston food manufacturing and Primary School.',
+      'Portfolio examples include AttendMe, CHAUFFR, Smart Loan Helper, SmartBroker, Recycled Market, and Estrado. Published case studies cover Food manufacturer food manufacturing and Primary School.',
       ['website', 'mobile app', 'ecommerce', 'automation', 'internal system', 'cloud solution', 'similar work', 'relevant project']),
   ];
 

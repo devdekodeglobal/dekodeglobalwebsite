@@ -72,7 +72,7 @@ function findSpecificEvidence(question) {
   if (namedProject) return portfolioItem(namedProject);
 
   const caseStudyAliases = {
-    'food-manufacturing': ['beston', 'food manufacturing company', 'food manufacturing case study'],
+    'food-manufacturing': ['food manufacturer', 'food manufacturing company', 'food manufacturing case study'],
     'primary-school': ['primary school case study', 'primary school solution'],
   };
   const namedStudy = knowledge.caseStudies.find((study) =>

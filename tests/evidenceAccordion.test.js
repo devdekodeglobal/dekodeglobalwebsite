@@ -45,7 +45,7 @@ test('does not attach evidence UI to unrelated, specific, or build-intent messag
     'methodology',
     'how does DEKODE work?',
     'how does your team deliver projects?',
-    'tell me about Beston',
+    'tell me about Food manufacturer',
     'what is CHAUFFR',
     'I want to build a meeting app',
     'I need calendar booking in my website',
@@ -58,7 +58,7 @@ test('automatically opens verified media for a specifically named project or cas
   const cases = [
     ['tell me about CHAUFFR', 'CHAUFFR'],
     ['what is AttendMe?', 'AttendMe'],
-    ['tell me about Beston', 'Food Manufacturing Company'],
+    ['tell me about Food manufacturer', 'Food Manufacturing Company'],
     ['show the Primary school case study', 'Primary School'],
   ];
   for (const [question, expectedName] of cases) {

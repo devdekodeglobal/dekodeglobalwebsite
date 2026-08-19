@@ -336,7 +336,7 @@ test('uses only the approved company origin text for why DEKODE started', () => 
 test('answers the three verified knowledge questions from live review', () => {
   const cases = [
     ['What happens during discovery?', 'process', /Align on goals, users, constraints, workflows/i],
-    ['How did DEKODE help Beston?', 'caseStudies', /reduced the manual efforts and associated costs by 20%/i],
+    ['How did DEKODE help Food manufacturer?', 'caseStudies', /reduced the manual efforts and associated costs by 20%/i],
     ['What is BRIDGE?', 'initiatives', /Connecting Australian and Indian businesses/i],
   ];
 

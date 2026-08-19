@@ -17,9 +17,9 @@ test('lexical aliases find location and meeting documents', () => {
   assert.equal(retrieveLexical('Can I schedule a discovery call?')[0].id, 'contact');
 });
 
-test('lexical retrieval grounds reviewed delivery, Beston, and BRIDGE questions', () => {
+test('lexical retrieval grounds reviewed delivery, Food manufacturer, and BRIDGE questions', () => {
   assert.equal(retrieveLexical('What happens during discovery?')[0].id, 'process-discovery');
-  assert.equal(retrieveLexical('How did DEKODE help Beston?')[0].id, 'case-food-manufacturing');
+  assert.equal(retrieveLexical('How did DEKODE help Food manufacturer?')[0].id, 'case-food-manufacturing');
   assert.equal(retrieveLexical('What is BRIDGE?')[0].id, 'initiative-bridge');
 });
 
@@ -53,7 +53,7 @@ test('prioritises project evidence across portfolio and case-study wording', () 
     assert.equal(retrieveLexical(question)[0]?.id, 'project-evidence-catalogue', question);
   }
 
-  assert.equal(retrieveLexical('tell me about Beston')[0]?.id, 'case-food-manufacturing');
+  assert.equal(retrieveLexical('tell me about Food manufacturer')[0]?.id, 'case-food-manufacturing');
   assert.equal(retrieveLexical('what is CHAUFFR')[0]?.id, 'portfolio-chauffr');
 
   const school = retrieveLexical('what platform was used for the primary school solution')[0];

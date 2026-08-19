@@ -89,7 +89,7 @@ test('prioritises project evidence across portfolio and case-study wording', () 
     assert.doesNotMatch(matches[0]?.id || '', /company-overview/, question);
   }
 
-  assert.equal(retrieveCompanyKnowledge('tell me about Beston')[0]?.id, 'case-study-food-manufacturing');
+  assert.equal(retrieveCompanyKnowledge('tell me about Food manufacturer')[0]?.id, 'case-study-food-manufacturing');
   assert.equal(retrieveCompanyKnowledge('what is CHAUFFR')[0]?.id, 'portfolio-chauffr');
 
   const school = retrieveCompanyKnowledge('what platform was used for the primary school solution');
@@ -99,17 +99,17 @@ test('prioritises project evidence across portfolio and case-study wording', () 
 
 test('includes structured old-site evidence in project documents', () => {
   const chauffr = retrieveCompanyKnowledge('what is CHAUFFR')[0];
-  const beston = retrieveCompanyKnowledge('tell me about Beston')[0];
+  const foodManufacturer = retrieveCompanyKnowledge('tell me about Food manufacturer')[0];
 
   assert.match(chauffr.text, /Platform: Android, iOS, and web/i);
   assert.match(chauffr.text, /Deliverables:/i);
-  assert.match(beston.text, /Obstacles:/i);
-  assert.match(beston.text, /Delivery approach:/i);
+  assert.match(foodManufacturer.text, /Obstacles:/i);
+  assert.match(foodManufacturer.text, /Delivery approach:/i);
 });
 
-test('retrieves reviewed delivery, Beston, and BRIDGE evidence', () => {
+test('retrieves reviewed delivery, Food manufacturer, and BRIDGE evidence', () => {
   assert.equal(retrieveCompanyKnowledge('What happens during discovery?')[0]?.id, 'process-discovery');
-  assert.equal(retrieveCompanyKnowledge('How did DEKODE help Beston?')[0]?.id, 'case-study-food-manufacturing');
+  assert.equal(retrieveCompanyKnowledge('How did DEKODE help Food manufacturer?')[0]?.id, 'case-study-food-manufacturing');
   assert.equal(retrieveCompanyKnowledge('What is BRIDGE?')[0]?.id, 'initiative-bridge');
 });
 
