@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import './ProposalCFS.css';
+import './ProposalVIP.css';
 import prototypeImage from './image.png';
 import archImage from './arch.png';
 
-const ProposalCFS = () => {
+const ProposalVIP = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
   const [error, setError] = useState('');
@@ -13,7 +13,7 @@ const ProposalCFS = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (passwordInput === 'dek123acc' || passwordInput === 'dek123vip') {
+    if (passwordInput === 'deko2486vip') {
       setIsAuthenticated(true);
     } else {
       setError('Incorrect password');
@@ -107,7 +107,7 @@ const ProposalCFS = () => {
         
         {/* PROPOSAL TOP HEADER */}
         <div className="proposal-top-header" style={{ textAlign: 'center' }}>
-          <h1 style={{color: '#053364', fontSize: '36px', margin: '0 0 8px 0', fontWeight: '800', letterSpacing: '-0.5px'}}>Centre For Sight</h1>
+          <h1 style={{color: '#053364', fontSize: '36px', margin: '0 0 8px 0', fontWeight: '800', letterSpacing: '-0.5px'}}>National Eyewear Company</h1>
           <p style={{color: '#475569', fontSize: '20px', margin: '0', fontWeight: '500'}}>Inventory &amp; Distribution System</p>
         </div>
         
@@ -801,4 +801,4 @@ const ProposalCFS = () => {
   );
 };
 
-export default ProposalCFS;
+export default ProposalVIP;
