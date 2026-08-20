@@ -30,13 +30,13 @@ export default async function handler(request, response) {
     new URL(request.url || '/', 'http://localhost').searchParams.get('asset')
     
   if (requestedAsset === 'business_plan') {
-    if (session.accessLevel !== 'extended') return response.status(403).end()
+    if (session.accessLevel !== 'extended' && session.accessLevel !== 'vip_national') return response.status(403).end()
     response.setHeader('Content-Type', 'application/pdf')
     return response.status(200).send(await readFile(businessPlanAssetPath))
   }
 
   if (requestedAsset === 'commercial_terms') {
-    if (session.accessLevel !== 'extended') return response.status(403).end()
+    if (session.accessLevel !== 'extended' && session.accessLevel !== 'vip_national') return response.status(403).end()
     response.setHeader('Content-Type', 'application/pdf')
     return response.status(200).send(await readFile(commercialTermsAssetPath))
   }
