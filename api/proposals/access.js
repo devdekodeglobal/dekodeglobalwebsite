@@ -29,6 +29,19 @@ export default async function handler(request, response) {
     version: PROPOSAL_VERSION,
     at: new Date().toISOString(),
   })
+  if (auth.accessLevel === 'vip_national') {
+    return response.status(200).json({
+      ok: true,
+      route: '/proposals/vip-client',
+      proposal: {
+        title: 'National Eyewear Company',
+        subtitle: 'Inventory & Distribution System',
+        sectionCount: 5,
+        version: PROPOSAL_VERSION,
+      },
+    })
+  }
+
   return response.status(200).json({
     ok: true,
     route: '/proposals/client',

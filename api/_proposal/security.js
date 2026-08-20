@@ -82,7 +82,7 @@ export function verifyCredentials(password) {
     return { valid: true, accessLevel: 'extended' }
   }
   if (safeEqual(passwordHash, NEW_VIP_PASSWORD_HASH)) {
-    return { valid: true, accessLevel: 'extended' }
+    return { valid: true, accessLevel: 'vip_national' }
   }
   return { valid: false, accessLevel: 'none' }
 }
