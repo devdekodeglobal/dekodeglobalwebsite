@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Server, Database, Cloud, Shield, ShoppingCart, GitMerge, FileText, MessageSquare, Bot, Wrench, Layers, UserRound, Sparkles } from 'lucide-react';
-import { resolveVisualFeatures, resolveVisualMode } from '../utils/visualIntent';
+import * as LucideIcons from 'lucide-react';
+import { resolveVisualFeatures, resolveVisualMode, resolveFallbackVisualState } from '../utils/visualIntent';
 import BookingSummary from './BookingSummary.jsx';
 
 const CodeLine = ({ delay = 0, width = "100%", color = "rgba(255,255,255,0.2)" }) => (
@@ -23,7 +23,7 @@ const ExperienceMapAnimation = ({ features, level }) => {
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
       >
-        <UserRound size={22} />
+        <LucideIcons.UserRound size={22} />
         <span>Visitor</span>
       </motion.div>
       <div className="experience-map-path" aria-hidden="true">
@@ -38,7 +38,7 @@ const ExperienceMapAnimation = ({ features, level }) => {
             transition={{ delay: 0.12 * index }}
             className="experience-map-feature"
           >
-            <Sparkles size={15} />
+            <LucideIcons.Sparkles size={15} />
             <span>{feature}</span>
           </motion.div>
         ))}
@@ -84,10 +84,19 @@ const Path = ({ delay, d, active }) => (
   </>
 );
 
-const AIAgentAnimation = ({ level }) => {
+const AIAgentAnimation = ({ level, visualState }) => {
+  const ThemeIcon = (visualState?.themeIcon && LucideIcons[visualState.themeIcon]) ? LucideIcons[visualState.themeIcon] : LucideIcons.Bot;
+  const themeColor = visualState?.themeColor || '#8b5cf6';
+
   return (
     <div className="ai-agent-container" style={{ position: 'relative', width: '100%', background: 'transparent' }}>
-      <div className="ai-agent-scaler" style={{ position: 'absolute', top: '15px', left: '50%', width: '480px', height: '260px', marginLeft: '-240px', transformOrigin: 'top center' }}>
+      {/* Background Glow */}
+      <motion.div 
+        animate={{ scale: [1, 1.05, 1], opacity: [0.6, 1, 0.6] }} 
+        transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+        style={{ position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%', background: `radial-gradient(circle at 50% 50%, ${themeColor}15 0%, transparent 50%)`, zIndex: 0, pointerEvents: 'none' }} 
+      />
+      <div className="ai-agent-scaler" style={{ position: 'absolute', top: '15px', left: '50%', width: '480px', height: '260px', marginLeft: '-240px', transformOrigin: 'top center', zIndex: 1 }}>
         <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 0, overflow: 'visible' }}>
           {/* Connection to Agent */}
           {level >= 2 && <Path delay={0.2} d="M 50 100 C 90 100, 110 100, 150 100" active={level >= 3} />}
@@ -114,28 +123,28 @@ const AIAgentAnimation = ({ level }) => {
         </svg>
 
         {/* Level 1: Trigger */}
-        <Node delay={0} icon={FileText} title="Webhook" color="var(--color-brand-blue)" x={0} y={72} />
+        <Node delay={0} icon={LucideIcons.FileText} title="Webhook" color="var(--color-brand-blue)" x={0} y={72} />
 
         {/* Level 2: Core Agent */}
         {level >= 2 && (
-          <Node delay={0.5} icon={Bot} title="AI Brain" color="#8b5cf6" x={150} y={72} />
+          <Node delay={0.5} icon={ThemeIcon} title="AI Brain" color={themeColor} x={150} y={72} />
         )}
 
         {/* Level 3: Tools */}
         {level >= 3 && (
           <>
-            <Node delay={0.4} icon={Layers} title="Memory DB" color="var(--color-brand-blue)" x={52} y={200} />
-            <Node delay={0.5} icon={Server} title="LLM Model" color="#f59e0b" x={150} y={200} />
-            <Node delay={0.6} icon={Wrench} title="Search Tool" color="#10b981" x={248} y={200} />
+            <Node delay={0.4} icon={LucideIcons.Layers} title="Memory DB" color="var(--color-brand-blue)" x={52} y={200} />
+            <Node delay={0.5} icon={LucideIcons.Server} title="LLM Model" color="#f59e0b" x={150} y={200} />
+            <Node delay={0.6} icon={LucideIcons.Wrench} title="Search Tool" color="#10b981" x={248} y={200} />
           </>
         )}
 
         {/* Level 4: Logic & Actions */}
         {level >= 4 && (
           <>
-            <Node delay={0.4} icon={GitMerge} title="Condition" color="#f43f5e" x={300} y={72} />
-            <Node delay={0.8} icon={MessageSquare} title="Chat Alert" color="#eab308" x={420} y={32} />
-            <Node delay={1.0} icon={Database} title="Update CRM" color="var(--color-brand-blue)" x={420} y={112} />
+            <Node delay={0.4} icon={LucideIcons.GitMerge} title="Condition" color="#f43f5e" x={300} y={72} />
+            <Node delay={0.8} icon={LucideIcons.MessageSquare} title="Chat Alert" color="#eab308" x={420} y={32} />
+            <Node delay={1.0} icon={LucideIcons.Database} title="Update CRM" color="var(--color-brand-blue)" x={420} y={112} />
           </>
         )}
       </div>
@@ -143,10 +152,17 @@ const AIAgentAnimation = ({ level }) => {
   );
 };
 
-const CloudInfraAnimation = ({ level }) => {
+const CloudInfraAnimation = ({ level, visualState }) => {
+  const themeColor = visualState?.themeColor || 'var(--color-brand-blue)';
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '300px', position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'relative', width: '300px', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      {/* Background Glow */}
+      <motion.div 
+        animate={{ scale: [1, 1.05, 1], opacity: [0.6, 1, 0.6] }} 
+        transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+        style={{ position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%', background: `radial-gradient(circle at 50% 50%, ${themeColor}15 0%, transparent 50%)`, zIndex: 0, pointerEvents: 'none' }} 
+      />
+      <div style={{ position: 'relative', width: '300px', height: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 1 }}>
         
         {/* Network Lines */}
         {level >= 3 && (
@@ -183,13 +199,13 @@ const CloudInfraAnimation = ({ level }) => {
       {level >= 4 && (
         <>
           <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', delay: 0.2 }} style={{ position: 'absolute', top: '20px', left: '0px', background: 'rgba(4, 51, 100, 0.8)', padding: '6px 12px', borderRadius: '8px', color: 'white', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', border: '1px solid var(--color-brand-blue)' }}>
-            <Cloud size={14} color="var(--color-brand-blue)" /> API
+            <LucideIcons.Cloud size={14} color="var(--color-brand-blue)" /> API
           </motion.div>
           <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', delay: 0.4 }} style={{ position: 'absolute', top: '20px', right: '0px', background: 'rgba(4, 51, 100, 0.8)', padding: '6px 12px', borderRadius: '8px', color: 'white', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', border: '1px solid var(--color-brand-blue)' }}>
-            <Database size={14} color="var(--color-accent-yellow)" /> DB
+            <LucideIcons.Database size={14} color="var(--color-accent-yellow)" /> DB
           </motion.div>
           <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', delay: 0.6 }} style={{ position: 'absolute', bottom: '20px', left: '0px', background: 'rgba(4, 51, 100, 0.8)', padding: '6px 12px', borderRadius: '8px', color: 'white', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', border: '1px solid var(--color-brand-blue)' }}>
-            <Shield size={14} color="#22c55e" /> Auth
+            <LucideIcons.Shield size={14} color="#22c55e" /> Auth
           </motion.div>
         </>
       )}
@@ -198,7 +214,11 @@ const CloudInfraAnimation = ({ level }) => {
   );
 };
 
-const EcommerceAnimation = ({ level }) => {
+const EcommerceAnimation = ({ level, visualState, features = [] }) => {
+  const ThemeIcon = (visualState?.themeIcon && LucideIcons[visualState.themeIcon]) ? LucideIcons[visualState.themeIcon] : LucideIcons.ShoppingCart;
+  const themeColor = visualState?.themeColor || 'var(--color-accent-yellow)';
+  const projectTitle = visualState?.projectTitle || '';
+
   return (
     <div className="browser-frame" style={{ width: '100%', height: '300px', display: 'flex', flexDirection: 'column' }}>
       <div className="browser-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '1rem' }}>
@@ -211,8 +231,9 @@ const EcommerceAnimation = ({ level }) => {
         {/* Level 3: Cart */}
         {level >= 3 && (
           <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'white' }}>
-            <ShoppingCart size={14} />
-            <motion.span key={level} initial={{ scale: 1.5, color: 'var(--color-accent-yellow)' }} animate={{ scale: 1, color: 'white' }} style={{ fontSize: '12px', fontWeight: 'bold' }}>
+            {projectTitle && <span style={{ fontSize: '10px', marginRight: '8px', opacity: 0.8 }}>{projectTitle}</span>}
+            <ThemeIcon size={14} color={themeColor} />
+            <motion.span key={level} initial={{ scale: 1.5, color: themeColor }} animate={{ scale: 1, color: 'white' }} style={{ fontSize: '12px', fontWeight: 'bold' }}>
               3
             </motion.span>
           </motion.div>
@@ -225,17 +246,30 @@ const EcommerceAnimation = ({ level }) => {
           {[1, 2, 3].map((card) => (
             <motion.div key={card} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: card * 0.1 }} style={{ flex: 1, background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden' }}>
               <motion.div 
-                initial={{ background: 'rgba(255,255,255,0.05)' }}
-                animate={level >= 2 ? { background: 'rgba(53, 118, 193, 0.3)' } : {}}
-                style={{ height: '60px', width: '100%' }}
-              />
+                style={{ 
+                  height: '60px', 
+                  width: '100%', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  backgroundColor: level >= 2 ? `${themeColor}33` : 'rgba(255,255,255,0.05)',
+                  borderBottom: level >= 2 ? `1px solid ${themeColor}55` : 'none'
+                }}
+              >
+                {level >= 2 && <ThemeIcon size={22} color={themeColor} />}
+              </motion.div>
               <div style={{ padding: '8px' }}>
                 <CodeLine delay={0.4} width={level >= 2 ? "90%" : "0%"} />
                 <CodeLine delay={0.5} width={level >= 2 ? "60%" : "0%"} />
+                {features[card - 1] && level >= 2 && (
+                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} style={{ display: 'inline-block', fontSize: '8px', background: 'rgba(255,255,255,0.12)', color: 'white', padding: '1px 5px', borderRadius: '3px', marginTop: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    {features[card - 1]}
+                  </motion.div>
+                )}
                 <motion.div 
                   initial={{ opacity: 0 }} 
                   animate={{ opacity: level >= 2 ? 1 : 0 }} 
-                  style={{ marginTop: '8px', width: '40px', height: '12px', background: 'var(--color-accent-yellow)', borderRadius: '4px' }}
+                  style={{ marginTop: '8px', width: '40px', height: '12px', background: themeColor, borderRadius: '4px' }}
                 />
               </div>
             </motion.div>
@@ -251,7 +285,7 @@ const EcommerceAnimation = ({ level }) => {
             style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', background: 'white', borderRadius: '12px', padding: '15px 20px', boxShadow: '0 10px 30px rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', gap: '12px', zIndex: 10 }}
           >
             <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-              <CheckCircle2 size={20} />
+              <LucideIcons.CheckCircle2 size={20} />
             </div>
             <div>
               <div style={{ color: '#0f172a', fontWeight: 'bold', fontSize: '14px' }}>Order Confirmed</div>
@@ -264,10 +298,20 @@ const EcommerceAnimation = ({ level }) => {
   );
 };
 
-const MobileAppAnimation = ({ level }) => {
+const MobileAppAnimation = ({ level, visualState, features = [] }) => {
+  const ThemeIcon = (visualState?.themeIcon && LucideIcons[visualState.themeIcon]) ? LucideIcons[visualState.themeIcon] : LucideIcons.ShoppingCart;
+  const themeColor = visualState?.themeColor || 'var(--color-brand-blue)';
+  const projectTitle = visualState?.projectTitle || 'App Built';
+
   return (
-    <div className="mobile-app-container" style={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center' }}>
-      <div className="device-frame mobile-app-scaler" style={{ position: 'relative', width: '260px', height: '520px', padding: 0, overflow: 'hidden', background: '#0f172a', transformOrigin: 'top center' }}>
+    <div className="mobile-app-container" style={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center', overflow: 'hidden', height: '300px' }}>
+      {/* Background Glow */}
+      <motion.div 
+        animate={{ scale: [1, 1.05, 1], opacity: [0.6, 1, 0.6] }} 
+        transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+        style={{ position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%', background: `radial-gradient(circle at 50% 50%, ${themeColor}15 0%, transparent 50%)`, zIndex: 0, pointerEvents: 'none' }} 
+      />
+      <div className="device-frame mobile-app-scaler" style={{ position: 'relative', width: '260px', height: '520px', padding: 0, overflow: 'hidden', background: '#0f172a', transformOrigin: 'top center', zIndex: 1, transform: 'scale(0.55)' }}>
         {/* iOS Dynamic Island */}
       <motion.div 
         initial={{ width: 0 }} 
@@ -279,7 +323,9 @@ const MobileAppAnimation = ({ level }) => {
       <div style={{ padding: '40px 15px 15px 15px', display: 'flex', flexDirection: 'column', height: '100%', gap: '15px' }}>
         {/* Level 1: App Header */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
+          <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+             <ThemeIcon size={14} color={themeColor} />
+          </div>
           <div style={{ width: '100px', height: '12px', background: 'rgba(255,255,255,0.1)', borderRadius: '6px' }} />
           <div style={{ width: '30px', height: '30px', borderRadius: '10px', background: 'rgba(255,255,255,0.1)' }} />
         </motion.div>
@@ -287,9 +333,23 @@ const MobileAppAnimation = ({ level }) => {
         {/* Level 2: Skeleton Feed */}
         {level >= 2 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} style={{ width: '100%', height: '140px', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} style={{ width: '100%', height: '140px', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', position: 'relative', overflow: 'hidden', border: level >= 2 ? `1px solid ${themeColor}33` : '1px solid transparent' }}>
+              {level >= 2 && (
+                <div style={{ position: 'absolute', top: '15px', right: '15px', color: themeColor, opacity: 0.3 }}>
+                  <ThemeIcon size={36} />
+                </div>
+              )}
               <CodeLine delay={0.4} width="80%" />
               <CodeLine delay={0.5} width="50%" />
+              {features.length > 0 && (
+                <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginTop: '6px' }}>
+                  {features.slice(0, 3).map((feat) => (
+                    <span key={feat} style={{ fontSize: '8px', background: `${themeColor}22`, border: `1px solid ${themeColor}44`, color: 'white', padding: '1px 5px', borderRadius: '3px' }}>
+                      {feat}
+                    </span>
+                  ))}
+                </div>
+              )}
             </motion.div>
             
             <div style={{ display: 'flex', gap: '10px' }}>
@@ -309,7 +369,7 @@ const MobileAppAnimation = ({ level }) => {
             style={{ position: 'absolute', bottom: '15px', left: '15px', right: '15px', height: '60px', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', borderRadius: '30px', display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}
           >
             {[1, 2, 3, 4].map(i => (
-              <motion.div key={i} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.5 + i*0.1 }} style={{ width: '24px', height: '24px', borderRadius: '8px', background: i === 1 ? 'var(--color-brand-blue)' : 'rgba(255,255,255,0.3)' }} />
+              <motion.div key={i} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.5 + i*0.1 }} style={{ width: '24px', height: '24px', borderRadius: '8px', background: i === 1 ? themeColor : 'rgba(255,255,255,0.3)' }} />
             ))}
           </motion.div>
         )}
@@ -323,11 +383,11 @@ const MobileAppAnimation = ({ level }) => {
           transition={{ type: 'spring', damping: 12, delay: 0.2 }}
           style={{ position: 'absolute', top: 0, left: '50%', width: '85%', background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', borderRadius: '20px', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)', zIndex: 30 }}
         >
-          <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--color-brand-blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-            <CheckCircle2 size={20} />
+          <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: themeColor, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
+            <LucideIcons.CheckCircle2 size={20} />
           </div>
           <div style={{ flex: 1 }}>
-            <div style={{ color: '#0f172a', fontWeight: 'bold', fontSize: '13px', lineHeight: '1' }}>App Built</div>
+            <div style={{ color: '#0f172a', fontWeight: 'bold', fontSize: '13px', lineHeight: '1' }}>{projectTitle}</div>
             <div style={{ color: '#64748b', fontSize: '11px', marginTop: '2px' }}>Ready for TestFlight</div>
           </div>
         </motion.div>
@@ -337,28 +397,66 @@ const MobileAppAnimation = ({ level }) => {
   );
 };
 
-const DefaultWebAnimation = ({ level }) => {
+const DefaultWebAnimation = ({ level, visualState, features = [] }) => {
+  const ThemeIcon = (visualState?.themeIcon && LucideIcons[visualState.themeIcon]) ? LucideIcons[visualState.themeIcon] : null;
+  const themeColor = visualState?.themeColor || 'var(--color-brand-blue)';
+  const projectTitle = visualState?.projectTitle || '';
+
   return (
-    <div className="browser-frame" style={{ width: '100%', maxWidth: '100%', height: '300px', display: 'flex', flexDirection: 'column' }}>
-      <div className="browser-header">
+    <div className="browser-frame" style={{ width: '100%', maxWidth: '100%', height: '300px', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+      
+      {/* Background Glow */}
+      <motion.div 
+        animate={{ scale: [1, 1.05, 1], opacity: [0.6, 1, 0.6] }} 
+        transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+        style={{ position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%', background: `radial-gradient(circle at 50% 50%, ${themeColor}15 0%, transparent 50%)`, zIndex: 0, pointerEvents: 'none' }} 
+      />
+
+      <div className="browser-header" style={{ position: 'relative', zIndex: 1 }}>
         <div className="browser-dot" />
         <div className="browser-dot" />
         <div className="browser-dot" />
         <motion.div initial={{width: 0}} animate={{width: '100px'}} transition={{delay: 0.3}} style={{ marginLeft: '10px', height: '12px', background: 'rgba(255,255,255,0.1)', borderRadius: '6px' }} />
+        {projectTitle && <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ marginLeft: 'auto', fontSize: '10px', color: 'white', opacity: 0.8 }}>{projectTitle}</motion.span>}
       </div>
-      <div style={{ padding: '1rem', display: 'flex', gap: '1rem', flex: 1 }}>
+      <div style={{ padding: '1rem', display: 'flex', gap: '1rem', flex: 1, position: 'relative', zIndex: 1 }}>
         {level >= 2 && (
           <>
-            <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} style={{ width: '60px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }} />
+            <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} style={{ width: '60px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }} />
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <motion.div initial={{ width: 0 }} animate={{ width: '100%' }} style={{ height: '60px', background: 'var(--color-brand-blue)', borderRadius: '8px' }} />
+              <motion.div initial={{ width: 0 }} animate={{ width: '100%' }} style={{ height: '60px', background: `linear-gradient(135deg, ${themeColor} 0%, ${themeColor}88 100%)`, borderRadius: '8px', display: 'flex', alignItems: 'center', paddingLeft: '15px', boxShadow: `0 4px 15px ${themeColor}44`, border: `1px solid ${themeColor}55` }}>
+                 {ThemeIcon && (
+                   <motion.div
+                     animate={{ rotate: [0, -5, 5, 0], scale: [1, 1.1, 1] }}
+                     transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                   >
+                     <ThemeIcon size={24} color="rgba(255,255,255,0.9)" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }} />
+                   </motion.div>
+                 )}
+              </motion.div>
               {level >= 3 && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'flex', gap: '10px', flex: 1 }}>
-                  <div style={{ flex: 2, background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '10px' }}>
-                    <CodeLine delay={0.2} width="80%" />
-                    <CodeLine delay={0.3} width="60%" />
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ display: 'flex', gap: '10px', flex: 1 }}>
+                  <div style={{ flex: 2, background: 'rgba(255,255,255,0.03)', borderRadius: '8px', padding: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <CodeLine delay={0.2} width="85%" />
+                    <CodeLine delay={0.3} width="65%" />
+                    <CodeLine delay={0.4} width="40%" />
                   </div>
-                  <div style={{ flex: 1, background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }} />
+                  <div style={{ flex: 1, background: 'rgba(255,255,255,0.03)', borderRadius: '8px', padding: '8px', display: 'flex', flexDirection: 'column', gap: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    {features.slice(0, 3).map((feat, idx) => (
+                      <motion.div 
+                        initial={{ opacity: 0, x: 10 }} 
+                        animate={{ opacity: 1, x: 0, scale: [1, 1.02, 1] }} 
+                        transition={{ 
+                          scale: { repeat: Infinity, duration: 3, ease: "easeInOut", delay: idx * 0.5 },
+                          default: { delay: 0.4 + (idx * 0.1) } 
+                        }} 
+                        key={feat} 
+                        style={{ fontSize: '9px', background: `linear-gradient(90deg, ${themeColor}22 0%, transparent 100%)`, borderLeft: `2px solid ${themeColor}`, color: 'white', padding: '6px 8px', borderRadius: '0 4px 4px 0', fontWeight: '500' }}
+                      >
+                        {feat}
+                      </motion.div>
+                    ))}
+                  </div>
                 </motion.div>
               )}
             </div>
@@ -366,8 +464,37 @@ const DefaultWebAnimation = ({ level }) => {
         )}
       </div>
       {level >= 4 && (
-         <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} style={{ position: 'absolute', top: '40%', right: '-10px', padding: '8px 12px', borderRadius: '16px', background: 'white', color: '#22c55e', fontSize: '12px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px', boxShadow: '0 10px 20px rgba(0,0,0,0.2)' }}>
-            <CheckCircle2 size={14} /> Ready
+         <motion.div 
+           initial={{ y: 20, opacity: 0, scale: 0.9 }} 
+           animate={{ y: [0, -6, 0], opacity: 1, scale: 1 }} 
+           transition={{ 
+             y: { repeat: Infinity, duration: 3, ease: "easeInOut" },
+             default: { type: 'spring', damping: 15 }
+           }}
+           style={{ 
+             position: 'absolute', 
+             bottom: '20px', 
+             left: '50%',
+             transform: 'translateX(-50%)',
+             padding: '10px 20px', 
+             borderRadius: '24px', 
+             background: 'rgba(15, 23, 42, 0.8)', 
+             backdropFilter: 'blur(12px)',
+             border: `1px solid ${themeColor}66`,
+             color: 'white', 
+             fontSize: '13px', 
+             fontWeight: '600', 
+             display: 'flex', 
+             alignItems: 'center', 
+             gap: '8px', 
+             boxShadow: `0 10px 30px ${themeColor}33`,
+             zIndex: 20
+           }}
+         >
+            <div style={{ background: themeColor, borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <LucideIcons.CheckCircle2 size={12} color="white" strokeWidth={3} />
+            </div>
+            Project Defined
          </motion.div>
       )}
     </div>
@@ -401,8 +528,12 @@ export default function AnimationPanel({
     return null;
   }
 
+  const latestMessageWithVisualState = [...messages].reverse().find(m => m.visualState);
+  const aiVisualState = latestMessageWithVisualState?.visualState || resolveFallbackVisualState(projectType, messages);
+
   const isMobileAndWeb = projectType === 'Mobile & Web';
-  const inferredMode = resolveVisualMode(projectType, messages);
+  // The user requested to disable the discovery call / calendar jump in the animation panel for now.
+  const inferredMode = aiVisualState?.mode || resolveVisualMode(projectType, messages);
   const visualFeatures = resolveVisualFeatures([
     ...messages,
     ...(conversationSummary ? [{ sender: 'user', text: conversationSummary }] : []),
@@ -486,15 +617,15 @@ export default function AnimationPanel({
           ) : visualMode === 'journey' ? (
             <ExperienceMapAnimation features={visualFeatures} level={dynamicLevel} />
           ) : visualMode === 'ai' ? (
-            <AIAgentAnimation level={dynamicLevel} />
+            <AIAgentAnimation level={dynamicLevel} visualState={aiVisualState} />
           ) : visualMode === 'cloud' ? (
-            <CloudInfraAnimation level={dynamicLevel} />
+            <CloudInfraAnimation level={dynamicLevel} visualState={aiVisualState} />
           ) : visualMode === 'ecommerce' ? (
-            <EcommerceAnimation level={dynamicLevel} />
+            <EcommerceAnimation level={dynamicLevel} visualState={aiVisualState} features={visualFeatures} />
           ) : visualMode === 'mobile' ? (
-            <MobileAppAnimation level={dynamicLevel} />
+            <MobileAppAnimation level={dynamicLevel} visualState={aiVisualState} features={visualFeatures} />
           ) : (
-            <DefaultWebAnimation level={dynamicLevel} />
+            <DefaultWebAnimation level={dynamicLevel} visualState={aiVisualState} features={visualFeatures} />
           )}
         </motion.div>
       </AnimatePresence>

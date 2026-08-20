@@ -111,7 +111,7 @@ const PROJECT_OPTION_ROWS = [
   PROJECT_OPTIONS,
 ];
 
-export const SUPPORTING_VISUAL_PANEL_ENABLED = false;
+export const SUPPORTING_VISUAL_PANEL_ENABLED = true;
 
 export default function ChatApp({
   proposalContext = null,
@@ -445,6 +445,7 @@ export default function ChatApp({
           suggestions: result.suggestions || [],
           actions: result.actions || [],
           evidenceAccordion: result.evidenceAccordion || null,
+          visualState: result.visualState || null,
         },
       ]);
     } catch {
@@ -499,8 +500,19 @@ export default function ChatApp({
 
       const visualIntent = classifyCompanyIntent(userMessage, companyContextRef.current);
       const verifiedCompanyTopic = visualIntent.kind === "company" && visualIntent.topic;
+      const isProjectExplicit = result.action === "show_project_panel" || result.intent === "project_build" || result.visualState || (step === "project" && result.intent === "clarification");
+
       if (result.action === "open_calendar") {
         activateMeetingScheduler();
+      } else if (isProjectExplicit) {
+        const project = generateProjectResponse(buildProjectConversationQuery(
+          userMessage,
+          requestConversation.recentMessages,
+        ));
+        setCompanyPanel(null);
+        setProjectType((prev) => (project.projectType === 'Unknown' && prev) ? prev : project.projectType || 'Unknown');
+        setGatheredTags((prev) => Array.from(new Set([...prev, project.projectType].filter((t) => t && t !== 'Unknown'))));
+        setStep("project");
       } else if (verifiedCompanyTopic || result.action === "show_company_panel" || [
         "company_info", "pricing", "case_study", "methodology",
       ].includes(result.intent)) {
@@ -517,16 +529,7 @@ export default function ChatApp({
         setProjectType(null);
         setCompanyPanel(company);
         setStep("company");
-      } else if (result.action === "show_project_panel" || result.intent === "project_build") {
-        const project = generateProjectResponse(buildProjectConversationQuery(
-          userMessage,
-          requestConversation.recentMessages,
-        ));
-        setCompanyPanel(null);
-        setProjectType(project.projectType);
-        setGatheredTags([project.projectType]);
-        setStep("project");
-      } else if (!["scheduling", "done"].includes(step)) {
+      } else if (!["scheduling", "done", "project"].includes(step)) {
         setCompanyPanel(null);
         setProjectType(null);
         setStep("triage");
@@ -542,6 +545,7 @@ export default function ChatApp({
           suggestions: result.suggestions || [],
           actions: result.actions || [],
           evidenceAccordion: result.evidenceAccordion || null,
+          visualState: result.visualState || null,
         },
       ]);
     } catch {

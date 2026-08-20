@@ -100,6 +100,12 @@ export function validateModelResponse(candidate, originalMessage, context = {}) 
     evidenceProjects: Array.isArray(parsed.evidenceProjects)
       ? parsed.evidenceProjects.map((p) => String(p).trim()).filter(Boolean)
       : [],
+    visualState: parsed.visualState && typeof parsed.visualState === 'object' ? {
+      mode: String(parsed.visualState.mode || ''),
+      themeIcon: String(parsed.visualState.themeIcon || ''),
+      themeColor: String(parsed.visualState.themeColor || ''),
+      projectTitle: String(parsed.visualState.projectTitle || ''),
+    } : null,
   };
 
   const calendarIntent = resolveCalendarIntent(originalMessage, context);

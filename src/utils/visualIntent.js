@@ -48,3 +48,42 @@ export function resolveVisualMode(projectType, messages = []) {
   const projectText = String(projectType || '');
   return VISUAL_INTENT_PATTERNS.find(([, pattern]) => pattern.test(projectText))?.[0] || 'web';
 }
+
+export function resolveFallbackVisualState(projectType, messages = []) {
+  const projectText = [
+    projectType,
+    ...messages.filter(m => m.sender === 'user').map(m => m.text)
+  ].join(' ').toLowerCase();
+
+  if (/\b(eco|green|tree|plant|nature|environment|conservation|recycle|recycled)\b/i.test(projectText)) {
+    return {
+      mode: 'ecommerce',
+      themeIcon: 'Trees',
+      themeColor: '#10b981',
+      projectTitle: 'Green Canopy'
+    };
+  }
+  if (/\b(coffee|cafe|bakery|restaurant|food|utensils?|eat|drink|menu)\b/i.test(projectText)) {
+    return {
+      mode: 'ecommerce',
+      themeIcon: 'Coffee',
+      themeColor: '#ea580c',
+      projectTitle: 'Cafe Experience'
+    };
+  }
+  if (/\b(app|mobile|software|tech|developer|code|system|saas|cloud)\b/i.test(projectText)) {
+    return {
+      mode: 'web',
+      themeIcon: 'Zap',
+      themeColor: '#3b82f6',
+      projectTitle: 'SaaS Platform'
+    };
+  }
+
+  return {
+    mode: 'web',
+    themeIcon: 'Sparkles',
+    themeColor: '#3b82f6',
+    projectTitle: 'Project Platform'
+  };
+}
