@@ -119,35 +119,37 @@ test('provides one translucent back-to-top control across every DEKODE layout', 
 });
 
 test('guides booking from date to time, summary, and details', () => {
-  assert.match(meetingScheduler, /30 minutes with the DEKODE team/);
+  assert.match(meetingScheduler, /Book 30 minutes with DEKODE/);
+  assert.match(meetingScheduler, /A quick, focused conversation about your project\./);
   assert.match(meetingScheduler, /meeting-duration-chip/);
   assert.match(meetingScheduler, /30 min · Video call/);
   assert.doesNotMatch(meetingScheduler, /Step 1|Step 2|Steps 3 and 4/);
-  assert.match(meetingScheduler, /id="meeting-calendar-title">Choose a date/);
-  assert.match(meetingScheduler, /className="meeting-date-rail"/);
+  assert.match(meetingScheduler, /className="meeting-when-row"/);
+  assert.match(meetingScheduler, /aria-label="Choose meeting date and time"/);
+  assert.match(meetingScheduler, /Select date/);
+  assert.match(meetingScheduler, /Select time/);
   assert.match(meetingScheduler, /dateRailDays\.map/);
   assert.doesNotMatch(meetingScheduler, /Calendar month|Calendar year|Previous month|Next month|ChevronLeft|ChevronRight/);
   assert.match(meetingScheduler, /className=\{`meeting-scheduler \$\{activeSelectedDateKey \? 'has-selected-date' : ''\}`\}/);
   assert.match(indexCss, /\.meeting-date-rail,[\s\S]*\.meeting-time-rail\s*\{[^}]*overflow-x:\s*auto/);
   assert.match(indexCss, /\.meeting-time-rail button\s*\{[^}]*border-radius:\s*999px[^}]*box-shadow:/);
-  assert.match(indexCss, /\.meeting-date-rail button\s*\{[^}]*border-radius:\s*999px[^}]*box-shadow:/);
-  assert.match(indexCss, /\.meeting-booking-fields input:not\(\[type="checkbox"\]\)\s*\{[^}]*border-radius:\s*999px/);
-  assert.match(indexCss, /\.meeting-booking-fields textarea\s*\{[^}]*border-radius:\s*18px/);
+  assert.match(indexCss, /\.meeting-date-rail button\s*\{[^}]*border-radius:\s*12px[^}]*box-shadow:/);
+  assert.match(indexCss, /\.meeting-booking-fields input:not\(\[type="checkbox"\]\),[\s\S]*\.meeting-booking-fields textarea\s*\{[^}]*border-bottom:/);
   assert.match(indexCss, /\.meeting-floating-field:focus-within > span/);
   assert.match(indexCss, /:has\(input:not\(:placeholder-shown\)\)/);
   assert.match(meetingScheduler, /placeholder=" "/);
   assert.match(meetingScheduler, /disabled=\{!hasSlots\}/);
-  assert.match(meetingScheduler, /activeSelectedDateKey && status !== 'loading'/);
+  assert.match(meetingScheduler, /setOpenPicker\('time'\)/);
   assert.match(meetingScheduler, /selectedDateSlots\.map/);
   assert.match(meetingScheduler, /\.sort\(\(left, right\) => Date\.parse\(left\.iso\) - Date\.parse\(right\.iso\)\)/);
-  assert.match(meetingScheduler, /const firstAvailableDateKey = nextSlots\.map/);
-  assert.match(meetingScheduler, /if \(firstAvailableDateKey\) selectDate\(firstAvailableDateKey\)/);
+  assert.doesNotMatch(meetingScheduler, /const firstAvailableDateKey = nextSlots\.map/);
+  assert.doesNotMatch(meetingScheduler, /if \(firstAvailableDateKey\) selectDate\(firstAvailableDateKey\)/);
   assert.match(meetingScheduler, /slots\.length > 0 && \(/);
   assert.match(meetingScheduler, /className=\{`meeting-details-stage \$\{selectedSlot \? 'is-unlocked' : 'is-locked'\}`\}/);
   assert.match(meetingScheduler, /<fieldset className="meeting-booking-fields" disabled=\{!selectedSlot\}/);
-  assert.match(meetingScheduler, /Choose a time to unlock/);
+  assert.match(meetingScheduler, /Pick a date and time/);
   assert.match(indexCss, /\.meeting-details-stage\.is-locked \.meeting-booking-fields\s*\{[^}]*pointer-events:\s*none/);
-  assert.match(meetingScheduler, /Review and complete your details/);
+  assert.match(meetingScheduler, /Your details/);
   assert.doesNotMatch(meetingScheduler, /Company <small>\(optional\)<\/small>/);
   assert.match(meetingScheduler, /<span>Company <i aria-hidden="true">\*<\/i><\/span>\s*<input required/);
   assert.match(meetingScheduler, /<span>Phone number <i aria-hidden="true">\*<\/i><\/span>\s*<input required type="tel"/);
@@ -167,14 +169,12 @@ test('communicates availability, timezone conversion, progress, and mobile order
   assert.match(meetingScheduler, /Mon-Fri/);
   assert.match(meetingScheduler, /9:00-17:00/);
   assert.match(meetingScheduler, /Shown in/);
-  assert.match(indexCss, /\.meeting-availability-card\s*\{[^}]*display:\s*flex[^}]*border-radius:\s*10px/s);
+  assert.match(indexCss, /\.meeting-availability-card\s*\{[^}]*display:\s*flex/s);
+  assert.match(indexCss, /\.meeting-availability-card > div\s*\{[^}]*border-radius:\s*999px/s);
   assert.match(bookingSummary, /Your timezone/);
   assert.match(bookingSummary, /Company timezone/);
   assert.match(bookingSummary, /progressLabels = \['Choose date', 'Choose time', 'Details', 'Confirm'\]/);
-  assert.match(meetingScheduler, /className="meeting-mobile-summary"/);
-  assert.ok(meetingScheduler.indexOf('className={`meeting-details-stage') < meetingScheduler.indexOf('className="meeting-mobile-summary"'));
-  assert.match(indexCss, /\.meeting-mobile-summary\s*\{\s*display:\s*none/);
-  assert.match(indexCss, /@media \(max-width:\s*767px\)[\s\S]*\.meeting-mobile-summary\s*\{\s*display:\s*block/s);
+  assert.doesNotMatch(meetingScheduler, /className="meeting-mobile-summary"/);
   assert.match(indexCss, /\.is-booking-layout \.booking-summary-panel\s*\{\s*display:\s*none/);
   assert.ok(indexCss.indexOf('.meeting-date-rail button:disabled') < indexCss.indexOf('.meeting-date-rail button.is-today'));
 });
@@ -190,7 +190,7 @@ test('keeps booking controls accessible and motion-sensitive', () => {
 });
 
 test('keeps consent aligned and resumes normal chat after booking', () => {
-  assert.match(indexCss, /\.meeting-consent\s*\{[^}]*align-items:\s*center/);
+  assert.match(indexCss, /\.meeting-consent\s*\{[^}]*align-items:\s*flex-start/);
   assert.match(indexCss, /\.meeting-consent input\s*\{[^}]*margin:\s*0/);
   assert.match(chatApp, /handleModelPrompt\(userMessage\)/);
   assert.match(chatApp, /result\.action === "open_calendar"/);
@@ -229,8 +229,9 @@ test('renders contextual suggestions through the normal chat pipeline', () => {
 });
 
 test('uses a readable translucent booking surface', () => {
-  assert.match(indexCss, /\.meeting-scheduler\s*\{[^}]*background:\s*rgba\(7, 24, 45, 0\.3[48]\)[^}]*backdrop-filter:\s*blur/s);
-  assert.match(indexCss, /\.meeting-booking-fields\s*\{[^}]*background:\s*rgba\(8, 26, 49, 0\.42\)[^}]*backdrop-filter:\s*blur/s);
+  assert.match(indexCss, /\.meeting-scheduler\s*\{[^}]*linear-gradient\(140deg,[^}]*border-radius:\s*24px/s);
+  assert.match(indexCss, /\.meeting-when-row\s*\{[^}]*background:\s*rgba\(255, 255, 255, 0\.065\)[^}]*border-radius:\s*15px/s);
+  assert.match(indexCss, /\.meeting-booking-fields\s*\{[^}]*background:\s*transparent[^}]*border:\s*0/s);
 });
 
 test('enters chat mode before waiting for the Gemini response', () => {

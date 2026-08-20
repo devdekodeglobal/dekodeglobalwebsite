@@ -3,15 +3,16 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
   CalendarDays,
   CheckCircle2,
+  ChevronDown,
   Clock3,
   Globe2,
   LoaderCircle,
   RefreshCw,
+  Sparkles,
 } from 'lucide-react';
 import { createMeetingSlotProvider } from '../meetings/meetingProviderFactory.js';
 import { CalendarBookingService } from '../meetings/calendarBookingService.js';
 import { voiceConfig } from '../voice/config.js';
-import BookingSummary from './BookingSummary.jsx';
 import {
   dateFromLocalKey,
   formatTimeInZone,
@@ -43,6 +44,7 @@ export default function MeetingScheduler({
   const [form, setForm] = useState({ name: '', email: '', company: '', phone: '', projectSummary, website: '' });
   const [touched, setTouched] = useState({});
   const [showValidationHints, setShowValidationHints] = useState(false);
+  const [openPicker, setOpenPicker] = useState('date');
   const timeSectionRef = useRef(null);
   const timeRailRef = useRef(null);
   const detailsHeadingRef = useRef(null);
@@ -136,8 +138,7 @@ export default function MeetingScheduler({
         .sort((left, right) => Date.parse(left.iso) - Date.parse(right.iso));
       setSlots(nextSlots);
       onSlotsChange?.(nextSlots);
-      const firstAvailableDateKey = nextSlots.map((slot) => toLocalDateKey(slot.iso)).sort()[0];
-      if (firstAvailableDateKey) selectDate(firstAvailableDateKey);
+      setOpenPicker(nextSlots.length ? 'date' : '');
       setStatus(nextSlots.length ? 'ready' : 'empty');
     } catch (nextError) {
       setSlots([]);
@@ -171,6 +172,18 @@ export default function MeetingScheduler({
   };
   const markTouched = (key) => setTouched((current) => ({ ...current, [key]: true }));
   const shouldShowFieldError = (key) => Boolean((showValidationHints || touched[key]) && fieldErrors[key]);
+  const togglePicker = (picker) => {
+    if (picker === 'time' && !activeSelectedDateKey) return;
+    setOpenPicker((current) => (current === picker ? '' : picker));
+  };
+  const handleDateSelect = (dateKey) => {
+    selectDate(dateKey);
+    setOpenPicker('time');
+  };
+  const handleSlotSelect = (slot) => {
+    selectSlot(slot);
+    setOpenPicker('');
+  };
   const submit = async (event) => {
     event.preventDefault();
     setShowValidationHints(true);
@@ -203,8 +216,9 @@ export default function MeetingScheduler({
     <form className={`meeting-scheduler ${activeSelectedDateKey ? 'has-selected-date' : ''}`} onSubmit={submit}>
       <header className="meeting-scheduler-heading">
         <div>
-          <strong>Book a discovery call</strong>
-          <small>30 minutes with the DEKODE team</small>
+          <span className="meeting-scheduler-eyebrow"><Sparkles size={14} /> Discovery Call</span>
+          <strong>Book 30 minutes with DEKODE</strong>
+          <small>A quick, focused conversation about your project.</small>
         </div>
         <span className="meeting-duration-chip"><i aria-hidden="true" />30 min · Video call</span>
       </header>
@@ -215,9 +229,103 @@ export default function MeetingScheduler({
         <div className="meeting-timezone-copy"><Globe2 size={14} /><span>Shown in</span><strong>{timezone.replaceAll('_', ' ')}</strong></div>
       </aside>
 
-      {status === 'loading' ? (
-        <div className="meeting-scheduler-state"><LoaderCircle className="meeting-spin" size={20} /> Checking live availability...</div>
-      ) : status === 'empty' || status === 'error' && slots.length === 0 ? (
+      <div className="meeting-when-wrap">
+        <div className="meeting-when-row" role="group" aria-label="Choose meeting date and time">
+          <button
+            type="button"
+            className={`meeting-when-field ${activeSelectedDateKey ? 'is-filled' : ''} ${openPicker === 'date' ? 'is-open' : ''}`}
+            onClick={() => togglePicker('date')}
+            aria-expanded={openPicker === 'date'}
+            aria-controls="meeting-date-picker-panel"
+          >
+            <CalendarDays size={16} />
+            <span>
+              <small>Date</small>
+              <strong>{selectedDate ? selectedDate.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }) : 'Select date'}</strong>
+            </span>
+            <ChevronDown className="meeting-when-chevron" size={15} aria-hidden="true" />
+          </button>
+          <span className="meeting-when-divider" aria-hidden="true" />
+          <button
+            type="button"
+            className={`meeting-when-field ${selectedSlot ? 'is-filled' : ''} ${openPicker === 'time' ? 'is-open' : ''}`}
+            disabled={!activeSelectedDateKey}
+            onClick={() => togglePicker('time')}
+            aria-expanded={openPicker === 'time'}
+            aria-controls="meeting-time-picker-panel"
+          >
+            <Clock3 size={16} />
+            <span>
+              <small>Time</small>
+              <strong>{selectedSlot ? formatTimeInZone(selectedSlot.iso, timezone) : 'Select time'}</strong>
+            </span>
+            <ChevronDown className="meeting-when-chevron" size={15} aria-hidden="true" />
+          </button>
+        </div>
+
+        <AnimatePresence initial={false}>
+          {openPicker && (
+            <motion.div
+              key={openPicker}
+              id={openPicker === 'date' ? 'meeting-date-picker-panel' : 'meeting-time-picker-panel'}
+              className="meeting-when-panel"
+              initial={{ opacity: 0, height: 0, y: reduceMotion ? 0 : -4 }}
+              animate={{ opacity: 1, height: 'auto', y: 0 }}
+              exit={{ opacity: 0, height: 0, y: reduceMotion ? 0 : -4 }}
+              transition={{ duration: reduceMotion ? 0 : 0.24 }}
+            >
+              <div className="meeting-when-panel-inner">
+                {status === 'loading' ? (
+                  <div className="meeting-scheduler-state"><LoaderCircle className="meeting-spin" size={20} /> Checking live availability...</div>
+                ) : status === 'empty' || status === 'error' && slots.length === 0 ? (
+                  <div className="meeting-scheduler-state">
+                    <div>
+                      <span>{error || 'No open times are currently available.'}</span>
+                      <a href="mailto:contactus@dekodeglobal.com?subject=Discovery%20call%20request">Request a callback instead</a>
+                    </div>
+                    <button type="button" className="meeting-icon-btn" onClick={loadSlots} aria-label="Reload availability" title="Reload availability"><RefreshCw size={17} /></button>
+                  </div>
+                ) : openPicker === 'date' ? (
+                  <div className="meeting-date-rail" role="group" aria-label="Available meeting dates">
+                    {dateRailDays.map(({ date, dateKey }) => {
+                      const hasSlots = slotsByDate.has(dateKey);
+                      const fullDate = date.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+                      return (
+                        <button
+                          type="button"
+                          key={dateKey}
+                          className={`${activeSelectedDateKey === dateKey ? 'is-selected' : ''} ${todayKey === dateKey ? 'is-today' : ''}`}
+                          disabled={!hasSlots}
+                          onClick={() => handleDateSelect(dateKey)}
+                          aria-label={`${fullDate}${hasSlots ? ', times available' : ', unavailable'}`}
+                          aria-pressed={activeSelectedDateKey === dateKey}
+                          aria-current={todayKey === dateKey ? 'date' : undefined}
+                        >
+                          <small>{date.toLocaleDateString(undefined, { weekday: 'short' })}</small>
+                          <strong>{date.getDate()}</strong>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="meeting-time-picker" ref={timeSectionRef} tabIndex="-1">
+                    <div className="meeting-section-heading"><span><strong id="meeting-time-title">Choose an available time</strong></span><em>{selectedDateLabel}</em></div>
+                    <div ref={timeRailRef} className="meeting-time-rail" role="group" aria-label={`Available times for ${selectedDateLabel}`}>
+                      {selectedDateSlots.map((slot) => (
+                        <button key={slot.id} type="button" className={selectedSlot?.id === slot.id ? 'is-selected' : ''} onClick={() => handleSlotSelect(slot)} aria-pressed={selectedSlot?.id === slot.id}>
+                          {formatTimeInZone(slot.iso, timezone)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {status !== 'loading' && (status === 'empty' || status === 'error' && slots.length === 0) && !openPicker ? (
         <div className="meeting-scheduler-state">
           <div>
             <span>{error || 'No open times are currently available.'}</span>
@@ -225,61 +333,7 @@ export default function MeetingScheduler({
           </div>
           <button type="button" className="meeting-icon-btn" onClick={loadSlots} aria-label="Reload availability" title="Reload availability"><RefreshCw size={17} /></button>
         </div>
-      ) : (
-        <section className="meeting-calendar" aria-labelledby="meeting-calendar-title">
-          <div className="meeting-calendar-header">
-            <div><strong id="meeting-calendar-title">Choose a date</strong></div>
-          </div>
-          <div className="meeting-date-rail" role="group" aria-label="Available meeting dates">
-            {dateRailDays.map(({ date, dateKey }) => {
-              const hasSlots = slotsByDate.has(dateKey);
-              const fullDate = date.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-              return (
-                <button
-                  type="button"
-                  key={dateKey}
-                  className={`${activeSelectedDateKey === dateKey ? 'is-selected' : ''} ${todayKey === dateKey ? 'is-today' : ''}`}
-                  disabled={!hasSlots}
-                  onClick={() => selectDate(dateKey)}
-                  aria-label={`${fullDate}${hasSlots ? ', times available' : ', unavailable'}`}
-                  aria-pressed={activeSelectedDateKey === dateKey}
-                  aria-current={todayKey === dateKey ? 'date' : undefined}
-                >
-                  <small>{date.toLocaleDateString(undefined, { weekday: 'short' })}</small>
-                  <strong>{date.getDate()}</strong>
-                  <span>{date.toLocaleDateString(undefined, { month: 'short' })}</span>
-                </button>
-              );
-            })}
-          </div>
-          <div className="meeting-calendar-legend"><span><i /> Available</span><span><i /> Today</span></div>
-        </section>
-      )}
-
-      <AnimatePresence initial={false}>
-        {activeSelectedDateKey && status !== 'loading' && (
-          <motion.section
-            key={activeSelectedDateKey}
-            className="meeting-time-section"
-            ref={timeSectionRef}
-            tabIndex="-1"
-            aria-labelledby="meeting-time-title"
-            initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: reduceMotion ? 0 : -6 }}
-            transition={{ duration: reduceMotion ? 0 : 0.22 }}
-          >
-            <div className="meeting-section-heading"><span><strong id="meeting-time-title">Choose an available time</strong></span><em>{selectedDateLabel}</em></div>
-            <div ref={timeRailRef} className="meeting-time-rail" role="group" aria-label={`Available times for ${selectedDateLabel}`}>
-              {selectedDateSlots.map((slot) => (
-                <button key={slot.id} type="button" className={selectedSlot?.id === slot.id ? 'is-selected' : ''} onClick={() => selectSlot(slot)} aria-pressed={selectedSlot?.id === slot.id}>
-                  {formatTimeInZone(slot.iso, timezone)}
-                </button>
-              ))}
-            </div>
-          </motion.section>
-        )}
-      </AnimatePresence>
+      ) : null}
 
       {slots.length > 0 && (
         <motion.div
@@ -289,11 +343,11 @@ export default function MeetingScheduler({
           transition={{ duration: reduceMotion ? 0 : 0.24 }}
         >
             <div className="meeting-details-heading" ref={detailsHeadingRef} tabIndex="-1">
-              <span><strong>Review and complete your details</strong></span>
+              <span><strong>Your details</strong></span>
               {selectedSlot ? (
                 <span className="meeting-selection-confirmed"><CheckCircle2 size={16} /> {selectedDateLabel}, {formatTimeInZone(selectedSlot.iso, timezone)}</span>
               ) : (
-                <span className="meeting-details-locked"><Clock3 size={15} /> Choose a time to unlock</span>
+                <span className="meeting-details-locked"><Clock3 size={15} /> Pick a date and time</span>
               )}
             </div>
             <fieldset className="meeting-booking-fields" disabled={!selectedSlot} aria-disabled={!selectedSlot}>
@@ -332,14 +386,6 @@ export default function MeetingScheduler({
             </fieldset>
         </motion.div>
       )}
-      <div className="meeting-mobile-summary">
-        <BookingSummary
-          compact
-          slots={slots}
-          selectedDateKey={activeSelectedDateKey}
-          selectedSlotId={activeSelectedSlotId}
-        />
-      </div>
       {error && slots.length > 0 && <p className="meeting-scheduler-error" role="alert">{error}</p>}
     </form>
   );
