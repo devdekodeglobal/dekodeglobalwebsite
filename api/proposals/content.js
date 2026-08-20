@@ -13,7 +13,7 @@ export default async function handler(request, response) {
   }
   
   let baseProposal = proposal
-  if (session.accessLevel === 'vip_national') {
+  if (session.accessLevel === 'vip_national' || session.accessLevel === 'standard_national') {
     baseProposal = vipProposal
   }
 

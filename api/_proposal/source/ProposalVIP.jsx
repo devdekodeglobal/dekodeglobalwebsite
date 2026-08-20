@@ -13,10 +13,10 @@ const ProposalVIP = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (passwordInput === 'deko2486vip') {
+    if (passwordInput === 'deko2486vip' || passwordInput === 'deko2486acc') {
       setIsAuthenticated(true);
     } else {
-      setError('Incorrect password');
+      setError('We could not verify these access details. Please check them or contact the DEKODE team.');
     }
   };
 

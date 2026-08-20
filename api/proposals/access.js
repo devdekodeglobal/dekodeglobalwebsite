@@ -29,7 +29,7 @@ export default async function handler(request, response) {
     version: PROPOSAL_VERSION,
     at: new Date().toISOString(),
   })
-  if (auth.accessLevel === 'vip_national') {
+  if (auth.accessLevel === 'vip_national' || auth.accessLevel === 'standard_national') {
     return response.status(200).json({
       ok: true,
       route: '/proposals/vip-client',
