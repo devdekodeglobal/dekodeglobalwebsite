@@ -11,6 +11,8 @@ const PASSWORD_HASH =
   'f6a311c82b08655107feb777a7222682592b0f56c518218eb17bc273e4f559e7'
 const EXTENDED_PASSWORD_HASH = 
   'c2c5858c81fde00b34332e3a182aa6b2bf971b5dde9c18f369121f56a6157113'
+const NEW_VIP_PASSWORD_HASH =
+  'de9f649dc834d58dc9f39138e940e9216a732973d09155325d6caee81b7443a8'
 const SESSION_TTL_SECONDS = 60 * 60 * 2
 const COOKIE_NAME = 'dekode_proposal_session'
 const attempts = new Map()
@@ -77,6 +79,9 @@ export function verifyCredentials(password) {
     return { valid: true, accessLevel: 'standard' }
   }
   if (safeEqual(passwordHash, EXTENDED_PASSWORD_HASH)) {
+    return { valid: true, accessLevel: 'extended' }
+  }
+  if (safeEqual(passwordHash, NEW_VIP_PASSWORD_HASH)) {
     return { valid: true, accessLevel: 'extended' }
   }
   return { valid: false, accessLevel: 'none' }
