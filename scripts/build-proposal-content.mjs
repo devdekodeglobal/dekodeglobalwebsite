@@ -28,7 +28,9 @@ async function buildProposal(sourceFileName, outputFileName, expectedSourceHash,
 
   let serverRenderableSource = source
     .replace("import React, { useState } from 'react';", 'const React = globalThis.__proposalReact; const { useState } = React;')
+    .replace("import './ProposalCFS.css';", '')
     .replace(`import './${sourceFileName.split('.')[0]}.css';`, '')
+    .replace("import prototypeImage from './image_vip.png';", "const prototypeImage = '/api/proposals/asset?asset=prototype_vip';")
     .replace("import prototypeImage from './image.png';", "const prototypeImage = '/api/proposals/asset';")
     .replace("import archImage from './arch.png';", "const archImage = '/api/proposals/asset?asset=architecture';")
     .replace(`const ${sourceFileName.split('.')[0]} = () => {`, `const ${sourceFileName.split('.')[0]} = ({ initialView = 'manual' }) => {`)

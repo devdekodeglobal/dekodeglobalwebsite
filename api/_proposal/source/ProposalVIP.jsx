@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './ProposalVIP.css';
-import prototypeImage from './image.png';
+import prototypeImage from './image_vip.png';
 import archImage from './arch.png';
 
 const ProposalVIP = () => {

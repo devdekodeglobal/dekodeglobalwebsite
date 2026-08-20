@@ -11,6 +11,10 @@ const architectureAssetPath = resolve(
   fileURLToPath(new URL('..', import.meta.url)),
   '_proposal/source/arch.png',
 )
+const prototypeVipAssetPath = resolve(
+  fileURLToPath(new URL('..', import.meta.url)),
+  '_proposal/source/image_vip.png',
+)
 const businessPlanAssetPath = resolve(
   fileURLToPath(new URL('..', import.meta.url)),
   '_proposal/source/CFS_Business_Impact_Presentation.pdf',
@@ -43,7 +47,9 @@ export default async function handler(request, response) {
     
   const assetPath = requestedAsset === 'architecture'
     ? architectureAssetPath
-    : prototypeAssetPath
+    : requestedAsset === 'prototype_vip'
+      ? prototypeVipAssetPath
+      : prototypeAssetPath
   response.setHeader('Content-Type', 'image/png')
   return response.status(200).send(await readFile(assetPath))
 }
