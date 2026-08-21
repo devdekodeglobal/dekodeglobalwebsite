@@ -2939,7 +2939,7 @@ h6 {
 .meeting-booking-field > input::placeholder,
 .meeting-booking-field > textarea::placeholder,
 .meeting-consent i {
-  color: #facc15;
+  color: white;
   font-style: normal;
   font-weight: 800;
 }
