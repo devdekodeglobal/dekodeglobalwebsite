@@ -2933,49 +2933,21 @@ h6 {
   border-radius: 0;
   backdrop-filter: none;
 }
-.meeting-floating-field {
-  position: relative;
+.meeting-booking-field {
   display: block !important;
 }
-.meeting-floating-field > span {
-  position: absolute;
-  z-index: 1;
-  top: 50%;
-  left: 0.15rem;
-  color: rgba(255, 255, 255, 0.42);
-  line-height: 1;
-  pointer-events: none;
-  transform: translateY(-50%);
-  transition:
-    top 0.18s ease,
-    color 0.18s ease,
-    font-size 0.18s ease;
-}
-.meeting-floating-field > span i,
+.meeting-booking-field > input::placeholder,
+.meeting-booking-field > textarea::placeholder,
 .meeting-consent i {
   color: #facc15;
   font-style: normal;
   font-weight: 800;
 }
-.meeting-floating-field.meeting-summary-field > span {
-  top: 0.95rem;
-}
-.meeting-floating-field:focus-within > span,
-.meeting-floating-field:has(input:not(:placeholder-shown)) > span,
-.meeting-floating-field:has(textarea:not(:placeholder-shown)) > span {
-  top: 0;
-  padding: 0 0.28rem;
-  color: #facc15;
-  background: rgba(76, 69, 139, 0.96);
-  border-radius: 999px;
-  font-size: 0.62rem;
-  transform: translateY(-50%);
-}
-.meeting-floating-field > input:not([type="checkbox"]) {
+.meeting-booking-field > input:not([type="checkbox"]) {
   padding-inline: 0.2rem;
 }
-.meeting-floating-field > textarea {
-  padding: 0.95rem 0.2rem 0.65rem;
+.meeting-booking-field > textarea {
+  padding: 0.65rem 0.2rem;
 }
 .meeting-booking-fields input:not([type="checkbox"]),
 .meeting-booking-fields textarea {
@@ -3009,8 +2981,8 @@ h6 {
   outline: none;
   border-color: #facc15;
 }
-.meeting-floating-field.has-error > input:not([type="checkbox"]),
-.meeting-floating-field.has-error > textarea {
+.meeting-booking-field.has-error > input:not([type="checkbox"]),
+.meeting-booking-field.has-error > textarea {
   border-color: rgba(248, 113, 113, 0.68);
   background: rgba(127, 29, 29, 0.16);
 }

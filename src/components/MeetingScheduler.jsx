@@ -141,7 +141,7 @@ export default function MeetingScheduler({
       projectSummary:
         projectSummaryValue.trim().length >= 4
           ? ""
-          : "Add a short project summary.",
+          : "Tell us what this is about.",
       consent: consent ? "" : "Please confirm consent before booking.",
     }),
     [
@@ -263,7 +263,7 @@ export default function MeetingScheduler({
       projectSummaryValue.trim().length < 4
     ) {
       return setError(
-        "Add your name, valid email, company, phone number, and a short project summary.",
+        "Add your name, valid email, company, phone number, and what this is about.",
       );
     }
     if (!consent) return setError("Please confirm consent before booking.");
@@ -570,14 +570,12 @@ export default function MeetingScheduler({
             aria-disabled={!selectedSlot}
           >
             <label
-              className={`meeting-floating-field ${shouldShowFieldError("name") ? "has-error" : ""}`}
+              className={`meeting-booking-field ${shouldShowFieldError("name") ? "has-error" : ""}`}
             >
-              <span>
-                Name <i aria-hidden="true">*</i>
-              </span>
               <input
                 required
-                placeholder=" "
+                placeholder="Name"
+                aria-label="Name"
                 value={form.name}
                 onBlur={() => markTouched("name")}
                 onChange={(event) => update("name", event.target.value)}
@@ -596,15 +594,13 @@ export default function MeetingScheduler({
               )}
             </label>
             <label
-              className={`meeting-floating-field ${shouldShowFieldError("email") ? "has-error" : ""}`}
+              className={`meeting-booking-field ${shouldShowFieldError("email") ? "has-error" : ""}`}
             >
-              <span>
-                Email <i aria-hidden="true">*</i>
-              </span>
               <input
                 required
                 type="email"
-                placeholder=" "
+                placeholder="Email"
+                aria-label="Email"
                 value={form.email}
                 onBlur={() => markTouched("email")}
                 onChange={(event) => update("email", event.target.value)}
@@ -623,14 +619,12 @@ export default function MeetingScheduler({
               )}
             </label>
             <label
-              className={`meeting-floating-field ${shouldShowFieldError("company") ? "has-error" : ""}`}
+              className={`meeting-booking-field ${shouldShowFieldError("company") ? "has-error" : ""}`}
             >
-              <span>
-                Company <i aria-hidden="true">*</i>
-              </span>
               <input
                 required
-                placeholder=" "
+                placeholder="Company"
+                aria-label="Company"
                 value={form.company}
                 onBlur={() => markTouched("company")}
                 onChange={(event) => update("company", event.target.value)}
@@ -652,15 +646,13 @@ export default function MeetingScheduler({
               )}
             </label>
             <label
-              className={`meeting-floating-field ${shouldShowFieldError("phone") ? "has-error" : ""}`}
+              className={`meeting-booking-field ${shouldShowFieldError("phone") ? "has-error" : ""}`}
             >
-              <span>
-                Phone number <i aria-hidden="true">*</i>
-              </span>
               <input
                 required
                 type="tel"
-                placeholder=" "
+                placeholder="Phone number"
+                aria-label="Phone number"
                 value={form.phone}
                 onBlur={() => markTouched("phone")}
                 onChange={(event) => update("phone", event.target.value)}
@@ -680,15 +672,13 @@ export default function MeetingScheduler({
               )}
             </label>
             <label
-              className={`meeting-summary-field meeting-floating-field ${shouldShowFieldError("projectSummary") ? "has-error" : ""}`}
+              className={`meeting-booking-field meeting-summary-field ${shouldShowFieldError("projectSummary") ? "has-error" : ""}`}
             >
-              <span>
-                Project summary <i aria-hidden="true">*</i>
-              </span>
               <textarea
                 required
                 rows="3"
-                placeholder=" "
+                placeholder="What's this about?"
+                aria-label="What's this about?"
                 value={projectSummaryValue}
                 onBlur={() => markTouched("projectSummary")}
                 onChange={(event) =>

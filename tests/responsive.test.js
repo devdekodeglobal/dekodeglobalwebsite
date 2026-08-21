@@ -135,9 +135,10 @@ test('guides booking from date to time, summary, and details', () => {
   assert.match(indexCss, /\.meeting-time-rail button\s*\{[^}]*border-radius:\s*999px[^}]*box-shadow:/);
   assert.match(indexCss, /\.meeting-date-rail button\s*\{[^}]*border-radius:\s*12px[^}]*box-shadow:/);
   assert.match(indexCss, /\.meeting-booking-fields input:not\(\[type="checkbox"\]\),[\s\S]*\.meeting-booking-fields textarea\s*\{[^}]*border-bottom:/);
-  assert.match(indexCss, /\.meeting-floating-field:focus-within > span/);
-  assert.match(indexCss, /:has\(input:not\(:placeholder-shown\)\)/);
-  assert.match(meetingScheduler, /placeholder=" "/);
+  assert.doesNotMatch(indexCss, /\.meeting-floating-field/);
+  assert.match(indexCss, /\.meeting-booking-field > input::placeholder/);
+  assert.match(meetingScheduler, /placeholder="Name"/);
+  assert.match(meetingScheduler, /placeholder="What's this about\?"/);
   assert.match(meetingScheduler, /disabled=\{!hasSlots\}/);
   assert.match(meetingScheduler, /setOpenPicker\('time'\)/);
   assert.match(meetingScheduler, /selectedDateSlots\.map/);
