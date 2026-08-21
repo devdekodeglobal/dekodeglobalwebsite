@@ -145,7 +145,7 @@ const ProposalVIP = () => {
               </p>
               
               <a 
-                href="https://optiflow-poc.vercel.app/allocation" 
+                href="https://optiflow-9yjasrqk1-devdekodeglobals-projects.vercel.app/allocation" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 style={{
@@ -183,7 +183,7 @@ const ProposalVIP = () => {
             {/* Right Column: Image */}
             <div style={{ flex: '1', display: 'flex', justifyContent: 'center' }}>
               <a 
-                href="https://optiflow-poc.vercel.app/allocation" 
+                href="https://optiflow-9yjasrqk1-devdekodeglobals-projects.vercel.app/allocation" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 style={{ display: 'block', width: '100%' }}
