@@ -581,17 +581,7 @@ export default function MeetingScheduler({
                 onChange={(event) => update("name", event.target.value)}
                 autoComplete="name"
                 aria-invalid={shouldShowFieldError("name")}
-                aria-describedby={
-                  shouldShowFieldError("name")
-                    ? "meeting-name-error"
-                    : undefined
-                }
               />
-              {shouldShowFieldError("name") && (
-                <small id="meeting-name-error" className="meeting-field-hint">
-                  {fieldErrors.name}
-                </small>
-              )}
             </label>
             <label
               className={`meeting-booking-field ${shouldShowFieldError("email") ? "has-error" : ""}`}
@@ -606,17 +596,7 @@ export default function MeetingScheduler({
                 onChange={(event) => update("email", event.target.value)}
                 autoComplete="email"
                 aria-invalid={shouldShowFieldError("email")}
-                aria-describedby={
-                  shouldShowFieldError("email")
-                    ? "meeting-email-error"
-                    : undefined
-                }
               />
-              {shouldShowFieldError("email") && (
-                <small id="meeting-email-error" className="meeting-field-hint">
-                  {fieldErrors.email}
-                </small>
-              )}
             </label>
             <label
               className={`meeting-booking-field ${shouldShowFieldError("company") ? "has-error" : ""}`}
@@ -630,20 +610,7 @@ export default function MeetingScheduler({
                 onChange={(event) => update("company", event.target.value)}
                 autoComplete="organization"
                 aria-invalid={shouldShowFieldError("company")}
-                aria-describedby={
-                  shouldShowFieldError("company")
-                    ? "meeting-company-error"
-                    : undefined
-                }
               />
-              {shouldShowFieldError("company") && (
-                <small
-                  id="meeting-company-error"
-                  className="meeting-field-hint"
-                >
-                  {fieldErrors.company}
-                </small>
-              )}
             </label>
             <label
               className={`meeting-booking-field ${shouldShowFieldError("phone") ? "has-error" : ""}`}
@@ -659,17 +626,7 @@ export default function MeetingScheduler({
                 autoComplete="tel"
                 inputMode="tel"
                 aria-invalid={shouldShowFieldError("phone")}
-                aria-describedby={
-                  shouldShowFieldError("phone")
-                    ? "meeting-phone-error"
-                    : undefined
-                }
               />
-              {shouldShowFieldError("phone") && (
-                <small id="meeting-phone-error" className="meeting-field-hint">
-                  {fieldErrors.phone}
-                </small>
-              )}
             </label>
             <label
               className={`meeting-booking-field meeting-summary-field ${shouldShowFieldError("projectSummary") ? "has-error" : ""}`}
@@ -685,20 +642,7 @@ export default function MeetingScheduler({
                   update("projectSummary", event.target.value)
                 }
                 aria-invalid={shouldShowFieldError("projectSummary")}
-                aria-describedby={
-                  shouldShowFieldError("projectSummary")
-                    ? "meeting-summary-error"
-                    : undefined
-                }
               />
-              {shouldShowFieldError("projectSummary") && (
-                <small
-                  id="meeting-summary-error"
-                  className="meeting-field-hint"
-                >
-                  {fieldErrors.projectSummary}
-                </small>
-              )}
             </label>
             <label className="meeting-honeypot" aria-hidden="true">
               <span>Website</span>
@@ -727,11 +671,6 @@ export default function MeetingScheduler({
                 <i aria-hidden="true">*</i>
               </span>
             </label>
-            {shouldShowFieldError("consent") && (
-              <small className="meeting-field-hint meeting-consent-hint">
-                {fieldErrors.consent}
-              </small>
-            )}
             <div
               className="meeting-book-action"
               onClick={() => {
@@ -757,11 +696,6 @@ export default function MeetingScheduler({
                   "Confirm meeting"
                 )}
               </button>
-              {!canSubmit && firstValidationHint && selectedSlot && (
-                <small id="meeting-submit-hint" className="meeting-submit-hint">
-                  {firstValidationHint}
-                </small>
-              )}
             </div>
           </fieldset>
         </motion.div>

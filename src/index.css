@@ -2937,9 +2937,13 @@ h6 {
   display: block !important;
 }
 .meeting-booking-field > input::placeholder,
-.meeting-booking-field > textarea::placeholder,
+.meeting-booking-field > textarea::placeholder {
+  color: rgba(255, 255, 255, 0.52);
+  font-style: normal;
+  font-weight: 400;
+}
 .meeting-consent i {
-  color: white;
+  color: #facc15;
   font-style: normal;
   font-weight: 800;
 }
