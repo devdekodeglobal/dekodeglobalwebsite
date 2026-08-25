@@ -330,6 +330,26 @@
   ],
   "portfolioProjects": [
     {
+      "id": "ugnami",
+      "name": "Ugnami",
+      "description": "Ugnami is a Melbourne-based tech start-up with an aim to connect people around the world and enable them to buy and sell goods and services. We helped augment Ugnami online portal to enrich the user experience.",
+      "category": "E-commerce and marketplace",
+      "type": "Responsive web marketplace",
+      "platform": "Web",
+      "clientContext": "A Melbourne-based tech start-up connecting people around the world for buying and selling goods and services.",
+      "deliverables": [
+        "Online portal augmentation",
+        "User experience enrichment",
+        "E-commerce marketplace features"
+      ],
+      "aliases": [
+        "Ugnami marketplace",
+        "Ugnami portal",
+        "ugnami"
+      ],
+      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
+    },
+    {
       "id": "attendme",
       "name": "AttendMe",
       "description": "AttendMe helps you record the movement of all children, staff and visitors as they arrive or leave your premises. This system also records and reports incidents where children require medical care.",
@@ -702,7 +722,9 @@
       "food manufacturing",
       "food manufacturer",
       "primary school",
-      "attendme"
+      "attendme",
+      "ugnami",
+      "ugnami marketplace"
     ],
     "initiatives": [
       "initiative",

@@ -8,95 +8,112 @@ import * as jsxRuntime from 'react/jsx-runtime'
 import { transformWithOxc } from 'vite'
 
 const projectRoot = resolve(fileURLToPath(new URL('..', import.meta.url)))
-const sourcePath = resolve(projectRoot, 'api/_proposal/source/ProposalCFS.jsx')
-const outputPath = resolve(projectRoot, 'api/_proposal/generatedContent.js')
-const expectedSourceHash =
-  'b5e6cb8fe83f279126f6724ca8cd97e9846246514fef5c8066867446b5940d16'
+async function buildProposal(sourceFileName, outputFileName, expectedSourceHash, clientId, title, isVip = false) {
+  const sourcePath = resolve(projectRoot, `api/_proposal/source/${sourceFileName}`)
+  const outputPath = resolve(projectRoot, `api/_proposal/${outputFileName}`)
+  
+  const source = await readFile(sourcePath, 'utf8')
+  const sourceHash = createHash('sha256').update(source).digest('hex')
 
-const source = await readFile(sourcePath, 'utf8')
-const sourceHash = createHash('sha256').update(source).digest('hex')
+  if (sourceHash !== expectedSourceHash) {
+    throw new Error(
+      `Protected proposal integrity check failed for ${sourceFileName}. Expected ${expectedSourceHash}, received ${sourceHash}. An approved sync is required.`,
+    )
+  }
 
-if (sourceHash !== expectedSourceHash) {
-  throw new Error(
-    `Protected proposal integrity check failed. Expected ${expectedSourceHash}, received ${sourceHash}. An approved sync is required.`,
+  const diagramStart = source.indexOf('{/* DETAILED LOGIC FLOW VIEW */}')
+  const diagramEnd = source.indexOf("{view === 'automated'", diagramStart)
+  const diagramSource = source.slice(diagramStart, diagramEnd)
+  const diagramStructureHash = createHash('sha256').update(diagramSource).digest('hex')
+
+  let serverRenderableSource = source
+    .replace("import React, { useState } from 'react';", 'const React = globalThis.__proposalReact; const { useState } = React;')
+    .replace("import './ProposalCFS.css';", '')
+    .replace(`import './${sourceFileName.split('.')[0]}.css';`, '')
+    .replace("import prototypeImage from './image_vip.png';", "const prototypeImage = '/api/proposals/asset?asset=prototype_vip';")
+    .replace("import prototypeImage from './image.png';", "const prototypeImage = '/api/proposals/asset';")
+    .replace("import archImage from './arch.png';", "const archImage = '/api/proposals/asset?asset=architecture';")
+    .replace(`const ${sourceFileName.split('.')[0]} = () => {`, `const ${sourceFileName.split('.')[0]} = ({ initialView = 'manual' }) => {`)
+    .replace('const [isAuthenticated, setIsAuthenticated] = useState(false);', 'const [isAuthenticated] = useState(true);')
+    .replace("const [view, setView] = useState('manual');", 'const [view, setView] = useState(initialView);')
+
+  const transformed = await transformWithOxc(serverRenderableSource, sourcePath, { lang: 'jsx' })
+
+  globalThis.__proposalReact = React
+  globalThis.__proposalJsxRuntime = jsxRuntime
+  const selfContainedCode = transformed.code.replace(
+    /import\s*\{([^}]+)\}\s*from\s*["']react\/jsx-runtime["'];?/,
+    (_, imports) => {
+      const declarations = imports
+        .split(',')
+        .map((entry) => entry.trim().replace(/\s+as\s+/, ': '))
+        .join(', ')
+      return `const { ${declarations} } = globalThis.__proposalJsxRuntime;`
+    },
   )
+  const moduleUrl = `data:text/javascript;base64,${Buffer.from(selfContainedCode).toString('base64')}`
+  const { default: Proposal } = await import(moduleUrl)
+
+  const sectionOrder = ['manual', 'automated', 'prototype', 'logic', 'architecture']
+  const navigationLabels = {
+    manual: 'Current Process: Manual',
+    automated: 'Proposed Process: OptiFlow',
+    prototype: 'Prototype',
+    logic: 'Allocation Logic Flow',
+    architecture: 'Architecture Diagram',
+  }
+
+  const sections = sectionOrder.map((id, index) => ({
+    id,
+    order: index + 1,
+    navigationLabel: navigationLabels[id],
+    html: renderToStaticMarkup(React.createElement(Proposal, { initialView: id })),
+  }))
+
+  const contentChecksum = createHash('sha256').update(JSON.stringify(sections)).digest('hex')
+
+  const proposal = {
+    id: isVip ? 'nec-2026-optiflow' : 'cfs-2026-optiflow',
+    clientId,
+    title,
+    subtitle: 'Inventory & Distribution System',
+    proposalVersion: '1.1.0',
+    approvedAt: '2026-07-31',
+    sourceCommit: process.env.VERCEL_GIT_COMMIT_SHA || process.env.GITHUB_SHA || 'source-snapshot',
+    sourceChecksum: sourceHash,
+    contentChecksum,
+    diagramStructureHash,
+    sections,
+  }
+
+  await writeFile(
+    outputPath,
+    `// Generated from the immutable approved proposal source. Do not edit.\nexport const proposal = ${JSON.stringify(proposal, null, 2)}\n`,
+    'utf8',
+  )
+
+  console.log(`Protected proposal verified and generated (${contentChecksum}) for ${title}.`)
 }
 
-const diagramStart = source.indexOf('{/* DETAILED LOGIC FLOW VIEW */}')
-const diagramEnd = source.indexOf("{view === 'automated'", diagramStart)
-const diagramSource = source.slice(diagramStart, diagramEnd)
-const diagramStructureHash = createHash('sha256')
-  .update(diagramSource)
-  .digest('hex')
-
-const serverRenderableSource = source
-  .replace("import React, { useState } from 'react';", 'const React = globalThis.__proposalReact; const { useState } = React;')
-  .replace("import './ProposalCFS.css';", '')
-  .replace("import prototypeImage from './image.png';", "const prototypeImage = '/api/proposals/asset';")
-  .replace("import archImage from './arch.png';", "const archImage = '/api/proposals/asset?asset=architecture';")
-  .replace('const ProposalCFS = () => {', "const ProposalCFS = ({ initialView = 'manual' }) => {")
-  .replace('const [isAuthenticated, setIsAuthenticated] = useState(false);', 'const [isAuthenticated] = useState(true);')
-  .replace("const [view, setView] = useState('manual');", 'const [view, setView] = useState(initialView);')
-
-const transformed = await transformWithOxc(
-  serverRenderableSource,
-  sourcePath,
-  { lang: 'jsx' },
+// Build CFS
+await buildProposal(
+  'ProposalCFS.jsx',
+  'generatedContent.js',
+  '53dd4dd6c8bb7af2f63c563b42268502be48f77aec4c2c2b15f726d4b6ff91d4',
+  'cfs',
+  'Centre For Sight'
 )
 
-globalThis.__proposalReact = React
-globalThis.__proposalJsxRuntime = jsxRuntime
-const selfContainedCode = transformed.code.replace(
-  /import\s*\{([^}]+)\}\s*from\s*["']react\/jsx-runtime["'];?/,
-  (_, imports) => {
-    const declarations = imports
-      .split(',')
-      .map((entry) => entry.trim().replace(/\s+as\s+/, ': '))
-      .join(', ')
-    return `const { ${declarations} } = globalThis.__proposalJsxRuntime;`
-  },
+// Build VIP (National Eyewear Company)
+// We need to fetch the hash for ProposalVIP.jsx first!
+const vipSource = await readFile(resolve(projectRoot, 'api/_proposal/source/ProposalVIP.jsx'), 'utf8')
+const vipHash = createHash('sha256').update(vipSource).digest('hex')
+
+await buildProposal(
+  'ProposalVIP.jsx',
+  'generatedVIPContent.js',
+  vipHash,
+  'nec',
+  'National Eyewear Company',
+  true
 )
-const moduleUrl = `data:text/javascript;base64,${Buffer.from(selfContainedCode).toString('base64')}`
-const { default: Proposal } = await import(moduleUrl)
-
-const sectionOrder = ['manual', 'automated', 'prototype', 'logic', 'architecture']
-const navigationLabels = {
-  manual: 'Current Process: Manual',
-  automated: 'Proposed Process: OptiFlow',
-  prototype: 'Prototype',
-  logic: 'Allocation Logic Flow',
-  architecture: 'Architecture Diagram',
-}
-
-const sections = sectionOrder.map((id, index) => ({
-  id,
-  order: index + 1,
-  navigationLabel: navigationLabels[id],
-  html: renderToStaticMarkup(React.createElement(Proposal, { initialView: id })),
-}))
-
-const contentChecksum = createHash('sha256')
-  .update(JSON.stringify(sections))
-  .digest('hex')
-
-const proposal = {
-  id: 'cfs-2026-optiflow',
-  clientId: 'cfs',
-  title: 'Centre For Sight',
-  subtitle: 'Inventory & Distribution System',
-  proposalVersion: '1.1.0',
-  approvedAt: '2026-07-31',
-  sourceCommit: process.env.VERCEL_GIT_COMMIT_SHA || process.env.GITHUB_SHA || 'source-snapshot',
-  sourceChecksum: sourceHash,
-  contentChecksum,
-  diagramStructureHash,
-  sections,
-}
-
-await writeFile(
-  outputPath,
-  `// Generated from the immutable approved proposal source. Do not edit.\nexport const proposal = ${JSON.stringify(proposal, null, 2)}\n`,
-  'utf8',
-)
-
-console.log(`Protected proposal verified and generated (${contentChecksum}).`)

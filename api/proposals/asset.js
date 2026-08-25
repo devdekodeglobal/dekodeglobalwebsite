@@ -11,6 +11,10 @@ const architectureAssetPath = resolve(
   fileURLToPath(new URL('..', import.meta.url)),
   '_proposal/source/arch.png',
 )
+const prototypeVipAssetPath = resolve(
+  fileURLToPath(new URL('..', import.meta.url)),
+  '_proposal/source/image_vip.png',
+)
 const businessPlanAssetPath = resolve(
   fileURLToPath(new URL('..', import.meta.url)),
   '_proposal/source/CFS_Business_Impact_Presentation.pdf',
@@ -30,20 +34,22 @@ export default async function handler(request, response) {
     new URL(request.url || '/', 'http://localhost').searchParams.get('asset')
     
   if (requestedAsset === 'business_plan') {
-    if (session.accessLevel !== 'extended') return response.status(403).end()
+    if (session.accessLevel !== 'extended' && session.accessLevel !== 'vip_national') return response.status(403).end()
     response.setHeader('Content-Type', 'application/pdf')
     return response.status(200).send(await readFile(businessPlanAssetPath))
   }
 
   if (requestedAsset === 'commercial_terms') {
-    if (session.accessLevel !== 'extended') return response.status(403).end()
+    if (session.accessLevel !== 'extended' && session.accessLevel !== 'vip_national') return response.status(403).end()
     response.setHeader('Content-Type', 'application/pdf')
     return response.status(200).send(await readFile(commercialTermsAssetPath))
   }
     
   const assetPath = requestedAsset === 'architecture'
     ? architectureAssetPath
-    : prototypeAssetPath
+    : requestedAsset === 'prototype_vip'
+      ? prototypeVipAssetPath
+      : prototypeAssetPath
   response.setHeader('Content-Type', 'image/png')
   return response.status(200).send(await readFile(assetPath))
 }
