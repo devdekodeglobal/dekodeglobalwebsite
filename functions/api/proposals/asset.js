@@ -4,26 +4,18 @@ import { fileURLToPath } from 'node:url'
 import { privateHeaders, readSession } from '../_proposal/security.js'
 import { adapt } from '../_vercel_adapter.js'
 
-const prototypeAssetPath = resolve(
-  fileURLToPath(new URL('..', import.meta.url)),
-  '_proposal/source/image.png',
-)
-const architectureAssetPath = resolve(
-  fileURLToPath(new URL('..', import.meta.url)),
-  '_proposal/source/arch.png',
-)
-const prototypeVipAssetPath = resolve(
-  fileURLToPath(new URL('..', import.meta.url)),
-  '_proposal/source/image_vip.png',
-)
-const businessPlanAssetPath = resolve(
-  fileURLToPath(new URL('..', import.meta.url)),
-  '_proposal/source/CFS_Business_Impact_Presentation.pdf',
-)
-const commercialTermsAssetPath = resolve(
-  fileURLToPath(new URL('..', import.meta.url)),
-  '_proposal/source/CFS_OptiFlow_Payback_Commercial_Terms.pdf',
-)
+function getLocalAssetPath(relativePath) {
+  try {
+    return resolve(
+      fileURLToPath(new URL('..', import.meta.url)),
+      relativePath,
+    );
+  } catch (e) {
+    // In production Cloudflare Workers, import.meta.url or fileURLToPath might fail,
+    // but we won't need the local path anyway as R2 is used.
+    return '';
+  }
+}
 
 async function getAssetData(request, r2Key, localPath) {
   if (request.env?.PROPOSAL_ASSETS) {
@@ -48,26 +40,26 @@ export default async function handler(request, response) {
   if (requestedAsset === 'business_plan') {
     if (session.accessLevel !== 'extended' && session.accessLevel !== 'vip_national') return response.status(403).end()
     response.setHeader('Content-Type', 'application/pdf')
-    const data = await getAssetData(request, 'CFS_Business_Impact_Presentation.pdf', businessPlanAssetPath);
+    const data = await getAssetData(request, 'CFS_Business_Impact_Presentation.pdf', getLocalAssetPath('_proposal/source/CFS_Business_Impact_Presentation.pdf'));
     return response.status(200).send(data)
   }
 
   if (requestedAsset === 'commercial_terms') {
     if (session.accessLevel !== 'extended' && session.accessLevel !== 'vip_national') return response.status(403).end()
     response.setHeader('Content-Type', 'application/pdf')
-    const data = await getAssetData(request, 'CFS_OptiFlow_Payback_Commercial_Terms.pdf', commercialTermsAssetPath);
+    const data = await getAssetData(request, 'CFS_OptiFlow_Payback_Commercial_Terms.pdf', getLocalAssetPath('_proposal/source/CFS_OptiFlow_Payback_Commercial_Terms.pdf'));
     return response.status(200).send(data)
   }
     
   let r2Key = 'image.png';
-  let localPath = prototypeAssetPath;
+  let localPath = getLocalAssetPath('_proposal/source/image.png');
 
   if (requestedAsset === 'architecture') {
     r2Key = 'arch.png';
-    localPath = architectureAssetPath;
+    localPath = getLocalAssetPath('_proposal/source/arch.png');
   } else if (requestedAsset === 'prototype_vip') {
     r2Key = 'image_vip.png';
-    localPath = prototypeVipAssetPath;
+    localPath = getLocalAssetPath('_proposal/source/image_vip.png');
   }
 
   response.setHeader('Content-Type', 'image/png')
