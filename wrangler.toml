@@ -8,7 +8,7 @@ binding = "PROPOSAL_ASSETS"
 bucket_name = "dekode-proposal-assets"
 
 [vars]
-VITE_DEKODE_VOICE_ENABLED="true"
+VITE_DEKODE_VOICE_ENABLED="false"
 VITE_VOICE_PROVIDER="browser"
 VITE_VOICE_FALLBACK_ENABLED="true"
 VITE_MOCK_MEETING_SLOTS_ENABLED="false"
