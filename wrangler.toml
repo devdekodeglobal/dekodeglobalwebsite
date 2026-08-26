@@ -6,3 +6,16 @@ compatibility_flags = ["nodejs_compat"]
 [[r2_buckets]]
 binding = "PROPOSAL_ASSETS"
 bucket_name = "dekode-proposal-assets"
+
+[vars]
+VITE_DEKODE_VOICE_ENABLED="true"
+VITE_VOICE_PROVIDER="browser"
+VITE_VOICE_FALLBACK_ENABLED="true"
+VITE_MOCK_MEETING_SLOTS_ENABLED="false"
+VITE_COMPANY_TIMEZONE="Australia/Melbourne"
+VITE_LEAD_NOTIFICATION_MODE="live"
+VITE_LEAD_NOTIFICATION_ENDPOINT="/api/leads"
+VITE_CLIENT_PROPOSALS_ENABLED="true"
+VITE_PROPOSAL_CHAT_ENABLED="true"
+VITE_PROPOSAL_ACCESS_MODE="password_only"
+VITE_MEETING_PROVIDER="calendar"
