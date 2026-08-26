@@ -11,13 +11,13 @@ const pbkdf2Async = promisify(pbkdf2)
 
 const PASSWORD_SALT = 'dekode-cfs-access-v1'
 const PASSWORD_HASH =
-  'f6a311c82b08655107feb777a7222682592b0f56c518218eb17bc273e4f559e7'
+  '39fdc384e0f0696714f02040f714af1a2da8858fdf42de1834fa519c57428108'
 const EXTENDED_PASSWORD_HASH = 
-  'c2c5858c81fde00b34332e3a182aa6b2bf971b5dde9c18f369121f56a6157113'
+  '548cdb19bad914ee422b745538a14a697a31ea77ed704b8e84a20937ad997c42'
 const NEW_VIP_PASSWORD_HASH =
-  'de9f649dc834d58dc9f39138e940e9216a732973d09155325d6caee81b7443a8'
+  'ef3d532801ce7390d7e080950f6719a644282eb0f3ec9fdc193180ba3c476b91'
 const NEW_NORMAL_PASSWORD_HASH =
-  'af5692f00d45c09fb5300e0deef5dc2c791a075804815cb7d9591d1caf854d8f'
+  'b115291b3833b44a9a42cb7ac41c8b3d2343cc6f2d1dc6d2e5c1bfb8a13b01bd'
 const SESSION_TTL_SECONDS = 60 * 60 * 2
 const COOKIE_NAME = 'dekode_proposal_session'
 const attempts = new Map()
@@ -76,7 +76,7 @@ export async function verifyCredentials(password) {
   const derivedKey = await pbkdf2Async(
     String(password || ''),
     PASSWORD_SALT,
-    210_000,
+    100_000,
     32,
     'sha256',
   )
