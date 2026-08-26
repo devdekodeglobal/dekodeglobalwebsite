@@ -7,6 +7,7 @@ import {
   PROPOSAL_VERSION,
   verifyCredentials,
 } from '../_proposal/security.js'
+import { adapt } from '../_vercel_adapter.js';
 
 export default async function handler(request, response) {
   privateHeaders(response)
@@ -52,4 +53,8 @@ export default async function handler(request, response) {
       version: PROPOSAL_VERSION,
     },
   })
+}
+
+export async function onRequest(context) {
+  return adapt(context, handler);
 }

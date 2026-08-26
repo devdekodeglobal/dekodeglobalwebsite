@@ -225,7 +225,10 @@ export async function createCalendarBooking(config, booking, fetchImpl = fetch) 
       ].filter(Boolean).join('\n\n'),
       start: { dateTime: selected.iso, timeZone: config.timezone },
       end: { dateTime: selected.endIso, timeZone: config.timezone },
-      attendees: [{ email: booking.visitorEmail, displayName: booking.visitorName }],
+      attendees: [
+        { email: booking.visitorEmail, displayName: booking.visitorName },
+        { email: config.calendarId, displayName: 'DEKODE Team' }
+      ],
       conferenceData: { createRequest: { requestId: crypto.randomUUID(), conferenceSolutionKey: { type: 'hangoutsMeet' } } },
       guestsCanInviteOthers: false,
     }),

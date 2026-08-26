@@ -1,4 +1,5 @@
 import { formatKnowledgeContext, formatFullKnowledgeContext, documents } from './_chat/companyRetrieval.js';
+import { adapt } from './_vercel_adapter.js';
 import {
   beginConversationTurn,
   buildProjectConversationQuery,
@@ -12,8 +13,8 @@ import {
   normalizeVisitorMessage,
   routeStarTrustSuggestion,
   validateModelResponse,
-} from '../src/knowledge/index.js';
-import { cleanAssistantText } from '../src/utils/assistantText.js';
+} from '../../src/knowledge/index.js';
+import { cleanAssistantText } from '../../src/utils/assistantText.js';
 import {
   isVertexCloudRunConfigured,
   requestVertexCloudRun,
@@ -383,4 +384,8 @@ export default async function handler(request, response) {
 
   const fallback = fallbackAfterProviderFailure(question, history, verifiedIntent, interaction);
   return sendResult(fallback, { sources, provider: 'verified-fallback', groundingMatches: matches });
+}
+
+export async function onRequest(context) {
+  return adapt(context, handler);
 }

@@ -1,4 +1,5 @@
 import { getAvailableCalendarSlots, readCalendarConfig } from '../_calendar/googleCalendar.js';
+import { adapt } from '../_vercel_adapter.js';
 
 const noStore = (response) => response.setHeader('Cache-Control', 'private, no-store, max-age=0');
 
@@ -18,4 +19,8 @@ export default async function handler(request, response) {
     console.error('[DEKODE Calendar] Availability failed.', { message: error.message, status: error.status });
     return response.status(502).json({ ok: false, error: 'Calendar availability is temporarily unavailable.' });
   }
+}
+
+export async function onRequest(context) {
+  return adapt(context, handler);
 }

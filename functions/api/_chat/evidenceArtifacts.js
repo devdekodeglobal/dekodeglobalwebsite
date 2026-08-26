@@ -1,4 +1,4 @@
-import { loadCompanyKnowledge } from '../../src/knowledge/companyKnowledgeLoader.js';
+import { loadCompanyKnowledge } from '../../../src/knowledge/companyKnowledgeLoader.js';
 
 const knowledge = loadCompanyKnowledge();
 

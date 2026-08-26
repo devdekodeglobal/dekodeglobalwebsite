@@ -1,5 +1,6 @@
 import { proposal } from '../_proposal/generatedContent.js'
 import { privateHeaders, readSession } from '../_proposal/security.js'
+import { adapt } from '../_vercel_adapter.js';
 
 const stripHtml = (html) =>
   html
@@ -113,4 +114,8 @@ export default async function handler(request, response) {
       : best.passage,
     source: { sectionId: best.sectionId, label: best.label },
   })
+}
+
+export async function onRequest(context) {
+  return adapt(context, handler);
 }

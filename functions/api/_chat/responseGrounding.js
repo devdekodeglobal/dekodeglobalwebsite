@@ -1,5 +1,5 @@
-import companyKnowledge from '../../src/knowledge/companyKnowledge.json' with { type: 'json' };
-import { normalizeVisitorMessage } from '../../src/knowledge/messageNormalization.js';
+import companyKnowledge from '../../../src/knowledge/companyKnowledge.json' with { type: 'json' };
+import { normalizeVisitorMessage } from '../../../src/knowledge/messageNormalization.js';
 
 const FACTUAL_INTENTS = new Set(['company_info', 'pricing', 'case_study', 'methodology']);
 const PROJECT_EVIDENCE_PATTERN = /\b(?:projects?|portfolio|past work|previous work|client work|examples?|case studies|success stories|clients?|what have you built|show me (?:some of )?(?:your )?work|what work (?:have you done|did you do))\b/i;

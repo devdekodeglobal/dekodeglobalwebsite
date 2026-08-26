@@ -1,4 +1,5 @@
 import { createCalendarBooking, readCalendarConfig } from '../_calendar/googleCalendar.js';
+import { adapt } from '../_vercel_adapter.js';
 
 const MAX_BODY_BYTES = 16_000;
 const sanitize = (value, limit) => [...String(value ?? '')]
@@ -35,42 +36,6 @@ export default async function handler(request, response) {
   try {
     const result = await createCalendarBooking(readCalendarConfig(), booking);
     console.info('[DEKODE Calendar] Meeting booked.', { eventId: result.eventId, startIso: result.startIso });
-
-    // Send internal notification email
-    try {
-      const startDate = new Date(result.startIso).toLocaleString('en-AU', {
-        timeZone: 'Australia/Melbourne',
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-        hour: 'numeric', minute: '2-digit', timeZoneName: 'short',
-      });
-      const transporter = (await import('nodemailer')).default.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        port: Number(process.env.SMTP_PORT) || 465,
-        secure: Number(process.env.SMTP_PORT) === 465,
-        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
-      });
-      await transporter.sendMail({
-        from: `"DEKODE Website" <${process.env.SMTP_USER}>`,
-        to: process.env.SMTP_USER,
-        replyTo: booking.visitorEmail,
-        subject: `📅 New Meeting Booked: ${booking.visitorName} from ${booking.company}`,
-        html: `
-          <h2>New Discovery Call Booked</h2>
-          <p><strong>Name:</strong> ${booking.visitorName}</p>
-          <p><strong>Email:</strong> ${booking.visitorEmail}</p>
-          <p><strong>Phone:</strong> ${booking.phone}</p>
-          <p><strong>Company:</strong> ${booking.company}</p>
-          <br/>
-          <p><strong>Meeting Time:</strong> ${startDate}</p>
-          ${result.meetLink ? `<p><strong>Google Meet Link:</strong> <a href="${result.meetLink}">${result.meetLink}</a></p>` : ''}
-          <br/>
-          <p><strong>Project Summary:</strong><br/>${booking.projectSummary.replace(/\n/g, '<br/>')}</p>
-        `,
-      });
-    } catch (mailError) {
-      console.error('[DEKODE Calendar] Booking notification email failed.', mailError.message);
-    }
-
     return response.status(201).json({
       ok: true,
       booked: true,
@@ -85,4 +50,8 @@ export default async function handler(request, response) {
     console.error('[DEKODE Calendar] Booking failed.', { message: error.message, status: error.status });
     return response.status(502).json({ ok: false, error: 'The meeting could not be booked. Please try again.' });
   }
+}
+
+export async function onRequest(context) {
+  return adapt(context, handler);
 }

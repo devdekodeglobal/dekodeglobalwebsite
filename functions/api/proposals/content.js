@@ -1,6 +1,7 @@
 import { proposal } from '../_proposal/generatedContent.js'
 import { proposal as vipProposal } from '../_proposal/generatedVIPContent.js'
 import { privateHeaders, readSession } from '../_proposal/security.js'
+import { adapt } from '../_vercel_adapter.js';
 
 export default async function handler(request, response) {
   privateHeaders(response)
@@ -59,4 +60,8 @@ export default async function handler(request, response) {
   }
 
   return response.status(200).json({ ok: true, proposal: customizedProposal })
+}
+
+export async function onRequest(context) {
+  return adapt(context, handler);
 }
