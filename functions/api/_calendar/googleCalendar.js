@@ -2,7 +2,7 @@ const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const GOOGLE_CALENDAR_API = 'https://www.googleapis.com/calendar/v3';
 
 const DEFAULTS = Object.freeze({
-  timezone: 'Australia/Melbourne',
+  timezone: 'Asia/Kolkata',
   businessDays: [1, 2, 3, 4, 5],
   workdayStart: '09:00',
   workdayEnd: '17:00',
