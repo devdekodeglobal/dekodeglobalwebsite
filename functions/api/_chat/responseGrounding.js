@@ -1,4 +1,4 @@
-import companyKnowledge from '../../../src/knowledge/companyKnowledge.json' with { type: 'json' };
+import companyKnowledge from '../../../src/knowledge/companyKnowledge.json' assert { type: 'json' };
 import { normalizeVisitorMessage } from '../../../src/knowledge/messageNormalization.js';
 
 const FACTUAL_INTENTS = new Set(['company_info', 'pricing', 'case_study', 'methodology']);
