@@ -31,3 +31,6 @@ dist-ssr
 # Cloudflare Wrangler Build Artifacts
 .wrangler/
 _worker.bundle
+
+.env*
+.local-config-backups/
