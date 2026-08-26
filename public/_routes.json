@@ -1,5 +1,11 @@
 {
   "version": 1,
   "include": ["/*"],
-  "exclude": ["/api/*"]
+  "exclude": [
+    "/assets/*",
+    "/favicon.png",
+    "/icons.svg",
+    "/og-image.png",
+    "/og-image.svg"
+  ]
 }
