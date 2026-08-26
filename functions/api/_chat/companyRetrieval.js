@@ -1,4 +1,4 @@
-import companyKnowledge from '../../../src/knowledge/companyKnowledge.json' with { type: 'json' };
+import companyKnowledge from '../../../src/knowledge/companyKnowledge.json' assert { type: 'json' };
 
 const STOP_WORDS = new Set([
   'about', 'also', 'and', 'are', 'can', 'could', 'does', 'for', 'from', 'have',
