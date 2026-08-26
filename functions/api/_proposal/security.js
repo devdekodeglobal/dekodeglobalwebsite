@@ -1,10 +1,13 @@
 import {
   createHash,
   createHmac,
-  pbkdf2Sync,
+  pbkdf2,
   randomBytes,
   timingSafeEqual,
 } from 'node:crypto'
+import { promisify } from 'node:util'
+
+const pbkdf2Async = promisify(pbkdf2)
 
 const PASSWORD_SALT = 'dekode-cfs-access-v1'
 const PASSWORD_HASH =
@@ -66,17 +69,18 @@ export function canAttemptAccess(request) {
   return current.count <= 8
 }
 
-export function verifyCredentials(password) {
+export async function verifyCredentials(password) {
   if (process.env.NODE_ENV === 'test' && password === 'OCTX2026TV') {
     return { valid: true, accessLevel: 'standard' }
   }
-  const passwordHash = pbkdf2Sync(
+  const derivedKey = await pbkdf2Async(
     String(password || ''),
     PASSWORD_SALT,
     210_000,
     32,
     'sha256',
-  ).toString('hex')
+  )
+  const passwordHash = derivedKey.toString('hex')
   if (safeEqual(passwordHash, PASSWORD_HASH)) {
     return { valid: true, accessLevel: 'standard' }
   }
