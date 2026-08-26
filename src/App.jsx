@@ -79,6 +79,9 @@ function App() {
           onAccess={activateProposal}
         />
       )}
+      {!proposal && !legalType && (
+        <BackToTopButton key="home-down" direction="down" disabled={isChatActive} />
+      )}
       <BackToTopButton key={proposal ? 'proposal' : 'site'} disabled={isChatActive && !proposal} />
     </div>
   )

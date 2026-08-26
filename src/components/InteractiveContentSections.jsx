@@ -8,7 +8,6 @@ import {
   Mail,
   MapPin,
   MessageCircle,
-  Mic,
   Phone,
   Scale,
   School,
@@ -34,7 +33,6 @@ import primarySchoolImage from "../assets/case-study-primary-school.jpg";
 import { interactiveSiteContent as content } from "../content/interactiveSiteContent";
 import { loadCompanyKnowledge } from "../knowledge/companyKnowledgeLoader";
 import {
-  openDekodeVoice,
   sendContentToChat,
   subscribeToSessionSummary,
 } from "../content/ContentToChatBridge";
@@ -191,9 +189,6 @@ export default function InteractiveContentSections() {
           >
             <MessageCircle size={18} />
             {sessionSummary ? "Continue the conversation" : "Start with an idea"}
-          </button>
-          <button type="button" onClick={() => openDekodeVoice()}>
-            <Mic size={18} /> Talk with DEKODE
           </button>
           <button
             type="button"

@@ -25,6 +25,7 @@ import smartLoanImage from '../assets/portfolio/smart-loan.png';
 import smartBrokerImage from '../assets/portfolio/smartbroker.png';
 import recycledMarketImage from '../assets/portfolio/recycled-market.png';
 import estradoImage from '../assets/portfolio/estrado.png';
+import ugnamiImage from '../assets/portfolio/ugnami.png';
 
 const knowledge = loadCompanyKnowledge();
 
@@ -39,6 +40,7 @@ const evidenceImages = {
   smartbroker: smartBrokerImage,
   'recycled-market': recycledMarketImage,
   estrado: estradoImage,
+  ugnami: ugnamiImage,
 };
 
 const stagger = {

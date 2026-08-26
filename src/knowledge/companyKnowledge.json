@@ -20,7 +20,6 @@
   },
   "company": {
     "name": "DEKODE",
-    "linkedin": "https://www.linkedin.com/company/dekodeglobal/",
     "about": "DEKODE helps businesses and communities modernise their systems, adopt AI with confidence, and build digital products that teams actually want to use. We handle the complexity so you don’t have to: from strategy and architecture through to build, security, and long-term support.",
     "mission": "We make technology work for the people who use it.",
     "origin": "We started DEKODE because we kept seeing the same problem: businesses that knew they needed to evolve but couldn’t find a partner that made the process feel manageable. The big IT firms were too expensive, too impersonal, and spoke a language most teams couldn’t follow. Meanwhile, the technology gap kept growing. We believed there was a better way. Practical technology, delivered simply, at a price that respects your budget. No jargon. No bloated scopes. No disappearing after launch. That belief still drives everything we do.",
@@ -31,7 +30,6 @@
         "name": "Pankaj Banga",
         "role": "Founder",
         "linkedin": "https://www.linkedin.com/in/pankajbanga/",
-        "bio": "Pankaj founded DEKODE Global after two decades as a developer, architect, and business strategist - long enough to watch expensive systems sit unused because they answered questions nobody in the business was actually asking. That's the problem DEKODE exists to solve: not more technology, but technology that works the way your business actually needs it to. Pankaj also founded the Second Innings Foundation, working with special children - a reminder that real impact doesn't stop at the office door.",
         "sourceReference": "DEKODE/src/components/Footer.jsx"
       }
     }
@@ -282,7 +280,7 @@
       "platform": "Microsoft Azure",
       "challenge": "Followed a traditional paper-based management system that constantly led to operational and management inefficiencies resulting in depleting business profitability and sustainability.",
       "solution": "Designed and developed digital Production Management System that increased productivity by 20% in Phase 1.",
-      "outcome": "By eliminating paper-based information management and moving to an Electronic Information Capturing and Production Management System, Food manufacturer reduced the manual efforts and associated costs by 20% in Phase 1 . Further, the information database will provide Food manufacturer with a rich source of information to find and test areas of operational improvement in future. The electronic system provides instant feedback which enables management to measure the impact and propose improvements along the way.",
+      "outcome": "By eliminating paper-based information management and moving to an Electronic Information Capturing and Production Management System, Beston reduced the manual efforts and associated costs by 20% in Phase 1 . Further, the information database will provide Beston with a rich source of information to find and test areas of operational improvement in future. The electronic system provides instant feedback which enables management to measure the impact and propose improvements along the way.",
       "aliases": [
         "Food manufacturer",
         "Food Manufacturing Company",
@@ -291,14 +289,7 @@
       ],
       "sourceReference": "DEKODE/src/pages/FoodManufacture.jsx",
       "obstacles": "The Shepparton plant relied on paper records that were difficult to store and retrieve, disconnected from corporate reporting, time-consuming to reconcile, and unable to give management reliable visibility into procurement, waste, inventory, and production performance.",
-      "deliveryApproach": "DEKODE worked through understand, design, develop and iterate, and deploy stages: identifying loss-making operational gaps, designing a cloud-based information capture and management system with simple interfaces, a database, and reports, validating a prototype with client feedback, and deploying within the client's budget and timeframe with support.",
-      "testimonials": [
-        {
-          "quote": "DEKODE delivered to us a progressive and sustainable platform for strong growth ahead. They guided us step by step at every stage of the project which enabled us simplify and strategies our production, inventory and reporting process and ensured timely delivery of the expectations.",
-          "author": "Vinesh Narula",
-          "role": "Commercial Manager, Provincial Food Group (Subsidiary)"
-        }
-      ]
+      "deliveryApproach": "DEKODE worked through understand, design, develop and iterate, and deploy stages: identifying loss-making operational gaps, designing a cloud-based information capture and management system with simple interfaces, a database, and reports, validating a prototype with client feedback, and deploying within the client's budget and timeframe with support."
     },
     {
       "id": "primary-school",
@@ -307,7 +298,7 @@
       "platform": "Cloud, Amazon Web Services",
       "challenge": "Followed a manual paper-based management and administration system that constantly led them to lose a lot of useful data and gradually saw in a decline in the safety of the school.",
       "solution": "Provided a fully automated management software called “AttendMe”.",
-      "outcome": "By adopting an automated system, Primary school noticed a decline in the administrative overheads and eliminated the unnecessary time and energy spent maintaining records on paper. Through their information capturing system, Primary school was also able to archive, locate and report compliance to the authorities. This helped release a lot of administrative workload. By working with DEKODE, Primary school was able to smoothen their operations, further providing a safer environment for children and helping parents release any of their worries. Primary school looks forward to working with DEKODE to maintain its data management systems.",
+      "outcome": "By adopting an automated system, Stella Maris noticed a decline in the administrative overheads and eliminated the unnecessary time and energy spent maintaining records on paper. Through their information capturing system, Stella Maris was also able to archive, locate and report compliance to the authorities. This helped release a lot of administrative workload. By working with DEKODE, Stella Maris was able to smoothen their operations, further providing a safer environment for children and helping parents release any of their worries. Stella Maris looks forward to working with DEKODE to maintain its data management systems.",
       "aliases": [
         "Primary school",
         "Primary School",
@@ -317,19 +308,7 @@
       ],
       "sourceReference": "DEKODE/src/pages/PrimarySchool.jsx",
       "obstacles": "Primary school manually recorded administration data, visitors, child pickup and drop-off, staff, and incidents. Storing, locating, archiving, and reporting those records increased administrative cost and made compliance reporting inefficient.",
-      "deliveryApproach": "DEKODE replaced paper-based administration with an automated cloud information-capture system that supports record storage, retrieval, archiving, visitor and movement records, incident management, and compliance reporting.",
-      "testimonials": [
-        {
-          "quote": "We engaged DEKODE to develop our check in/check out an app for our new office area which opened in 2016. DEKODE recommended their AttendMe App to replace our paper based method of maintaining visitors log, late arrival and early departure of students, teachers attendance and sick bay. They were very responsive to our specific needs in a very tight time frame. Excellent follow up service has allowed us to have a useful and stable tool for use in the school environment.",
-          "author": "Leon Colla",
-          "role": "Principal, St Mary of the Cross Catholic School"
-        },
-        {
-          "quote": "We asked DEKODE to develop a product for us, a product where we could have our staff log in and out, our visitors log in and out and for our parents to enter in Late Arrivals or Early Dismissals. That was it, no further information was given. DEKODE provided us within a matter of a week a platform that was exactly what we had asked for. The completed product was then delivered in full within 3 weeks. The follow up customer service after installation is quality, I would highly recommend DEKODE to any other business with which we have already done.",
-          "author": "Kirsty Palimaka",
-          "role": "Admin, St Mary of the Cross Catholic Primary School"
-        }
-      ]
+      "deliveryApproach": "DEKODE replaced paper-based administration with an automated cloud information-capture system that supports record storage, retrieval, archiving, visitor and movement records, incident management, and compliance reporting."
     }
   ],
   "portfolioProjects": [
@@ -417,14 +396,7 @@
         "mortgage broker app",
         "broker client platform"
       ],
-      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx",
-      "testimonials": [
-        {
-          "quote": "I like to work with people who understand the problem we are trying to solve and can provide input that will help the project succeed. This requires understanding, not just the provided requirements but, the user and the workflow in full and become almost an SME in the subject. Team at DEKODE did this very well.",
-          "author": "Vijay Mani",
-          "role": "Founder, Smart Broker"
-        }
-      ]
+      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
     },
     {
       "id": "recycled-market",
@@ -444,14 +416,7 @@
         "recycled products marketplace",
         "sustainable ecommerce"
       ],
-      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx",
-      "testimonials": [
-        {
-          "quote": "The team at DEKODE displayed true professionalism at the time the Recycled Market needed a saviour. With their regular one on one communication approach we felt truly valued as a customer and their after service continues to astound us.",
-          "author": "Lester Louis",
-          "role": "Recycled Market"
-        }
-      ]
+      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
     },
     {
       "id": "estrado",
@@ -534,34 +499,32 @@
   ],
   "contact": {
     "email": "contactus@dekodeglobal.com",
-    "emailIN": "contactus@dekodeglobal.com",
-    "emailAU": "pankaj.banga@dekode.au",
-    "phone": "+918882848489",
+    "phone": "+61421196363",
     "phones": [
-      "+918882848489",
-      "+61421196363"
+      "+61421196363",
+      "+918882848489"
     ],
     "phoneLabels": [
-      "+91 88828 48489",
-      "+61 421 196 363"
+      "+61 421 196 363",
+      "+91 88828 48489"
     ],
     "whatsapp": "61421196363",
     "locations": [
       {
-        "country": "IN",
-        "address": "DEKODE Global LLP - Janak Puri, New Delhi 110058"
+        "country": "Australia",
+        "address": "DEKODE - Little Collins Street, Melbourne, Vic 3000"
       },
       {
-        "country": "AU",
-        "address": "DEKODE - Little Collins Street, Melbourne, Vic 3000"
+        "country": "India",
+        "address": "DEKODE Global LLP - Janak Puri, New Delhi 110058"
       }
     ],
-    "operatingModel": "DEKODE operates directly in India and reaches the Australian market through channel partners, with a distributed team built to work responsively across time zones."
+    "operatingModel": "DEKODE operates across Australia and India, delivering remotely and on-site depending on what the project needs. Our team is distributed, responsive, and built to work across time zones."
   },
   "legal": {
     "privacy": {
       "title": "Privacy Policy",
-      "contactEmail": "contactus@dekodeglobal.com",
+      "contactEmail": "pankaj.banga@dekodeglobal.com",
       "summary": "At DEKODE Consultancy, we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, and safeguard your data.",
       "sections": [
         {
@@ -612,7 +575,7 @@
         },
         {
           "title": "Governing Law",
-          "summary": "These terms and conditions are governed by and construed in accordance with the laws of India. Subject to any mandatory local law requirements that may apply to you, the courts of New Delhi, India shall have exclusive jurisdiction over any disputes arising out of or in connection with these terms."
+          "summary": "These terms and conditions are governed by and construed in accordance with the laws of Australia and you irrevocably submit to the exclusive jurisdiction of the courts in that State or location."
         }
       ]
     }
@@ -691,7 +654,8 @@
       "who started",
       "who is behind",
       "who runs",
-      "pankaj banga"
+      "pankaj banga",
+      "linkedin"
     ],
     "why": [
       "why choose",
@@ -699,8 +663,6 @@
       "difference",
       "values",
       "culture",
-      "star",
-      "star principles",
       "principles"
     ],
     "caseStudies": [
@@ -730,8 +692,7 @@
       "business",
       "who are you",
       "about you",
-      "what do you do",
-      "linkedin"
+      "what do you do"
     ],
     "contact": [
       "contact",

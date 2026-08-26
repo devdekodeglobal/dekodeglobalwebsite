@@ -476,7 +476,7 @@ h6 {
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.38);
   border-radius: 50%;
-  background: rgba(5, 51, 100, 0.72);
+  background: rgba(5, 51, 100, 0.36);
   box-shadow: 0 10px 24px rgba(2, 24, 48, 0.24);
   backdrop-filter: blur(10px);
   cursor: pointer;
@@ -487,7 +487,7 @@ h6 {
 }
 
 .back-to-top-button:hover {
-  background: rgba(5, 51, 100, 0.92);
+  background: rgba(5, 51, 100, 0.58);
   box-shadow: 0 12px 28px rgba(2, 24, 48, 0.3);
   transform: translateY(-2px);
 }
