@@ -2,6 +2,18 @@
 export async function adapt(context, handler) {
   const { request, env } = context;
 
+  // Handle CORS preflight requests automatically
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      },
+    });
+  }
+
   // Polyfill process.env for Cloudflare Workers compatibility
   if (!globalThis.process) {
     globalThis.process = { env: {} };
@@ -46,7 +58,10 @@ export async function adapt(context, handler) {
 
   let statusCode = 200;
   const responseHeaders = new Headers({
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   });
   let responseData = null;
 
