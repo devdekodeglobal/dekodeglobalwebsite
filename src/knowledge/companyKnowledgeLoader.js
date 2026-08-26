@@ -1,4 +1,4 @@
-import companyKnowledge from './companyKnowledge.json' with { type: 'json' };
+import companyKnowledge from './companyKnowledge.json' assert { type: 'json' };
 
 let cachedKnowledge;
 
