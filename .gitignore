@@ -35,3 +35,4 @@ _worker.bundle
 .env*
 .local-config-backups/
 old-nameservers.txt
+cloudflare-preview-vars.txt
