@@ -34,3 +34,4 @@ _worker.bundle
 
 .env*
 .local-config-backups/
+old-nameservers.txt
