@@ -1,4 +1,4 @@
-import companyKnowledge from './companyKnowledge.json' with { type: 'json' };
+import companyKnowledge from './companyKnowledgeData.js';
 
 let cachedKnowledge;
 
