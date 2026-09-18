@@ -309,6 +309,22 @@
   ],
   "portfolioProjects": [
     {
+      "id": "ugnami",
+      "name": "Ugnami",
+      "description": "Ugnami is a Melbourne-based tech start-up with an aim to connect people around the world and enable them to buy and sell goods and services. We helped augment Ugnami online portal to enrich the user experience.",
+      "category": "E-commerce and marketplace",
+      "type": "Responsive web marketplace",
+      "platform": "Web",
+      "clientContext": "A Melbourne-based tech start-up connecting people around the world for buying and selling goods and services.",
+      "deliverables": [
+        "Online portal augmentation",
+        "User experience enrichment",
+        "E-commerce marketplace features"
+      ],
+      "aliases": ["Ugnami marketplace", "Ugnami portal", "ugnami"],
+      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
+    },
+    {
       "id": "attendme",
       "name": "AttendMe",
       "description": "AttendMe helps you record the movement of all children, staff and visitors as they arrive or leave your premises. This system also records and reports incidents where children require medical care.",
@@ -433,6 +449,34 @@
         "iPad POS"
       ],
       "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
+    },
+    {
+      "id": "krafc",
+      "name": "Krafc",
+      "description": "[Kraft](https://krafc.com/) is a 2D and 3D spatial design web platform built for interior planning, exhibition booths, and commercial spaces. We designed and developed a fast, browser-based solution that bridges conceptual 2D floor planning with interactive 3D visualization, automated architectural blueprints, and complete furniture specification reports.",
+      "category": "Spatial design and 3D planning",
+      "type": "Interactive 2D and 3D web application",
+      "platform": "Web application",
+      "website": "https://krafc.com",
+      "clientContext": "Interior designers, exhibition booth planners, and commercial space architects.",
+      "deliverables": [
+        "Web application",
+        "2D floor planning and 3D space visualizer",
+        "Architectural blueprint and elevation exports",
+        "Automated furniture & asset spec sheets"
+      ],
+      "aliases": [
+        "Krafc",
+        "Kraft",
+        "krafc.com",
+        "https://krafc.com",
+        "Krafc by Dekode",
+        "krafc 3d",
+        "spatial design web app",
+        "3d space planner",
+        "krafc web application"
+      ],
+      "sourceReference": "https://krafc.com"
     }
   ],
   "initiatives": [
@@ -511,7 +555,7 @@
   "legal": {
     "privacy": {
       "title": "Privacy Policy",
-      "contactEmail": "pankaj.banga@dekodeglobal.com",
+      "contactEmail": "contactus@dekodeglobal.com",
       "summary": "At DEKODE, we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, and safeguard your data.",
       "sections": [
         {
@@ -550,7 +594,7 @@
         },
         {
           "title": "Intellectual Property",
-          "summary": "Unless otherwise stated, DEKODE Consultancy and/or its licensors own the intellectual property rights for all material on DEKODE Consultancy. All intellectual property rights are reserved. You may access this from DEKODE for your own personal use subjected to restrictions set in these terms and conditions."
+          "summary": "Unless otherwise stated, DEKODE and/or its licensors own the intellectual property rights for all material on DEKODE. All intellectual property rights are reserved. You may access this from DEKODE for your own personal use subjected to restrictions set in these terms and conditions."
         },
         {
           "title": "Limitations of Liability",
@@ -664,7 +708,11 @@
       "food manufacturing",
       "food manufacturer",
       "primary school",
-      "attendme"
+      "attendme",
+      "krafc",
+      "krafc.com",
+      "krafc 3d",
+      "kraft"
     ],
     "initiatives": [
       "initiative",

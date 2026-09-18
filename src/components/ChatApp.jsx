@@ -35,6 +35,7 @@ import DekodeVoiceEntry from "./voice/DekodeVoiceEntry";
 import DekodeVoiceSession from "./voice/DekodeVoiceSession";
 import MeetingScheduler from "./MeetingScheduler";
 import EvidenceAccordion from "./EvidenceAccordion";
+import krafcThumbnail from "../assets/portfolio/krafc.png";
 import { voiceConfig } from "../voice/config";
 import { BrowserSpeechToTextProvider } from "../voice/providers/browserSpeechToTextProvider";
 import { placeholderInterval, placeholderMessages } from "./chatComposerConfig";
@@ -971,13 +972,10 @@ export default function ChatApp({
       <ParticleBackground timeOfDay={timeOfDay} />
       
       {step === "centered" && (
-        <>
-          <HeroScenery
-            timeOfDay={timeOfDay}
-            realTime={realTime}
-          />
-          {/* <PlaneBanner timeOfDay={timeOfDay} /> */}
-        </>
+        <HeroScenery
+          timeOfDay={timeOfDay}
+          realTime={realTime}
+        />
       )}
 
       <header className="chat-header">
@@ -1075,6 +1073,22 @@ export default function ChatApp({
                       ))}
                     </div>
                   ))}
+
+                  <motion.button
+                    type="button"
+                    className="comet-pill"
+                    onClick={() => handleOptionSelect("Show me your projects and work")}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.15, duration: 0.4 }}
+                    whileHover={{ scale: 1.025, y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    aria-label="Projects and Work"
+                  >
+                    <span className="comet-flare-trail" aria-hidden="true" />
+                    <span className="comet-nucleus-glow" aria-hidden="true" />
+                    <span className="comet-pill-text">Projects and Work</span>
+                  </motion.button>
                 </div>
               </>
             )}

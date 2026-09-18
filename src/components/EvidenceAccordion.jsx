@@ -10,6 +10,7 @@ import smartBrokerImage from '../assets/portfolio/smartbroker.png';
 import recycledMarketImage from '../assets/portfolio/recycled-market.png';
 import estradoImage from '../assets/portfolio/estrado.png';
 import ugnamiImage from '../assets/portfolio/ugnami.png';
+import krafcImage from '../assets/portfolio/krafc.png';
 
 const images = {
   'food-manufacturing': foodManufacturingImage,
@@ -21,7 +22,62 @@ const images = {
   'recycled-market': recycledMarketImage,
   estrado: estradoImage,
   ugnami: ugnamiImage,
+  krafc: krafcImage,
 };
+
+function formatSectionText(text, website, name) {
+  if (!text) return '';
+  const mdLinkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+  if (mdLinkRegex.test(text)) {
+    const elements = [];
+    let lastIndex = 0;
+    let match;
+    mdLinkRegex.lastIndex = 0;
+    while ((match = mdLinkRegex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        elements.push(text.slice(lastIndex, match.index));
+      }
+      elements.push(
+        <a
+          key={match.index}
+          href={match[2]}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: '#00d2ff', fontWeight: 600, textDecoration: 'underline' }}
+        >
+          {match[1]}
+        </a>
+      );
+      lastIndex = mdLinkRegex.lastIndex;
+    }
+    if (lastIndex < text.length) {
+      elements.push(text.slice(lastIndex));
+    }
+    return elements;
+  }
+
+  if (website && name && text.includes(name)) {
+    const parts = text.split(name);
+    return parts.reduce((acc, part, i) => {
+      if (i === 0) return [part];
+      return [
+        ...acc,
+        <a
+          key={i}
+          href={website}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: '#00d2ff', fontWeight: 600, textDecoration: 'underline' }}
+        >
+          {name}
+        </a>,
+        part,
+      ];
+    }, []);
+  }
+
+  return text;
+}
 
 export default function EvidenceAccordion({ artifact }) {
   const [openId, setOpenId] = useState(() => artifact?.autoOpen ? artifact.items?.[0]?.id : null);
@@ -61,14 +117,35 @@ export default function EvidenceAccordion({ artifact }) {
                   >
                     <div className="evidence-accordion-content">
                       <div className={`evidence-media${item.id === 'attendme' ? ' evidence-media-attendme' : ''}${item.kind === 'Portfolio project' && item.id !== 'attendme' ? ' evidence-media-contain' : ''}`}>
-                        <img src={images[item.imageKey]} alt={`${item.name} project`} />
+                        {item.website ? (
+                          <a
+                            href={item.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="evidence-image-link"
+                            title={`Visit ${item.name} (${item.website})`}
+                            style={{ display: 'block', position: 'relative', cursor: 'pointer' }}
+                          >
+                            <img src={images[item.imageKey]} alt={`${item.name} project`} />
+                          </a>
+                        ) : (
+                          <img src={images[item.imageKey]} alt={`${item.name} project`} />
+                        )}
                       </div>
                       {item.facts?.length > 0 && (
                         <dl className="evidence-facts">
                           {item.facts.map((fact) => (
                             <div key={fact.label}>
                               <dt>{fact.label}</dt>
-                              <dd>{fact.value}</dd>
+                              <dd>
+                                {typeof fact.value === 'string' && /^https?:\/\//i.test(fact.value) ? (
+                                  <a href={fact.value} target="_blank" rel="noopener noreferrer" style={{ color: '#00d2ff', textDecoration: 'underline' }}>
+                                    {fact.value.replace(/^https?:\/\//i, '')}
+                                  </a>
+                                ) : (
+                                  fact.value
+                                )}
+                              </dd>
                             </div>
                           ))}
                         </dl>
@@ -77,7 +154,7 @@ export default function EvidenceAccordion({ artifact }) {
                         {item.sections.map((section) => (
                           <section key={section.label}>
                             <h4>{section.label}</h4>
-                            <p>{section.value}</p>
+                            <p>{formatSectionText(section.value, item.website, item.name)}</p>
                           </section>
                         ))}
                       </div>

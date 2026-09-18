@@ -960,7 +960,7 @@ h6 {
 
 .option-row {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 0.75rem;
   width: 100%;
@@ -991,6 +991,142 @@ h6 {
   background: rgba(255, 255, 255, 0.15);
   border-color: rgba(255, 255, 255, 0.3);
 }
+
+/* Comet Pill - Featured Projects and Work */
+.comet-pill {
+  position: relative;
+  z-index: 65;
+  pointer-events: auto !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.85rem;
+  padding: 0.52rem 1.45rem;
+  min-height: 42px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50px;
+  color: #ffffff;
+  font-family: var(--font-primary);
+  font-weight: 600;
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  outline: none;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  overflow: hidden;
+  box-shadow: 
+    0 8px 22px rgba(0, 0, 0, 0.24),
+    0 0 16px rgba(254, 182, 17, 0.15);
+  transition: 
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+/* Dynamic Sweeping Comet Flare & Ion Tail */
+.comet-flare-trail {
+  position: absolute;
+  top: 0;
+  left: -140%;
+  width: 110%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0) 10%,
+    rgba(0, 210, 255, 0.2) 35%,
+    rgba(254, 182, 17, 0.55) 70%,
+    rgba(254, 182, 17, 0.85) 90%,
+    #ffffff 98%,
+    transparent 100%
+  );
+  transform: skewX(-24deg);
+  pointer-events: none;
+  z-index: 1;
+  filter: drop-shadow(0 0 8px rgba(254, 182, 17, 0.8)) drop-shadow(0 0 14px rgba(0, 210, 255, 0.5));
+  animation: cometFlareSweep 4.2s ease-in-out infinite;
+}
+
+@keyframes cometFlareSweep {
+  0% {
+    left: -140%;
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  38% {
+    left: 145%;
+    opacity: 0.9;
+  }
+  39%, 100% {
+    left: 145%;
+    opacity: 0;
+  }
+}
+
+/* Glowing Comet Nucleus Pulse */
+.comet-nucleus-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50px;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(254, 182, 17, 0.14) 0%,
+    rgba(0, 210, 255, 0.08) 50%,
+    transparent 75%
+  );
+  pointer-events: none;
+  animation: cometNucleusPulse 3.2s ease-in-out infinite alternate;
+}
+
+@keyframes cometNucleusPulse {
+  0% {
+    opacity: 0.4;
+    transform: scale(0.96);
+  }
+  100% {
+    opacity: 0.95;
+    transform: scale(1.03);
+  }
+}
+
+.comet-pill-text {
+  position: relative;
+  z-index: 3;
+  white-space: nowrap;
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.comet-pill:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(254, 182, 17, 0.55);
+  box-shadow: 
+    0 12px 30px rgba(0, 0, 0, 0.35),
+    0 0 24px rgba(254, 182, 17, 0.4),
+    0 0 14px rgba(0, 210, 255, 0.3);
+}
+
+.comet-pill:hover .comet-flare-trail {
+  animation-duration: 2.8s;
+}
+
+@media (max-width: 600px) {
+  .comet-pill {
+    margin-top: 0.75rem;
+    padding: 0.45rem 1.15rem;
+    font-size: 0.86rem;
+    min-height: 38px;
+  }
+}
+
+
 
 .proposal-entry-button {
   display: inline-flex;
@@ -1598,22 +1734,40 @@ h6 {
 
 .evidence-media {
   width: 100%;
-  max-height: 260px;
+  max-height: 320px;
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border-radius: 6px;
   background: transparent;
 }
 
-.evidence-media > img {
+.evidence-media > img,
+.evidence-media a > img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.25s ease, filter 0.25s ease;
 }
 
-.evidence-media-contain > img {
+.evidence-media.evidence-media-contain {
+  max-height: 440px;
+  aspect-ratio: auto;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.evidence-media-contain > img,
+.evidence-media-contain a > img {
+  width: 100%;
+  height: auto;
+  max-height: 440px;
   object-fit: contain;
+}
+
+.evidence-media a:hover > img {
+  transform: scale(1.015);
+  filter: brightness(1.05);
 }
 
 .evidence-media-attendme {
@@ -1688,6 +1842,15 @@ h6 {
 
   .evidence-media {
     max-height: 190px;
+  }
+
+  .evidence-media.evidence-media-contain {
+    max-height: 280px;
+  }
+
+  .evidence-media-contain > img,
+  .evidence-media-contain a > img {
+    max-height: 280px;
   }
 
   .evidence-media-attendme {
@@ -3518,6 +3681,12 @@ h6 {
     justify-content: center;
     display: flex;
     align-items: center;
+  }
+  .option-row:not(.option-row-portal) .action-pill:last-child:nth-child(odd) {
+    grid-column: span 2;
+    max-width: 240px;
+    justify-self: center;
+    width: 100%;
   }
   .option-row.option-row-portal {
     display: flex;
