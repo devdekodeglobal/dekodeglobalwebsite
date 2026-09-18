@@ -67,6 +67,9 @@ function findSpecificEvidence(question) {
   const normalized = normalizeForMatch(question);
   if (!normalized || PROJECT_BUILD_QUERY.test(normalized)) return null;
 
+  const isBroadQuery = /\b(?:projects|products|portfolio|case studies|success stories|our work|past work|previous work)\b/i.test(question);
+  if (isBroadQuery) return null;
+
   const namedProject = knowledge.portfolioProjects.find((project) =>
     normalized.includes(normalizeForMatch(project.name))
   );
@@ -107,9 +110,18 @@ export function buildEvidenceAccordion(question, evidenceProjects, useFallbackRe
         items: filteredItems,
       };
     } else if (filteredItems.length > 0) {
-      // Always include all published case studies when showing a broad catalogue
-      const caseStudyItems = knowledge.caseStudies.map(caseStudyItem);
+      const scope = detectEvidenceScope(question);
+      if (scope === 'case_studies') {
+        const caseStudyItems = filteredItems.filter((item) => item.kind === 'Published case study');
+        return {
+          scope: 'case_studies',
+          mode: 'catalogue',
+          label: 'Published case studies',
+          items: caseStudyItems.length > 0 ? caseStudyItems : knowledge.caseStudies.map(caseStudyItem),
+        };
+      }
       const uniquePortfolioItems = filteredItems.filter((item) => item.kind !== 'Published case study');
+      const caseStudyItems = knowledge.caseStudies.map(caseStudyItem);
       const finalItems = [...uniquePortfolioItems, ...caseStudyItems];
 
       return {

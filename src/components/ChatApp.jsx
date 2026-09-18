@@ -1078,7 +1078,7 @@ export default function ChatApp({
                     <motion.button
                       type="button"
                       className="discovery-pill product-comet-pill"
-                      onClick={() => handleOptionSelect("Show me your shipped products like Krafc")}
+                      onClick={() => handleOptionSelect("Show me your shipped products and portfolio")}
                       initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.15, duration: 0.4 }}
@@ -1095,7 +1095,7 @@ export default function ChatApp({
                     <motion.button
                       type="button"
                       className="discovery-pill casestudy-pill"
-                      onClick={() => handleOptionSelect("Show me your client case studies and work")}
+                      onClick={() => handleOptionSelect("Show me your client case studies")}
                       initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.2, duration: 0.4 }}
