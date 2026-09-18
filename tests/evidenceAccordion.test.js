@@ -28,12 +28,14 @@ test('shows the full approved evidence catalogue for broad portfolio requests', 
     assert.deepEqual(artifact.items.map((item) => item.name), [
       'Food Manufacturing Company',
       'Primary School',
+      'Ugnami',
       'AttendMe',
       'CHAUFFR',
       'Smart Loan Helper',
       'SmartBroker',
       'Recycled Market',
       'Estrado',
+      'Krafc',
     ]);
   }
 });

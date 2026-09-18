@@ -1074,21 +1074,41 @@ export default function ChatApp({
                     </div>
                   ))}
 
-                  <motion.button
-                    type="button"
-                    className="comet-pill"
-                    onClick={() => handleOptionSelect("Show me your projects and work")}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.15, duration: 0.4 }}
-                    whileHover={{ scale: 1.025, y: -2 }}
-                    whileTap={{ scale: 0.98 }}
-                    aria-label="Projects and Work"
-                  >
-                    <span className="comet-flare-trail" aria-hidden="true" />
-                    <span className="comet-nucleus-glow" aria-hidden="true" />
-                    <span className="comet-pill-text">Projects and Work</span>
-                  </motion.button>
+                  <div className="discovery-pills-row" role="group" aria-label="Products and case studies">
+                    <motion.button
+                      type="button"
+                      className="discovery-pill product-comet-pill"
+                      onClick={() => handleOptionSelect("Show me your shipped products like Krafc")}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.15, duration: 0.4 }}
+                      whileHover={{ scale: 1.025, y: -2 }}
+                      whileTap={{ scale: 0.98 }}
+                      aria-label="Products"
+                    >
+                      <span className="comet-flare-trail" aria-hidden="true" />
+                      <span className="comet-nucleus-glow" aria-hidden="true" />
+                      <span className="pill-glyph gold-glyph">✦</span>
+                      <span className="discovery-pill-text">Products</span>
+                    </motion.button>
+
+                    <motion.button
+                      type="button"
+                      className="discovery-pill casestudy-pill"
+                      onClick={() => handleOptionSelect("Show me your client case studies and work")}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2, duration: 0.4 }}
+                      whileHover={{ scale: 1.025, y: -2 }}
+                      whileTap={{ scale: 0.98 }}
+                      aria-label="Case Studies"
+                    >
+                      <span className="casestudy-aurora-trail" aria-hidden="true" />
+                      <span className="casestudy-nucleus-glow" aria-hidden="true" />
+                      <span className="pill-glyph cyan-glyph">❖</span>
+                      <span className="discovery-pill-text">Case Studies</span>
+                    </motion.button>
+                  </div>
                 </div>
               </>
             )}
