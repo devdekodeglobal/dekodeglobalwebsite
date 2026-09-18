@@ -26,8 +26,6 @@ test('shows the full approved evidence catalogue for broad portfolio requests', 
     const artifact = buildEvidenceAccordion(question);
     assert.equal(artifact.scope, 'portfolio');
     assert.deepEqual(artifact.items.map((item) => item.name), [
-      'Food Manufacturing Company',
-      'Primary School',
       'Krafc',
       'Ugnami',
       'AttendMe',
@@ -36,6 +34,8 @@ test('shows the full approved evidence catalogue for broad portfolio requests', 
       'SmartBroker',
       'Recycled Market',
       'Estrado',
+      'Food Manufacturing Company',
+      'Primary School',
     ]);
   }
 });

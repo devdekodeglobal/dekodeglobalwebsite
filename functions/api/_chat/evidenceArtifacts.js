@@ -110,7 +110,7 @@ export function buildEvidenceAccordion(question, evidenceProjects, useFallbackRe
       // Always include all published case studies when showing a broad catalogue
       const caseStudyItems = knowledge.caseStudies.map(caseStudyItem);
       const uniquePortfolioItems = filteredItems.filter((item) => item.kind !== 'Published case study');
-      const finalItems = [...caseStudyItems, ...uniquePortfolioItems];
+      const finalItems = [...uniquePortfolioItems, ...caseStudyItems];
 
       return {
         scope: 'portfolio',
@@ -140,7 +140,7 @@ export function buildEvidenceAccordion(question, evidenceProjects, useFallbackRe
   const caseStudies = knowledge.caseStudies.map(caseStudyItem);
   const items = scope === 'case_studies'
     ? caseStudies
-    : [...caseStudies, ...knowledge.portfolioProjects.map(portfolioItem)];
+    : [...knowledge.portfolioProjects.map(portfolioItem), ...caseStudies];
 
   return {
     scope,

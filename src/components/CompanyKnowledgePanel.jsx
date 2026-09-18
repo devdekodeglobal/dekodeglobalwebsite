@@ -111,16 +111,16 @@ function ServicesPanel({ onSelect }) {
 
 function PortfolioPanel({ onSelect }) {
   const evidence = [
+    ...knowledge.portfolioProjects.map((project) => ({
+      ...project,
+      category: 'Portfolio project',
+      prompt: `Tell me about the ${project.name} project`,
+    })),
     ...knowledge.caseStudies.map((study) => ({
       ...study,
       category: 'Published case study',
       description: study.solution,
       prompt: `Tell me about the ${study.name} case study`,
-    })),
-    ...knowledge.portfolioProjects.map((project) => ({
-      ...project,
-      category: 'Portfolio project',
-      prompt: `Tell me about the ${project.name} project`,
     })),
   ];
 
