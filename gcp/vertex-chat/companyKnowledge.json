@@ -460,9 +460,9 @@
       "website": "https://krafc.com",
       "clientContext": "Interior designers, exhibition booth planners, and commercial space architects.",
       "deliverables": [
+        "Web application",
         "2D floor planning and 3D space visualizer",
-        "95% reduction in 3D design time",
-        "Automated blueprints and spec sheet exports"
+        "Architectural blueprint and furniture spec sheet exports"
       ],
       "aliases": [
         "Krafc",
