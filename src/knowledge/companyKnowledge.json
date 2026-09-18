@@ -309,6 +309,33 @@
   ],
   "portfolioProjects": [
     {
+      "id": "krafc",
+      "name": "Krafc",
+      "description": "[Krafc](https://krafc.com/) is a 2D and 3D spatial design web platform built for interior planning, exhibition booths, and commercial spaces. We designed and developed a fast, browser-based solution that bridges conceptual 2D floor planning with interactive 3D visualization, automated architectural blueprints, and complete furniture specification reports, reducing the time taken to design and produce 3D spaces by 95%.",
+      "category": "Spatial design and 3D planning",
+      "type": "Interactive 2D and 3D web application",
+      "platform": "Web application",
+      "website": "https://krafc.com",
+      "clientContext": "Interior designers, exhibition booth planners, and commercial space architects.",
+      "deliverables": [
+        "Web application",
+        "2D floor planning and 3D space visualizer",
+        "Architectural blueprint and furniture spec sheet exports"
+      ],
+      "aliases": [
+        "Krafc",
+        "Kraft",
+        "krafc.com",
+        "https://krafc.com",
+        "Krafc by Dekode",
+        "krafc 3d",
+        "spatial design web app",
+        "3d space planner",
+        "krafc web application"
+      ],
+      "sourceReference": "https://krafc.com"
+    },
+    {
       "id": "ugnami",
       "name": "Ugnami",
       "description": "Ugnami is a Melbourne-based tech start-up with an aim to connect people around the world and enable them to buy and sell goods and services. We helped augment Ugnami online portal to enrich the user experience.",
@@ -449,33 +476,6 @@
         "iPad POS"
       ],
       "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
-    },
-    {
-      "id": "krafc",
-      "name": "Krafc",
-      "description": "[Krafc](https://krafc.com/) is a 2D and 3D spatial design web platform built for interior planning, exhibition booths, and commercial spaces. We designed and developed a fast, browser-based solution that bridges conceptual 2D floor planning with interactive 3D visualization, automated architectural blueprints, and complete furniture specification reports, reducing the time taken to design and produce 3D spaces by 95%.",
-      "category": "Spatial design and 3D planning",
-      "type": "Interactive 2D and 3D web application",
-      "platform": "Web application",
-      "website": "https://krafc.com",
-      "clientContext": "Interior designers, exhibition booth planners, and commercial space architects.",
-      "deliverables": [
-        "Web application",
-        "2D floor planning and 3D space visualizer",
-        "Architectural blueprint and furniture spec sheet exports"
-      ],
-      "aliases": [
-        "Krafc",
-        "Kraft",
-        "krafc.com",
-        "https://krafc.com",
-        "Krafc by Dekode",
-        "krafc 3d",
-        "spatial design web app",
-        "3d space planner",
-        "krafc web application"
-      ],
-      "sourceReference": "https://krafc.com"
     }
   ],
   "initiatives": [
