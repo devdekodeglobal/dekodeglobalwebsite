@@ -973,12 +973,19 @@ h6 {
   position: relative;
   z-index: 65;
   pointer-events: auto !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: white;
-  padding: 0.5rem 1rem;
+  padding: 0.55rem 1.4rem;
+  width: 180px;
+  text-align: center;
   border-radius: 50px;
   font-weight: 500;
+  font-size: 0.88rem;
+  line-height: 1.25;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: var(--font-primary);
@@ -992,47 +999,22 @@ h6 {
   border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Comet Pill - Featured Projects and Work */
-.comet-pill-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin-top: 0.85rem;
-  position: relative;
-  z-index: 65;
+/* Comet Pill - Featured Our Work */
+.option-row-discovery {
+  margin-top: 0.75rem;
 }
 
-.comet-pill {
-  position: relative;
-  z-index: 65;
-  pointer-events: auto !important;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 1rem;
-  min-height: 42px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 50px;
-  color: #ffffff;
-  font-family: var(--font-primary);
-  font-weight: 500;
-  font-size: 0.92rem;
-  letter-spacing: 0.01em;
-  cursor: pointer;
-  outline: none;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+.action-pill.comet-pill {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   overflow: hidden;
-  box-shadow: 
-    0 8px 22px rgba(0, 0, 0, 0.24),
-    0 0 16px rgba(254, 182, 17, 0.15);
-  transition: 
-    background 0.25s ease,
-    border-color 0.25s ease,
-    box-shadow 0.25s ease,
-    transform 0.25s ease;
+}
+
+.action-pill.comet-pill:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.28);
 }
 
 /* Dynamic Sweeping Comet Flare & Ion Tail */
@@ -1129,11 +1111,6 @@ h6 {
 @media (max-width: 600px) {
   .comet-pill-row {
     margin-top: 0.75rem;
-  }
-  .comet-pill {
-    padding: 0.45rem 1rem;
-    font-size: 0.86rem;
-    min-height: 38px;
   }
 }
 
@@ -1658,6 +1635,113 @@ h6 {
   margin-top: 0.85rem;
   border-top: 1px solid rgba(255, 255, 255, 0.13);
   background: transparent;
+}
+
+/* Evidence Segmented Category Switcher */
+.evidence-tabs-rail {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.65rem 0 0.85rem;
+  padding: 0.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  width: fit-content;
+}
+
+.evidence-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.85rem;
+  border: 1px solid transparent;
+  border-radius: 50px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.65);
+  font-family: var(--font-primary);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.evidence-tab-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.evidence-tab-btn.is-active {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.evidence-tab-btn.is-active.is-products {
+  border-color: rgba(254, 182, 17, 0.4);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25), 0 0 10px rgba(254, 182, 17, 0.15);
+}
+
+.evidence-tab-btn.is-active.is-projects {
+  border-color: rgba(52, 211, 153, 0.4);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25), 0 0 10px rgba(52, 211, 153, 0.15);
+}
+
+.evidence-tab-btn.is-active.is-casestudies {
+  border-color: rgba(0, 210, 255, 0.4);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25), 0 0 10px rgba(0, 210, 255, 0.15);
+}
+
+.tab-glyph {
+  font-size: 0.75rem;
+}
+
+.tab-glyph.gold-glyph {
+  color: #feb611;
+  filter: drop-shadow(0 0 4px #feb611);
+}
+
+.tab-glyph.emerald-glyph {
+  color: #34d399;
+  filter: drop-shadow(0 0 4px #34d399);
+}
+
+.tab-glyph.cyan-glyph {
+  color: #00d2ff;
+  filter: drop-shadow(0 0 4px #00d2ff);
+}
+
+.tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.evidence-tab-btn.is-active .tab-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.kind-tag-product {
+  color: #feb611 !important;
+}
+
+.kind-tag-project {
+  color: #34d399 !important;
+}
+
+.kind-tag-casestudy {
+  color: #00d2ff !important;
 }
 
 .message-ai.message-evidence .message-bubble {
@@ -3693,6 +3777,8 @@ h6 {
   }
   .option-row:not(.option-row-portal) .action-pill {
     width: 100%;
+    min-width: 0;
+    min-height: 0;
     padding: 0.52rem 0.4rem;
     font-size: 0.82rem;
     text-align: center;
@@ -3713,6 +3799,17 @@ h6 {
   }
   .option-row.option-row-portal .action-pill {
     padding: 0.52rem 1.2rem;
+    font-size: 0.82rem;
+  }
+  .option-row.option-row-discovery {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  .option-row.option-row-discovery .action-pill {
+    width: calc(50% - 0.25rem);
+    padding: 0.52rem 0.4rem;
     font-size: 0.82rem;
   }
 
@@ -3883,8 +3980,14 @@ h6 {
   .centered-layout {
     padding-inline: 0.75rem;
   }
+  .options-container .option-row:not(.option-row-portal):not(.option-row-discovery) {
+    grid-template-columns: repeat(2, 1fr);
+  }
   .options-container .action-pill {
-    flex: 1 1 calc(50% - 0.5rem);
+    min-width: 0;
+    min-height: 0;
+    padding: 0.48rem 0.35rem;
+    font-size: 0.78rem;
   }
   .message-bubble {
     max-width: 96%;

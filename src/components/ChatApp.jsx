@@ -1074,21 +1074,21 @@ export default function ChatApp({
                     </div>
                   ))}
 
-                  <div className="comet-pill-row">
+                  <div className="option-row option-row-discovery" role="group" aria-label="Our work">
                     <motion.button
                       type="button"
-                      className="comet-pill"
-                      onClick={() => handleOptionSelect("Show me some of your projects")}
+                      className="action-pill comet-pill"
+                      onClick={() => handleOptionSelect("What have you shipped?")}
                       initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.15, duration: 0.4 }}
                       whileHover={{ scale: 1.025, y: -2 }}
                       whileTap={{ scale: 0.98 }}
-                      aria-label="Projects & Work"
+                      aria-label="What We've Shipped"
                     >
                       <span className="comet-flare-trail" aria-hidden="true" />
                       <span className="comet-nucleus-glow" aria-hidden="true" />
-                      <span className="comet-pill-text">Projects & Work</span>
+                      <span className="comet-pill-text">What We've Shipped</span>
                     </motion.button>
                   </div>
                 </div>
