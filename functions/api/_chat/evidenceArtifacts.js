@@ -26,10 +26,13 @@ export function detectEvidenceScope(question) {
   return null;
 }
 
+const PRODUCT_IDS = new Set(['krafc']);
+
 const caseStudyItem = (study) => ({
   id: study.id,
   name: study.name,
   kind: 'Published case study',
+  archetype: 'case_study',
   imageKey: study.id,
   summary: study.solution,
   facts: [
@@ -43,25 +46,30 @@ const caseStudyItem = (study) => ({
   ],
 });
 
-const portfolioItem = (project) => ({
-  id: project.id,
-  name: project.name,
-  kind: 'Portfolio project',
-  imageKey: project.id,
-  summary: project.description,
-  website: project.website,
-  facts: [
-    { label: 'Category', value: project.category },
-    { label: 'Platform', value: project.platform },
-  ].filter((fact) => fact.value),
-  sections: [
-    { label: 'About', value: project.description },
-    project.deliverables?.length
-      ? { label: 'Delivered', value: project.deliverables.join('; ') }
-      : null,
-    project.outcome ? { label: 'Outcome', value: project.outcome } : null,
-  ].filter(Boolean),
-});
+const portfolioItem = (project) => {
+  const isProduct = PRODUCT_IDS.has(project.id);
+  return {
+    id: project.id,
+    name: project.name,
+    kind: 'Portfolio project',
+    categoryType: isProduct ? 'Shipped Product' : 'Client Project',
+    archetype: isProduct ? 'product' : 'project',
+    imageKey: project.id,
+    summary: project.description,
+    website: project.website,
+    facts: [
+      { label: 'Category', value: project.category },
+      { label: 'Platform', value: project.platform },
+    ].filter((fact) => fact.value),
+    sections: [
+      { label: 'About', value: project.description },
+      project.deliverables?.length
+        ? { label: 'Delivered', value: project.deliverables.join('; ') }
+        : null,
+      project.outcome ? { label: 'Outcome', value: project.outcome } : null,
+    ].filter(Boolean),
+  };
+};
 
 function findSpecificEvidence(question) {
   const normalized = normalizeForMatch(question);

@@ -81,12 +81,126 @@ function formatSectionText(text, website, name) {
 
 export default function EvidenceAccordion({ artifact }) {
   const [openId, setOpenId] = useState(() => artifact?.autoOpen ? artifact.items?.[0]?.id : null);
+  
+  const productItems = artifact?.items?.filter((item) => 
+    item.id === 'krafc' || item.archetype === 'product' || item.categoryType === 'Shipped Product'
+  ) || [];
+  const projectItems = artifact?.items?.filter((item) => 
+    item.id !== 'krafc' && item.archetype !== 'case_study' && item.kind !== 'Published case study' && item.categoryType !== 'Shipped Product'
+  ) || [];
+  const caseStudyItems = artifact?.items?.filter((item) => 
+    item.archetype === 'case_study' || item.kind === 'Published case study'
+  ) || [];
+
+  const categoriesPresent = [
+    productItems.length > 0 && 'products',
+    projectItems.length > 0 && 'projects',
+    caseStudyItems.length > 0 && 'case_studies',
+  ].filter(Boolean);
+
+  const hasMultipleCategories = categoriesPresent.length > 1;
+
+  const [activeTab, setActiveTab] = useState(() => {
+    if (artifact?.scope === 'case_studies') return 'case_studies';
+    if (artifact?.scope === 'products') return 'products';
+    if (projectItems.length > 0) return 'projects';
+    if (productItems.length > 0) return 'products';
+    return 'all';
+  });
+
   if (!artifact?.items?.length) return null;
+
+  const visibleItems = !hasMultipleCategories || activeTab === 'all'
+    ? artifact.items
+    : activeTab === 'products'
+      ? productItems
+      : activeTab === 'projects'
+        ? projectItems
+        : caseStudyItems;
+
+  const getItemBadgeClass = (item) => {
+    if (item.id === 'krafc' || item.archetype === 'product' || item.categoryType === 'Shipped Product') {
+      return 'kind-tag-product';
+    }
+    if (item.archetype === 'project' || item.kind === 'Client Project' || item.kind === 'Portfolio project') {
+      return 'kind-tag-project';
+    }
+    return 'kind-tag-casestudy';
+  };
 
   return (
     <div className="evidence-accordion" aria-label={artifact.label}>
+      {hasMultipleCategories && (
+        <div className="evidence-tabs-rail" role="tablist" aria-label="Filter evidence categories">
+          {productItems.length > 0 && (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === 'products'}
+              className={`evidence-tab-btn ${activeTab === 'products' ? 'is-active is-products' : ''}`}
+              onClick={() => {
+                setActiveTab('products');
+                setOpenId(null);
+              }}
+            >
+              <span className="tab-glyph gold-glyph">✦</span>
+              <span>Products</span>
+              <span className="tab-count">{productItems.length}</span>
+            </button>
+          )}
+
+          {projectItems.length > 0 && (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === 'projects'}
+              className={`evidence-tab-btn ${activeTab === 'projects' ? 'is-active is-projects' : ''}`}
+              onClick={() => {
+                setActiveTab('projects');
+                setOpenId(null);
+              }}
+            >
+              <span className="tab-glyph emerald-glyph">⚙</span>
+              <span>Projects</span>
+              <span className="tab-count">{projectItems.length}</span>
+            </button>
+          )}
+
+          {caseStudyItems.length > 0 && (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === 'case_studies'}
+              className={`evidence-tab-btn ${activeTab === 'case_studies' ? 'is-active is-casestudies' : ''}`}
+              onClick={() => {
+                setActiveTab('case_studies');
+                setOpenId(null);
+              }}
+            >
+              <span className="tab-glyph cyan-glyph">❖</span>
+              <span>Case Studies</span>
+              <span className="tab-count">{caseStudyItems.length}</span>
+            </button>
+          )}
+
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'all'}
+            className={`evidence-tab-btn ${activeTab === 'all' ? 'is-active' : ''}`}
+            onClick={() => {
+              setActiveTab('all');
+              setOpenId(null);
+            }}
+          >
+            <span>All</span>
+            <span className="tab-count">{artifact.items.length}</span>
+          </button>
+        </div>
+      )}
+
       <div className="evidence-accordion-list">
-        {artifact.items.map((item, index) => {
+        {visibleItems.map((item, index) => {
           const isOpen = openId === item.id;
           const panelId = `evidence-panel-${item.id}`;
           return (
@@ -101,7 +215,9 @@ export default function EvidenceAccordion({ artifact }) {
                 <span className="evidence-accordion-index">{String(index + 1).padStart(2, '0')}</span>
                 <span className="evidence-accordion-title">
                   <strong>{item.name}</strong>
-                  <small>{item.kind}</small>
+                  <small className={getItemBadgeClass(item)}>
+                    {item.categoryType || item.kind}
+                  </small>
                 </span>
                 <ChevronDown size={17} aria-hidden="true" />
               </button>

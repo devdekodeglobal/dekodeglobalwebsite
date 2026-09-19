@@ -26,7 +26,7 @@ test('shows the full approved evidence catalogue for broad portfolio requests', 
     const artifact = buildEvidenceAccordion(question);
     assert.equal(artifact.scope, 'portfolio');
     assert.deepEqual(artifact.items.map((item) => item.name), [
-      'Krafc',
+      'krafc',
       'Ugnami',
       'AttendMe',
       'CHAUFFR',
