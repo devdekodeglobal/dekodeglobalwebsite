@@ -144,7 +144,8 @@ export default function EvidenceAccordion({ artifact }) {
               }}
             >
               <span className="tab-glyph gold-glyph">✦</span>
-              <span>Products</span>
+              <span className="tab-label-full">Products</span>
+              <span className="tab-label-short">Products</span>
               <span className="tab-count">{productItems.length}</span>
             </button>
           )}
@@ -161,7 +162,8 @@ export default function EvidenceAccordion({ artifact }) {
               }}
             >
               <span className="tab-glyph emerald-glyph">⚙</span>
-              <span>Projects</span>
+              <span className="tab-label-full">Projects</span>
+              <span className="tab-label-short">Projects</span>
               <span className="tab-count">{projectItems.length}</span>
             </button>
           )}
@@ -178,7 +180,8 @@ export default function EvidenceAccordion({ artifact }) {
               }}
             >
               <span className="tab-glyph cyan-glyph">❖</span>
-              <span>Case Studies</span>
+              <span className="tab-label-full">Case Studies</span>
+              <span className="tab-label-short">Cases</span>
               <span className="tab-count">{caseStudyItems.length}</span>
             </button>
           )}
