@@ -52,7 +52,7 @@ const portfolioItem = (project) => {
     id: project.id,
     name: project.name,
     kind: 'Portfolio project',
-    categoryType: isProduct ? 'Shipped Product' : 'Client Project',
+    categoryType: isProduct ? 'Spatial Design Platform' : 'Client Project',
     archetype: isProduct ? 'product' : 'project',
     imageKey: project.id,
     summary: project.description,

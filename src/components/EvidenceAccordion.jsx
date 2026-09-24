@@ -83,10 +83,10 @@ export default function EvidenceAccordion({ artifact }) {
   const [openId, setOpenId] = useState(() => artifact?.autoOpen ? artifact.items?.[0]?.id : null);
   
   const productItems = artifact?.items?.filter((item) => 
-    item.id === 'krafc' || item.archetype === 'product' || item.categoryType === 'Shipped Product'
+    item.id === 'krafc' || item.archetype === 'product' || item.categoryType === 'Spatial Design Platform' || item.categoryType === 'Shipped Product'
   ) || [];
   const projectItems = artifact?.items?.filter((item) => 
-    item.id !== 'krafc' && item.archetype !== 'case_study' && item.kind !== 'Published case study' && item.categoryType !== 'Shipped Product'
+    item.id !== 'krafc' && item.archetype !== 'product' && item.archetype !== 'case_study' && item.kind !== 'Published case study' && item.categoryType !== 'Spatial Design Platform' && item.categoryType !== 'Shipped Product'
   ) || [];
   const caseStudyItems = artifact?.items?.filter((item) => 
     item.archetype === 'case_study' || item.kind === 'Published case study'
@@ -119,7 +119,7 @@ export default function EvidenceAccordion({ artifact }) {
         : caseStudyItems;
 
   const getItemBadgeClass = (item) => {
-    if (item.id === 'krafc' || item.archetype === 'product' || item.categoryType === 'Shipped Product') {
+    if (item.id === 'krafc' || item.archetype === 'product' || item.categoryType === 'Spatial Design Platform' || item.categoryType === 'Shipped Product') {
       return 'kind-tag-product';
     }
     if (item.archetype === 'project' || item.kind === 'Client Project' || item.kind === 'Portfolio project') {
