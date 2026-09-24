@@ -336,22 +336,6 @@ export default {
       "sourceReference": "https://krafc.com"
     },
     {
-      "id": "ugnami",
-      "name": "Ugnami",
-      "description": "Ugnami is a Melbourne-based tech start-up with an aim to connect people around the world and enable them to buy and sell goods and services. We helped augment Ugnami online portal to enrich the user experience.",
-      "category": "E-commerce and marketplace",
-      "type": "Responsive web marketplace",
-      "platform": "Web",
-      "clientContext": "A Melbourne-based tech start-up connecting people around the world for buying and selling goods and services.",
-      "deliverables": [
-        "Online portal augmentation",
-        "User experience enrichment",
-        "E-commerce marketplace features"
-      ],
-      "aliases": ["Ugnami marketplace", "Ugnami portal", "ugnami"],
-      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
-    },
-    {
       "id": "attendme",
       "name": "AttendMe",
       "description": "AttendMe helps you record the movement of all children, staff and visitors as they arrive or leave your premises. This system also records and reports incidents where children require medical care.",
@@ -395,6 +379,26 @@ export default {
       "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
     },
     {
+      "id": "smartbroker",
+      "name": "SmartBroker",
+      "description": "SmartBroker is a Melbourne-based start-up that aims to provide a simple platform for mortgage brokers and their clients to manage their relationships on the go. We designed and delivered a web and iOS SmartBroker app.",
+      "category": "Finance and client relationship management",
+      "type": "Web and mobile application",
+      "platform": "Web and iOS",
+      "clientContext": "A Melbourne start-up serving mortgage brokers and their clients",
+      "deliverables": [
+        "Web application",
+        "iOS application",
+        "On-the-go broker and client relationship management"
+      ],
+      "aliases": [
+        "Smart Broker",
+        "mortgage broker app",
+        "broker client platform"
+      ],
+      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
+    },
+    {
       "id": "smart-loan-helper",
       "name": "Smart Loan Helper",
       "description": "Smart Loan Helper unifies various home loan calculators for home buyers looking to buy their first home, investment property or refinance. The app enables buyers to perform, record and access various mortgage calculations, determine borrowing capacity, repayments, stamp duty and much more. We created the iOS and Android version of the app for Smart Money Solutions, an independent mortgage broker in Australia.",
@@ -418,26 +422,6 @@ export default {
       "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
     },
     {
-      "id": "smartbroker",
-      "name": "SmartBroker",
-      "description": "SmartBroker is a Melbourne-based start-up that aims to provide a simple platform for mortgage brokers and their clients to manage their relationships on the go. We designed and delivered a web and iOS SmartBroker app.",
-      "category": "Finance and client relationship management",
-      "type": "Web and mobile application",
-      "platform": "Web and iOS",
-      "clientContext": "A Melbourne start-up serving mortgage brokers and their clients",
-      "deliverables": [
-        "Web application",
-        "iOS application",
-        "On-the-go broker and client relationship management"
-      ],
-      "aliases": [
-        "Smart Broker",
-        "mortgage broker app",
-        "broker client platform"
-      ],
-      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
-    },
-    {
       "id": "recycled-market",
       "name": "Recycled Market",
       "description": "Recycled Market is an online market for products made from recycled products. We designed and developed a browser-independent responsive web portal with integrated CMS.",
@@ -455,6 +439,22 @@ export default {
         "recycled products marketplace",
         "sustainable ecommerce"
       ],
+      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
+    },
+    {
+      "id": "ugnami",
+      "name": "Ugnami",
+      "description": "Ugnami is a Melbourne-based tech start-up with an aim to connect people around the world and enable them to buy and sell goods and services. We helped augment Ugnami online portal to enrich the user experience.",
+      "category": "E-commerce and marketplace",
+      "type": "Responsive web marketplace",
+      "platform": "Web",
+      "clientContext": "A Melbourne-based tech start-up connecting people around the world for buying and selling goods and services.",
+      "deliverables": [
+        "Online portal augmentation",
+        "User experience enrichment",
+        "E-commerce marketplace features"
+      ],
+      "aliases": ["Ugnami marketplace", "Ugnami portal", "ugnami"],
       "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
     },
     {
