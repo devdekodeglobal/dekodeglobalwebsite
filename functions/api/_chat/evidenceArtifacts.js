@@ -128,7 +128,12 @@ export function buildEvidenceAccordion(question, evidenceProjects, useFallbackRe
           items: caseStudyItems.length > 0 ? caseStudyItems : knowledge.caseStudies.map(caseStudyItem),
         };
       }
-      const uniquePortfolioItems = filteredItems.filter((item) => item.kind !== 'Published case study');
+      
+      // If broad portfolio query, include full catalogue in consistent order
+      const isBroadPortfolio = scope === 'portfolio' || /\b(?:portfolio|our work|your work|projects|work)\b/i.test(question || '');
+      const uniquePortfolioItems = isBroadPortfolio
+        ? knowledge.portfolioProjects.map(portfolioItem)
+        : filteredItems.filter((item) => item.kind !== 'Published case study');
       const caseStudyItems = knowledge.caseStudies.map(caseStudyItem);
       const finalItems = [...uniquePortfolioItems, ...caseStudyItems];
 
