@@ -3818,9 +3818,11 @@ h6 {
     margin-top: 0.5rem;
   }
   .option-row.option-row-discovery .action-pill {
-    width: calc(50% - 0.25rem);
-    padding: 0.52rem 0.4rem;
-    font-size: 0.82rem;
+    width: calc(50% - 0.25rem) !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 0.52rem 0.4rem !important;
+    font-size: 0.82rem !important;
   }
 
   .chat-scroll-area {
