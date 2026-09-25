@@ -1,4 +1,4 @@
-{
+export default {
   "schemaVersion": 1,
   "source": {
     "repository": "website/DEKODE",
@@ -773,3 +773,4 @@
     ]
   }
 }
+;

@@ -3,8 +3,8 @@ import { loadCompanyKnowledge } from '../../../src/knowledge/companyKnowledgeLoa
 const knowledge = loadCompanyKnowledge();
 
 const CASE_STUDY_QUERY = /\b(?:case stud(?:y|ies)|success stor(?:y|ies))\b/i;
-const PORTFOLIO_QUERY = /\b(?:portfolio|past work|previous work|our work|your work|ur work|dekode['’]s work|project examples|work examples|testimonials?|reviews?)\b/i;
-const PROJECT_CATALOGUE_QUERY = /^(?:show|share|list|see|what|which|tell me about|can i see|do you have|have you got)\b.*\b(?:projects|work|portfolio|examples)\b/i;
+const PORTFOLIO_QUERY = /\b(?:portfolio|past work|previous work|our work|your work|ur work|dekode['’]s work|project examples|work examples|testimonials?|reviews?|products?|our products|products (?:&|and) work|our products (?:&|and) work)\b/i;
+const PROJECT_CATALOGUE_QUERY = /^(?:show|share|list|see|what|which|tell me about|can i see|do you have|have you got)\b.*\b(?:projects|work|portfolio|examples|products)\b/i;
 const PROJECT_BUILD_QUERY = /\b(?:build|create|make|develop|design|launch)\b.*\b(?:app|website|web app|platform|system|software|product|feature)\b/i;
 const DELIVERY_PROCESS_QUERY = /\b(?:methodology|delivery process|project lifecycle|how (?:do|does) (?:dekode|your team|you) (?:work|deliver|run projects?))\b/i;
 
@@ -20,16 +20,19 @@ export function detectEvidenceScope(question) {
   if (/\b(?:domain|industry|industries|sector)s?\b/i.test(normalized) && !/\b(?:projects?|case stud(?:y|ies))\b/i.test(normalized)) return null;
   if (CASE_STUDY_QUERY.test(normalized)) return 'case_studies';
   if (PORTFOLIO_QUERY.test(normalized) || PROJECT_CATALOGUE_QUERY.test(normalized)) return 'portfolio';
-  if (['projects', 'portfolio', 'case studies', 'success stories', 'our work', 'testimonials', 'testimonial', 'reviews', 'review'].includes(normalized)) {
+  if (['projects', 'portfolio', 'case studies', 'success stories', 'our work', 'our products', 'products', 'our products and work', 'our products & work', 'products and work', 'products & work', 'testimonials', 'testimonial', 'reviews', 'review'].includes(normalized)) {
     return normalized === 'case studies' || normalized === 'success stories' ? 'case_studies' : 'portfolio';
   }
   return null;
 }
 
+const PRODUCT_IDS = new Set(['krafc']);
+
 const caseStudyItem = (study) => ({
   id: study.id,
   name: study.name,
   kind: 'Published case study',
+  archetype: 'case_study',
   imageKey: study.id,
   summary: study.solution,
   facts: [
@@ -43,28 +46,37 @@ const caseStudyItem = (study) => ({
   ],
 });
 
-const portfolioItem = (project) => ({
-  id: project.id,
-  name: project.name,
-  kind: 'Portfolio project',
-  imageKey: project.id,
-  summary: project.description,
-  facts: [
-    { label: 'Category', value: project.category },
-    { label: 'Platform', value: project.platform },
-  ].filter((fact) => fact.value),
-  sections: [
-    { label: 'About', value: project.description },
-    project.deliverables?.length
-      ? { label: 'Delivered', value: project.deliverables.join('; ') }
-      : null,
-    project.outcome ? { label: 'Outcome', value: project.outcome } : null,
-  ].filter(Boolean),
-});
+const portfolioItem = (project) => {
+  const isProduct = PRODUCT_IDS.has(project.id);
+  return {
+    id: project.id,
+    name: project.name,
+    kind: 'Portfolio project',
+    categoryType: isProduct ? 'Spatial Design Platform' : 'Client Project',
+    archetype: isProduct ? 'product' : 'project',
+    imageKey: project.id,
+    summary: project.description,
+    website: project.website,
+    facts: [
+      { label: 'Category', value: project.category },
+      { label: 'Platform', value: project.platform },
+    ].filter((fact) => fact.value),
+    sections: [
+      { label: 'About', value: project.description },
+      project.deliverables?.length
+        ? { label: 'Delivered', value: project.deliverables.join('; ') }
+        : null,
+      project.outcome ? { label: 'Outcome', value: project.outcome } : null,
+    ].filter(Boolean),
+  };
+};
 
 function findSpecificEvidence(question) {
   const normalized = normalizeForMatch(question);
   if (!normalized || PROJECT_BUILD_QUERY.test(normalized)) return null;
+
+  const isBroadQuery = /\b(?:projects|products|portfolio|case studies|success stories|our work|past work|previous work)\b/i.test(question);
+  if (isBroadQuery) return null;
 
   const namedProject = knowledge.portfolioProjects.find((project) =>
     normalized.includes(normalizeForMatch(project.name))
@@ -106,10 +118,24 @@ export function buildEvidenceAccordion(question, evidenceProjects, useFallbackRe
         items: filteredItems,
       };
     } else if (filteredItems.length > 0) {
-      // Always include all published case studies when showing a broad catalogue
+      const scope = detectEvidenceScope(question);
+      if (scope === 'case_studies') {
+        const caseStudyItems = filteredItems.filter((item) => item.kind === 'Published case study');
+        return {
+          scope: 'case_studies',
+          mode: 'catalogue',
+          label: 'Published case studies',
+          items: caseStudyItems.length > 0 ? caseStudyItems : knowledge.caseStudies.map(caseStudyItem),
+        };
+      }
+      
+      // If broad portfolio query, include full catalogue in consistent order
+      const isBroadPortfolio = scope === 'portfolio' || /\b(?:portfolio|our work|your work|projects|work)\b/i.test(question || '');
+      const uniquePortfolioItems = isBroadPortfolio
+        ? knowledge.portfolioProjects.map(portfolioItem)
+        : filteredItems.filter((item) => item.kind !== 'Published case study');
       const caseStudyItems = knowledge.caseStudies.map(caseStudyItem);
-      const uniquePortfolioItems = filteredItems.filter((item) => item.kind !== 'Published case study');
-      const finalItems = [...caseStudyItems, ...uniquePortfolioItems];
+      const finalItems = [...uniquePortfolioItems, ...caseStudyItems];
 
       return {
         scope: 'portfolio',
@@ -139,7 +165,7 @@ export function buildEvidenceAccordion(question, evidenceProjects, useFallbackRe
   const caseStudies = knowledge.caseStudies.map(caseStudyItem);
   const items = scope === 'case_studies'
     ? caseStudies
-    : [...caseStudies, ...knowledge.portfolioProjects.map(portfolioItem)];
+    : [...knowledge.portfolioProjects.map(portfolioItem), ...caseStudies];
 
   return {
     scope,

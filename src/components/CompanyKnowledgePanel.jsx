@@ -26,6 +26,7 @@ import smartBrokerImage from '../assets/portfolio/smartbroker.png';
 import recycledMarketImage from '../assets/portfolio/recycled-market.png';
 import estradoImage from '../assets/portfolio/estrado.png';
 import ugnamiImage from '../assets/portfolio/ugnami.png';
+import krafcImage from '../assets/portfolio/krafc.png';
 
 const knowledge = loadCompanyKnowledge();
 
@@ -41,6 +42,7 @@ const evidenceImages = {
   'recycled-market': recycledMarketImage,
   estrado: estradoImage,
   ugnami: ugnamiImage,
+  krafc: krafcImage,
 };
 
 const stagger = {
@@ -109,16 +111,16 @@ function ServicesPanel({ onSelect }) {
 
 function PortfolioPanel({ onSelect }) {
   const evidence = [
+    ...knowledge.portfolioProjects.map((project) => ({
+      ...project,
+      category: 'Portfolio project',
+      prompt: `Tell me about the ${project.name} project`,
+    })),
     ...knowledge.caseStudies.map((study) => ({
       ...study,
       category: 'Published case study',
       description: study.solution,
       prompt: `Tell me about the ${study.name} case study`,
-    })),
-    ...knowledge.portfolioProjects.map((project) => ({
-      ...project,
-      category: 'Portfolio project',
-      prompt: `Tell me about the ${project.name} project`,
     })),
   ];
 

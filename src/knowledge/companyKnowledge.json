@@ -309,20 +309,31 @@
   ],
   "portfolioProjects": [
     {
-      "id": "ugnami",
-      "name": "Ugnami",
-      "description": "Ugnami is a Melbourne-based tech start-up with an aim to connect people around the world and enable them to buy and sell goods and services. We helped augment Ugnami online portal to enrich the user experience.",
-      "category": "E-commerce and marketplace",
-      "type": "Responsive web marketplace",
-      "platform": "Web",
-      "clientContext": "A Melbourne-based tech start-up connecting people around the world for buying and selling goods and services.",
+      "id": "krafc",
+      "name": "krafc",
+      "description": "[krafc](https://krafc.com/) is a 2D and 3D spatial design web platform built for interior planning, exhibition booths, and commercial spaces. We designed and developed a fast, browser-based solution that bridges conceptual 2D floor planning with interactive 3D visualization, automated architectural blueprints, and complete furniture specification reports, reducing the time taken to design and produce 3D spaces by 95%.",
+      "category": "Spatial design and 3D planning",
+      "type": "Interactive 2D and 3D web application",
+      "platform": "Web application",
+      "website": "https://krafc.com",
+      "clientContext": "Interior designers, exhibition booth planners, and commercial space architects.",
       "deliverables": [
-        "Online portal augmentation",
-        "User experience enrichment",
-        "E-commerce marketplace features"
+        "Web application",
+        "2D floor planning and 3D space visualizer",
+        "Architectural blueprint and furniture spec sheet exports"
       ],
-      "aliases": ["Ugnami marketplace", "Ugnami portal", "ugnami"],
-      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
+      "aliases": [
+        "krafc",
+        "Kraft",
+        "krafc.com",
+        "https://krafc.com",
+        "krafc by Dekode",
+        "krafc 3d",
+        "spatial design web app",
+        "3d space planner",
+        "krafc web application"
+      ],
+      "sourceReference": "https://krafc.com"
     },
     {
       "id": "attendme",
@@ -368,6 +379,26 @@
       "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
     },
     {
+      "id": "smartbroker",
+      "name": "SmartBroker",
+      "description": "SmartBroker is a Melbourne-based start-up that aims to provide a simple platform for mortgage brokers and their clients to manage their relationships on the go. We designed and delivered a web and iOS SmartBroker app.",
+      "category": "Finance and client relationship management",
+      "type": "Web and mobile application",
+      "platform": "Web and iOS",
+      "clientContext": "A Melbourne start-up serving mortgage brokers and their clients",
+      "deliverables": [
+        "Web application",
+        "iOS application",
+        "On-the-go broker and client relationship management"
+      ],
+      "aliases": [
+        "Smart Broker",
+        "mortgage broker app",
+        "broker client platform"
+      ],
+      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
+    },
+    {
       "id": "smart-loan-helper",
       "name": "Smart Loan Helper",
       "description": "Smart Loan Helper unifies various home loan calculators for home buyers looking to buy their first home, investment property or refinance. The app enables buyers to perform, record and access various mortgage calculations, determine borrowing capacity, repayments, stamp duty and much more. We created the iOS and Android version of the app for Smart Money Solutions, an independent mortgage broker in Australia.",
@@ -391,26 +422,6 @@
       "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
     },
     {
-      "id": "smartbroker",
-      "name": "SmartBroker",
-      "description": "SmartBroker is a Melbourne-based start-up that aims to provide a simple platform for mortgage brokers and their clients to manage their relationships on the go. We designed and delivered a web and iOS SmartBroker app.",
-      "category": "Finance and client relationship management",
-      "type": "Web and mobile application",
-      "platform": "Web and iOS",
-      "clientContext": "A Melbourne start-up serving mortgage brokers and their clients",
-      "deliverables": [
-        "Web application",
-        "iOS application",
-        "On-the-go broker and client relationship management"
-      ],
-      "aliases": [
-        "Smart Broker",
-        "mortgage broker app",
-        "broker client platform"
-      ],
-      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
-    },
-    {
       "id": "recycled-market",
       "name": "Recycled Market",
       "description": "Recycled Market is an online market for products made from recycled products. We designed and developed a browser-independent responsive web portal with integrated CMS.",
@@ -428,6 +439,22 @@
         "recycled products marketplace",
         "sustainable ecommerce"
       ],
+      "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
+    },
+    {
+      "id": "ugnami",
+      "name": "Ugnami",
+      "description": "Ugnami is a Melbourne-based tech start-up with an aim to connect people around the world and enable them to buy and sell goods and services. We helped augment Ugnami online portal to enrich the user experience.",
+      "category": "E-commerce and marketplace",
+      "type": "Responsive web marketplace",
+      "platform": "Web",
+      "clientContext": "A Melbourne-based tech start-up connecting people around the world for buying and selling goods and services.",
+      "deliverables": [
+        "Online portal augmentation",
+        "User experience enrichment",
+        "E-commerce marketplace features"
+      ],
+      "aliases": ["Ugnami marketplace", "Ugnami portal", "ugnami"],
       "sourceReference": "DEKODE/src/components/PortfolioShowcase.jsx"
     },
     {
@@ -457,7 +484,7 @@
       "name": "BRIDGE",
       "title": "The BRIDGE Initiative",
       "status": "COMING SOON",
-      "summary": "Connecting Australian and Indian businesses through technology, talent, and strategic partnership — to build, scale, and grow together.",
+      "summary": "Connecting Australian and Indian businesses through technology, talent, and strategic partnership, to build, scale, and grow together.",
       "regions": [
         {
           "name": "Australia",
@@ -680,7 +707,11 @@
       "food manufacturing",
       "food manufacturer",
       "primary school",
-      "attendme"
+      "attendme",
+      "krafc",
+      "krafc.com",
+      "krafc 3d",
+      "kraft"
     ],
     "initiatives": [
       "initiative",

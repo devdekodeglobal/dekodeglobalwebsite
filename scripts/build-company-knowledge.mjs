@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sourceRoot = resolve(projectRoot, '..', 'Dekode');
 const outputFile = resolve(projectRoot, 'src', 'knowledge', 'companyKnowledge.json');
+const jsOutputFile = resolve(projectRoot, 'src', 'knowledge', 'companyKnowledgeData.js');
 const vertexOutputFile = resolve(projectRoot, 'gcp', 'vertex-chat', 'companyKnowledge.json');
 const optional = process.argv.includes('--optional');
 
@@ -525,6 +526,7 @@ await mkdir(dirname(outputFile), { recursive: true });
 const serializedKnowledge = `${JSON.stringify(knowledge, null, 2)}\n`;
 await Promise.all([
   writeFile(outputFile, serializedKnowledge, 'utf8'),
+  writeFile(jsOutputFile, `export default ${serializedKnowledge};\n`, 'utf8'),
   writeFile(vertexOutputFile, serializedKnowledge, 'utf8'),
 ]);
 console.log(`Generated synchronized website and Vertex knowledge from ${knowledge.source.files.length} DEKODE source files.`);
