@@ -145,7 +145,7 @@ const ProposalCFS = () => {
               </p>
               
               <a 
-                href="https://optiflow-poc.vercel.app/allocation" 
+                href="https://optiflow-poc.pages.dev" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 style={{
@@ -183,7 +183,7 @@ const ProposalCFS = () => {
             {/* Right Column: Image */}
             <div style={{ flex: '1', display: 'flex', justifyContent: 'center' }}>
               <a 
-                href="https://optiflow-poc.vercel.app/allocation" 
+                href="https://optiflow-poc.pages.dev" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 style={{ display: 'block', width: '100%' }}
