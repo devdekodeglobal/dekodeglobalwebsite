@@ -987,7 +987,13 @@ export default function ChatApp({
           aria-label="Explore Clinics On Cloud in a new tab"
         >
           <span className="coc-peek-character">
-            <img src="/clinics-on-cloud/coc-mascot-v1.png" alt="" />
+            <img className="coc-peek-body" src="/clinics-on-cloud/coc-mascot-v1.png" alt="" />
+            <img className="coc-peek-arm-left" src="/clinics-on-cloud/coc-mascot-v1.png" alt="" />
+            <img className="coc-peek-arm-right" src="/clinics-on-cloud/coc-mascot-v1.png" alt="" />
+            <img className="coc-peek-leg-left" src="/clinics-on-cloud/coc-mascot-v1.png" alt="" />
+            <img className="coc-peek-leg-right" src="/clinics-on-cloud/coc-mascot-v1.png" alt="" />
+            <span className="coc-peek-eyelid coc-peek-eyelid-left" aria-hidden="true" />
+            <span className="coc-peek-eyelid coc-peek-eyelid-right" aria-hidden="true" />
           </span>
           <span className="coc-peek-caption">Meet Clinics On Cloud <span aria-hidden="true">↗</span></span>
         </a>
