@@ -354,13 +354,23 @@ export default async function handler(request, response) {
     process.env.GEMINI_API_KEY_3
   ].filter(Boolean);
   if (allKeys.length) {
-    const apiKey = allKeys[Math.floor(Math.random() * allKeys.length)];
     const primaryModel = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
     const fallbackModel = process.env.GEMINI_FALLBACK_MODEL || 'gemini-2.5-flash-lite';
-    const attempts = [primaryModel, primaryModel, fallbackModel];
+    const MAX_TOTAL_ATTEMPTS = Math.max(6, allKeys.length * 2);
+    const MAX_TOTAL_DURATION_MS = 45_000;
+    const startTime = Date.now();
+    const startIndex = Math.floor(Math.random() * allKeys.length);
     let lastFailure = null;
-    for (let index = 0; index < attempts.length; index += 1) {
-      const model = attempts[index];
+
+    for (let attempt = 0; attempt < MAX_TOTAL_ATTEMPTS; attempt += 1) {
+      if (Date.now() - startTime >= MAX_TOTAL_DURATION_MS) {
+        console.warn('[DEKODE Chat] Gemini retry deadline (45s) reached. Falling back to local verified response.');
+        break;
+      }
+
+      const apiKey = allKeys[(startIndex + attempt) % allKeys.length];
+      const model = attempt < allKeys.length ? primaryModel : fallbackModel;
+
       try {
         const geminiResponse = await requestGemini({ apiKey, model, question, normalizedQuestion, history, context, memoryContext, usedSuggestions, interaction });
         const payload = await geminiResponse.json();
@@ -372,12 +382,19 @@ export default async function handler(request, response) {
           lastFailure = { status: 502, reason: candidate.finishReason || 'EMPTY_RESPONSE' };
         } else {
           lastFailure = { status: geminiResponse.status, reason: payload?.error?.status };
+          if (!RETRYABLE_STATUSES.has(geminiResponse.status)) {
+            console.error('[DEKODE Chat] Non-retryable Gemini error received.', geminiResponse.status, payload?.error);
+            break;
+          }
         }
       } catch (error) {
         lastFailure = { status: 503, reason: error?.name };
       }
-      if (!RETRYABLE_STATUSES.has(lastFailure.status) || index === attempts.length - 1) break;
-      await wait(150 * (2 ** index));
+
+      if (attempt < MAX_TOTAL_ATTEMPTS - 1) {
+        const backoff = Math.min(300 * (1.5 ** attempt), 2500);
+        await wait(backoff);
+      }
     }
     console.error('[DEKODE Chat] Gemini attempts failed.', lastFailure?.status, lastFailure?.reason);
   }
