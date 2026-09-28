@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#043364">
+  <meta name="description" content="Explore Clinics On Cloud: understand the screening journey, find a kiosk, and see how digital reports work.">
+  <title>Clinics On Cloud | DEKODE</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="preload" as="image" href="coc-mascot-v1.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="prototype.css">
+  <script src="prototype.js" defer></script>
+</head>
+<body>
+  <div class="announcement"><span class="announcement-dot"></span> A simpler way to access everyday health screening <span class="announcement-end">A DEKODE product showcase</span></div>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="wordmark" href="#home" data-route="home" aria-label="DEKODE home">DEKODE<span class="wordmark-dot">.</span></a>
+      <div class="header-divider"></div>
+      <span class="header-product">Clinics On Cloud</span>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="#how-it-works" data-scroll="how-it-works">How it works</a>
+        <a href="#report" data-route="report">My report</a>
+        <a href="#organisations" data-route="organisations">For organisations</a>
+      </nav>
+      <button class="header-cta" type="button" data-route="locations">Find a kiosk <span aria-hidden="true">↗</span></button>
+      <button class="menu-button" id="menu-button" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav"><span></span><span></span><span></span></button>
+    </div>
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" hidden>
+      <a href="#how-it-works" data-scroll="how-it-works">How it works</a>
+      <a href="#locations" data-route="locations">Find a kiosk</a>
+      <a href="#report" data-route="report">My report</a>
+      <a href="#organisations" data-route="organisations">For organisations</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="view active" data-view="home">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-photo" role="img" aria-label="Clinics On Cloud health screening kiosk in a modern clinic"></div>
+        <div class="hero-shade"></div>
+        <div class="hero-inner">
+          <div class="hero-content">
+            <h1 id="hero-title">A health check.<br><em>Made simple.</em></h1>
+            <p>One easy-to-use machine can check important health indicators, give you a clear report, and connect you to a doctor when you need one.</p>
+            <div class="hero-actions">
+              <button type="button" class="btn btn-yellow" data-scroll="how-it-works">See how it works <span aria-hidden="true">↘</span></button>
+              <a class="btn btn-white-outline whatsapp-cta" href="https://wa.me/918882848489" target="_blank" rel="noopener noreferrer" aria-label="Chat with DEKODE about Clinics On Cloud on WhatsApp">
+                <svg class="whatsapp-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.031-.967-.273-.099-.472-.148-.67.15-.198.297-.768.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.297-.496.099-.198.05-.372-.025-.52-.074-.149-.669-1.612-.916-2.206-.242-.579-.487-.5-.669-.51-.173-.009-.372-.011-.57-.011s-.52.074-.792.372c-.273.297-1.04 1.016-1.04 2.479s1.064 2.876 1.212 3.074c.149.198 2.095 3.2 5.077 4.487.709.306 1.262.489 1.693.626.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.273-.198-.57-.347m-5.421 7.435h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.74.981.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.002-5.45 4.438-9.886 9.892-9.886a9.82 9.82 0 0 1 6.993 2.898 9.83 9.83 0 0 1 2.895 7.002c-.002 5.45-4.438 9.887-9.897 9.887m8.413-18.297A11.81 11.81 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.893a11.82 11.82 0 0 0 1.586 5.928L.057 24l6.326-1.658a11.88 11.88 0 0 0 5.664 1.444h.005c6.555 0 11.89-5.335 11.893-11.893a11.82 11.82 0 0 0-3.48-8.413Z"/></svg>
+                Chat on WhatsApp
+              </a>
+            </div>
+            <div class="hero-trust"><span class="hero-trust-icon" aria-hidden="true">✳</span><span>Walk in. Get checked. Take your report with you.</span></div>
+          </div>
+          <div class="hero-side-label"><span>01 / 04</span><span>YOUR HEALTH, CLOSER</span></div>
+        </div>
+        <div class="mascot-stage" aria-label="Clinics On Cloud guide">
+          <div class="mascot-dock" id="mascot-dock">
+            <div class="mascot-greeting" aria-hidden="true">Hi! Have a question?</div>
+            <button class="mascot-button" id="mascot-button" type="button" aria-label="Chat with the Clinics On Cloud guide" aria-controls="chat-panel" aria-expanded="false">
+              <span class="mascot-art" aria-hidden="true">
+                <img class="mascot-part mascot-body" src="coc-mascot-v1.png" alt="">
+                <img class="mascot-part mascot-arm-left" src="coc-mascot-v1.png" alt="">
+                <img class="mascot-part mascot-arm-right" src="coc-mascot-v1.png" alt="">
+                <img class="mascot-part mascot-leg-left" src="coc-mascot-v1.png" alt="">
+                <img class="mascot-part mascot-leg-right" src="coc-mascot-v1.png" alt="">
+                <span class="mascot-eyelid mascot-eyelid-left"></span>
+                <span class="mascot-eyelid mascot-eyelid-right"></span>
+              </span>
+              <span class="mascot-shadow" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="quick-paths" aria-label="Choose what you need">
+        <button type="button" class="quick-path" data-route="locations"><span class="quick-number">01</span><span class="quick-copy"><strong>I need a health check</strong><small>Find a kiosk near you</small></span><span class="quick-arrow" aria-hidden="true">↗</span></button>
+        <button type="button" class="quick-path" data-route="report"><span class="quick-number">02</span><span class="quick-copy"><strong>I already got tested</strong><small>View your report</small></span><span class="quick-arrow" aria-hidden="true">↗</span></button>
+        <button type="button" class="quick-path" data-route="organisations"><span class="quick-number">03</span><span class="quick-copy"><strong>I want this at my location</strong><small>Explore deployment</small></span><span class="quick-arrow" aria-hidden="true">↗</span></button>
+      </section>
+
+      <section class="explainer section-wrap" id="how-it-works" aria-labelledby="explainer-title">
+        <div class="section-heading split-heading">
+          <div><div class="eyebrow"><span class="eyebrow-line"></span> THE IDEA, IN 20 SECONDS</div><h2 id="explainer-title">So what does this<br><em>machine actually do?</em></h2></div>
+          <p>Think of it as a small health check station. It brings basic screening, a simple report, and care options together in one visit.</p>
+        </div>
+        <div class="explainer-grid">
+          <div class="explainer-image"><img src="coc-experience-v2.png" alt="A patient using a health screening kiosk with help from a clinic assistant"><div class="image-overline">A guided experience, from start to finish</div></div>
+          <div class="explainer-steps" role="tablist" aria-label="Health check steps">
+            <button type="button" class="explain-step active" role="tab" id="step-tab-0" aria-selected="true" aria-controls="step-panel" data-step="0"><span class="step-no">01</span><span><strong>Start at the kiosk</strong><small>Walk in, select a health check, and follow the screen. Staff can help if needed.</small></span><span class="step-plus">−</span></button>
+            <button type="button" class="explain-step" role="tab" id="step-tab-1" aria-selected="false" aria-controls="step-panel" data-step="1"><span class="step-no">02</span><span><strong>Get checked</strong><small>Connected devices measure your selected health indicators.</small></span><span class="step-plus">+</span></button>
+            <button type="button" class="explain-step" role="tab" id="step-tab-2" aria-selected="false" aria-controls="step-panel" data-step="2"><span class="step-no">03</span><span><strong>Take your report</strong><small>Get a printed report and, where available, a digital copy.</small></span><span class="step-plus">+</span></button>
+            <button type="button" class="explain-step" role="tab" id="step-tab-3" aria-selected="false" aria-controls="step-panel" data-step="3"><span class="step-no">04</span><span><strong>Talk to a doctor</strong><small>Ask for a video consultation if you need guidance on what comes next.</small></span><span class="step-plus">+</span></button>
+            <div class="step-detail" id="step-panel" role="tabpanel" aria-labelledby="step-tab-0"><span class="step-detail-label">STEP 01 · START</span><p>No technical knowledge needed. Choose a check on the screen and follow the prompts.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="capabilities" aria-labelledby="capabilities-title">
+        <div class="section-wrap">
+          <div class="section-heading split-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> WHAT YOU CAN CHECK</div><h2 id="capabilities-title">One kiosk. Many<br><em>useful health checks.</em></h2></div><p>Available checks depend on the kiosk model and location. Explore the types of screening it can support.</p></div>
+          <div class="capability-layout">
+            <div class="capability-tabs" role="tablist" aria-label="Screening categories">
+              <button type="button" class="capability-tab active" role="tab" aria-selected="true" data-category="everyday"><span class="capability-index">01</span><span>Everyday health</span><span aria-hidden="true">↗</span></button>
+              <button type="button" class="capability-tab" role="tab" aria-selected="false" data-category="heart"><span class="capability-index">02</span><span>Heart & blood</span><span aria-hidden="true">↗</span></button>
+              <button type="button" class="capability-tab" role="tab" aria-selected="false" data-category="specialist"><span class="capability-index">03</span><span>Specialised checks</span><span aria-hidden="true">↗</span></button>
+            </div>
+            <div class="capability-display" id="capability-display" role="tabpanel"><div class="display-symbol" aria-hidden="true">♡</div><div class="display-kicker">EVERYDAY HEALTH</div><h3>Know the basics about your body.</h3><p>Quick checks that help you understand your day-to-day health.</p><div class="test-chips"><span>Blood pressure</span><span>Heart rate</span><span>SpO₂</span><span>BMI & weight</span><span>Body temperature</span></div><button type="button" class="inline-link" data-route="locations">Find a kiosk to get started <span aria-hidden="true">↗</span></button></div>
+          </div>
+          <div class="capability-note"><span aria-hidden="true">ⓘ</span> Test availability varies by machine model and location. A screening report is not a medical diagnosis.</div>
+        </div>
+      </section>
+
+      <section class="report-story section-wrap" aria-labelledby="report-story-title"><div class="report-story-copy"><div class="eyebrow"><span class="eyebrow-line"></span> AFTER YOUR TEST</div><h2 id="report-story-title">Your report goes<br><em>where you go.</em></h2><p>See your results clearly, keep a copy, and share it with a doctor when you choose. The sample preview shows how the digital experience could feel.</p><div class="report-story-actions"><button type="button" class="btn btn-navy" data-route="report">Explore report access <span aria-hidden="true">↗</span></button></div></div><div class="report-mini" aria-label="Illustrative report preview"><div class="report-mini-top"><strong>Health snapshot</strong><span>SAMPLE</span></div><div class="report-mini-score"><span>CHECKS COMPLETED</span><strong>05<span>/05</span></strong><small>See the full details in your report</small></div><div class="report-mini-lines"><span>Blood pressure <b>View result</b></span><span>Heart rate <b>View result</b></span><span>Oxygen level <b>View result</b></span></div></div></section>
+      <section class="home-close"><div class="section-wrap"><div><div class="eyebrow light-eyebrow"><span class="eyebrow-line"></span> YOUR NEXT STEP</div><h2>Ready to see where<br><em>you can get checked?</em></h2></div><button type="button" class="btn btn-yellow" data-route="locations">Find a kiosk <span aria-hidden="true">↗</span></button></div></section>
+    </div>
+
+    <div class="view" data-view="locations">
+      <section class="interior-head section-wrap"><div class="eyebrow"><span class="eyebrow-line"></span> LOCATIONS</div><h1>Find a kiosk<br><em>near you.</em></h1><p>Search a city or area, then choose a location to see the details. The locations below are illustrative while the live network is connected.</p></section>
+      <section class="location-workspace section-wrap" aria-label="Kiosk finder"><div class="location-list-panel"><label for="location-search">City, area or PIN code</label><div class="search-control"><span aria-hidden="true">⌕</span><input id="location-search" type="search" placeholder="Try Mumbai or Andheri" autocomplete="off"><button type="button" id="location-search-button">Search</button></div><p class="demo-note"><span>DEMO DATA</span> Locations shown here are examples, not verified operating sites.</p><div class="location-results" id="location-results"></div></div><div class="location-detail" id="location-detail"><div class="location-map" aria-hidden="true"><span class="map-road road-one"></span><span class="map-road road-two"></span><span class="map-road road-three"></span><span class="map-pin">+</span><span class="map-neighbourhood">MUMBAI</span></div><div class="location-detail-body"><span class="detail-kicker">SELECT A LOCATION</span><h2>Choose a kiosk from the list.</h2><p>Details, example test availability, and next actions will appear here.</p></div></div></section>
+    </div>
+
+    <div class="view" data-view="report">
+      <section class="interior-head section-wrap"><div class="eyebrow"><span class="eyebrow-line"></span> DIGITAL REPORTS</div><h1>Your report.<br><em>Easy to access.</em></h1><p>After a screening, use your registered mobile number and report ID to open your results. Explore the sample below to see the experience.</p></section>
+      <section class="report-workspace section-wrap"><div class="report-access"><div class="access-icon" aria-hidden="true">▤</div><h2>View your report</h2><p>Enter the details given at the kiosk. Real report verification will require a secure connection to the Clinics On Cloud platform.</p><form id="report-form"><label for="patient-phone">Registered mobile number</label><input id="patient-phone" type="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile number" required><label for="patient-report-id">Report ID</label><input id="patient-report-id" type="text" placeholder="Found on your printed receipt" required><button type="submit" class="btn btn-navy">Continue securely <span aria-hidden="true">→</span></button></form><div class="access-separator"><span>or</span></div><button type="button" class="sample-link" id="open-sample-report">Explore a sample report <span aria-hidden="true">↗</span></button><p class="form-message" id="report-message" role="status"></p></div><div class="report-benefits"><span class="benefit-kicker">WHAT YOU CAN DO AFTER TESTING</span><div class="benefit-item"><span>01</span><div><strong>Understand your results</strong><p>See each measurement with clear labels and useful context.</p></div></div><div class="benefit-item"><span>02</span><div><strong>Keep a copy</strong><p>Download or print your report for your own records.</p></div></div><div class="benefit-item"><span>03</span><div><strong>Get guidance</strong><p>Share your report with a doctor or ask for a consultation.</p></div></div></div></section>
+      <section class="sample-report section-wrap" id="sample-report" hidden><div class="sample-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> ILLUSTRATIVE PREVIEW</div><h2>A report that's easy to read.</h2></div><span class="sample-badge">SAMPLE DATA</span></div><div class="sample-report-layout"><div class="sample-document" id="sample-document"><div class="document-head"><strong>Clinics On Cloud</strong><span>Health screening report</span></div><div class="document-person"><div><small>PATIENT</small><strong>Sample Patient</strong></div><div><small>REPORT ID</small><strong>DEMO-001</strong></div><div><small>DATE</small><strong>Sample only</strong></div></div><h3>Your screening results</h3><div class="document-row"><span>Blood pressure</span><strong>118 / 76 mmHg</strong><em>In range</em></div><div class="document-row"><span>Heart rate</span><strong>72 bpm</strong><em>In range</em></div><div class="document-row"><span>Oxygen level (SpO₂)</span><strong>98%</strong><em>In range</em></div><div class="document-row"><span>Body temperature</span><strong>36.7 °C</strong><em>In range</em></div><div class="document-foot">Illustrative data only. A clinician should interpret actual results in context.</div></div><div class="sample-actions"><h3>What would you like to do?</h3><p>This sample lets you explore the report actions. Your real report would be protected by verification.</p><button type="button" id="print-sample"><span>↓</span> Save or print sample</button><button type="button" id="share-sample"><span>↗</span> Share sample link</button><button type="button" id="consult-sample"><span>✳</span> Ask about a doctor consultation</button><p class="form-message" id="sample-message" role="status"></p></div></div></section>
+    </div>
+
+    <div class="view" data-view="organisations"><section class="interior-head section-wrap"><div class="eyebrow"><span class="eyebrow-line"></span> FOR ORGANISATIONS</div><h1>Bring screening<br><em>closer to people.</em></h1><p>Clinics On Cloud can be considered for clinics, workplaces, pharmacies, community programmes and health camps. Tell DEKODE about the setting you have in mind.</p></section><section class="organisation-workspace section-wrap"><div class="organisation-visual"><img src="coc-experience-v2.png" alt="Patient using a health screening kiosk with clinic staff support"><div class="organisation-overlay"><span>DESIGNED FOR REAL SETTINGS</span><strong>One compact station.<br>Many places it could help.</strong></div></div><div class="organisation-form"><h2>Let's talk about your location.</h2><p>Share a few details and the team can discuss the right model, test menu, and setup.</p><form id="demo-form"><div class="two-fields"><div><label for="contact-name">Your name</label><input id="contact-name" type="text" placeholder="Full name" required></div><div><label for="contact-org">Organisation</label><input id="contact-org" type="text" placeholder="Organisation name" required></div></div><div class="two-fields"><div><label for="contact-email">Work email</label><input id="contact-email" type="email" placeholder="you@company.com" required></div><div><label for="contact-type">Where would it be used?</label><select id="contact-type"><option value="">Select a setting</option><option>Clinic or health centre</option><option>Workplace</option><option>Pharmacy</option><option>Community or residential site</option><option>Health camp or CSR programme</option></select></div></div><label for="contact-message">Tell us a little more</label><textarea id="contact-message" rows="4" placeholder="Location, expected use, or questions"></textarea><button type="submit" class="btn btn-navy">Prepare enquiry <span aria-hidden="true">↗</span></button><p class="form-message" id="demo-message" role="status"></p><small>Prototype form: no details are sent or stored.</small></form></div></section></div>
+  </main>
+
+  <footer class="site-footer"><div class="section-wrap footer-inner"><div><a class="wordmark footer-wordmark" href="#home" data-route="home">DEKODE<span class="wordmark-dot">.</span></a><p>Practical technology for a healthier tomorrow.</p></div><div class="footer-links"><button type="button" data-scroll="how-it-works">How it works</button><button type="button" data-route="locations">Find a kiosk</button><button type="button" data-route="report">My report</button><button type="button" data-route="organisations">For organisations</button></div><div class="footer-note">Clinics On Cloud product showcase<br>DEKODE Global LLP · Authorised seller</div></div></footer>
+
+  <aside class="chat-panel" id="chat-panel" role="dialog" aria-label="Clinics On Cloud chat guide" hidden>
+    <div class="chat-header">
+      <div class="chat-header-avatar"><img src="coc-mascot-v1.png" alt="" width="34" height="51"></div>
+      <div><strong>Clinics On Cloud guide</strong><span>Ask me about the product</span></div>
+      <button class="chat-close" id="chat-close" type="button" aria-label="Close chat">×</button>
+    </div>
+    <div class="chat-messages" id="chat-messages" role="log" aria-live="polite" aria-label="Chat messages">
+      <div class="chat-message bot"><span class="chat-bubble">Hi! 👋 I can help you understand the machine, tests, reports, locations, or how to bring it to your organisation.</span></div>
+    </div>
+    <div class="chat-suggestions" id="chat-suggestions" aria-label="Suggested questions">
+      <button type="button" data-chat-prompt="What does this machine do?">What does it do?</button>
+      <button type="button" data-chat-prompt="What tests can I take?">Available tests</button>
+      <button type="button" data-chat-prompt="How do I view my report?">My report</button>
+      <button type="button" data-chat-prompt="Where can I find a kiosk?">Find a kiosk</button>
+    </div>
+    <form class="chat-compose" id="chat-form">
+      <label class="sr-only" for="chat-input">Ask a question about Clinics On Cloud</label>
+      <input id="chat-input" type="text" maxlength="300" placeholder="Ask anything about the product…" autocomplete="off" required>
+      <button type="submit" aria-label="Send message">➤</button>
+    </form>
+    <p class="chat-disclosure">Prototype guide · answers common questions · no messages are sent or saved</p>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

@@ -978,6 +978,21 @@ export default function ChatApp({
         />
       )}
 
+      {step === "centered" && !proposalContext && (
+        <a
+          className="coc-peek-link"
+          href="/clinics-on-cloud/index.html#home"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Explore Clinics On Cloud in a new tab"
+        >
+          <span className="coc-peek-character">
+            <img src="/clinics-on-cloud/coc-mascot-v1.png" alt="" />
+          </span>
+          <span className="coc-peek-caption">Meet Clinics On Cloud <span aria-hidden="true">↗</span></span>
+        </a>
+      )}
+
       <header className="chat-header">
         <a className="brand-logo" href={import.meta.env.BASE_URL || "/"} aria-label="Go to DEKODE home">
           DEKODE

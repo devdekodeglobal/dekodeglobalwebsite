@@ -622,6 +622,115 @@ h6 {
 }
 
 /* Initial Hero */
+.coc-peek-link {
+  position: absolute;
+  z-index: 80;
+  left: 0;
+  bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  display: flex;
+  align-items: flex-end;
+  width: min(15vw, 188px);
+  min-width: 124px;
+  height: min(31vh, 238px);
+  color: #fff;
+  text-decoration: none;
+  isolation: isolate;
+  outline-offset: 4px;
+}
+
+.coc-peek-link::before {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  inset: 5% auto 5% 0;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: linear-gradient(180deg, transparent, rgba(254, 182, 17, 0.8), transparent);
+  box-shadow: 4px 0 18px rgba(3, 26, 55, 0.45);
+  opacity: 0;
+  animation: cocDoorEdge 4.7s ease-out both;
+}
+
+.coc-peek-link::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  bottom: 2px;
+  left: 12px;
+  width: 110px;
+  height: 17px;
+  border-radius: 50%;
+  background: rgba(0, 12, 30, 0.45);
+  filter: blur(7px);
+  opacity: 0;
+  animation: cocShadow 5.4s ease-out both;
+}
+
+.coc-peek-character {
+  display: block;
+  width: min(11vw, 128px);
+  min-width: 92px;
+  height: 100%;
+  transform: translateX(-105%);
+  filter: brightness(0.78);
+  animation: cocPeek 5.4s cubic-bezier(0.25, 0.7, 0.28, 1) both;
+  transition: filter 250ms ease, translate 250ms ease;
+}
+
+.coc-peek-character img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom;
+  filter: drop-shadow(8px 10px 10px rgba(0, 13, 38, 0.35));
+}
+
+.coc-peek-caption {
+  position: absolute;
+  left: min(10vw, 116px);
+  bottom: 35%;
+  width: max-content;
+  max-width: 190px;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid rgba(254, 182, 17, 0.55);
+  border-radius: 12px 12px 12px 2px;
+  background: rgba(3, 43, 87, 0.94);
+  box-shadow: 0 9px 24px rgba(0, 10, 32, 0.26);
+  font: 600 0.8rem/1.25 var(--font-primary);
+  opacity: 0;
+  transform: translateX(-6px);
+  animation: cocCaption 450ms ease-out 5s forwards;
+}
+
+.coc-peek-caption span { color: var(--color-accent-yellow); }
+.coc-peek-link:hover .coc-peek-character,
+.coc-peek-link:focus-visible .coc-peek-character { filter: brightness(1.1); translate: 4px 0; }
+.coc-peek-link:focus-visible { outline: 3px solid var(--color-accent-yellow); }
+
+@keyframes cocPeek {
+  0%, 10% { transform: translateX(-105%) rotate(-5deg); filter: brightness(0.62); }
+  38%, 57% { transform: translateX(-48%) rotate(-4deg); filter: brightness(0.72); }
+  100% { transform: translateX(0) rotate(0); filter: brightness(1); }
+}
+
+@keyframes cocDoorEdge { 0%, 80% { opacity: 0.85; } 100% { opacity: 0; } }
+@keyframes cocShadow { 0%, 50% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes cocCaption { to { opacity: 1; transform: translateX(0); } }
+
+@media (max-width: 700px) {
+  .coc-peek-link { width: 112px; min-width: 0; height: 154px; bottom: max(0.5rem, env(safe-area-inset-bottom, 0px)); }
+  .coc-peek-character { width: 88px; min-width: 0; }
+  .coc-peek-caption { left: 76px; bottom: 28%; max-width: 128px; font-size: 0.72rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coc-peek-character { animation: none; transform: none; filter: none; }
+  .coc-peek-link::before { animation: none; opacity: 0; }
+  .coc-peek-link::after { animation: none; opacity: 1; }
+  .coc-peek-caption { animation: none; opacity: 1; transform: none; }
+}
+
 .hero-title {
   font-family: var(--font-heading);
   font-size: clamp(1.65rem, 2.4vw, 2.2rem);
