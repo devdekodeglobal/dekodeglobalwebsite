@@ -14,7 +14,8 @@ const mobileNav = document.getElementById('mobile-nav');
 const menuButton = document.getElementById('menu-button');
 
 function navigate(route) {
-  const next = validRoutes.has(route) ? route : 'home';
+  const requested = route === 'locations' ? 'kiosk' : route;
+  const next = validRoutes.has(requested) ? requested : 'home';
   views.forEach(view => view.classList.toggle('active', view.dataset.view === next));
   document.body.classList.toggle('home-view', next === 'home');
   document.querySelectorAll('[data-route]').forEach(control => control.classList.toggle('active', control.dataset.route === next));
@@ -138,9 +139,28 @@ const cataloguePrev = document.getElementById('catalogue-prev');
 const catalogueNext = document.getElementById('catalogue-next');
 const catalogueCount = document.getElementById('catalogue-page-count');
 const catalogueFullsize = document.getElementById('catalogue-fullsize');
+const catalogueDialog = document.getElementById('catalogue-dialog');
+const catalogueDialogImage = document.getElementById('catalogue-dialog-image');
+const catalogueDialogCount = document.getElementById('catalogue-dialog-count');
+const catalogueDialogPrev = document.getElementById('catalogue-dialog-prev');
+const catalogueDialogNext = document.getElementById('catalogue-dialog-next');
+const catalogueZoom = document.getElementById('catalogue-zoom');
 let cataloguePage = 1;
 let catalogueTurning = false;
 const catalogueSource = page => `catalogue/page-${String(page).padStart(2, '0')}.jpg`;
+
+function setCatalogueZoom(zoomed) {
+  catalogueDialog.classList.toggle('is-zoomed', zoomed);
+  catalogueZoom.setAttribute('aria-pressed', String(zoomed));
+  catalogueZoom.textContent = zoomed ? 'Fit page' : 'Zoom to read';
+}
+
+function openCatalogueDialog() {
+  catalogueDialogImage.src = catalogueSource(cataloguePage);
+  catalogueDialogImage.alt = `Catalogue page ${cataloguePage} of 12`;
+  setCatalogueZoom(matchMedia('(min-width: 701px)').matches);
+  catalogueDialog.showModal();
+}
 
 async function turnCataloguePage(direction) {
   const target = cataloguePage + direction;
@@ -154,9 +174,14 @@ async function turnCataloguePage(direction) {
   catalogueImage.src = nextImage.src;
   catalogueImage.alt = `Catalogue page ${target} of 12`;
   catalogueCount.textContent = `Page ${target} of 12`;
-  catalogueFullsize.href = catalogueSource(target);
+  catalogueDialogImage.src = catalogueSource(target);
+  catalogueDialogImage.alt = `Catalogue page ${target} of 12`;
+  catalogueDialogCount.textContent = `Page ${target} of 12`;
   cataloguePrev.disabled = target === 1;
   catalogueNext.disabled = target === 12;
+  catalogueDialogPrev.disabled = target === 1;
+  catalogueDialogNext.disabled = target === 12;
+  document.getElementById('catalogue-dialog-stage').scrollTo(0, 0);
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
     catalogueTurning = false;
     return;
@@ -174,6 +199,16 @@ async function turnCataloguePage(direction) {
 
 cataloguePrev.addEventListener('click', () => turnCataloguePage(-1));
 catalogueNext.addEventListener('click', () => turnCataloguePage(1));
+catalogueDialogPrev.addEventListener('click', () => turnCataloguePage(-1));
+catalogueDialogNext.addEventListener('click', () => turnCataloguePage(1));
+catalogueFullsize.addEventListener('click', openCatalogueDialog);
+catalogueBook.addEventListener('click', openCatalogueDialog);
+catalogueBook.addEventListener('keydown', event => {
+  if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openCatalogueDialog(); }
+});
+catalogueZoom.addEventListener('click', () => setCatalogueZoom(!catalogueDialog.classList.contains('is-zoomed')));
+document.getElementById('catalogue-close').addEventListener('click', () => catalogueDialog.close());
+catalogueDialog.addEventListener('click', event => { if (event.target === catalogueDialog) catalogueDialog.close(); });
 let catalogueTouchStart = null;
 catalogueBook.addEventListener('touchstart', event => { catalogueTouchStart = event.changedTouches[0].clientX; }, { passive: true });
 catalogueBook.addEventListener('touchend', event => {
