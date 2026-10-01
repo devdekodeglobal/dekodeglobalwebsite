@@ -22,9 +22,13 @@
       <div class="header-divider"></div>
       <a class="header-product" href="#home" data-route="home">Clinics On Cloud</a>
       <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="#catalogue" data-route="catalogue">View catalogue</a>
         <a href="#organisations" data-route="organisations">For organisations</a>
       </nav>
+      <button type="button" class="header-cta" data-route="kiosk">Find kiosk <span aria-hidden="true">↗</span></button>
+      <button type="button" class="menu-button" id="menu-button" aria-label="Open menu" aria-controls="mobile-nav" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" hidden><a href="#catalogue" data-route="catalogue">View catalogue</a><a href="#organisations" data-route="organisations">For organisations</a><a href="#kiosk" data-route="kiosk">Find kiosk</a></nav>
   </header>
 
   <main>
@@ -72,8 +76,41 @@
           <p>Watch the full video without cropping. Use the player controls to play, pause, mute, or view fullscreen.</p>
         </div>
         <div class="product-video-frame">
-          <video id="product-video" controls playsinline preload="metadata" poster="coc-hero-v2.png"><source src="coc-overview-web.mp4" type="video/mp4">Your browser does not support this video.</video>
+          <video id="product-video" playsinline preload="metadata" poster="coc-hero-v2.png" tabindex="0" aria-label="Clinics On Cloud product film"><source src="coc-overview-web.mp4" type="video/mp4">Your browser does not support this video.</video>
+          <div class="product-video-controls" role="group" aria-label="Product film controls">
+            <button type="button" id="video-play" aria-label="Play video" title="Play or pause video"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="video-play-icon" d="m8 5 11 7-11 7V5Z"/><path class="video-pause-icon" d="M8 5v14M16 5v14" hidden/></svg><span class="video-play-label">Play</span></button>
+            <span class="product-video-controls-spacer"></span>
+            <button type="button" id="video-mute" aria-label="Mute video" title="Mute or unmute video"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path class="video-sound-on" d="M15 9a5 5 0 0 1 0 6m3-9a9 9 0 0 1 0 12"/><path class="video-sound-off" d="m16 9 5 6m0-6-5 6" hidden/></svg><span class="video-mute-label">Mute</span></button>
+            <button type="button" id="video-fullscreen" aria-label="Enter fullscreen" title="Fullscreen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg><span class="video-fullscreen-label">Fullscreen</span></button>
+          </div>
         </div>
+        <div class="flyer-actions" aria-label="Clinics On Cloud flyer">
+          <div><strong>Prefer a quick overview?</strong><span>Keep the product flyer handy for your team.</span></div>
+          <div class="flyer-action-buttons">
+            <button type="button" class="flyer-view-button" id="view-flyer">View flyer <span aria-hidden="true">↗</span></button>
+            <a class="flyer-download-button" href="clinics-on-cloud-flyer.png" download="Clinics-On-Cloud-Flyer.png">Download flyer <span aria-hidden="true">↓</span></a>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="view" data-view="catalogue">
+      <section class="catalogue-section section-wrap" aria-labelledby="catalogue-title">
+        <div class="catalogue-copy"><div class="eyebrow"><span class="eyebrow-line"></span> PRODUCT CATALOGUE</div><h1 id="catalogue-title">Explore the machine,<br><em>page by page.</em></h1><p>Flip through the 12-page Clinics On Cloud catalogue for machine details, capabilities and deployment ideas.</p><span class="catalogue-copy-note">A closer look at the machine, one page at a time.</span></div>
+        <div class="catalogue-reader">
+          <div class="catalogue-book" id="catalogue-book" aria-label="Clinics On Cloud catalogue page viewer"><div class="catalogue-page"><img id="catalogue-page-image" src="catalogue/page-01.jpg" alt="Catalogue page 1 of 12" width="990" height="1400"></div><div class="catalogue-turn" id="catalogue-turn" aria-hidden="true"><img id="catalogue-turn-image" src="catalogue/page-01.jpg" alt="" width="990" height="1400"></div></div>
+          <div class="catalogue-navigation" aria-label="Catalogue page controls"><button type="button" id="catalogue-prev" disabled aria-label="Previous catalogue page">← Previous</button><span id="catalogue-page-count" role="status" aria-live="polite">Page 1 of 12</span><button type="button" id="catalogue-next" aria-label="Next catalogue page">Next →</button></div>
+          <p class="catalogue-hint">Use the arrows or swipe to turn pages.</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="view" data-view="kiosk">
+      <section class="kiosk-section section-wrap" aria-labelledby="kiosk-title">
+        <div class="eyebrow"><span class="eyebrow-line"></span> FIND A KIOSK</div>
+        <h1 id="kiosk-title">Looking for a<br><em>nearby machine?</em></h1>
+        <p>Share your city or PIN code and DEKODE can help confirm the nearest available Clinics On Cloud location.</p>
+        <form id="kiosk-form" class="kiosk-form"><label for="kiosk-location">Your city or PIN code</label><div><input id="kiosk-location" name="location" type="text" autocomplete="address-level2" placeholder="e.g. Delhi or 110001" required><button type="submit" class="btn btn-navy">Ask on WhatsApp <span aria-hidden="true">↗</span></button></div><small>You'll review the message before sending it. We don't show unverified kiosk locations.</small></form>
       </section>
     </div>
 
@@ -101,6 +138,11 @@
       </section>
     </div>
   </main>
+
+  <dialog class="flyer-dialog" id="flyer-dialog" aria-labelledby="flyer-dialog-title">
+    <div class="flyer-dialog-bar"><h2 id="flyer-dialog-title">Clinics On Cloud flyer</h2><div><a href="clinics-on-cloud-flyer.png" download="Clinics-On-Cloud-Flyer.png">Download <span aria-hidden="true">↓</span></a><button type="button" id="close-flyer" aria-label="Close flyer">×</button></div></div>
+    <img src="clinics-on-cloud-flyer.png" alt="Clinics On Cloud product flyer" loading="lazy">
+  </dialog>
 
   <footer class="site-footer"><div class="section-wrap footer-inner"><div><a class="wordmark footer-wordmark" href="../index.html">DEKODE</a><p>Practical technology for a healthier tomorrow.</p></div><div class="footer-links"><button type="button" data-route="home">Product overview</button><button type="button" data-route="organisations">For organisations</button></div><div class="footer-note">Clinics On Cloud product showcase<br>DEKODE Global LLP · Authorised seller</div></div></footer>
 
