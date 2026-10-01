@@ -1,9 +1,10 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 
 export default function HeroScenery({
   timeOfDay = 'noon',
-  realTime = new Date()
+  realTime = new Date(),
+  onInitialTransitionComplete
 }) {
   const isNight = timeOfDay === 'night';
   const isEvening = timeOfDay === 'evening';
@@ -119,6 +120,7 @@ export default function HeroScenery({
     return hours + minutes / 60;
   });
   const animatedTime = useMotionValue(initialDecimal);
+  const initialTransitionFinished = useRef(false);
 
   // 2. Whenever realTime updates, smoothly animate the motion value over 7 seconds
   useEffect(() => {
@@ -133,14 +135,22 @@ export default function HeroScenery({
       targetDecimal += 24;
     }
 
+    if (Math.abs(targetDecimal - animatedTime.get()) < 0.001) return undefined;
+
     const controls = animate(animatedTime, targetDecimal, {
       type: "tween",
       duration: 7,
-      ease: "easeInOut"
+      ease: "easeInOut",
+      onComplete: () => {
+        if (!initialTransitionFinished.current) {
+          initialTransitionFinished.current = true;
+          onInitialTransitionComplete?.(true);
+        }
+      }
     });
 
     return controls.stop;
-  }, [realTime, animatedTime]);
+  }, [realTime, animatedTime, onInitialTransitionComplete]);
 
   // 3. Derive our exact visual properties dynamically on every frame!
   const sunX = useTransform(animatedTime, t => `calc(${getCoordinatesForTime(t, isMobile).sunX}vw - 55px)`);

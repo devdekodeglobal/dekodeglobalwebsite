@@ -133,6 +133,7 @@ export default function ChatApp({
     d.setHours(d.getHours() - 3);
     return d;
   });
+  const [sceneryReady, setSceneryReady] = useState(false);
 
   const timeOfDay = useMemo(() => {
     const hour = realTime.getHours();
@@ -975,16 +976,15 @@ export default function ChatApp({
         <HeroScenery
           timeOfDay={timeOfDay}
           realTime={realTime}
+          onInitialTransitionComplete={setSceneryReady}
         />
       )}
 
       {step === "centered" && !proposalContext && (
         <a
-          className="coc-peek-link"
+          className={`coc-peek-link${sceneryReady ? " is-ready" : ""}`}
           href="/clinics-on-cloud/index.html#home"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Explore Clinics On Cloud in a new tab"
+          aria-label="Explore Clinics On Cloud"
         >
           <span className="coc-peek-character">
             <img className="coc-peek-body" src="/clinics-on-cloud/coc-mascot-v1.png" alt="" />

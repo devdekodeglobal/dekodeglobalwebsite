@@ -648,7 +648,8 @@ h6 {
   background: linear-gradient(180deg, transparent, rgba(254, 182, 17, 0.8), transparent);
   box-shadow: 4px 0 18px rgba(3, 26, 55, 0.45);
   opacity: 0;
-  animation: cocDoorEdge 6.1s ease-out both;
+  animation: none;
+  opacity: 0.85;
 }
 
 .coc-peek-link::after {
@@ -663,7 +664,7 @@ h6 {
   background: rgba(0, 12, 30, 0.45);
   filter: blur(7px);
   opacity: 0;
-  animation: cocShadow 6.8s ease-out both;
+  animation: none;
 }
 
 .coc-peek-character {
@@ -673,9 +674,9 @@ h6 {
   width: min(11vw, 128px);
   min-width: 92px;
   aspect-ratio: 2 / 3;
-  transform: translateX(-105%);
+  transform: translateX(-49%) rotate(-6deg);
   filter: brightness(0.78);
-  animation: cocPeekWalk 6.8s ease-in-out both;
+  animation: none;
   transition: filter 250ms ease, translate 250ms ease;
 }
 
@@ -706,7 +707,7 @@ h6 {
   z-index: 1;
   clip-path: polygon(68% 39%, 98% 39%, 98% 65%, 68% 65%);
   transform-origin: 71% 46%;
-  animation: cocOtherArm 6.8s ease-in-out both;
+  animation: none;
 }
 
 .coc-peek-leg-left,
@@ -717,13 +718,13 @@ h6 {
 .coc-peek-leg-left {
   clip-path: polygon(31% 76%, 52% 76%, 53% 99%, 16% 99%);
   transform-origin: 41% 78%;
-  animation: cocLeftStep 6.8s ease-in-out both;
+  animation: none;
 }
 
 .coc-peek-leg-right {
   clip-path: polygon(56% 76%, 76% 76%, 88% 99%, 55% 99%);
   transform-origin: 65% 78%;
-  animation: cocRightStep 6.8s ease-in-out both;
+  animation: none;
 }
 
 .coc-peek-eyelid {
@@ -757,7 +758,24 @@ h6 {
   font: 600 0.8rem/1.25 var(--font-primary);
   opacity: 0;
   transform: translateX(-6px);
-  animation: cocCaption 450ms ease-out 6.4s forwards;
+  animation: none;
+}
+
+.coc-peek-link.is-ready::before { animation: cocDoorEdge 6.1s ease-out both; }
+.coc-peek-link.is-ready::after { animation: cocShadow 6.8s ease-out both; }
+.coc-peek-link.is-ready .coc-peek-character { animation: cocPeekWalkAfterPeek 3.8s ease-in-out both; }
+.coc-peek-link.is-ready .coc-peek-arm-right { animation: cocOtherArm 3.8s ease-in-out both; }
+.coc-peek-link.is-ready .coc-peek-leg-left { animation: cocLeftStep 3.8s ease-in-out both; }
+.coc-peek-link.is-ready .coc-peek-leg-right { animation: cocRightStep 3.8s ease-in-out both; }
+.coc-peek-link.is-ready .coc-peek-caption { animation: cocCaption 450ms ease-out 3.5s forwards; }
+
+@keyframes cocPeekWalkAfterPeek {
+  0%, 15% { transform: translateX(-49%) translateY(0) rotate(-6deg); filter: brightness(0.75); }
+  32% { transform: translateX(-34%) translateY(-5px) rotate(-2deg); filter: brightness(0.88); }
+  49% { transform: translateX(-25%) translateY(0) rotate(2deg); filter: brightness(0.94); }
+  66% { transform: translateX(-15%) translateY(-5px) rotate(-2deg); filter: brightness(1); }
+  83% { transform: translateX(-7%) translateY(0) rotate(1deg); filter: brightness(1); }
+  100% { transform: translateX(0) translateY(0) rotate(0); filter: brightness(1); }
 }
 
 .coc-peek-caption span { color: var(--color-accent-yellow); }
@@ -820,7 +838,11 @@ h6 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .coc-peek-character { animation: none; transform: none; filter: none; }
+  .coc-peek-character {
+    animation: none;
+    transform: translateX(-49%) rotate(-6deg);
+    filter: brightness(0.78);
+  }
   .coc-peek-arm-left,
   .coc-peek-arm-right,
   .coc-peek-leg-left,
@@ -828,7 +850,18 @@ h6 {
   .coc-peek-eyelid { animation: none; }
   .coc-peek-link::before { animation: none; opacity: 0; }
   .coc-peek-link::after { animation: none; opacity: 1; }
-  .coc-peek-caption { animation: none; opacity: 1; transform: none; }
+  .coc-peek-caption { animation: none; opacity: 0; transform: translateX(-6px); }
+  .coc-peek-link.is-ready .coc-peek-character,
+  .coc-peek-link.is-ready .coc-peek-arm-right,
+  .coc-peek-link.is-ready .coc-peek-leg-left,
+  .coc-peek-link.is-ready .coc-peek-leg-right {
+    animation: none;
+    transform: none;
+    filter: none;
+  }
+  .coc-peek-link.is-ready .coc-peek-caption { animation: none; opacity: 1; transform: none; }
+  .coc-peek-link.is-ready::before { animation: none; opacity: 0; }
+  .coc-peek-link.is-ready::after { animation: none; opacity: 1; }
 }
 
 .hero-title {
