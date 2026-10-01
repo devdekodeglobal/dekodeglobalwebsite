@@ -159,3 +159,12 @@
 .kiosk-section{min-height:calc(100svh - 91px);padding-top:85px;padding-bottom:90px}.kiosk-section h1{max-width:780px}.kiosk-form{max-width:680px;margin-top:30px;padding:25px;background:white;border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 38px rgba(4,51,100,.08)}.kiosk-form label{display:block;color:var(--navy);font:700 13px Outfit,sans-serif;margin-bottom:9px}.kiosk-form>div{display:flex;gap:9px}.kiosk-form input{flex:1;min-width:0;padding:11px 14px;border:1px solid #b9d1e2;border-radius:8px;color:var(--navy)}.kiosk-form .btn{white-space:nowrap}.kiosk-form small{display:block;color:var(--muted);font-size:11px;margin-top:11px}
 @media(max-width:850px){.desktop-nav{display:none}.catalogue-section{grid-template-columns:1fr;gap:25px;align-items:start;padding-top:35px}.catalogue-copy{max-width:680px}.catalogue-copy h1{font-size:clamp(42px,7vw,62px);margin:13px 0}.catalogue-copy p{font-size:14px;line-height:1.55}.catalogue-copy-note{display:none}.catalogue-reader{max-width:430px}.kiosk-section{padding-top:55px}}
 @media(max-width:600px){.header-inner{min-height:58px}.home-view .hero,.home-view .hero-inner{min-height:max(760px,calc(100svh - 89px))}.catalogue-section{padding-top:28px;padding-bottom:50px;gap:14px}.catalogue-copy h1{font-size:clamp(38px,10vw,50px)}.catalogue-copy p{font-size:13px;margin-bottom:0}.catalogue-reader{max-width:min(100%,350px)}.catalogue-navigation{margin-top:12px}.catalogue-navigation button{font-size:11px;padding-inline:8px}.catalogue-navigation span{font-size:11px}.kiosk-section{padding-top:45px}.kiosk-section h1{font-size:clamp(42px,11vw,56px)}.kiosk-section>p{font-size:14px}.kiosk-form{padding:18px}.kiosk-form>div{flex-direction:column}.kiosk-form .btn{width:100%}}
+.catalogue-section{padding-top:20px;padding-bottom:24px}
+.catalogue-reader{max-width:min(470px,50svh)}
+.catalogue-hint a{color:var(--blue);font-weight:700;text-decoration:underline;text-underline-offset:2px}
+@media(max-width:850px){.catalogue-reader{max-width:min(430px,50svh)}}
+@media(max-width:600px){.catalogue-section{padding-top:28px;padding-bottom:36px}.catalogue-reader{max-width:min(100%,350px,50svh)}}
+.product-video-frame,.flyer-actions{width:min(100%,740px)}
+.flyer-dialog>a{display:block;cursor:zoom-in}
+@media(min-width:601px) and (max-width:850px){.hero-photo{background-position:calc(100% + 100px) center}.hero-content{width:min(54vw,440px)}}
+@media(max-width:600px){.catalogue-reader{max-width:min(100%,320px,50svh)}}

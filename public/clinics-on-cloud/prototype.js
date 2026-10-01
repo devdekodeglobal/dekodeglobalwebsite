@@ -137,6 +137,7 @@ const catalogueTurnImage = document.getElementById('catalogue-turn-image');
 const cataloguePrev = document.getElementById('catalogue-prev');
 const catalogueNext = document.getElementById('catalogue-next');
 const catalogueCount = document.getElementById('catalogue-page-count');
+const catalogueFullsize = document.getElementById('catalogue-fullsize');
 let cataloguePage = 1;
 let catalogueTurning = false;
 const catalogueSource = page => `catalogue/page-${String(page).padStart(2, '0')}.jpg`;
@@ -153,6 +154,7 @@ async function turnCataloguePage(direction) {
   catalogueImage.src = nextImage.src;
   catalogueImage.alt = `Catalogue page ${target} of 12`;
   catalogueCount.textContent = `Page ${target} of 12`;
+  catalogueFullsize.href = catalogueSource(target);
   cataloguePrev.disabled = target === 1;
   catalogueNext.disabled = target === 12;
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
