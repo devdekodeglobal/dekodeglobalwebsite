@@ -2,11 +2,6 @@ name = "dekodeglobalwebsite"
 pages_build_output_dir = "dist/client"
 compatibility_date = "2026-08-26"
 compatibility_flags = ["nodejs_compat"]
-
-[[r2_buckets]]
-binding = "PROPOSAL_ASSETS"
-bucket_name = "dekode-proposal-assets"
-
 [vars]
 VITE_DEKODE_VOICE_ENABLED="false"
 VITE_VOICE_PROVIDER="browser"

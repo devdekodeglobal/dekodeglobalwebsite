@@ -117,3 +117,27 @@ await buildProposal(
   'National Eyewear Company',
   true
 )
+
+// Generate bundled base64 assets for standalone Cloudflare Pages deployment (no R2 required)
+const sourceDir = resolve(projectRoot, 'api/_proposal/source')
+const assetFiles = [
+  'image.png',
+  'image_vip.png',
+  'arch.png',
+  'CFS_Business_Impact_Presentation.pdf',
+  'CFS_OptiFlow_Payback_Commercial_Terms.pdf',
+]
+
+const bundled = {}
+for (const file of assetFiles) {
+  const content = await readFile(resolve(sourceDir, file))
+  bundled[file] = content.toString('base64')
+}
+
+await writeFile(
+  resolve(projectRoot, 'functions/api/_proposal/bundledAssets.js'),
+  `// Auto-generated bundled proposal assets. Do not edit.\nexport const bundledAssets = ${JSON.stringify(bundled)};\n`,
+  'utf8'
+)
+console.log('Successfully bundled proposal assets for standalone serving.')
+
