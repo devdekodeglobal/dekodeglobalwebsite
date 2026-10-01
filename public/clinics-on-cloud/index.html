@@ -45,6 +45,7 @@
               <a class="btn btn-white-outline whatsapp-cta" href="https://wa.me/918882848489" target="_blank" rel="noopener noreferrer" aria-label="For more info on WhatsApp">
                 <svg class="whatsapp-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.031-.967-.273-.099-.472-.148-.67.15-.198.297-.768.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.297-.496.099-.198.05-.372-.025-.52-.074-.149-.669-1.612-.916-2.206-.242-.579-.487-.5-.669-.51-.173-.009-.372-.011-.57-.011s-.52.074-.792.372c-.273.297-1.04 1.016-1.04 2.479s1.064 2.876 1.212 3.074c.149.198 2.095 3.2 5.077 4.487.709.306 1.262.489 1.693.626.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.273-.198-.57-.347m-5.421 7.435h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.74.981.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.002-5.45 4.438-9.886 9.892-9.886a9.82 9.82 0 0 1 6.993 2.898 9.83 9.83 0 0 1 2.895 7.002c-.002 5.45-4.438 9.887-9.897 9.887m8.413-18.297A11.81 11.81 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.893a11.82 11.82 0 0 0 1.586 5.928L.057 24l6.326-1.658a11.88 11.88 0 0 0 5.664 1.444h.005c6.555 0 11.89-5.335 11.893-11.893a11.82 11.82 0 0 0-3.48-8.413Z"/></svg>
                 For more info
+                <span class="whatsapp-cta-arrow" aria-hidden="true">↗</span>
               </a>
             </div>
             <p class="hero-context">For clinics · workplaces · pharmacies · community programmes</p>
@@ -108,9 +109,21 @@
     <div class="view" data-view="kiosk">
       <section class="kiosk-section section-wrap" aria-labelledby="kiosk-title">
         <div class="eyebrow"><span class="eyebrow-line"></span> FIND A KIOSK</div>
-        <h1 id="kiosk-title">Looking for a<br><em>nearby machine?</em></h1>
-        <p>Share your city or PIN code and DEKODE can help confirm the nearest available Clinics On Cloud location.</p>
-        <form id="kiosk-form" class="kiosk-form"><label for="kiosk-location">Your city or PIN code</label><div><input id="kiosk-location" name="location" type="text" autocomplete="address-level2" placeholder="e.g. Delhi or 110001" required><button type="submit" class="btn btn-navy">Ask on WhatsApp <span aria-hidden="true">↗</span></button></div><small>You'll review the message before sending it. We don't show unverified kiosk locations.</small></form>
+        <h1 id="kiosk-title">Find a machine<br><em>near your area.</em></h1>
+        <p>Explore the map and search by city or area. Current listings are examples; ask DEKODE to confirm a live kiosk before visiting.</p>
+        <div class="kiosk-workspace">
+          <div class="location-list-panel">
+            <form id="kiosk-form" class="kiosk-search"><label for="kiosk-location">City, area or PIN code</label><div class="search-control"><span aria-hidden="true">⌕</span><input id="kiosk-location" name="location" type="search" autocomplete="address-level2" placeholder="Try Mumbai or Andheri"><button type="submit">Search</button></div></form>
+            <p class="demo-note"><span>DEMO DATA</span> These are illustrative areas, not verified operating sites.</p>
+            <div class="location-results" id="location-results" aria-live="polite"></div>
+            <div class="location-empty" id="location-empty" hidden><strong>No example area found.</strong><p>We can check actual kiosk availability for your city or PIN code.</p><button type="button" id="kiosk-ask-empty">Ask DEKODE on WhatsApp ↗</button><a id="kiosk-map-search" href="https://www.openstreetmap.org/" target="_blank" rel="noopener noreferrer">Explore the area map ↗</a></div>
+          </div>
+          <div class="location-detail" id="location-detail">
+            <div class="location-map"><iframe id="location-map-frame" title="Illustrative area map near Andheri East, Mumbai" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe><span class="map-demo-badge">Illustrative area map</span></div>
+            <div class="location-detail-body"><span class="detail-kicker">DEMO AREA · LOCATION TO BE CONFIRMED</span><h2 id="location-detail-title">Andheri example area</h2><p id="location-detail-copy">Andheri East, Mumbai. This map pin marks the general area, not an operating kiosk address.</p><div class="detail-tags"><span>No live address yet</span><span>Hours to be confirmed</span></div><div class="detail-actions"><button type="button" id="kiosk-ask-selected">Ask for a verified location ↗</button><a id="location-open-map" href="https://www.openstreetmap.org/" target="_blank" rel="noopener noreferrer">Open area map ↗</a></div></div>
+          </div>
+          <div class="location-map-empty" id="location-map-empty" hidden><span>MAP PREVIEW</span><h2>No demo area selected.</h2><p>Search another area or ask DEKODE for a verified kiosk location.</p></div>
+        </div>
       </section>
     </div>
 

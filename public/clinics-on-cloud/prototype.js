@@ -188,13 +188,74 @@ document.addEventListener('keydown', event => {
   if (event.key === 'ArrowLeft') turnCataloguePage(-1);
 });
 
+const sampleAreas = [
+  { name: 'Andheri example area', area: 'Andheri East, Mumbai', lat: 19.1156, lon: 72.8703 },
+  { name: 'Powai example area', area: 'Powai, Mumbai', lat: 19.1197, lon: 72.9054 },
+  { name: 'BKC example area', area: 'Bandra Kurla Complex, Mumbai', lat: 19.0596, lon: 72.8656 }
+];
+const kioskSearch = document.getElementById('kiosk-location');
+const locationResults = document.getElementById('location-results');
+const locationEmpty = document.getElementById('location-empty');
+const locationDetail = document.getElementById('location-detail');
+let selectedArea = sampleAreas[0];
+
+function selectArea(area) {
+  selectedArea = area;
+  document.getElementById('location-detail-title').textContent = area.name;
+  document.getElementById('location-detail-copy').textContent = `${area.area}. This map pin marks the general area, not an operating kiosk address.`;
+  const west = (area.lon - .015).toFixed(5);
+  const south = (area.lat - .009).toFixed(5);
+  const east = (area.lon + .015).toFixed(5);
+  const north = (area.lat + .009).toFixed(5);
+  const mapFrame = document.getElementById('location-map-frame');
+  mapFrame.src = `https://www.openstreetmap.org/export/embed.html?bbox=${west}%2C${south}%2C${east}%2C${north}&layer=mapnik&marker=${area.lat}%2C${area.lon}`;
+  mapFrame.title = `Illustrative area map near ${area.area}`;
+  document.getElementById('location-open-map').href = `https://www.openstreetmap.org/?mlat=${area.lat}&mlon=${area.lon}#map=15/${area.lat}/${area.lon}`;
+  locationResults.querySelectorAll('.location-result').forEach(button => {
+    button.classList.toggle('selected', button.dataset.area === area.name);
+    button.setAttribute('aria-pressed', String(button.dataset.area === area.name));
+  });
+}
+
+function renderAreas(query = '') {
+  const normalized = query.toLocaleLowerCase();
+  const matches = sampleAreas.filter(area => `${area.name} ${area.area}`.toLocaleLowerCase().includes(normalized));
+  locationResults.replaceChildren();
+  for (const area of matches) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'location-result';
+    button.dataset.area = area.name;
+    const name = document.createElement('strong');
+    name.textContent = area.name;
+    const address = document.createElement('small');
+    address.textContent = `${area.area} · Illustrative area`;
+    const tag = document.createElement('span');
+    tag.className = 'location-demo-tag';
+    tag.textContent = 'Demo location';
+    button.append(name, address, tag);
+    button.addEventListener('click', () => selectArea(area));
+    locationResults.append(button);
+  }
+  const hasMatches = matches.length > 0;
+  locationEmpty.hidden = hasMatches;
+  locationDetail.hidden = !hasMatches;
+  document.getElementById('location-map-empty').hidden = hasMatches;
+  document.getElementById('kiosk-map-search').href = `https://www.openstreetmap.org/search?query=${encodeURIComponent(query)}`;
+  if (hasMatches) selectArea(matches.includes(selectedArea) ? selectedArea : matches[0]);
+}
+
 document.getElementById('kiosk-form').addEventListener('submit', event => {
   event.preventDefault();
-  const location = document.getElementById('kiosk-location').value.trim();
-  if (!location) return;
-  const message = `Hello DEKODE, I would like to find the nearest Clinics On Cloud kiosk. My city or PIN code is ${location}. Please share a confirmed location.`;
-  window.open(`https://wa.me/918882848489?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+  renderAreas(kioskSearch.value.trim());
 });
+function askForKiosk(area) {
+  const message = `Hello DEKODE, I would like to find a verified Clinics On Cloud kiosk near ${area}. Please share a confirmed address and visiting hours.`;
+  window.open(`https://wa.me/918882848489?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+}
+document.getElementById('kiosk-ask-selected').addEventListener('click', () => askForKiosk(selectedArea.area));
+document.getElementById('kiosk-ask-empty').addEventListener('click', () => askForKiosk(kioskSearch.value.trim() || 'my area'));
+renderAreas();
 
 function wireWhatsAppEnquiry(formId, statusId) {
   const form = document.getElementById(formId);
