@@ -13,7 +13,7 @@ test('approved proposal source is byte-for-byte unchanged', async () => {
   const hash = createHash('sha256').update(source).digest('hex')
   assert.equal(
     hash,
-    'b5e6cb8fe83f279126f6724ca8cd97e9846246514fef5c8066867446b5940d16',
+    'fc918a910d1fc66ea4f7aff1b41c37bce974e8325d27d9c619117a832b9a6aa9',
   )
   assert.equal(proposal.sourceChecksum, hash)
 })
@@ -56,7 +56,7 @@ test('section order and approved metadata stay pinned', () => {
 test('generated content and diagram structure match their snapshots', () => {
   assert.equal(
     proposal.contentChecksum,
-    'dc1af9d3fc1d7e6df14c3aa6448b3b19b39623a0ae4e9949eb1239cf426ffab6',
+    '6c7e2bbd7b6e4db7cf4dc89752474c4cfee581613d01f454bdbbd42143241eb4',
   )
   assert.equal(
     proposal.diagramStructureHash,

@@ -99,7 +99,7 @@ async function buildProposal(sourceFileName, outputFileName, expectedSourceHash,
 await buildProposal(
   'ProposalCFS.jsx',
   'generatedContent.js',
-  '53dd4dd6c8bb7af2f63c563b42268502be48f77aec4c2c2b15f726d4b6ff91d4',
+  'fc918a910d1fc66ea4f7aff1b41c37bce974e8325d27d9c619117a832b9a6aa9',
   'cfs',
   'Centre For Sight'
 )
