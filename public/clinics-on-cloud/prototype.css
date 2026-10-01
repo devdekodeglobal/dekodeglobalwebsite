@@ -164,7 +164,7 @@
 .catalogue-hint a{color:var(--blue);font-weight:700;text-decoration:underline;text-underline-offset:2px}
 @media(max-width:850px){.catalogue-reader{max-width:min(430px,50svh)}}
 @media(max-width:600px){.catalogue-section{padding-top:28px;padding-bottom:36px}.catalogue-reader{max-width:min(100%,350px,50svh)}}
-.product-video-frame,.flyer-actions{width:min(100%,740px)}
+.product-video-frame,.flyer-actions{width:min(100%,720px)}
 .flyer-dialog>a{display:block;cursor:zoom-in}
 @media(min-width:601px) and (max-width:850px){.hero-photo{background-position:calc(100% + 100px) center}.hero-content{width:min(54vw,440px)}}
 @media(max-width:600px){.catalogue-reader{max-width:min(100%,320px,50svh)}}
