@@ -4,8 +4,8 @@ const mascotDock = document.getElementById('mascot-dock');
 const mascotButton = document.getElementById('mascot-button');
 const chatPanel = document.getElementById('chat-panel');
 const chatClose = document.getElementById('chat-close');
-const videoDialog = document.getElementById('video-dialog');
 const productVideo = document.getElementById('product-video');
+const productFilmSection = document.getElementById('product-film');
 
 function navigate(route) {
   const next = validRoutes.has(route) ? route : 'home';
@@ -51,14 +51,9 @@ document.addEventListener('keydown', event => {
 });
 
 document.getElementById('watch-video').addEventListener('click', () => {
-  videoDialog.showModal();
-  productVideo.play().catch(() => {});
+  productFilmSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  productVideo.focus({ preventScroll: true });
 });
-document.getElementById('video-close').addEventListener('click', () => videoDialog.close());
-videoDialog.addEventListener('click', event => {
-  if (event.target === videoDialog) videoDialog.close();
-});
-videoDialog.addEventListener('close', () => productVideo.pause());
 
 function wireWhatsAppEnquiry(formId, statusId) {
   const form = document.getElementById(formId);
