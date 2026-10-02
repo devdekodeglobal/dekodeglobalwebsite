@@ -109,6 +109,44 @@ let pendingSeekTime = null;
 let seekControlsReady = false;
 let resumePlaybackAfterSeek = false;
 let isScrubbing = false;
+let seekRetryTimer = null;
+let seekRetryCount = 0;
+const maxSeekRetries = 40;
+
+function finishVideoSeek() {
+  clearTimeout(seekRetryTimer);
+  seekRetryTimer = null;
+  pendingSeekTime = null;
+  seekRetryCount = 0;
+  updateVideoTimeline();
+  if (resumePlaybackAfterSeek && productVideo.paused) productVideo.play().catch(() => {});
+  resumePlaybackAfterSeek = false;
+}
+
+function attemptVideoSeek() {
+  if (pendingSeekTime === null || isScrubbing) return;
+  if (seekRetryCount >= maxSeekRetries) {
+    finishVideoSeek();
+    return;
+  }
+  seekRetryCount += 1;
+  if (productVideo.seeking) {
+    clearTimeout(seekRetryTimer);
+    seekRetryTimer = setTimeout(attemptVideoSeek, 300);
+    return;
+  }
+  if (Math.abs(productVideo.currentTime - pendingSeekTime) <= 0.35 && productVideo.readyState >= 2) {
+    finishVideoSeek();
+    return;
+  }
+  try {
+    productVideo.currentTime = pendingSeekTime;
+  } catch {
+    // Mobile browsers can reject a seek until enough media data is available.
+  }
+  clearTimeout(seekRetryTimer);
+  seekRetryTimer = setTimeout(attemptVideoSeek, 300);
+}
 
 function updateVideoTimeline() {
   const duration = Number.isFinite(productVideo.duration) ? productVideo.duration : 0;
@@ -128,17 +166,13 @@ function seekVideo(time, keepPlaying = !productVideo.paused) {
   if (!Number.isFinite(productVideo.duration) || productVideo.duration <= 0) return;
   pendingSeekTime = Math.max(0, Math.min(productVideo.duration, time));
   resumePlaybackAfterSeek = keepPlaying;
-  try {
-    productVideo.currentTime = pendingSeekTime;
-  } catch {
-    return;
-  }
+  seekRetryCount = 0;
   updateVideoTimeline();
-  if (keepPlaying) productVideo.play().catch(() => {});
+  attemptVideoSeek();
 }
 
 function skipVideo(seconds) {
-  seekVideo(productVideo.currentTime + seconds, !productVideo.paused);
+  seekVideo((pendingSeekTime ?? productVideo.currentTime) + seconds, !productVideo.paused || resumePlaybackAfterSeek);
 }
 
 function previewVideoSeek() {
@@ -170,11 +204,11 @@ productVideo.addEventListener('keydown', event => {
 });
 ['play', 'pause', 'ended'].forEach(eventName => productVideo.addEventListener(eventName, updateVideoPlaybackControl));
 ['loadedmetadata', 'loadeddata', 'canplay', 'durationchange', 'progress', 'timeupdate'].forEach(eventName => productVideo.addEventListener(eventName, updateVideoTimeline));
+['loadeddata', 'canplay', 'progress'].forEach(eventName => productVideo.addEventListener(eventName, attemptVideoSeek));
 productVideo.addEventListener('seeked', () => {
-  pendingSeekTime = null;
-  updateVideoTimeline();
-  if (resumePlaybackAfterSeek && productVideo.paused) productVideo.play().catch(() => {});
-  resumePlaybackAfterSeek = false;
+  if (pendingSeekTime === null) return;
+  if (Math.abs(productVideo.currentTime - pendingSeekTime) <= 0.35) finishVideoSeek();
+  else attemptVideoSeek();
 });
 videoSeek.addEventListener('input', previewVideoSeek);
 videoSeek.addEventListener('change', commitVideoSeek);
