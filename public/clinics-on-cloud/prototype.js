@@ -10,6 +10,10 @@ const videoFrame = document.querySelector('.product-video-frame');
 const videoPlayButton = document.getElementById('video-play');
 const videoMuteButton = document.getElementById('video-mute');
 const videoFullscreenButton = document.getElementById('video-fullscreen');
+const videoBackButton = document.getElementById('video-back');
+const videoForwardButton = document.getElementById('video-forward');
+const videoSeek = document.getElementById('video-seek');
+const videoTime = document.getElementById('video-time');
 // Remove casual browser save affordances without changing playback controls.
 videoFrame.addEventListener('contextmenu', event => event.preventDefault());
 const mobileNav = document.getElementById('mobile-nav');
@@ -90,6 +94,34 @@ function updateVideoPlaybackControl() {
   videoPlayButton.querySelector('.video-play-label').textContent = playing ? 'Pause' : 'Play';
   videoPlayButton.querySelector('.video-play-icon').hidden = playing;
   videoPlayButton.querySelector('.video-pause-icon').hidden = !playing;
+  videoFrame.classList.toggle('has-started', playing || productVideo.currentTime > 0);
+}
+
+function formatVideoTime(seconds) {
+  if (!Number.isFinite(seconds)) return '0:00';
+  const whole = Math.floor(seconds);
+  const minutes = Math.floor(whole / 60);
+  const hours = Math.floor(minutes / 60);
+  return hours ? `${hours}:${String(minutes % 60).padStart(2, '0')}:${String(whole % 60).padStart(2, '0')}` : `${minutes}:${String(whole % 60).padStart(2, '0')}`;
+}
+
+function updateVideoTimeline() {
+  const duration = Number.isFinite(productVideo.duration) ? productVideo.duration : 0;
+  const current = Math.min(productVideo.currentTime || 0, duration || Infinity);
+  videoSeek.max = String(duration);
+  videoSeek.value = String(current);
+  videoSeek.disabled = !duration;
+  videoBackButton.disabled = !duration;
+  videoForwardButton.disabled = !duration;
+  videoSeek.style.setProperty('--seek-progress', `${duration ? current / duration * 100 : 0}%`);
+  videoTime.textContent = `${formatVideoTime(current)} / ${formatVideoTime(duration)}`;
+  videoFrame.classList.toggle('has-started', current > 0 || !productVideo.paused);
+}
+
+function skipVideo(seconds) {
+  if (!Number.isFinite(productVideo.duration)) return;
+  productVideo.currentTime = Math.max(0, Math.min(productVideo.duration, productVideo.currentTime + seconds));
+  updateVideoTimeline();
 }
 
 function updateVideoMuteControl() {
@@ -108,6 +140,13 @@ productVideo.addEventListener('keydown', event => {
   }
 });
 ['play', 'pause', 'ended'].forEach(eventName => productVideo.addEventListener(eventName, updateVideoPlaybackControl));
+['loadedmetadata', 'durationchange', 'timeupdate', 'seeked'].forEach(eventName => productVideo.addEventListener(eventName, updateVideoTimeline));
+videoSeek.addEventListener('input', () => {
+  productVideo.currentTime = Number(videoSeek.value);
+  updateVideoTimeline();
+});
+videoBackButton.addEventListener('click', () => skipVideo(-10));
+videoForwardButton.addEventListener('click', () => skipVideo(5));
 videoMuteButton.addEventListener('click', () => { productVideo.muted = !productVideo.muted; });
 productVideo.addEventListener('volumechange', updateVideoMuteControl);
 videoFullscreenButton.addEventListener('click', () => {
@@ -126,6 +165,7 @@ document.addEventListener('fullscreenchange', () => {
 });
 updateVideoPlaybackControl();
 updateVideoMuteControl();
+updateVideoTimeline();
 
 const flyerDialog = document.getElementById('flyer-dialog');
 document.getElementById('view-flyer').addEventListener('click', () => flyerDialog.showModal());
