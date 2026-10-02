@@ -995,7 +995,7 @@ export default function ChatApp({
             <span className="coc-peek-eyelid coc-peek-eyelid-left" aria-hidden="true" />
             <span className="coc-peek-eyelid coc-peek-eyelid-right" aria-hidden="true" />
           </span>
-          <span className="coc-peek-caption">Meet Clinics On Cloud <span aria-hidden="true">↗</span></span>
+          <span className="coc-peek-caption">Meet<span className="coc-peek-caption-name">Clinics On Cloud <span className="coc-peek-caption-arrow" aria-hidden="true">↗</span></span></span>
         </a>
       )}
 

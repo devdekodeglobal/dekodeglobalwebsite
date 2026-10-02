@@ -674,8 +674,7 @@ h6 {
   width: min(11vw, 128px);
   min-width: 92px;
   aspect-ratio: 2 / 3;
-  transform: translateX(-49%) translateY(0) rotate(-6deg);
-  clip-path: inset(0 0 38% 0);
+  transform: translateX(-49%) rotate(-6deg);
   filter: brightness(0.78);
   animation: none;
   transition: filter 250ms ease, translate 250ms ease;
@@ -747,7 +746,7 @@ h6 {
 
 .coc-peek-caption {
   position: absolute;
-  left: min(10vw, 116px);
+  left: 48px;
   bottom: 35%;
   width: max-content;
   max-width: 190px;
@@ -760,11 +759,8 @@ h6 {
   opacity: 1;
   transform: none;
   animation: none;
+  transition: left 450ms ease;
 }
-
-/* Until the scenery transition finishes, only the head and hand peek past the screen edge. */
-.coc-peek-link:not(.is-ready) .coc-peek-leg-left,
-.coc-peek-link:not(.is-ready) .coc-peek-leg-right { visibility: hidden; }
 
 .coc-peek-link.is-ready::before { animation: cocDoorEdge 6.1s ease-out both; }
 .coc-peek-link.is-ready::after { animation: cocShadow 6.8s ease-out both; }
@@ -772,18 +768,19 @@ h6 {
 .coc-peek-link.is-ready .coc-peek-arm-right { animation: cocOtherArm 3.8s ease-in-out both; }
 .coc-peek-link.is-ready .coc-peek-leg-left { animation: cocLeftStep 3.8s ease-in-out both; }
 .coc-peek-link.is-ready .coc-peek-leg-right { animation: cocRightStep 3.8s ease-in-out both; }
-.coc-peek-link.is-ready .coc-peek-caption { opacity: 1; }
+.coc-peek-link.is-ready .coc-peek-caption { left: min(10vw, 116px); opacity: 1; }
 
 @keyframes cocPeekWalkAfterPeek {
-  0%, 15% { transform: translateX(-49%) translateY(0) rotate(-6deg); clip-path: inset(0 0 38% 0); filter: brightness(0.75); }
-  32% { transform: translateX(-34%) translateY(-3px) rotate(-2deg); clip-path: inset(0 0 24% 0); filter: brightness(0.88); }
-  49% { transform: translateX(-25%) translateY(-6px) rotate(2deg); clip-path: inset(0 0 12% 0); filter: brightness(0.94); }
-  66% { transform: translateX(-15%) translateY(-5px) rotate(-2deg); clip-path: inset(0 0 0 0); filter: brightness(1); }
-  83% { transform: translateX(-7%) translateY(0) rotate(1deg); clip-path: inset(0 0 0 0); filter: brightness(1); }
-  100% { transform: translateX(0) translateY(0) rotate(0); clip-path: inset(0 0 0 0); filter: brightness(1); }
+  0%, 15% { transform: translateX(-49%) translateY(0) rotate(-6deg); filter: brightness(0.75); }
+  32% { transform: translateX(-34%) translateY(-5px) rotate(-2deg); filter: brightness(0.88); }
+  49% { transform: translateX(-25%) translateY(0) rotate(2deg); filter: brightness(0.94); }
+  66% { transform: translateX(-15%) translateY(-5px) rotate(-2deg); filter: brightness(1); }
+  83% { transform: translateX(-7%) translateY(0) rotate(1deg); filter: brightness(1); }
+  100% { transform: translateX(0) translateY(0) rotate(0); filter: brightness(1); }
 }
 
-.coc-peek-caption span { color: var(--color-accent-yellow); }
+.coc-peek-caption-name { display: block; white-space: nowrap; }
+.coc-peek-caption-arrow { color: var(--color-accent-yellow); }
 .coc-peek-link:hover .coc-peek-character,
 .coc-peek-link:focus-visible .coc-peek-character { filter: brightness(1.1); translate: 4px 0; }
 .coc-peek-link:focus-visible { outline: 3px solid var(--color-accent-yellow); }
@@ -839,14 +836,14 @@ h6 {
 @media (max-width: 700px) {
   .coc-peek-link { width: 112px; min-width: 0; height: 154px; bottom: max(0.5rem, env(safe-area-inset-bottom, 0px)); }
   .coc-peek-character { width: 88px; min-width: 0; }
-  .coc-peek-caption { left: 76px; bottom: 28%; max-width: 128px; font-size: 0.72rem; }
+  .coc-peek-caption { left: 37px; bottom: 28%; max-width: 128px; font-size: 0.72rem; }
+  .coc-peek-link.is-ready .coc-peek-caption { left: 76px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .coc-peek-character {
     animation: none;
-    transform: translateX(-49%) translateY(0) rotate(-6deg);
-    clip-path: inset(0 0 38% 0);
+    transform: translateX(-49%) rotate(-6deg);
     filter: brightness(0.78);
   }
   .coc-peek-arm-left,
@@ -863,7 +860,6 @@ h6 {
   .coc-peek-link.is-ready .coc-peek-leg-right {
     animation: none;
     transform: none;
-    clip-path: inset(0 0 0 0);
     filter: none;
   }
   .coc-peek-link.is-ready .coc-peek-caption { animation: none; opacity: 1; transform: none; }
