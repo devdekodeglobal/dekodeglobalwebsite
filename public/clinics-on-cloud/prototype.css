@@ -145,6 +145,10 @@
 .product-video-controls button:hover{background:#1b416a}
 .product-video-controls button:disabled{opacity:.45;cursor:default}.product-video-controls button:disabled:hover{background:transparent}
 .product-video-controls button svg{width:18px;height:18px;flex:none}
+#video-play .video-pause-icon,#video-play[data-playing="true"] .video-play-icon{display:none}
+#video-play[data-playing="true"] .video-pause-icon{display:block}
+#video-mute .video-sound-off,#video-mute[data-muted="true"] .video-sound-on{display:none}
+#video-mute[data-muted="true"] .video-sound-off{display:block}
 .product-video-controls .video-skip{padding-inline:6px}.product-video-controls .video-skip svg{width:25px;height:25px}
 .product-video-controls [hidden]{display:none}
 .product-video-frame:fullscreen{display:flex;flex-direction:column;justify-content:center;background:#061b35;border:0;border-radius:0}

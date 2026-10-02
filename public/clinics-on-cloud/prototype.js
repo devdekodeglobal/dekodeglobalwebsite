@@ -91,9 +91,9 @@ function toggleVideoPlayback() {
 function updateVideoPlaybackControl() {
   const playing = !productVideo.paused && !productVideo.ended;
   videoPlayButton.setAttribute('aria-label', playing ? 'Pause video' : 'Play video');
+  videoPlayButton.title = playing ? 'Pause video' : 'Play video';
+  videoPlayButton.dataset.playing = String(playing);
   videoPlayButton.querySelector('.video-play-label').textContent = playing ? 'Pause' : 'Play';
-  videoPlayButton.querySelector('.video-play-icon').hidden = playing;
-  videoPlayButton.querySelector('.video-pause-icon').hidden = !playing;
   videoFrame.classList.toggle('has-started', playing || productVideo.currentTime > 0);
 }
 
@@ -157,9 +157,8 @@ function skipVideo(seconds) {
 
 function updateVideoMuteControl() {
   videoMuteButton.setAttribute('aria-label', productVideo.muted ? 'Unmute video' : 'Mute video');
-  videoMuteButton.querySelector('.video-mute-label').textContent = productVideo.muted ? 'Unmute' : 'Mute';
-  videoMuteButton.querySelector('.video-sound-on').hidden = productVideo.muted;
-  videoMuteButton.querySelector('.video-sound-off').hidden = !productVideo.muted;
+  videoMuteButton.title = productVideo.muted ? 'Unmute video' : 'Mute video';
+  videoMuteButton.dataset.muted = String(productVideo.muted);
 }
 
 videoPlayButton.addEventListener('click', toggleVideoPlayback);
