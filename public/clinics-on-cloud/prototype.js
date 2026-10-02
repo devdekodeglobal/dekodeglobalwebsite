@@ -106,14 +106,14 @@ function formatVideoTime(seconds) {
 }
 
 let pendingSeekTime = null;
-let seekRetryTimer = null;
-let seekRetryCount = 0;
 let seekControlsReady = false;
+let resumePlaybackAfterSeek = false;
+let isScrubbing = false;
 
 function updateVideoTimeline() {
   const duration = Number.isFinite(productVideo.duration) ? productVideo.duration : 0;
   const current = Math.min((pendingSeekTime ?? productVideo.currentTime) || 0, duration || Infinity);
-  if (duration && productVideo.readyState >= 2 && productVideo.seekable.length) seekControlsReady = true;
+  if (duration && productVideo.readyState >= 1) seekControlsReady = true;
   videoSeek.max = String(duration);
   videoSeek.value = String(current);
   videoSeek.disabled = !seekControlsReady;
@@ -124,35 +124,34 @@ function updateVideoTimeline() {
   videoFrame.classList.toggle('has-started', current > 0 || !productVideo.paused);
 }
 
-function attemptPendingSeek() {
-  if (pendingSeekTime === null) return;
-  const duration = productVideo.duration;
-  if (Number.isFinite(duration) && duration > 0 && !productVideo.seeking && Math.abs(productVideo.currentTime - pendingSeekTime) > 0.35) {
-    try { productVideo.currentTime = pendingSeekTime; } catch { /* Retry after metadata is ready. */ }
-  }
-  updateVideoTimeline();
-  clearTimeout(seekRetryTimer);
-  seekRetryTimer = setTimeout(() => {
-    if (pendingSeekTime === null) return;
-    if (!productVideo.seeking && Math.abs(productVideo.currentTime - pendingSeekTime) <= 0.35 && productVideo.readyState >= 2) {
-      pendingSeekTime = null;
-      updateVideoTimeline();
-      return;
-    }
-    if (++seekRetryCount < 15) attemptPendingSeek();
-    else { pendingSeekTime = null; updateVideoTimeline(); }
-  }, 350);
-}
-
-function seekVideo(time) {
+function seekVideo(time, keepPlaying = !productVideo.paused) {
   if (!Number.isFinite(productVideo.duration) || productVideo.duration <= 0) return;
   pendingSeekTime = Math.max(0, Math.min(productVideo.duration, time));
-  seekRetryCount = 0;
-  attemptPendingSeek();
+  resumePlaybackAfterSeek = keepPlaying;
+  try {
+    productVideo.currentTime = pendingSeekTime;
+  } catch {
+    return;
+  }
+  updateVideoTimeline();
+  if (keepPlaying) productVideo.play().catch(() => {});
 }
 
 function skipVideo(seconds) {
-  seekVideo((pendingSeekTime ?? productVideo.currentTime) + seconds);
+  seekVideo(productVideo.currentTime + seconds, !productVideo.paused);
+}
+
+function previewVideoSeek() {
+  isScrubbing = true;
+  pendingSeekTime = Number(videoSeek.value);
+  updateVideoTimeline();
+}
+
+function commitVideoSeek() {
+  if (!isScrubbing || pendingSeekTime === null) return;
+  const target = pendingSeekTime;
+  isScrubbing = false;
+  seekVideo(target, !productVideo.paused);
 }
 
 function updateVideoMuteControl() {
@@ -170,13 +169,17 @@ productVideo.addEventListener('keydown', event => {
   }
 });
 ['play', 'pause', 'ended'].forEach(eventName => productVideo.addEventListener(eventName, updateVideoPlaybackControl));
-['loadedmetadata', 'loadeddata', 'canplay', 'durationchange', 'progress', 'timeupdate', 'seeked'].forEach(eventName => productVideo.addEventListener(eventName, updateVideoTimeline));
-['loadedmetadata', 'canplay', 'seeked'].forEach(eventName => productVideo.addEventListener(eventName, () => {
-  if (pendingSeekTime !== null) attemptPendingSeek();
-}));
-videoSeek.addEventListener('input', () => {
-  seekVideo(Number(videoSeek.value));
+['loadedmetadata', 'loadeddata', 'canplay', 'durationchange', 'progress', 'timeupdate'].forEach(eventName => productVideo.addEventListener(eventName, updateVideoTimeline));
+productVideo.addEventListener('seeked', () => {
+  pendingSeekTime = null;
+  updateVideoTimeline();
+  if (resumePlaybackAfterSeek && productVideo.paused) productVideo.play().catch(() => {});
+  resumePlaybackAfterSeek = false;
 });
+videoSeek.addEventListener('input', previewVideoSeek);
+videoSeek.addEventListener('change', commitVideoSeek);
+videoSeek.addEventListener('pointerup', commitVideoSeek);
+videoSeek.addEventListener('touchend', commitVideoSeek, { passive: true });
 videoBackButton.addEventListener('click', () => skipVideo(-5));
 videoForwardButton.addEventListener('click', () => skipVideo(5));
 videoMuteButton.addEventListener('click', () => { productVideo.muted = !productVideo.muted; });

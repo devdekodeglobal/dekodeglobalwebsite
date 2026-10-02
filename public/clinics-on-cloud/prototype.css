@@ -131,7 +131,7 @@
 .product-video-frame.has-started .product-video-poster-details{display:none}
 .product-video-frame video:focus-visible{outline:3px solid var(--yellow);outline-offset:-3px}
 .product-video-controls{min-height:58px;padding:2px 10px 6px;background:#061b35;color:white}
-.product-video-seek{display:block;width:100%;height:15px;margin:0;appearance:none;-webkit-appearance:none;border:0;outline:0;background:transparent;cursor:pointer;--seek-progress:0%}
+.product-video-seek{display:block;width:100%;height:15px;margin:0;appearance:none;-webkit-appearance:none;border:0;outline:0;background:transparent;cursor:pointer;touch-action:none;--seek-progress:0%}
 .product-video-seek::-webkit-slider-runnable-track{height:4px;border-radius:4px;background:linear-gradient(90deg,var(--yellow) var(--seek-progress),#6d829b var(--seek-progress))}
 .product-video-seek::-moz-range-track{height:4px;border-radius:4px;background:#6d829b}
 .product-video-seek::-moz-range-progress{height:4px;border-radius:4px;background:var(--yellow)}
