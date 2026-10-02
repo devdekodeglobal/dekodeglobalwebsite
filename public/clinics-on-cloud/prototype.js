@@ -10,6 +10,8 @@ const videoFrame = document.querySelector('.product-video-frame');
 const videoPlayButton = document.getElementById('video-play');
 const videoMuteButton = document.getElementById('video-mute');
 const videoFullscreenButton = document.getElementById('video-fullscreen');
+// Remove casual browser save affordances without changing playback controls.
+videoFrame.addEventListener('contextmenu', event => event.preventDefault());
 const mobileNav = document.getElementById('mobile-nav');
 const menuButton = document.getElementById('menu-button');
 
