@@ -169,6 +169,44 @@ export default {
     if (requestUrl.pathname === '/api/proposals/logout') {
       return privateJson({ ok: true }, 200, { 'set-cookie': 'dekode_proposal_session=; Path=/; HttpOnly; SameSite=Strict; Secure; Max-Age=0' });
     }
+    if (requestUrl.pathname.endsWith('.mp4')) {
+      const assetRes = await env.ASSETS.fetch(request.url, { headers: { 'Accept-Encoding': 'identity' } });
+      if (!assetRes.ok) return assetRes;
+      const range = request.headers.get('range');
+      const buf = await assetRes.arrayBuffer();
+      const total = buf.byteLength;
+      if (!range) {
+        return new Response(buf, {
+          status: 200,
+          headers: {
+            'content-type': 'video/mp4',
+            'content-length': String(total),
+            'accept-ranges': 'bytes',
+            'cache-control': 'public, max-age=31536000, immutable',
+            'access-control-allow-origin': '*',
+          }
+        });
+      }
+      const match = range.match(/bytes=(\\d*)-(\\d*)/);
+      if (!match) return new Response('Invalid Range', { status: 416, headers: { 'content-range': 'bytes */' + total, 'accept-ranges': 'bytes' } });
+      let start = match[1] ? parseInt(match[1], 10) : 0;
+      let end = match[2] ? parseInt(match[2], 10) : total - 1;
+      if (isNaN(start)) start = 0;
+      if (isNaN(end) || end >= total) end = total - 1;
+      if (start > end || start >= total) return new Response(null, { status: 416, headers: { 'content-range': 'bytes */' + total, 'accept-ranges': 'bytes' } });
+      const slice = buf.slice(start, end + 1);
+      return new Response(slice, {
+        status: 206,
+        headers: {
+          'content-type': 'video/mp4',
+          'content-range': 'bytes ' + start + '-' + end + '/' + total,
+          'content-length': String(slice.byteLength),
+          'accept-ranges': 'bytes',
+          'cache-control': 'public, max-age=31536000, immutable',
+          'access-control-allow-origin': '*',
+        }
+      });
+    }
     const response = await env.ASSETS.fetch(request);
     if (response.status !== 404 || request.method !== 'GET') return response;
 
