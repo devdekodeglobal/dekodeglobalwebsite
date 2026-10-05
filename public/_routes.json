@@ -3,6 +3,7 @@
   "include": ["/*"],
   "exclude": [
     "/assets/*",
+    "/clinics-on-cloud/*",
     "/favicon.png",
     "/icons.svg",
     "/og-image.png",
