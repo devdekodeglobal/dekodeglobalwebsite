@@ -105,55 +105,14 @@ function formatVideoTime(seconds) {
   return hours ? `${hours}:${String(minutes % 60).padStart(2, '0')}:${String(whole % 60).padStart(2, '0')}` : `${minutes}:${String(whole % 60).padStart(2, '0')}`;
 }
 
-let pendingSeekTime = null;
-let seekControlsReady = false;
-let resumePlaybackAfterSeek = false;
-let isScrubbing = false;
-let seekRetryTimer = null;
-let seekRetryCount = 0;
-const maxSeekRetries = 40;
-
-function finishVideoSeek() {
-  clearTimeout(seekRetryTimer);
-  seekRetryTimer = null;
-  pendingSeekTime = null;
-  seekRetryCount = 0;
-  updateVideoTimeline();
-  if (resumePlaybackAfterSeek && productVideo.paused) productVideo.play().catch(() => {});
-  resumePlaybackAfterSeek = false;
-}
-
-function attemptVideoSeek() {
-  if (pendingSeekTime === null || isScrubbing) return;
-  if (seekRetryCount >= maxSeekRetries) {
-    finishVideoSeek();
-    return;
-  }
-  seekRetryCount += 1;
-  if (productVideo.seeking) {
-    clearTimeout(seekRetryTimer);
-    seekRetryTimer = setTimeout(attemptVideoSeek, 300);
-    return;
-  }
-  if (Math.abs(productVideo.currentTime - pendingSeekTime) <= 0.35 && productVideo.readyState >= 2) {
-    finishVideoSeek();
-    return;
-  }
-  try {
-    productVideo.currentTime = pendingSeekTime;
-  } catch {
-    // Mobile browsers can reject a seek until enough media data is available.
-  }
-  clearTimeout(seekRetryTimer);
-  seekRetryTimer = setTimeout(attemptVideoSeek, 300);
-}
-
 function updateVideoTimeline() {
   const duration = Number.isFinite(productVideo.duration) ? productVideo.duration : 0;
-  const current = Math.min((pendingSeekTime ?? productVideo.currentTime) || 0, duration || Infinity);
+  const current = isScrubbing ? Number(videoSeek.value) : productVideo.currentTime || 0;
   if (duration && productVideo.readyState >= 1) seekControlsReady = true;
   videoSeek.max = String(duration);
-  videoSeek.value = String(current);
+  if (!isScrubbing) {
+    videoSeek.value = String(current);
+  }
   videoSeek.disabled = !seekControlsReady;
   videoBackButton.disabled = !seekControlsReady;
   videoForwardButton.disabled = !seekControlsReady;
@@ -162,30 +121,34 @@ function updateVideoTimeline() {
   videoFrame.classList.toggle('has-started', current > 0 || !productVideo.paused);
 }
 
-function seekVideo(time, keepPlaying = !productVideo.paused) {
+function seekVideo(time) {
   if (!Number.isFinite(productVideo.duration) || productVideo.duration <= 0) return;
-  pendingSeekTime = Math.max(0, Math.min(productVideo.duration, time));
-  resumePlaybackAfterSeek = keepPlaying;
-  seekRetryCount = 0;
+  const targetTime = Math.max(0, Math.min(productVideo.duration, time));
+  try {
+    productVideo.currentTime = targetTime;
+  } catch {
+    // If not ready yet, currentTime assignment will take effect on next interaction
+  }
   updateVideoTimeline();
-  attemptVideoSeek();
 }
 
 function skipVideo(seconds) {
-  seekVideo((pendingSeekTime ?? productVideo.currentTime) + seconds, !productVideo.paused || resumePlaybackAfterSeek);
+  if (!Number.isFinite(productVideo.duration) || productVideo.duration <= 0) return;
+  seekVideo(productVideo.currentTime + seconds);
 }
 
 function previewVideoSeek() {
   isScrubbing = true;
-  pendingSeekTime = Number(videoSeek.value);
-  updateVideoTimeline();
+  const current = Number(videoSeek.value);
+  const duration = Number.isFinite(productVideo.duration) ? productVideo.duration : 0;
+  videoSeek.style.setProperty('--seek-progress', `${duration ? current / duration * 100 : 0}%`);
+  videoTime.textContent = `${formatVideoTime(current)} / ${formatVideoTime(duration)}`;
 }
 
 function commitVideoSeek() {
-  if (!isScrubbing || pendingSeekTime === null) return;
-  const target = pendingSeekTime;
+  if (!isScrubbing) return;
   isScrubbing = false;
-  seekVideo(target, !productVideo.paused);
+  seekVideo(Number(videoSeek.value));
 }
 
 function updateVideoMuteControl() {
@@ -203,13 +166,7 @@ productVideo.addEventListener('keydown', event => {
   }
 });
 ['play', 'pause', 'ended'].forEach(eventName => productVideo.addEventListener(eventName, updateVideoPlaybackControl));
-['loadedmetadata', 'loadeddata', 'canplay', 'durationchange', 'progress', 'timeupdate'].forEach(eventName => productVideo.addEventListener(eventName, updateVideoTimeline));
-['loadeddata', 'canplay', 'progress'].forEach(eventName => productVideo.addEventListener(eventName, attemptVideoSeek));
-productVideo.addEventListener('seeked', () => {
-  if (pendingSeekTime === null) return;
-  if (Math.abs(productVideo.currentTime - pendingSeekTime) <= 0.35) finishVideoSeek();
-  else attemptVideoSeek();
-});
+['loadedmetadata', 'loadeddata', 'canplay', 'durationchange', 'timeupdate', 'seeked'].forEach(eventName => productVideo.addEventListener(eventName, updateVideoTimeline));
 videoSeek.addEventListener('input', previewVideoSeek);
 videoSeek.addEventListener('change', commitVideoSeek);
 videoSeek.addEventListener('pointerup', commitVideoSeek);
