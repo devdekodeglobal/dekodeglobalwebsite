@@ -149,7 +149,6 @@ function previewVideoSeek() {
 }
 
 function commitVideoSeek() {
-  if (!isScrubbing) return;
   isScrubbing = false;
   seekVideo(Number(videoSeek.value));
 }
