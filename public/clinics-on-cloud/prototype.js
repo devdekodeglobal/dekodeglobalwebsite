@@ -105,6 +105,9 @@ function formatVideoTime(seconds) {
   return hours ? `${hours}:${String(minutes % 60).padStart(2, '0')}:${String(whole % 60).padStart(2, '0')}` : `${minutes}:${String(whole % 60).padStart(2, '0')}`;
 }
 
+let seekControlsReady = false;
+let isScrubbing = false;
+
 function updateVideoTimeline() {
   const duration = Number.isFinite(productVideo.duration) ? productVideo.duration : 0;
   const current = isScrubbing ? Number(videoSeek.value) : productVideo.currentTime || 0;
