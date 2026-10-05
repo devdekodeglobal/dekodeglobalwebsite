@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#043364">
+  <meta name="description" content="Explore the Clinics On Cloud health screening kiosk for clinics, workplaces and community settings. Watch the product film and speak with DEKODE about deployment.">
+  <title>Clinics On Cloud for Organisations | DEKODE</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="preload" as="image" href="coc-mascot-v1.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="prototype.css">
+  <script src="prototype.js" defer></script>
+</head>
+<body>
+  <div class="announcement"><span class="announcement-dot"></span> Health screening technology for real-world spaces <span class="announcement-end">A DEKODE product showcase</span></div>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="wordmark" href="../index.html" aria-label="Back to DEKODE home">DEKODE</a>
+      <div class="header-divider"></div>
+      <a class="header-product" href="#home" data-route="home">Clinics On Cloud</a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="#catalogue" data-route="catalogue">View catalogue</a>
+        <a href="#organisations" data-route="organisations">For organisations</a>
+      </nav>
+      <button type="button" class="header-cta" data-route="kiosk">Find kiosk <span aria-hidden="true">↗</span></button>
+      <button type="button" class="menu-button" id="menu-button" aria-label="Open menu" aria-controls="mobile-nav" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" hidden><a href="#catalogue" data-route="catalogue">View catalogue</a><a href="#organisations" data-route="organisations">For organisations</a><a href="#kiosk" data-route="kiosk">Find kiosk</a></nav>
+  </header>
+
+  <main>
+    <div class="view active" data-view="home">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-photo" role="img" aria-label="Clinics On Cloud screening kiosk in a clinic"></div>
+        <div class="hero-shade"></div>
+        <div class="hero-inner">
+          <div class="hero-content">
+            <h1 id="hero-title">Bring health screening<br><em>to your space.</em></h1>
+            <p>Clinics On Cloud brings guided health checks together in one kiosk. See the machine in action, then talk with DEKODE about the right setup for your clinic, workplace or community location.</p>
+            <div class="hero-actions">
+              <button type="button" class="btn btn-yellow" id="watch-video">How it works <span aria-hidden="true">▶</span></button>
+              <a class="btn btn-white-outline whatsapp-cta" href="https://wa.me/918882848489" target="_blank" rel="noopener noreferrer" aria-label="For more info on WhatsApp">
+                <svg class="whatsapp-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.031-.967-.273-.099-.472-.148-.67.15-.198.297-.768.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.297-.496.099-.198.05-.372-.025-.52-.074-.149-.669-1.612-.916-2.206-.242-.579-.487-.5-.669-.51-.173-.009-.372-.011-.57-.011s-.52.074-.792.372c-.273.297-1.04 1.016-1.04 2.479s1.064 2.876 1.212 3.074c.149.198 2.095 3.2 5.077 4.487.709.306 1.262.489 1.693.626.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.273-.198-.57-.347m-5.421 7.435h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.74.981.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.002-5.45 4.438-9.886 9.892-9.886a9.82 9.82 0 0 1 6.993 2.898 9.83 9.83 0 0 1 2.895 7.002c-.002 5.45-4.438 9.887-9.897 9.887m8.413-18.297A11.81 11.81 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.893a11.82 11.82 0 0 0 1.586 5.928L.057 24l6.326-1.658a11.88 11.88 0 0 0 5.664 1.444h.005c6.555 0 11.89-5.335 11.893-11.893a11.82 11.82 0 0 0-3.48-8.413Z"/></svg>
+                For more info
+                <span class="whatsapp-cta-arrow" aria-hidden="true">↗</span>
+              </a>
+            </div>
+            <p class="hero-context">For clinics · workplaces · pharmacies · community programmes</p>
+          </div>
+        </div>
+        <div class="mascot-stage" aria-label="Clinics On Cloud product guide">
+          <div class="mascot-dock" id="mascot-dock">
+            <div class="mascot-greeting" aria-hidden="true">Hi!</div>
+            <button class="mascot-button" id="mascot-button" type="button" aria-label="Ask about the Clinics On Cloud machine" aria-controls="chat-panel" aria-expanded="false">
+              <span class="mascot-art" aria-hidden="true">
+                <img class="mascot-part mascot-body" src="coc-mascot-v1.png" alt="">
+                <img class="mascot-part mascot-arm-left" src="coc-mascot-v1.png" alt="">
+                <img class="mascot-part mascot-arm-right" src="coc-mascot-v1.png" alt="">
+                <img class="mascot-part mascot-leg-left" src="coc-mascot-v1.png" alt="">
+                <img class="mascot-part mascot-leg-right" src="coc-mascot-v1.png" alt="">
+                <span class="mascot-eyelid mascot-eyelid-left"></span>
+                <span class="mascot-eyelid mascot-eyelid-right"></span>
+              </span>
+              <span class="mascot-shadow" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="product-film section-wrap" id="product-film" aria-labelledby="product-film-title">
+        <div class="eyebrow"><span class="eyebrow-line"></span> PRODUCT FILM</div>
+        <div class="product-film-head">
+          <h2 id="product-film-title">See the machine in action.</h2>
+        </div>
+        <div class="product-video-frame">
+          <div class="product-video-stage">
+            <video id="product-video" playsinline preload="auto" controlslist="nodownload noremoteplayback" disablepictureinpicture disableremoteplayback poster="coc-video-poster-v1.png" tabindex="0" aria-label="Clinics On Cloud product film"><source src="coc-overview-web.mp4" type="video/mp4">Your browser does not support this video.</video>
+            <div class="product-video-poster-details" id="video-poster-details"><strong>Clinics On Cloud</strong><span>DEKODE GLOBAL LLP (Authorized Seller)</span><span>Contact number: +91 88828 48489</span><span>Website: www.dekodeglobal.com</span></div>
+          </div>
+          <div class="product-video-controls" role="group" aria-label="Product film controls">
+            <input id="video-seek" class="product-video-seek" type="range" min="0" max="0" value="0" step="0.1" aria-label="Seek video" disabled>
+            <div class="product-video-control-row">
+              <button type="button" id="video-play" aria-label="Play video" title="Play video" data-playing="false"><svg class="video-play-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 5 11 7-11 7V5Z"/></svg><svg class="video-pause-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg><span class="video-play-label">Play</span></button>
+              <button type="button" id="video-back" class="video-skip" aria-label="Back 5 seconds" title="Back 5 seconds" disabled><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 9H3V4"/><path d="M4 9a12 12 0 1 1-1 12"/><text x="16" y="20" text-anchor="middle" fill="currentColor" stroke="none" font-size="10" font-weight="700">5</text></svg></button>
+              <button type="button" id="video-forward" class="video-skip" aria-label="Forward 5 seconds" title="Forward 5 seconds" disabled><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 9h5V4"/><path d="M28 9a12 12 0 1 0 1 12"/><text x="16" y="20" text-anchor="middle" fill="currentColor" stroke="none" font-size="10" font-weight="700">5</text></svg></button>
+              <output id="video-time" class="product-video-time" for="video-seek">0:00 / 0:00</output>
+              <span class="product-video-controls-spacer"></span>
+              <button type="button" id="video-mute" aria-label="Mute video" title="Mute video" data-muted="false"><svg class="video-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15 9a5 5 0 0 1 0 6m3-9a9 9 0 0 1 0 12"/></svg><svg class="video-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="m16 9 5 6m0-6-5 6"/></svg></button>
+              <button type="button" id="video-fullscreen" aria-label="Enter fullscreen" title="Fullscreen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg><span class="video-fullscreen-label">Fullscreen</span></button>
+            </div>
+          </div>
+        </div>
+        <div class="flyer-actions" aria-label="Clinics On Cloud flyer">
+          <div><strong>Prefer a quick overview?</strong><span>Keep the product flyer handy for your team.</span></div>
+          <div class="flyer-action-buttons">
+            <button type="button" class="flyer-view-button" id="view-flyer">View flyer <span aria-hidden="true">↗</span></button>
+            <a class="flyer-download-button" href="clinics-on-cloud-flyer.png" download="Clinics-On-Cloud-Flyer.png">Download flyer <span aria-hidden="true">↓</span></a>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="view" data-view="catalogue">
+      <section class="catalogue-section section-wrap" aria-labelledby="catalogue-title">
+        <div class="catalogue-copy"><div class="eyebrow"><span class="eyebrow-line"></span> PRODUCT CATALOGUE</div><h1 id="catalogue-title">Explore the machine,<br><em>page by page.</em></h1><p>Flip through the 12-page Clinics On Cloud catalogue for machine details, capabilities and deployment ideas.</p><span class="catalogue-copy-note">A closer look at the machine, one page at a time.</span></div>
+        <div class="catalogue-reader">
+          <div class="catalogue-book" id="catalogue-book" role="button" tabindex="0" aria-label="Open catalogue page larger"><div class="catalogue-page"><img id="catalogue-page-image" src="catalogue/page-01.jpg" alt="Catalogue page 1 of 12" width="990" height="1400"></div><div class="catalogue-turn" id="catalogue-turn" aria-hidden="true"><img id="catalogue-turn-image" src="catalogue/page-01.jpg" alt="" width="990" height="1400"></div></div>
+          <div class="catalogue-navigation" aria-label="Catalogue page controls"><button type="button" id="catalogue-prev" disabled aria-label="Previous catalogue page">← Previous</button><span id="catalogue-page-count" role="status" aria-live="polite">Page 1 of 12</span><button type="button" id="catalogue-next" aria-label="Next catalogue page">Next →</button></div>
+          <p class="catalogue-hint">Use arrows or swipe to turn pages · <button type="button" id="catalogue-fullsize">Read page larger ↗</button> · <a href="clinics-on-cloud-catalogue.pdf" download="Clinics-On-Cloud-Catalogue.pdf">Download full catalogue (PDF) ↓</a></p>
+        </div>
+      </section>
+    </div>
+
+    <div class="view" data-view="kiosk">
+      <section class="kiosk-section section-wrap" aria-labelledby="kiosk-title">
+        <div class="eyebrow"><span class="eyebrow-line"></span> FIND A KIOSK</div>
+        <h1 id="kiosk-title">Find a machine<br><em>near your area.</em></h1>
+        <p>Explore the map and search by city or area. Current listings are examples; ask DEKODE to confirm a live kiosk before visiting.</p>
+        <div class="kiosk-workspace">
+          <div class="location-list-panel">
+            <form id="kiosk-form" class="kiosk-search"><label for="kiosk-location">City, area or PIN code</label><div class="search-control"><span aria-hidden="true">⌕</span><input id="kiosk-location" name="location" type="search" autocomplete="address-level2" placeholder="Try Mumbai or Andheri"><button type="submit">Search</button></div></form>
+            <p class="demo-note"><span>DEMO DATA</span> These are illustrative areas, not verified operating sites.</p>
+            <div class="location-results" id="location-results" aria-live="polite"></div>
+            <div class="location-empty" id="location-empty" hidden><strong>No example area found.</strong><p>We can check actual kiosk availability for your city or PIN code.</p><button type="button" id="kiosk-ask-empty">Ask DEKODE on WhatsApp ↗</button><a id="kiosk-map-search" href="https://www.openstreetmap.org/" target="_blank" rel="noopener noreferrer">Explore the area map ↗</a></div>
+          </div>
+          <div class="location-detail" id="location-detail">
+            <div class="location-map"><iframe id="location-map-frame" title="Illustrative area map near Andheri East, Mumbai" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe><span class="map-demo-badge">Illustrative area map</span></div>
+            <div class="location-detail-body"><span class="detail-kicker">DEMO AREA · LOCATION TO BE CONFIRMED</span><h2 id="location-detail-title">Andheri example area</h2><p id="location-detail-copy">Andheri East, Mumbai. This map pin marks the general area, not an operating kiosk address.</p><div class="detail-tags"><span>No live address yet</span><span>Hours to be confirmed</span></div><div class="detail-actions"><button type="button" id="kiosk-ask-selected">Ask for a verified location ↗</button><a id="location-open-map" href="https://www.openstreetmap.org/" target="_blank" rel="noopener noreferrer">Open area map ↗</a></div></div>
+          </div>
+          <div class="location-map-empty" id="location-map-empty" hidden><span>MAP PREVIEW</span><h2>No demo area selected.</h2><p>Search another area or ask DEKODE for a verified kiosk location.</p></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="view" data-view="organisations">
+      <section class="interior-head section-wrap">
+        <div class="eyebrow"><span class="eyebrow-line"></span> FOR ORGANISATIONS</div>
+        <h1>Bring screening<br><em>closer to people.</em></h1>
+        <p>Considering a kiosk for a clinic, workplace, pharmacy or outreach programme? Tell DEKODE about your setting. We can discuss the machine, supported checks, setup and next steps.</p>
+      </section>
+      <section class="organisation-workspace section-wrap">
+        <div class="organisation-visual"><img src="coc-experience-v2.png" alt="Clinics On Cloud kiosk with staff support"><div class="organisation-overlay"><span>BUILT FOR REAL SETTINGS</span><strong>One compact station.<br>Many places it could help.</strong></div></div>
+        <div class="organisation-form">
+          <h2>Tell us about your location.</h2>
+          <p>Share your details and open a prepared WhatsApp enquiry. Review it before sending; DEKODE receives it only after you send the message.</p>
+          <form id="demo-form">
+            <div class="two-fields"><div><label for="contact-name">Your name</label><input id="contact-name" name="name" type="text" autocomplete="name" placeholder="Full name" required></div><div><label for="contact-org">Organisation</label><input id="contact-org" name="organisation" type="text" autocomplete="organization" placeholder="Organisation name" required></div></div>
+            <div class="two-fields"><div><label for="contact-phone">Contact number</label><input id="contact-phone" name="phone" type="tel" autocomplete="tel" minlength="10" placeholder="Your mobile number" required></div><div><label for="contact-email">Work email <span class="optional">(optional)</span></label><input id="contact-email" name="email" type="email" autocomplete="email" placeholder="you@company.com"></div></div>
+            <label for="contact-type">Where would it be used?</label><select id="contact-type" name="setting" required><option value="">Select a setting</option><option>Clinic or health centre</option><option>Workplace</option><option>Pharmacy</option><option>Community or residential site</option><option>Health camp or CSR programme</option></select>
+            <label for="contact-message">Anything else? <span class="optional">(optional)</span></label><textarea id="contact-message" name="message" rows="3" placeholder="City, expected use, or a specific question"></textarea>
+            <button type="submit" class="btn btn-navy">Continue on WhatsApp <span aria-hidden="true">↗</span></button>
+            <p class="form-message" id="demo-message" role="status"></p>
+            <small>No details are stored on this prototype. WhatsApp opens with your details prefilled.</small>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <dialog class="flyer-dialog" id="flyer-dialog" aria-labelledby="flyer-dialog-title">
+    <div class="flyer-dialog-bar"><h2 id="flyer-dialog-title">Clinics On Cloud flyer</h2><div><a href="clinics-on-cloud-flyer.png" download="Clinics-On-Cloud-Flyer.png">Download <span aria-hidden="true">↓</span></a><button type="button" id="close-flyer" aria-label="Close flyer">×</button></div></div>
+    <a href="clinics-on-cloud-flyer.png" target="_blank" rel="noopener noreferrer" aria-label="Open flyer at full size"><img src="clinics-on-cloud-flyer.png" alt="Clinics On Cloud product flyer" loading="lazy"></a>
+  </dialog>
+
+  <dialog class="catalogue-dialog" id="catalogue-dialog" aria-labelledby="catalogue-dialog-title">
+    <div class="catalogue-dialog-bar"><h2 id="catalogue-dialog-title">Clinics On Cloud catalogue</h2><div><button type="button" id="catalogue-zoom" aria-pressed="false">Zoom to read</button><button type="button" id="catalogue-close" aria-label="Close catalogue">×</button></div></div>
+    <div class="catalogue-dialog-stage" id="catalogue-dialog-stage"><img id="catalogue-dialog-image" src="catalogue/page-01.jpg" alt="Catalogue page 1 of 12" width="990" height="1400"></div>
+    <div class="catalogue-dialog-controls"><button type="button" id="catalogue-dialog-prev" disabled>← Previous</button><span id="catalogue-dialog-count" role="status" aria-live="polite">Page 1 of 12</span><button type="button" id="catalogue-dialog-next">Next →</button></div>
+  </dialog>
+
+  <footer class="site-footer"><div class="section-wrap footer-inner"><div><a class="wordmark footer-wordmark" href="../index.html">DEKODE</a><p>Practical technology for a healthier tomorrow.</p></div><div class="footer-links"><button type="button" data-route="home">Product overview</button><button type="button" data-route="organisations">For organisations</button></div><div class="footer-note">Clinics On Cloud product showcase<br>DEKODE Global LLP · Authorised seller</div></div></footer>
+
+  <aside class="chat-panel" id="chat-panel" role="dialog" aria-label="Clinics On Cloud product enquiry" hidden>
+    <div class="chat-header"><div class="chat-header-avatar"><img src="coc-mascot-v1.png" alt="" width="34" height="51"></div><div><strong>Clinics On Cloud</strong><span>Product enquiry</span></div><button class="chat-close" id="chat-close" type="button" aria-label="Close chat">×</button></div>
+    <div class="chat-lead-body">
+      <p class="chat-intro">Hi! Clinics On Cloud is a guided health screening kiosk that can be considered for clinics, workplaces and community settings.</p>
+      <ul class="chat-facts"><li>Selected health checks through connected devices</li><li>Clear screening reports</li><li>Setup and service options discussed for your location</li></ul>
+      <p class="chat-lead-prompt">Want to know if it fits your space? Share a few details and our team can follow up.</p>
+      <form id="chat-lead-form" class="chat-lead-form">
+        <label for="chat-name">Your name</label><input id="chat-name" name="name" type="text" autocomplete="name" required>
+        <label for="chat-organisation">Organisation</label><input id="chat-organisation" name="organisation" type="text" autocomplete="organization" required>
+        <label for="chat-phone">Contact number</label><input id="chat-phone" name="phone" type="tel" autocomplete="tel" minlength="10" required>
+        <button type="submit" class="btn btn-navy">Continue on WhatsApp <span aria-hidden="true">↗</span></button>
+        <p class="form-message" id="chat-lead-message" role="status"></p>
+      </form>
+      <p class="chat-disclosure">Your details open in a prefilled WhatsApp message. Review and send it to DEKODE to share them; this page does not store them.</p>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

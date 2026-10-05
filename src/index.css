@@ -622,6 +622,251 @@ h6 {
 }
 
 /* Initial Hero */
+.coc-peek-link {
+  position: absolute;
+  z-index: 80;
+  left: 0;
+  bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  display: flex;
+  align-items: flex-end;
+  width: min(15vw, 188px);
+  min-width: 124px;
+  height: min(31vh, 238px);
+  color: #fff;
+  text-decoration: none;
+  isolation: isolate;
+  outline-offset: 4px;
+}
+
+.coc-peek-link::before {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  inset: 5% auto 5% 0;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: linear-gradient(180deg, transparent, rgba(254, 182, 17, 0.8), transparent);
+  box-shadow: 4px 0 18px rgba(3, 26, 55, 0.45);
+  opacity: 0;
+  animation: none;
+  opacity: 0.85;
+}
+
+.coc-peek-link::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  bottom: 2px;
+  left: 12px;
+  width: 110px;
+  height: 17px;
+  border-radius: 50%;
+  background: rgba(0, 12, 30, 0.45);
+  filter: blur(7px);
+  opacity: 0;
+  animation: none;
+}
+
+.coc-peek-character {
+  position: relative;
+  display: block;
+  align-self: flex-end;
+  width: min(11vw, 128px);
+  min-width: 92px;
+  aspect-ratio: 2 / 3;
+  transform: translateX(-49%) rotate(-6deg);
+  filter: brightness(0.78);
+  animation: none;
+  transition: filter 250ms ease, translate 250ms ease;
+}
+
+.coc-peek-character img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+
+.coc-peek-body {
+  z-index: 2;
+  clip-path: polygon(27% 0, 77% 0, 77% 43%, 72% 44%, 73% 80%, 29% 80%, 34% 47%, 28% 43%);
+  filter: drop-shadow(8px 10px 10px rgba(0, 13, 38, 0.35));
+}
+
+.coc-peek-arm-left {
+  z-index: 1;
+  clip-path: polygon(0 25%, 43% 25%, 43% 52%, 6% 52%);
+  transform-origin: 40% 47%;
+  animation: cocWave 3.3s ease-in-out 0.9s infinite;
+}
+
+.coc-peek-arm-right {
+  z-index: 1;
+  clip-path: polygon(68% 39%, 98% 39%, 98% 65%, 68% 65%);
+  transform-origin: 71% 46%;
+  animation: none;
+}
+
+.coc-peek-leg-left,
+.coc-peek-leg-right {
+  z-index: 1;
+}
+
+.coc-peek-leg-left {
+  clip-path: polygon(31% 76%, 52% 76%, 53% 99%, 16% 99%);
+  transform-origin: 41% 78%;
+  animation: none;
+}
+
+.coc-peek-leg-right {
+  clip-path: polygon(56% 76%, 76% 76%, 88% 99%, 55% 99%);
+  transform-origin: 65% 78%;
+  animation: none;
+}
+
+.coc-peek-eyelid {
+  position: absolute;
+  z-index: 3;
+  top: 34.1%;
+  width: 7.7%;
+  height: 5.2%;
+  border-radius: 48%;
+  background: #074686;
+  transform: scaleY(0);
+  transform-origin: 50% 10%;
+  animation: cocBlink 4.8s ease-in-out 1.4s infinite;
+  pointer-events: none;
+}
+
+.coc-peek-eyelid-left { left: 45.4%; }
+.coc-peek-eyelid-right { left: 56.3%; }
+
+.coc-peek-caption {
+  position: absolute;
+  left: 48px;
+  bottom: 35%;
+  width: max-content;
+  max-width: 190px;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid rgba(254, 182, 17, 0.55);
+  border-radius: 12px 12px 12px 2px;
+  background: rgba(3, 43, 87, 0.94);
+  box-shadow: 0 9px 24px rgba(0, 10, 32, 0.26);
+  font: 600 0.8rem/1.25 var(--font-primary);
+  opacity: 1;
+  transform: none;
+  animation: none;
+  transition: left 450ms ease;
+}
+
+.coc-peek-link.is-ready::before { animation: cocDoorEdge 6.1s ease-out both; }
+.coc-peek-link.is-ready::after { animation: cocShadow 6.8s ease-out both; }
+.coc-peek-link.is-ready .coc-peek-character { animation: cocPeekWalkAfterPeek 3.8s ease-in-out both; }
+.coc-peek-link.is-ready .coc-peek-arm-right { animation: cocOtherArm 3.8s ease-in-out both; }
+.coc-peek-link.is-ready .coc-peek-leg-left { animation: cocLeftStep 3.8s ease-in-out both; }
+.coc-peek-link.is-ready .coc-peek-leg-right { animation: cocRightStep 3.8s ease-in-out both; }
+.coc-peek-link.is-ready .coc-peek-caption { left: min(10vw, 116px); opacity: 1; }
+
+@keyframes cocPeekWalkAfterPeek {
+  0%, 15% { transform: translateX(-49%) translateY(0) rotate(-6deg); filter: brightness(0.75); }
+  32% { transform: translateX(-34%) translateY(-5px) rotate(-2deg); filter: brightness(0.88); }
+  49% { transform: translateX(-25%) translateY(0) rotate(2deg); filter: brightness(0.94); }
+  66% { transform: translateX(-15%) translateY(-5px) rotate(-2deg); filter: brightness(1); }
+  83% { transform: translateX(-7%) translateY(0) rotate(1deg); filter: brightness(1); }
+  100% { transform: translateX(0) translateY(0) rotate(0); filter: brightness(1); }
+}
+
+.coc-peek-caption-name { display: block; white-space: nowrap; }
+.coc-peek-caption-arrow { color: var(--color-accent-yellow); }
+.coc-peek-link:hover .coc-peek-character,
+.coc-peek-link:focus-visible .coc-peek-character { filter: brightness(1.1); translate: 4px 0; }
+.coc-peek-link:focus-visible { outline: 3px solid var(--color-accent-yellow); }
+
+@keyframes cocPeekWalk {
+  0%, 9% { transform: translateX(-105%) translateY(0) rotate(-6deg); filter: brightness(0.6); }
+  29%, 46% { transform: translateX(-49%) translateY(0) rotate(-6deg); filter: brightness(0.75); }
+  53% { transform: translateX(-43%) translateY(-5px) rotate(-3deg); filter: brightness(0.82); }
+  60% { transform: translateX(-33%) translateY(0) rotate(2deg); filter: brightness(0.87); }
+  67% { transform: translateX(-25%) translateY(-5px) rotate(-2deg); filter: brightness(0.92); }
+  75% { transform: translateX(-15%) translateY(0) rotate(2deg); filter: brightness(0.96); }
+  83% { transform: translateX(-7%) translateY(-4px) rotate(-1deg); filter: brightness(1); }
+  92%, 100% { transform: translateX(0) translateY(0) rotate(0); filter: brightness(1); }
+}
+
+@keyframes cocWave {
+  0%, 100% { transform: rotate(-3deg); }
+  22% { transform: rotate(10deg); }
+  45% { transform: rotate(-5deg); }
+  68% { transform: rotate(12deg); }
+}
+
+@keyframes cocOtherArm {
+  0%, 46%, 100% { transform: rotate(0); }
+  60%, 75% { transform: rotate(-5deg); }
+}
+
+@keyframes cocLeftStep {
+  0%, 48%, 100% { transform: rotate(0) translateY(0); }
+  55% { transform: rotate(-11deg) translateY(-3px); }
+  65% { transform: rotate(7deg) translateY(0); }
+  74% { transform: rotate(-9deg) translateY(-3px); }
+  84% { transform: rotate(6deg) translateY(0); }
+}
+
+@keyframes cocRightStep {
+  0%, 48%, 100% { transform: rotate(0) translateY(0); }
+  55% { transform: rotate(7deg) translateY(0); }
+  65% { transform: rotate(-11deg) translateY(-3px); }
+  74% { transform: rotate(7deg) translateY(0); }
+  84% { transform: rotate(-9deg) translateY(-3px); }
+}
+
+@keyframes cocBlink {
+  0%, 42%, 46%, 85%, 89%, 100% { transform: scaleY(0); }
+  44%, 87% { transform: scaleY(1); }
+}
+
+@keyframes cocDoorEdge { 0%, 80% { opacity: 0.85; } 100% { opacity: 0; } }
+@keyframes cocShadow { 0%, 50% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes cocCaption { to { opacity: 1; transform: translateX(0); } }
+
+@media (max-width: 700px) {
+  .coc-peek-link { width: 112px; min-width: 0; height: 154px; bottom: max(0.5rem, env(safe-area-inset-bottom, 0px)); }
+  .coc-peek-character { width: 88px; min-width: 0; }
+  .coc-peek-caption { left: 37px; bottom: 28%; max-width: 128px; font-size: 0.72rem; }
+  .coc-peek-link.is-ready .coc-peek-caption { left: 76px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coc-peek-character {
+    animation: none;
+    transform: translateX(-49%) rotate(-6deg);
+    filter: brightness(0.78);
+  }
+  .coc-peek-arm-left,
+  .coc-peek-arm-right,
+  .coc-peek-leg-left,
+  .coc-peek-leg-right,
+  .coc-peek-eyelid { animation: none; }
+  .coc-peek-link::before { animation: none; opacity: 0; }
+  .coc-peek-link::after { animation: none; opacity: 1; }
+  .coc-peek-caption { animation: none; opacity: 1; transform: none; }
+  .coc-peek-link.is-ready .coc-peek-character,
+  .coc-peek-link.is-ready .coc-peek-arm-right,
+  .coc-peek-link.is-ready .coc-peek-leg-left,
+  .coc-peek-link.is-ready .coc-peek-leg-right {
+    animation: none;
+    transform: none;
+    filter: none;
+  }
+  .coc-peek-link.is-ready .coc-peek-caption { animation: none; opacity: 1; transform: none; }
+  .coc-peek-link.is-ready::before { animation: none; opacity: 0; }
+  .coc-peek-link.is-ready::after { animation: none; opacity: 1; }
+}
+
 .hero-title {
   font-family: var(--font-heading);
   font-size: clamp(1.65rem, 2.4vw, 2.2rem);

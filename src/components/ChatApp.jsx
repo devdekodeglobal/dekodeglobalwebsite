@@ -133,6 +133,7 @@ export default function ChatApp({
     d.setHours(d.getHours() - 3);
     return d;
   });
+  const [sceneryReady, setSceneryReady] = useState(false);
 
   const timeOfDay = useMemo(() => {
     const hour = realTime.getHours();
@@ -975,7 +976,27 @@ export default function ChatApp({
         <HeroScenery
           timeOfDay={timeOfDay}
           realTime={realTime}
+          onInitialTransitionComplete={setSceneryReady}
         />
+      )}
+
+      {step === "centered" && !proposalContext && (
+        <a
+          className={`coc-peek-link${sceneryReady ? " is-ready" : ""}`}
+          href="/clinics-on-cloud/index.html#home"
+          aria-label="Explore Clinics On Cloud"
+        >
+          <span className="coc-peek-character">
+            <img className="coc-peek-body" src="/clinics-on-cloud/coc-mascot-v1.png" alt="" />
+            <img className="coc-peek-arm-left" src="/clinics-on-cloud/coc-mascot-v1.png" alt="" />
+            <img className="coc-peek-arm-right" src="/clinics-on-cloud/coc-mascot-v1.png" alt="" />
+            <img className="coc-peek-leg-left" src="/clinics-on-cloud/coc-mascot-v1.png" alt="" />
+            <img className="coc-peek-leg-right" src="/clinics-on-cloud/coc-mascot-v1.png" alt="" />
+            <span className="coc-peek-eyelid coc-peek-eyelid-left" aria-hidden="true" />
+            <span className="coc-peek-eyelid coc-peek-eyelid-right" aria-hidden="true" />
+          </span>
+          <span className="coc-peek-caption">Meet<span className="coc-peek-caption-name">Clinics On Cloud <span className="coc-peek-caption-arrow" aria-hidden="true">↗</span></span></span>
+        </a>
       )}
 
       <header className="chat-header">
