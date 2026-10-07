@@ -9,6 +9,7 @@ const InteractiveContentSections = lazy(
   () => import('./components/InteractiveContentSections'),
 )
 const LegalPage = lazy(() => import('./pages/LegalPage'))
+const InternalKnowledgeBase = lazy(() => import('./pages/InternalKnowledgeBase'))
 
 export const INTERACTIVE_CONTENT_SECTIONS_ENABLED =
   import.meta.env.VITE_INTERACTIVE_CONTENT_SECTIONS_ENABLED !== 'false'
@@ -44,11 +45,14 @@ function App() {
   const isTermsPage = path === '/terms' || path === '/terms-of-service'
   const legalType = isPrivacyPage ? 'privacy' : isTermsPage ? 'terms' : null
 
+  // Internal secret knowledge base route (custom obscure string so outsiders cannot guess/find)
+  const isInternalDocs = path === '/team-kb-d7x9q2' || path === '/internal-kb' || path.startsWith('/team-kb-d7x9q2/')
+
   return (
     <div
-      className={`app-container ${INTERACTIVE_CONTENT_SECTIONS_ENABLED && !proposal ? 'interactive-content-enabled' : ''} ${proposal ? 'proposal-mode' : ''}`}
+      className={`app-container ${isInternalDocs ? 'internal-kb-mode' : ''} ${INTERACTIVE_CONTENT_SECTIONS_ENABLED && !proposal && !isInternalDocs ? 'interactive-content-enabled' : ''} ${proposal ? 'proposal-mode' : ''}`}
     >
-      {!legalType && (
+      {!legalType && !isInternalDocs && (
         <div className="chat-viewport" id="dekode-chat">
           <ChatApp
             onOpenProposalAccess={() => setShowProposalAccess(true)}
@@ -63,7 +67,12 @@ function App() {
           onExit={exitProposal}
         />
       )}
-      {INTERACTIVE_CONTENT_SECTIONS_ENABLED && !proposal && !legalType && (
+      {isInternalDocs && (
+        <Suspense fallback={<div className="interactive-section-placeholder" aria-hidden="true" />}>
+          <InternalKnowledgeBase secretPath="/team-kb-d7x9q2" />
+        </Suspense>
+      )}
+      {INTERACTIVE_CONTENT_SECTIONS_ENABLED && !proposal && !legalType && !isInternalDocs && (
         <Suspense fallback={<div className="interactive-section-placeholder" aria-hidden="true" />}>
           <InteractiveContentSections />
         </Suspense>
@@ -79,12 +88,15 @@ function App() {
           onAccess={activateProposal}
         />
       )}
-      {!proposal && !legalType && (
+      {!proposal && !legalType && !isInternalDocs && (
         <BackToTopButton key="home-down" direction="down" disabled={isChatActive} />
       )}
-      <BackToTopButton key={proposal ? 'proposal' : 'site'} disabled={isChatActive && !proposal} />
+      {!isInternalDocs && (
+        <BackToTopButton key={proposal ? 'proposal' : 'site'} disabled={isChatActive && !proposal} />
+      )}
     </div>
   )
 }
 
 export default App
+

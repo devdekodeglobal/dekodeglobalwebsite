@@ -3,6 +3,7 @@
   "include": ["/*"],
   "exclude": [
     "/assets/*",
+    "/internal-docs/*",
     "/favicon.png",
     "/icons.svg",
     "/og-image.png",
