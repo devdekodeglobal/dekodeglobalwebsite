@@ -282,26 +282,60 @@
       min-width: 0;
     }
 
-    /* Hero Banner */
-    .doc-hero {
-      background: var(--surface);
+    /* Hero Banner (Unified Template) */
+    .hero-banner {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface-elevated) 100%);
       border: 1px solid var(--border);
       border-radius: var(--card-radius);
-      padding: 40px;
+      padding: 44px 48px;
       margin-bottom: 48px;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18);
     }
-    .doc-hero::after {
-      content: '';
+
+    .hero-banner::before {
+      content: "";
       position: absolute;
-      top: 0; right: 0;
-      width: 320px; height: 320px;
+      top: -120px;
+      right: -100px;
+      width: 360px;
+      height: 360px;
       background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
       pointer-events: none;
     }
-    .lead { font-size: 1.15rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 24px; }
+
+    .hero-tagline {
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .hero-title span {
+      color: var(--primary);
+    }
+
+    .hero-desc {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 880px;
+      line-height: 1.75;
+    }
     .doc-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
     .meta-tag {
       background: var(--surface-elevated);
@@ -688,17 +722,28 @@
   <!-- Main Content Area -->
   <main class="main-content">
 
-    <!-- Hero Header -->
-    <div class="doc-hero">
-      <h1 style="font-size: 2.8rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 8px;">krafc</h1>
-      <p style="font-size: 1.25rem; font-weight: 600; color: var(--primary); margin-bottom: 12px;">
-        Professional Browser-Based Spatial Design &amp; Real-Time 3D Materialization Platform
+    <!-- Hero Banner (Unified DEKODE Template) -->
+    <header class="hero-banner">
+      <div class="hero-tagline">
+        <span>●</span> DEKODE INTERNAL SYSTEMS ARCHITECTURE
+      </div>
+      <div class="hero-title">
+        krafc<br>
+        <span>2D Architectural Drafting &amp; Real-Time 3D Spatial WebGL Engine</span>
+      </div>
+      <p class="hero-desc">
+        Millimeter-accurate 2D blueprint drafting (HTML5 Canvas via Konva) synchronized in real-time with instant photorealistic 3D WebGL spatial simulation (BabylonJS 9.x), backed by an edge-native Cloudflare Pages &amp; D1 serverless backend.
       </p>
-      <p class="lead">
-        Seamlessly bridging millimeter-accurate 2D architectural blueprint drafting (HTML5 Canvas via Konva) with instant photorealistic 3D WebGL spatial simulation (BabylonJS 9.x), backed by an edge-native serverless backend on Cloudflare Pages and D1.
-      </p>
+      <div class="pill-row">
+        <span class="pill pill-gold">krafc.com</span>
+        <span class="pill pill-gold">PPM = 100 Canonical Coordinate Law</span>
+        <span class="pill pill-blue">React 19 · Vite · TanStack</span>
+        <span class="pill pill-blue">Konva 10.x (2D)</span>
+        <span class="pill pill-green">BabylonJS 9.x (3D WebGL)</span>
+        <span class="pill pill-purple">Cloudflare Pages &amp; D1</span>
+      </div>
 
-      <div class="grid-2" style="margin-top: 22px;">
+      <div class="grid-2" style="margin-top: 24px;">
         <div class="card" style="border-left: 4px solid var(--primary);">
           <h4>What krafc Solves</h4>
           <p>
@@ -711,14 +756,6 @@
             The 2D canvas strictly adopts a <strong>PPM = 100 scale (100 pixels = 1.00 metre)</strong>. The 3D Babylon engine projects X &rarr; X (meters), Z &rarr; -Y (meters, inverted depth), and Y &rarr; Z (elevation/height). No visual element escapes this coordinate mapping contract.
           </p>
         </div>
-      </div>
-
-      <div class="doc-meta">
-        <div class="meta-tag">Application: <strong>Spatial Design &amp; Architectural Exhibition CAD</strong></div>
-        <div class="meta-tag">Frontend: <strong>React 19 · Vite · TanStack Router · TailwindCSS v4</strong></div>
-        <div class="meta-tag">Engines: <strong>Konva 10.x (2D) · BabylonJS 9.x (3D WebGL / PBR)</strong></div>
-        <div class="meta-tag">Edge Backend: <strong>Cloudflare Pages Functions · D1 SQLite · Web Crypto PBKDF2</strong></div>
-        <div class="meta-tag">Live Platform: <a href="https://krafc.com" target="_blank" rel="noopener noreferrer" style="color:var(--primary); font-weight:700;">krafc.com &rarr;</a></div>
       </div>
 
       <!-- Live Interactive Platform Preview Link -->
@@ -742,7 +779,7 @@
           </div>
         </div>
       </a>
-    </div>
+    </header>
 
     <!-- Section 01: Vision & Problem Statement -->
     <section id="product-vision">
