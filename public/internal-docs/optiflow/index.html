@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@800&display=swap" rel="stylesheet">
   <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
   <style>
 
@@ -174,27 +175,30 @@
       gap: 12px;
     }
 
-    .brand-logo-badge {
-      font-family: 'Montserrat', sans-serif;
-      padding: 0;
-      background: transparent;
-      color: #ffffff;
-      font-weight: 900;
-      font-size: 1.3rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      box-shadow: none;
+    .brand-logo {
       display: inline-flex;
       align-items: center;
+      height: 38px;
+      font-family: "Outfit", sans-serif;
+      font-weight: 800;
+      font-size: 1.55rem;
       line-height: 1;
-      border: none;
+      letter-spacing: 1px;
+      color: #fff;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+    .brand-logo:hover {
+      color: #feb611;
+      opacity: 0.95;
     }
 
-    [data-theme="light"] .brand-logo-badge {
-      background: transparent;
-      color: #1d4ed8;
-      border: none;
-      box-shadow: none;
+    [data-theme="light"] .brand-logo {
+      color: #000000;
+    }
+    [data-theme="light"] .brand-logo:hover {
+      color: #b97a00;
     }
 
     .theme-icon-btn {
@@ -1966,7 +1970,7 @@
   <!-- Mobile Topbar -->
   <header class="mobile-topbar">
     <div style="display:flex; align-items:center; gap:10px;">
-      <span class="brand-logo-badge">DEKODE</span>
+      <a class="brand-logo" href="/">DEKODE</a>
       <span style="font-weight:800; font-size:0.95rem; color:var(--text);">OptiFlow Guide</span>
     </div>
     <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
@@ -1981,7 +1985,7 @@
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <div class="brand-container">
-        <span class="brand-logo-badge">DEKODE</span>
+        <a class="brand-logo" href="/">DEKODE</a>
         <button class="theme-icon-btn" id="theme-toggle" aria-label="Toggle color theme" title="Toggle Light / Dark Mode">
           <span id="theme-icon">☀️</span>
         </button>
