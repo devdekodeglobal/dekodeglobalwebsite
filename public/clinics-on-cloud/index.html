@@ -170,6 +170,20 @@
     <div class="catalogue-dialog-controls"><button type="button" id="catalogue-dialog-prev" disabled>← Previous</button><span id="catalogue-dialog-count" role="status" aria-live="polite">Page 1 of 12</span><button type="button" id="catalogue-dialog-next">Next →</button></div>
   </dialog>
 
+  <dialog class="catalogue-access-dialog" id="catalogue-access-dialog" aria-labelledby="catalogue-access-title">
+    <button type="button" class="catalogue-access-close" id="catalogue-access-close" aria-label="Close catalogue access">×</button>
+    <span class="catalogue-access-lock" aria-hidden="true">⌑</span>
+    <p class="catalogue-access-eyebrow">PRIVATE PRODUCT MATERIAL</p>
+    <h2 id="catalogue-access-title">Access the Clinics On Cloud catalogue</h2>
+    <p>Enter the password provided by the DEKODE team.</p>
+    <form id="catalogue-access-form">
+      <label for="catalogue-password">Password</label>
+      <input id="catalogue-password" name="password" type="password" autocomplete="current-password" required>
+      <p class="catalogue-access-error" id="catalogue-access-error" role="alert" aria-live="polite"></p>
+      <button type="submit" class="btn btn-navy" id="catalogue-access-submit">Access catalogue</button>
+    </form>
+  </dialog>
+
   <footer class="site-footer"><div class="section-wrap footer-inner"><div><a class="wordmark footer-wordmark" href="../index.html">DEKODE</a><p>Practical technology for a healthier tomorrow.</p></div><div class="footer-links"><button type="button" data-route="home">Product overview</button><button type="button" data-route="organisations">For organisations</button></div><div class="footer-note">Clinics On Cloud product showcase<br>DEKODE Global LLP · Authorised seller</div></div></footer>
 
   <aside class="chat-panel" id="chat-panel" role="dialog" aria-label="Clinics On Cloud product enquiry" hidden>

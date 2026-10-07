@@ -18,6 +18,11 @@ const videoTime = document.getElementById('video-time');
 videoFrame.addEventListener('contextmenu', event => event.preventDefault());
 const mobileNav = document.getElementById('mobile-nav');
 const menuButton = document.getElementById('menu-button');
+const catalogueAccessDialog = document.getElementById('catalogue-access-dialog');
+const catalogueAccessForm = document.getElementById('catalogue-access-form');
+const catalogueAccessError = document.getElementById('catalogue-access-error');
+const catalogueAccessSubmit = document.getElementById('catalogue-access-submit');
+let catalogueUnlocked = false;
 
 function navigate(route) {
   const requested = route === 'locations' ? 'kiosk' : route;
@@ -39,10 +44,10 @@ function navigate(route) {
 document.querySelectorAll('[data-route]').forEach(control => {
   control.addEventListener('click', event => {
     event.preventDefault();
-    navigate(control.dataset.route);
+    requestNavigation(control.dataset.route);
   });
 });
-window.addEventListener('hashchange', () => navigate(location.hash.slice(1)));
+window.addEventListener('hashchange', () => requestNavigation(location.hash.slice(1)));
 menuButton.addEventListener('click', () => {
   mobileNav.hidden = !mobileNav.hidden;
   menuButton.setAttribute('aria-expanded', String(!mobileNav.hidden));
@@ -219,6 +224,70 @@ let cataloguePage = 1;
 let catalogueTurning = false;
 const catalogueSource = page => `catalogue/page-${String(page).padStart(2, '0')}.jpg`;
 
+function refreshCatalogueAssets() {
+  const source = catalogueSource(cataloguePage);
+  catalogueImage.src = source;
+  catalogueTurnImage.src = source;
+  catalogueDialogImage.src = source;
+}
+
+async function requestNavigation(route) {
+  const requested = route === 'locations' ? 'kiosk' : route;
+  if (requested !== 'catalogue') {
+    navigate(requested);
+    return;
+  }
+  if (!catalogueUnlocked) {
+    try {
+      const response = await fetch('/api/catalogue/session', { credentials: 'same-origin', cache: 'no-store' });
+      const result = await response.json();
+      catalogueUnlocked = response.ok && result.authenticated === true;
+    } catch {
+      catalogueUnlocked = false;
+    }
+  }
+  if (catalogueUnlocked) {
+    refreshCatalogueAssets();
+    navigate('catalogue');
+    return;
+  }
+  navigate('home');
+  catalogueAccessError.textContent = '';
+  catalogueAccessDialog.showModal();
+  document.getElementById('catalogue-password').focus();
+}
+
+catalogueAccessForm.addEventListener('submit', async event => {
+  event.preventDefault();
+  const password = document.getElementById('catalogue-password').value;
+  if (!password) return;
+  catalogueAccessSubmit.disabled = true;
+  catalogueAccessSubmit.textContent = 'Verifying…';
+  catalogueAccessError.textContent = '';
+  try {
+    const response = await fetch('/api/catalogue/access', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ password })
+    });
+    const result = await response.json();
+    if (!response.ok || !result.ok) throw new Error(result.error || 'Catalogue access could not be verified.');
+    catalogueUnlocked = true;
+    catalogueAccessForm.reset();
+    catalogueAccessDialog.close();
+    refreshCatalogueAssets();
+    navigate('catalogue');
+  } catch (error) {
+    catalogueAccessError.textContent = error.message || 'Catalogue access could not be verified.';
+  } finally {
+    catalogueAccessSubmit.disabled = false;
+    catalogueAccessSubmit.textContent = 'Access catalogue';
+  }
+});
+document.getElementById('catalogue-access-close').addEventListener('click', () => catalogueAccessDialog.close());
+catalogueAccessDialog.addEventListener('click', event => { if (event.target === catalogueAccessDialog) catalogueAccessDialog.close(); });
+
 function setCatalogueZoom(zoomed) {
   catalogueDialog.classList.toggle('is-zoomed', zoomed);
   catalogueZoom.setAttribute('aria-pressed', String(zoomed));
@@ -385,4 +454,4 @@ function wireWhatsAppEnquiry(formId, statusId) {
 
 wireWhatsAppEnquiry('demo-form', 'demo-message');
 wireWhatsAppEnquiry('chat-lead-form', 'chat-lead-message');
-navigate(location.hash.slice(1));
+requestNavigation(location.hash.slice(1));

@@ -224,3 +224,14 @@
 .catalogue-dialog-stage img{display:block;width:auto;height:100%;max-width:100%;object-fit:contain;background:white;box-shadow:0 8px 30px rgba(4,51,100,.2)}
 .catalogue-dialog.is-zoomed .catalogue-dialog-stage{justify-content:flex-start}.catalogue-dialog.is-zoomed .catalogue-dialog-stage img{width:990px;height:auto;max-width:none;flex:none;margin-inline:auto}
 @media(max-width:600px){.catalogue-dialog{width:100vw;height:100dvh;border-radius:0}.catalogue-dialog-bar,.catalogue-dialog-controls{padding:10px}.catalogue-dialog-bar h2{font-size:12px}.catalogue-dialog button{font-size:11px;padding:7px 9px}.catalogue-dialog-stage{padding:10px}.catalogue-dialog.is-zoomed .catalogue-dialog-stage img{margin:0}}
+
+/* Catalogue access uses the same server-verified pattern as the client portal, while remaining isolated from it. */
+.catalogue-access-dialog{width:min(92vw,470px);padding:32px;border:1px solid #bed3e3;border-radius:18px;background:#fff;color:var(--navy);box-shadow:0 25px 85px rgba(0,24,56,.38)}
+.catalogue-access-dialog::backdrop{background:rgba(0,22,50,.76);backdrop-filter:blur(4px)}
+.catalogue-access-close{position:absolute;right:15px;top:12px;border:0;background:transparent;color:var(--muted);font-size:25px;line-height:1}
+.catalogue-access-lock{display:grid;place-items:center;width:42px;height:42px;margin-bottom:16px;border-radius:12px;background:#e8f4fc;color:var(--blue);font-size:25px;font-weight:800}
+.catalogue-access-eyebrow{margin:0 0 8px!important;color:var(--blue)!important;font:700 11px Outfit,sans-serif!important;letter-spacing:.13em}
+.catalogue-access-dialog h2{margin:0 0 10px;font-size:30px;line-height:1.08}.catalogue-access-dialog>p:not(.catalogue-access-eyebrow){margin-bottom:20px;color:var(--muted);font-size:14px}
+.catalogue-access-dialog label{display:block;margin-bottom:7px;font:700 12px Outfit,sans-serif}.catalogue-access-dialog input{width:100%;height:48px;padding:0 13px;border:1px solid #bad0e0;border-radius:9px;color:var(--navy);background:#f9fcfe}
+.catalogue-access-dialog form .btn{width:100%;justify-content:center}.catalogue-access-error{min-height:22px;margin:7px 0 8px;color:#a42121;font-size:12px;line-height:1.35}
+@media(max-width:600px){.catalogue-access-dialog{width:min(94vw,430px);padding:26px 20px}.catalogue-access-dialog h2{font-size:25px}}

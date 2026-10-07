@@ -1,0 +1,4 @@
+# Copy this file to .dev.vars for local Cloudflare testing only.
+# Never commit real values.
+CATALOGUE_PASSWORD_HASH=
+CATALOGUE_SESSION_SECRET=

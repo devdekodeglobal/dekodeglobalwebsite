@@ -35,6 +35,9 @@ const PASSWORD_HASH = '39fdc384e0f0696714f02040f714af1a2da8858fdf42de1834fa519c5
 const PASSWORD_SALT = new TextEncoder().encode('dekode-cfs-access-v1');
 const SESSION_TTL = 7200;
 const attempts = new Map();
+const CATALOGUE_PASSWORD_SALT = new TextEncoder().encode('dekode-clinics-catalogue-v1');
+const CATALOGUE_SESSION_TTL = 7200;
+const catalogueAttempts = new Map();
 
 const privateHeaders = {
   'cache-control': 'private, no-store, max-age=0',
@@ -54,6 +57,10 @@ const sha256 = async (value) => bytesToHex(await crypto.subtle.digest('SHA-256',
 const passwordHash = async (password) => {
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
   return bytesToHex(await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: PASSWORD_SALT, iterations: 100000 }, key, 256));
+};
+const cataloguePasswordHash = async (password) => {
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
+  return bytesToHex(await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: CATALOGUE_PASSWORD_SALT, iterations: 100000 }, key, 256));
 };
 const sign = async (value, secret) => {
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
@@ -78,6 +85,26 @@ const createSession = async (env) => {
   const now = Math.floor(Date.now() / 1000);
   const payload = base64url(JSON.stringify({ proposalId: proposal.id, version: proposal.proposalVersion, issuedAt: now, expiresAt: now + SESSION_TTL, nonce: crypto.randomUUID() }));
   return payload + '.' + await sign(payload, env.PROPOSAL_SESSION_SECRET);
+};
+const catalogueSigningSecret = (env) => env.CATALOGUE_SESSION_SECRET || env.PROPOSAL_SESSION_SECRET;
+const readCatalogueSession = async (request, env) => {
+  const secret = catalogueSigningSecret(env);
+  if (!secret) return null;
+  const token = readCookie(request, 'dekode_catalogue_session');
+  if (!token) return null;
+  const separator = token.lastIndexOf('.');
+  if (separator < 1) return null;
+  const payload = token.slice(0, separator);
+  if (token.slice(separator + 1) !== await sign(payload, secret)) return null;
+  try {
+    const session = JSON.parse(decodeBase64url(payload));
+    return session.resource === 'clinics-on-cloud-catalogue' && session.version === '1.0.0' && session.expiresAt > Math.floor(Date.now() / 1000) ? session : null;
+  } catch { return null; }
+};
+const createCatalogueSession = async (env) => {
+  const now = Math.floor(Date.now() / 1000);
+  const payload = base64url(JSON.stringify({ resource: 'clinics-on-cloud-catalogue', version: '1.0.0', issuedAt: now, expiresAt: now + CATALOGUE_SESSION_TTL, nonce: crypto.randomUUID() }));
+  return payload + '.' + await sign(payload, catalogueSigningSecret(env));
 };
 const stripHtml = (html) => html.replace(/<script[\\s\\S]*?<\\/script>/gi, ' ').replace(/<style[\\s\\S]*?<\\/style>/gi, ' ').replace(/<[^>]+>/g, '\\n').replace(/&amp;/g, '&').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&quot;/g, '"').replace(/&#x27;/g, "'").replace(/\\n{2,}/g, '\\n').trim();
 const documents = proposal.sections.map((section) => ({ ...section, passages: stripHtml(section.html).split('\\n').map((value) => value.trim()).filter((value) => value.length > 18) }));
@@ -168,6 +195,38 @@ export default {
     }
     if (requestUrl.pathname === '/api/proposals/logout') {
       return privateJson({ ok: true }, 200, { 'set-cookie': 'dekode_proposal_session=; Path=/; HttpOnly; SameSite=Strict; Secure; Max-Age=0' });
+    }
+    if (requestUrl.pathname === '/api/catalogue/access') {
+      if (request.method !== 'POST') return privateJson({ ok: false, error: 'Method not allowed.' }, 405);
+      if (!env.CATALOGUE_PASSWORD_HASH || !catalogueSigningSecret(env)) return privateJson({ ok: false, error: 'Catalogue access is temporarily unavailable.' }, 503);
+      const ipKey = await sha256('catalogue:' + (request.headers.get('cf-connecting-ip') || 'unknown'));
+      const now = Date.now();
+      const current = catalogueAttempts.get(ipKey);
+      const attempt = !current || now > current.resetAt ? { count: 1, resetAt: now + 900000 } : { ...current, count: current.count + 1 };
+      catalogueAttempts.set(ipKey, attempt);
+      if (attempt.count > 8) return privateJson({ ok: false, error: 'We could not verify this catalogue password. Please contact the DEKODE team.' }, 429);
+      let payload;
+      try { payload = await request.json(); } catch { return privateJson({ ok: false, error: 'We could not verify this catalogue password. Please contact the DEKODE team.' }, 401); }
+      const validPassword = await cataloguePasswordHash(String(payload.password || '')) === String(env.CATALOGUE_PASSWORD_HASH);
+      if (!validPassword) return privateJson({ ok: false, error: 'We could not verify this catalogue password. Please contact the DEKODE team.' }, 401);
+      const session = await createCatalogueSession(env);
+      console.log('[Catalogue audit] Access granted', { resource: 'clinics-on-cloud-catalogue', at: new Date().toISOString() });
+      return privateJson({ ok: true }, 200, { 'set-cookie': 'dekode_catalogue_session=' + session + '; Path=/; HttpOnly; SameSite=Strict; Secure; Max-Age=' + CATALOGUE_SESSION_TTL });
+    }
+    if (requestUrl.pathname === '/api/catalogue/session') {
+      if (request.method !== 'GET') return privateJson({ ok: false, error: 'Method not allowed.' }, 405);
+      return privateJson({ ok: true, authenticated: Boolean(await readCatalogueSession(request, env)) });
+    }
+    if (requestUrl.pathname === '/api/catalogue/logout') {
+      return privateJson({ ok: true }, 200, { 'set-cookie': 'dekode_catalogue_session=; Path=/; HttpOnly; SameSite=Strict; Secure; Max-Age=0' });
+    }
+    const isCatalogueAsset = (requestUrl.pathname.startsWith('/clinics-on-cloud/catalogue/page-') && requestUrl.pathname.endsWith('.jpg')) || requestUrl.pathname === '/clinics-on-cloud/clinics-on-cloud-catalogue.pdf';
+    if (isCatalogueAsset) {
+      if (!await readCatalogueSession(request, env)) return new Response(null, { status: 401, headers: privateHeaders });
+      const assetResponse = await env.ASSETS.fetch(request);
+      const headers = new Headers(assetResponse.headers);
+      Object.entries(privateHeaders).forEach(([name, value]) => headers.set(name, value));
+      return new Response(assetResponse.body, { status: assetResponse.status, headers });
     }
     if (requestUrl.pathname.endsWith('.mp4')) {
       const assetRes = await env.ASSETS.fetch(request.url, { headers: { 'Accept-Encoding': 'identity' } });
