@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>DEKODE — Engineering Standards & Developer Playbook</title>
+  <title>DEKODE - Engineering Standards & Developer Playbook</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@800&display=swap" rel="stylesheet">
   <style>
     /* DEKODE Brand Palette: High Legibility Dark & Clean Light */
@@ -59,11 +59,11 @@
       --border-subtle: #cbd7e6;
       --border-accent: rgba(245, 166, 35, 0.45);
       
-      /* DEKODE Original Electric Cyber Gold */
-      --primary: #f5a623;
-      --primary-hover: #e09415;
-      --primary-glow: rgba(245, 166, 35, 0.16);
-      --primary-accent: #ffbe4d;
+      /* DEKODE High-Contrast Amber / Gold for Light Mode */
+      --primary: #FFB611;
+      --primary-hover: #FFB611;
+      --primary-glow: rgba(180, 83, 9, 0.12);
+      --primary-accent: #FFB611;
       
       /* Pure solid black & ultra-deep slate for crystal clear reading */
       --text: #000000;
@@ -72,15 +72,26 @@
       
       --success: #047857;
       --success-bg: #d1fae5;
-      --warning: #b45309;
+      --warning: #FFB611;
       --warning-bg: #fef3c7;
       --danger: #b91c1c;
       --danger-bg: #fee2e2;
       
-      --code-bg: #e2e8f0;
-      --code-border: #64748b;
-      --code-text: #000000;
+      --code-bg: #f1f5f9;
+      --code-border: #cbd5e1;
+      --code-text: #0f172a;
     }
+
+    [data-theme="light"] .code-keyword { color: #053364 !important; font-weight: 700; }
+    [data-theme="light"] .code-func { color: #1d4ed8 !important; font-weight: 700; }
+    [data-theme="light"] .code-string { color: #047857 !important; }
+    [data-theme="light"] .code-comment { color: #64748b !important; font-style: italic; }
+    [data-theme="light"] .arch-node-tag { background: rgba(5,51,100,0.10) !important; color: #053364 !important; font-weight: 800; padding: 2px 8px; border-radius: 999px; }
+    [data-theme="light"] .doc-meta-label { font-weight: 800; background: #FFB611; color: #000000; padding: 2px 8px; border-radius: 999px; display: inline-block; }
+    [data-theme="light"] div.doc-meta-label.doc-meta-covers[style] { color: #053364 !important; background: rgba(5,51,100,0.10) !important; }
+    [data-theme="light"] [style*="color:var(--primary)"] { color: #053364 !important; font-weight: 700; }
+    [data-theme="light"] [style*="color:var(--primary-accent)"] { color: #053364 !important; }
+    [data-theme="light"] .badge-primary { color: #053364 !important; border-color: rgba(5,51,100,0.35) !important; background: rgba(5,51,100,0.08) !important; }
 
     * {
       box-sizing: border-box;
@@ -95,7 +106,7 @@
     }
 
     body {
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background-color: var(--bg);
       background-image: var(--bg-gradient);
       background-attachment: fixed;
@@ -361,7 +372,7 @@
       pointer-events: none;
     }
 
-    .hero-tagline {
+    .hero-eyebrow {
       font-size: 0.82rem;
       font-weight: 800;
       text-transform: uppercase;
@@ -374,30 +385,30 @@
     }
 
     .hero-title {
+      font-family: 'Montserrat', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 2.5rem;
-      font-weight: 800;
+      font-weight: 900;
       letter-spacing: -0.03em;
-      line-height: 1.25;
+      line-height: 1.2;
       margin-bottom: 16px;
       color: var(--text);
     }
 
     .hero-title span {
+      font-family: 'Montserrat', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       color: var(--primary);
+      font-weight: 800;
     }
+
+    .hero-title{ max-width:100%; overflow-wrap:break-word; word-wrap:break-word; }
+    .hero-title span{ display:block; max-width:100%; overflow-wrap:break-word; font-size:0.72em; line-height:1.2; }
+    .hero-desc{ max-width:100%; overflow-wrap:break-word; }
 
     .hero-desc {
       font-size: 1.1rem;
       color: var(--text-muted);
       max-width: 880px;
       line-height: 1.75;
-    }
-
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 24px;
     }
 
     .pill {
@@ -417,16 +428,21 @@
     .pill-green { background: rgba(16, 185, 129, 0.14); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
     .pill-purple { background: rgba(168, 85, 247, 0.14); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
 
-    [data-theme="light"] .pill-gold,
+    [data-theme="light"] .pill-gold {
+      background: #FFB611;
+      color: #000000;
+      border: 1px solid #FFB611;
+      font-weight: 800;
+    }
     [data-theme="light"] .pill-amber {
-      background: #fef9c3;
-      color: #92400e;
-      border: 1px solid #fcd34d;
+      background: #fef08a;
+      color: #000000;
+      border: 1px solid #FFB611;
       font-weight: 800;
     }
     [data-theme="light"] .pill-blue {
-      background: #e0f2fe;
-      color: #0369a1;
+      background: #38bdf8;
+      color: #000000;
       border: 1px solid #38bdf8;
       font-weight: 800;
     }
@@ -444,10 +460,21 @@
     }
     [data-theme="light"] .badge-primary,
     [data-theme="light"] .badge-warning {
-      background: #fef9c3;
-      color: #92400e;
-      border: 1px solid #fcd34d;
+      background: #FFB611;
+      color: #000000;
+      border: 1px solid #FFB611;
       font-weight: 800;
+    }
+
+    [data-theme="light"] th { color: #1e3a8a; }
+    [data-theme="light"] .section-num {
+      background: #FFB611 !important;
+      color: #000000 !important;
+      border: 1px solid #FFB611 !important;
+      box-shadow: 0 2px 8px rgba(255, 182, 17, 0.35) !important;
+    }
+    [data-theme="light"] .star-letter {
+      color: #FFB611 !important;
     }
 
     /* STAR Standard */
@@ -485,11 +512,11 @@
     }
 
     .star-word {
-      font-size: 1.25rem;
+      font-size: 1.25rem; /* tightened */
       font-weight: 800;
       color: var(--text);
       display: inline-block;
-      margin-left: 2px;
+      margin-left: -0.1em;
     }
 
     .star-desc {
@@ -518,7 +545,7 @@
       width: 40px;
       height: 40px;
       border-radius: 10px;
-      background: var(--primary-glow);
+      background: #071a2d;
       color: var(--primary);
       border: 1px solid var(--border-accent);
       display: flex;
@@ -595,6 +622,14 @@
       transition: var(--transition);
     }
 
+    .star-word.tuck-t { margin-left: -0.3em; }
+
+    .card h4 .pill,
+    .card h4 .badge {
+      order: -1;
+      flex-shrink: 0;
+    }
+
     .card:hover {
       border-color: var(--primary);
       transform: translateY(-2px);
@@ -607,8 +642,8 @@
       margin-bottom: 10px;
       color: var(--text);
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      flex-direction: column;
+      align-items: flex-start;
       gap: 8px;
     }
 
@@ -859,10 +894,17 @@
     }
 
     [data-theme="light"] code {
-      background: #e9eef6;
-      color: #b45309;
-      border-color: #cbd5e1;
+      background: rgba(5,51,100,0.08);
+      color: #053364;
+      border-color: rgba(5,51,100,0.25);
       font-weight: 600;
+    }
+
+    /* Light mode keeps deep dark slate code blocks so Electric Gold/Cyan/Green/Pink syntax stays vibrant */
+    [data-theme="light"] pre {
+      background: #0b101b;
+      border: 1px solid #1e293b;
+      color: #f0f6fc;
     }
 
     pre code {
@@ -1138,20 +1180,138 @@
         padding: 20px;
       }
     }
-  </style>
+  
+    /* Unified Light Mode & Solid Gold Brand Polish */
+    [data-theme="light"] pre,
+    [data-theme="dark"] pre {
+      background: #0b101b !important;
+      border: 1px solid #1e293b !important;
+      color: #f0f6fc !important;
+    }
+    [data-theme="light"] pre code,
+    [data-theme="light"] pre span,
+    [data-theme="dark"] pre code,
+    [data-theme="dark"] pre span {
+      background: transparent !important;
+      color: inherit;
+      border: none !important;
+    }
+    [data-theme="light"] .badge-primary {
+      background: #FFB611 !important;
+      color: #000000 !important;
+      font-weight: 800 !important;
+      border: 1px solid #e09e05 !important;
+    }
+    [data-theme="light"] .back-to-top {
+      background: #FFB611 !important;
+      color: #000000 !important;
+      border: 1px solid #e09e05 !important;
+      font-weight: 900 !important;
+    }
+    [data-theme="light"] .back-to-top:hover {
+      background: #e09e05 !important;
+      color: #000000 !important;
+    }
+    [data-theme="light"] .section-num {
+      background: #FFB611 !important;
+      color: #000000 !important;
+      font-weight: 900 !important;
+      border: none !important;
+    }
+    [data-theme="light"] /* Sleek Theme Switcher Pill */
+    .theme-icon-btn {
+      min-width: 44px;
+      height: 34px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    .theme-icon-btn:hover {
+      background: var(--surface-hover);
+      border-color: #FFB611;
+      color: #FFB611;
+      transform: translateY(-1px);
+    }
+    [data-theme="light"] .theme-icon-btn {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #0f172a;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    [data-theme="light"] .theme-icon-btn:hover {
+      background: #e2e8f0;
+      border-color: #FFB611;
+      color: #FFB611;
+    }
+
+  
+
+
+    /* High-Legibility Electric Gold in Light Mode */
+    [data-theme="light"] [style*="color:var(--primary)"] {
+      color: #FFB611 !important;
+      font-weight: 700 !important;
+    }
+
+    /* Fixed Theme Pill & Mobile Topbar */
+    .theme-icon-btn {
+      min-width: 44px;
+      height: 34px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    [data-theme="light"] .theme-icon-btn {
+      background: #f1f5f9 !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #0f172a !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    [data-theme="light"] .theme-icon-btn:hover {
+      background: #e2e8f0 !important;
+      border-color: #FFB611 !important;
+      color: #FFB611 !important;
+    }
+
+/* DEKODE light-mode navy body text - final overrides (hero/titles untouched) */
+[data-theme="light"] .badge-primary{color:#053364!important;border-color:rgba(5,51,100,.35)!important;background:rgba(5,51,100,.08)!important}
+[data-theme="light"] .badge-wash,[data-theme="light"] .pill-gold-wash,[data-theme="light"] .pill-amber{color:#053364!important;border-color:rgba(5,51,100,.35)!important;background:rgba(5,51,100,.08)!important}
+[data-theme="light"] code{color:#053364!important;background:rgba(5,51,100,.08)!important;border-color:rgba(5,51,100,.25)!important}
+[data-theme="light"] .code-keyword{color:#053364!important}
+[data-theme="light"] .arch-node-tag{color:#053364!important;background:rgba(5,51,100,.10)!important}
+[data-theme="light"] [style*="color:var(--primary)"]{color:#053364!important}
+[data-theme="light"] [style*="color:var(--primary-accent)"]{color:#053364!important}
+[data-theme="light"] .layer-arrow{color:#053364!important}
+[data-theme="light"] .layer-box code{color:#053364!important;background:rgba(5,51,100,.08)!important;border-color:rgba(5,51,100,.25)!important}
+[data-theme="light"] pre code,[data-theme="dark"] pre code{color:#f0f6fc !important;background:transparent !important;border:none !important;}
+</style>
 </head>
 <body>
 
   <!-- Mobile Topbar -->
-  <header class="mobile-topbar">
-    <div style="display:flex; align-items:center; gap:10px;">
-      <a class="brand-logo" href="/">DEKODE</a>
-      <span style="font-weight:800; font-size:0.95rem; color:var(--text);">Engineering Playbook</span>
-    </div>
-    <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
-      <span>☰</span> Menu
-    </button>
-  </header>
+  <header class="mobile-topbar"><div style="display:flex;align-items:center;gap:10px;"><a class="brand-logo" href="/">DEKODE</a></div><div style="display:flex;align-items:center;gap:8px;"><button class="mobile-menu-btn" onclick="toggleMobileMenu()">Menu</button></div></header>
 
   <!-- Mobile Drawer Backdrop -->
   <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
@@ -1161,97 +1321,99 @@
     <div class="sidebar-header">
       <div class="brand-container">
         <a class="brand-logo" href="/">DEKODE</a>
-        <button class="theme-icon-btn" id="theme-toggle" aria-label="Toggle color theme" title="Toggle Light / Dark Mode">
-          <span id="theme-icon">☀️</span>
-        </button>
+        
       </div>
 
       <div class="search-wrapper">
-        <span class="search-icon">🔍</span>
+        
         <input type="text" id="sidebar-filter" class="sidebar-search" placeholder="Search standards..." oninput="filterNav()">
       </div>
     </div>
 
-    <nav id="nav-container">
-      <div class="nav-group-title">Company & Identity</div>
+        <nav id="nav-container">
+      <div class="nav-group-title">System Architecture & Design Docs</div>
       <ul class="nav-links">
         <li><a href="#about-dekode">About DEKODE (Global AI & Tech)</a></li>
         <li><a href="#star-standard">The STAR Standard</a></li>
         <li><a href="#core-values">Core Architecture Rules</a></li>
         <li><a href="#solid-principles">SOLID Engineering Rules</a></li>
-        <li><a href="#auditing-standards">Auditing, Provenance & History</a></li>
-        <li><a href="#ui-principles">Minimalist & Readable UI</a></li>
         <li><a href="#tech-stack">Company Tech Radar</a></li>
+        <li><a href="#kb-taxonomy">Knowledge Base & Doc Taxonomy</a></li>
       </ul>
 
-      <div class="nav-group-title">AI-Assisted Engineering</div>
+      <div class="nav-group-title">Coding Standards & Code Quality</div>
       <ul class="nav-links">
-        <li><a href="#ai-protocols">AI Feedback Loops &amp; Protocols</a></li>
-        <li><a href="#prerequisites">The 6 Pre-Build Documents Gate</a></li>
-        <li><a href="#kb-taxonomy">Knowledge Base &amp; Doc Taxonomy</a></li>
-        <li><a href="#ai-anti-patterns">Doom Loop &amp; Anti-Patterns</a></li>
-      </ul>
-
-      <div class="nav-group-title">Comprehensive Testing</div>
-      <ul class="nav-links">
+        <li><a href="#ui-principles">Minimalist & Readable UI</a></li>
         <li><a href="#testing-pyramid">Test-First Paradigm & Pyramid</a></li>
         <li><a href="#active-testing-matrix">Live Test Suite & Tool Matrix</a></li>
       </ul>
 
-      <div class="nav-group-title">Git & Showcase Release</div>
+      <div class="nav-group-title">Contributor & Onboarding Playbooks</div>
       <ul class="nav-links">
-        <li><a href="#branching-strategy">Branch Management Strategy</a></li>
-        <li><a href="#showcase-preview">Showcase & Preview Protocol</a></li>
-        <li><a href="#commit-standards">Conventional Commits</a></li>
-      </ul>
-
-      <div class="nav-group-title">Operations & Hardening</div>
-      <ul class="nav-links">
-        <li><a href="#ci-cd-gates">CI / CD Quality Gates</a></li>
-        <li><a href="#security-hardening">Zero-Secrets Policy</a></li>
+        <li><a href="#ai-protocols">AI Feedback Loops & Protocols</a></li>
+        <li><a href="#prerequisites">The 6 Pre-Build Documents Gate</a></li>
+        <li><a href="#ai-anti-patterns">Doom Loop & Anti-Patterns</a></li>
         <li><a href="#onboarding-checklist">Day-1 Developer Checklist</a></li>
       </ul>
 
-      <div class="nav-group-title">Platform Standards</div>
+      <div class="nav-group-title">API, Security & Data Models</div>
       <ul class="nav-links">
+        <li><a href="#security-hardening">Zero-Secrets Policy</a></li>
+        <li><a href="#auth-sessions-rbac">Auth, Sessions & RBAC</a></li>
+        <li><a href="#privacy-compliance">Privacy & Compliance</a></li>
+        <li><a href="#auditing-standards">Auditing, Provenance & History</a></li>
+      </ul>
+
+      <div class="nav-group-title">Operations, CI/CD & Runbooks</div>
+      <ul class="nav-links">
+        <li><a href="#branching-strategy">Branch Management Strategy</a></li>
+        <li><a href="#commit-standards">Conventional Commits</a></li>
+        <li><a href="#ci-cd-gates">CI / CD Quality Gates</a></li>
+        <li><a href="#showcase-preview">Showcase & Preview Protocol</a></li>
         <li><a href="#observability-logging">Observability & Logging</a></li>
         <li><a href="#incident-hotfix-rollback">Incidents, Hotfix & Rollback</a></li>
         <li><a href="#dependency-supply-chain">Dependency & Supply Chain</a></li>
-        <li><a href="#privacy-compliance">Privacy & Compliance</a></li>
-        <li><a href="#auth-sessions-rbac">Auth, Sessions & RBAC</a></li>
       </ul>
+
     </nav>
   </aside>
 
   <!-- Main Content -->
   <main class="main-content">
 
-    <!-- Hero Banner -->
+    <!-- Hero Banner (Unified DEKODE Template) -->
     <header class="hero-banner">
-      <div class="hero-tagline">
-        <span>●</span> DEKODE GLOBAL AI &amp; SOFTWARE ENGINEERING
+        <span></span>
       </div>
       <div class="hero-title">
-        Simple enough to understand.<br>
-        <span>Strong enough to rely on.</span>
+        Company Standards<br>
+        <span>Universal Engineering Handbook &amp; Operating System</span>
       </div>
       <p class="hero-desc">
         The universal handbook for software engineers, contractors, and AI agents building digital products at DEKODE. We modernize systems, adopt enterprise AI with confidence, and engineer software teams actually love to use.
       </p>
-      <div class="pill-row">
-        <span class="pill pill-gold">dekodeglobal.com</span>
-        <span class="pill pill-gold">DEKODE STAR Standard</span>
-        <span class="pill pill-gold">SOLID Architecture</span>
-        <span class="pill pill-blue">React / Vite / TanStack</span>
-        <span class="pill pill-green">Python (FastAPI) & Go</span>
-        <span class="pill pill-gold">PostgreSQL & SQLite</span>
+
+      <!-- 60-Second Executive TL;DR -->
+      <div class="grid-2" style="margin-top: 24px;">
+        <div class="card" style="border-left: 4px solid var(--primary);">
+          <h4>The STAR Standard</h4>
+          <p>
+            Four non-negotiable promises behind everything we build: <strong>Simple</strong> plain language, <strong>Transparent</strong> costs &amp; scope, <strong>Accountable</strong> outcome ownership, and <strong>Reliable</strong> engineering.
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid var(--success);">
+          <h4>Zero-Secrets &amp; Test-First Law</h4>
+          <p>
+            No secrets in git repositories, 100% test coverage on business algorithms, strict conventional commits, and zero unvetted dependencies into production.
+          </p>
+        </div>
       </div>
     </header>
 
     <!-- About DEKODE Global -->
     <section id="about-dekode" class="star-standard-container" style="margin-bottom: 40px;">
       <div class="section-header">
-        <span class="section-num">✦</span>
+        <span class="section-num">*</span>
         <h2 class="section-title">About DEKODE</h2>
       </div>
 
@@ -1285,7 +1447,7 @@
     <!-- The STAR Standard -->
     <section id="star-standard" class="star-standard-container">
       <div class="section-header">
-        <span class="section-num">★</span>
+        <span class="section-num">*</span>
         <h2 class="section-title">The DEKODE STAR Standard</h2>
       </div>
       <p style="color: var(--text-muted); margin-bottom: 14px;">
@@ -1301,7 +1463,7 @@
         </div>
 
         <div class="star-card">
-          <div><span class="star-letter">T</span><span class="star-word">ransparent</span></div>
+          <div><span class="star-letter">T</span><span class="star-word tuck-t">ransparent</span></div>
           <p class="star-desc">
             You'll always know what we're building, what it costs, and how we measure success. No surprises or opaque architecture.
           </p>
@@ -1519,7 +1681,7 @@
         <div class="card">
           <h4>1. High Typography Contrast <span class="badge badge-primary">Readability</span></h4>
           <p>
-            Avoid low-contrast gray text on dark backgrounds. Use clean sans-serif typefaces (<em>Plus Jakarta Sans</em>, <em>Inter</em>) with at least 4.5:1 WCAG contrast ratios. Never use font sizes below 12px for data tables.
+            Avoid low-contrast gray text on dark backgrounds. Use clean sans-serif typefaces (<em>Inter</em>) with at least 4.5:1 WCAG contrast ratios. Never use font sizes below 12px for data tables.
           </p>
         </div>
 
@@ -1539,7 +1701,7 @@
       </div>
 
       <div class="callout callout-warning">
-        <strong>The "No Clutter" Rule:</strong> White space is not wasted space. Generous padding (16px–24px) around cards and concise labels make complex retail metrics intelligible at a glance.
+        <strong>The "No Clutter" Rule:</strong> White space is not wasted space. Generous padding (16px-24px) around cards and concise labels make complex retail metrics intelligible at a glance.
       </div>
     </section>
 
@@ -1614,7 +1776,7 @@
       </div>
 
       <p style="color:var(--text-muted); margin-bottom:14px;">
-        Building software with AI is fast now — and <strong>that is the trap</strong>. When code generation takes minutes, teams skip upfront decisions, leaving critical architecture choices to whoever is typing prompts. You only find out what was chosen when you inspect broken code.
+        Building software with AI is fast now - and <strong>that is the trap</strong>. When code generation takes minutes, teams skip upfront decisions, leaving critical architecture choices to whoever is typing prompts. You only find out what was chosen when you inspect broken code.
       </p>
 
       <div class="callout callout-info" style="margin-top: 10px; margin-bottom: 20px;">
@@ -1637,7 +1799,7 @@
           </p>
           <div class="doc-meta-row">
             <div>
-              <div class="doc-meta-label" style="color:var(--primary);">Covers</div>
+              <div class="doc-meta-label doc-meta-covers" style="color:var(--primary);">Covers</div>
               <div style="font-size:0.83rem; color:var(--text);">Features, personas, user stories, acceptance criteria ("Done").</div>
             </div>
             <div>
@@ -1661,7 +1823,7 @@
           </p>
           <div class="doc-meta-row">
             <div>
-              <div class="doc-meta-label" style="color:var(--primary);">Covers</div>
+              <div class="doc-meta-label doc-meta-covers" style="color:var(--primary);">Covers</div>
               <div style="font-size:0.83rem; color:var(--text);">Platform, hosting, dependencies, APIs, and rate limits.</div>
             </div>
             <div>
@@ -1685,7 +1847,7 @@
           </p>
           <div class="doc-meta-row">
             <div>
-              <div class="doc-meta-label" style="color:var(--primary);">Covers</div>
+              <div class="doc-meta-label doc-meta-covers" style="color:var(--primary);">Covers</div>
               <div style="font-size:0.83rem; color:var(--text);">Every screen transition, state change, and fallback dead-end.</div>
             </div>
             <div>
@@ -1709,7 +1871,7 @@
           </p>
           <div class="doc-meta-row">
             <div>
-              <div class="doc-meta-label" style="color:var(--primary);">Covers</div>
+              <div class="doc-meta-label doc-meta-covers" style="color:var(--primary);">Covers</div>
               <div style="font-size:0.83rem; color:var(--text);">Palettes (DEKODE Navy/Gold), typography, tokens, components.</div>
             </div>
             <div>
@@ -1733,7 +1895,7 @@
           </p>
           <div class="doc-meta-row">
             <div>
-              <div class="doc-meta-label" style="color:var(--primary);">Covers</div>
+              <div class="doc-meta-label doc-meta-covers" style="color:var(--primary);">Covers</div>
               <div style="font-size:0.83rem; color:var(--text);">Entities, relations, migrations, provenance columns, and RBAC rules.</div>
             </div>
             <div>
@@ -1757,7 +1919,7 @@
           </p>
           <div class="doc-meta-row">
             <div>
-              <div class="doc-meta-label" style="color:var(--primary);">Covers</div>
+              <div class="doc-meta-label doc-meta-covers" style="color:var(--primary);">Covers</div>
               <div style="font-size:0.83rem; color:var(--text);">Stages, milestones, tests required per stage, sign-off checkpoints.</div>
             </div>
             <div>
@@ -1773,7 +1935,7 @@
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
           <div>
             <h4 style="margin:0; font-size:1.1rem; color:var(--text); display:flex; align-items:center; gap:8px;">
-              <span>✅</span> The 6-Box Pre-Build Verification Gate
+              <span>[OK]</span> The 6-Box Pre-Build Verification Gate
             </h4>
             <p style="margin:4px 0 0; font-size:0.88rem; color:var(--text-muted);">
               Ask the builder or AI agent for each document by name. Check only if you have read, verified, and agreed to it.
@@ -1787,27 +1949,27 @@
 
         <div id="prebuild-check-list">
           <div class="check-item active" onclick="togglePrebuildCheck(this)">
-            <span class="check-box">✓</span>
+            <span class="check-box">[OK]</span>
             <div><strong>1. Feature Requirements (PRD):</strong> Complete feature list read and agreed to with explicit acceptance criteria.</div>
           </div>
           <div class="check-item active" onclick="togglePrebuildCheck(this)">
-            <span class="check-box">✓</span>
+            <span class="check-box">[OK]</span>
             <div><strong>2. Technical Specs (TRD):</strong> Platform, tech stack, hosting, and integrated third-party APIs fixed in writing.</div>
           </div>
           <div class="check-item active" onclick="togglePrebuildCheck(this)">
-            <span class="check-box">✓</span>
+            <span class="check-box">[OK]</span>
             <div><strong>3. Screen-by-Screen App Flow:</strong> Explicit click paths, edge-case handlers, and empty/error states mapped out.</div>
           </div>
           <div class="check-item" onclick="togglePrebuildCheck(this)">
-            <span class="check-box">✓</span>
+            <span class="check-box">[OK]</span>
             <div><strong>4. Unified Design Brief:</strong> Palette, typography, design tokens, and components adhering to DEKODE guidelines.</div>
           </div>
           <div class="check-item" onclick="togglePrebuildCheck(this)">
-            <span class="check-box">✓</span>
+            <span class="check-box">[OK]</span>
             <div><strong>5. Database Schema &amp; Security:</strong> Data residency, provenance tracking, and role-based permissions verified.</div>
           </div>
           <div class="check-item" onclick="togglePrebuildCheck(this)">
-            <span class="check-box">✓</span>
+            <span class="check-box">[OK]</span>
             <div><strong>6. Phased Implementation Plan:</strong> Stage-by-stage build order with explicit sign-off checkpoints before merge.</div>
           </div>
         </div>
@@ -1815,7 +1977,7 @@
         <!-- Interpretation Rubric -->
         <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; font-size:0.85rem;">
           <div style="padding:10px; border-radius:6px; background:var(--surface); border-left:3px solid var(--success);">
-            <strong style="color:var(--success);">6 Checked:</strong> All documents approved. Architecture is locked — coding can start safely.
+            <strong style="color:var(--success);">6 Checked:</strong> All documents approved. Architecture is locked - coding can start safely.
           </div>
           <div style="padding:10px; border-radius:6px; background:var(--surface); border-left:3px solid var(--warning);">
             <strong style="color:var(--warning);">3 to 5 Checked:</strong> Get the missing documents written first. It takes far less time than refactoring bad code later.
@@ -1978,7 +2140,7 @@
 
       <div class="grid-3">
         <div class="card">
-          <h4>❌ The Three-Layer Desync Trap</h4>
+          <h4>[X] The Three-Layer Desync Trap</h4>
           <p>
             <strong>Symptom:</strong> UI requirements change, but the agent only tweaks the frontend component while leaving the backend model or API contract out of sync.
           </p>
@@ -1988,7 +2150,7 @@
         </div>
 
         <div class="card">
-          <h4>❌ The "Blind Thrashing" Trap</h4>
+          <h4>[X] The "Blind Thrashing" Trap</h4>
           <p>
             <strong>Symptom:</strong> Letting an agent keep attempting guesses on a complex bug, accumulating messy patches and phantom dependencies.
           </p>
@@ -1998,7 +2160,7 @@
         </div>
 
         <div class="card">
-          <h4>❌ The "Layer Skipping" Trap</h4>
+          <h4>[X] The "Layer Skipping" Trap</h4>
           <p>
             <strong>Symptom:</strong> Agent writes raw SQL queries directly inside FastAPI route handlers or frontend components.
           </p>
@@ -2017,7 +2179,7 @@
       </div>
 
       <p style="color:var(--text-muted); margin-bottom:14px;">
-        At DEKODE, we operate with a <strong>Testing-First Approach</strong>. Tests are not retroactive paperwork written after a feature ships — they are the executable contract and safety net that enable rapid refactoring, confident AI-agent code generation, and zero regressions.
+        At DEKODE, we operate with a <strong>Testing-First Approach</strong>. Tests are not retroactive paperwork written after a feature ships - they are the executable contract and safety net that enable rapid refactoring, confident AI-agent code generation, and zero regressions.
       </p>
 
       <div class="grid-3" style="margin-bottom: 24px;">
@@ -2360,7 +2522,7 @@
           <li>Set up local virtual environment (Python) or node modules (Frontend).</li>
           <li>Run existing test suite (<code>pytest</code> and <code>npm test</code>) to confirm baseline is green.</li>
           <li>Set up your IDE with <strong>Prettier</strong> (Frontend) and <strong>Ruff/Black</strong> (Backend) with format-on-save enabled.</li>
-          <li>Never commit directly to <code>main</code> — always branch off <code>develop</code>.</li>
+          <li>Never commit directly to <code>main</code> - always branch off <code>develop</code>.</li>
         </ol>
       </div>
     </section>
@@ -2674,7 +2836,7 @@
       </div>
 
       <div class="callout callout-warning">
-        <strong>Retention &amp; Deletion vs. Soft-Delete — Reconcile:</strong> Our no-hard-delete rule supports audit history, but privacy law can require erasure or de-identification.
+        <strong>Retention &amp; Deletion vs. Soft-Delete - Reconcile:</strong> Our no-hard-delete rule supports audit history, but privacy law can require erasure or de-identification.
         <ul style="margin: 8px 0 0 20px; line-height: 1.7;">
           <li>Soft-delete is the default for business records.</li>
           <li>Personal data must have a documented purge or anonymization path once retention expires or a valid erasure request is approved.</li>
@@ -2778,11 +2940,11 @@ valid token, correct role              -&gt; 2xx</code></pre>
       htmlEl.setAttribute('data-theme', theme);
       localStorage.setItem('company_handbook_theme', theme);
       if (theme === 'light') {
-        themeIcon.textContent = '🌙';
+        themeIcon.textContent = 'Dark';
         if (themeLabel) themeLabel.textContent = 'Dark Mode';
         themeBtn.setAttribute('title', 'Switch to Dark Mode');
       } else {
-        themeIcon.textContent = '☀️';
+        themeIcon.textContent = 'Light';
         if (themeLabel) themeLabel.textContent = 'Light Mode';
         themeBtn.setAttribute('title', 'Switch to Light Mode');
       }
@@ -2902,5 +3064,5 @@ valid token, correct role              -&gt; 2xx</code></pre>
     window.addEventListener('DOMContentLoaded', updateNav);
     updateNav();
   </script>
-</body>
+<script>function toggleMobileMenu(){var s=document.getElementById("sidebar");if(s)s.classList.toggle("open");}</script></body>
 </html>

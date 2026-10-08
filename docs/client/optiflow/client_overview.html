@@ -1,0 +1,3668 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OptiFlow , Automated Optical Inventory Replenishment | Dekode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@800&display=swap" rel="stylesheet">
+<style>
+
+/* DEKODE Brand Palette: High Legibility Dark & Clean Light */
+:root {
+--bg: #070d18;
+--bg-gradient: radial-gradient(circle at 12% 12%, rgba(245, 166, 35, 0.07) 0%, transparent 40%),
+linear-gradient(180deg, #070d18 0%, #0a1322 100%);
+--surface: #0e1726;
+--surface-elevated: #152238;
+--surface-hover: #1c2c47;
+--border: #1e304f;
+--border-subtle: #24395c;
+--border-accent: rgba(245, 166, 35, 0.4);
+/* Primary: DEKODE Electric Gold */
+--primary: #f5a623;
+--primary-hover: #e69512;
+--primary-glow: rgba(245, 166, 35, 0.16);
+--primary-accent: #ffbe4d;
+/* High-Contrast Crisp Typography */
+--text: #ffffff;
+--text-muted: #e2e8f4;
+--text-dim: #9ab0d3;
+--success: #10b981;
+--success-bg: rgba(16, 185, 129, 0.14);
+--warning: #f5a623;
+--warning-bg: rgba(245, 166, 35, 0.14);
+--danger: #ef4444;
+--danger-bg: rgba(239, 68, 68, 0.14);
+--code-bg: #05080f;
+--code-border: #1a2a44;
+--code-text: #f0f6fc;
+--sidebar-width: 300px;
+--card-radius: 14px;
+--transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme="light"] {
+--bg: #f4f6fa;
+--bg-gradient: radial-gradient(circle at 10% 10%, rgba(245, 166, 35, 0.08) 0%, transparent 40%),
+linear-gradient(180deg, #f8faff 0%, #edf2f9 100%);
+--surface: #ffffff;
+--surface-elevated: #f1f5fb;
+--surface-hover: #e4edf8;
+--border: #7f95b3;
+--border-subtle: #cbd7e6;
+--border-accent: rgba(245, 166, 35, 0.45);
+/* DEKODE High-Contrast Amber / Gold for Light Mode */
+--primary: #FFB611;
+--primary-hover: #FFB611;
+--primary-glow: rgba(180, 83, 9, 0.12);
+--primary-accent: #FFB611;
+/* Pure solid black & ultra-deep slate for crystal clear reading */
+--text: #000000;
+--text-muted: #0a0f1d;
+--text-dim: #1e293b;
+--success: #047857;
+--success-bg: #d1fae5;
+--warning: #FFB611;
+--warning-bg: #fef3c7;
+--danger: #b91c1c;
+--danger-bg: #fee2e2;
+--code-bg: #f1f5f9;
+--code-border: #cbd5e1;
+--code-text: #0f172a;
+}
+
+[data-theme="light"] .code-keyword { color: #053364 !important; font-weight: 700; }
+[data-theme="light"] .code-func { color: #1d4ed8 !important; font-weight: 700; }
+[data-theme="light"] .code-string { color: #047857 !important; }
+[data-theme="light"] .code-comment { color: #64748b !important; font-style: italic; }
+[data-theme="light"] .arch-node-tag { color: #053364 !important; font-weight: 800; }
+[data-theme="light"] [style*="color:var(--primary)"] { color: #053364 !important; font-weight: 700; }
+
+/* DEKODE light-mode navy body text (preserve hero/titles) */
+[data-theme="light"] .badge-primary{color:#053364!important;border-color:rgba(5,51,100,.35)!important;background:rgba(5,51,100,.08)!important}
+[data-theme="light"] [style*="color:var(--primary-accent)"]{color:#053364!important}
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+}
+
+html {
+scroll-behavior: smooth;
+font-size: 16px;
+overflow-x: hidden;
+}
+
+body {
+font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+background-color: var(--bg);
+background-image: var(--bg-gradient);
+background-attachment: fixed;
+color: var(--text);
+line-height: 1.75;
+font-size: 1rem;
+display: flex;
+min-height: 100vh;
+overflow-x: hidden;
+-webkit-font-smoothing: antialiased;
+transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Top Mobile Bar */
+.mobile-topbar {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+height: 60px;
+background: var(--surface);
+border-bottom: 1px solid var(--border);
+padding: 0 16px;
+align-items: center;
+justify-content: space-between;
+z-index: 1000;
+box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.mobile-menu-btn {
+background: none;
+border: 1px solid var(--border);
+color: var(--text);
+padding: 8px 12px;
+border-radius: 8px;
+font-size: 1rem;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 6px;
+}
+
+/* Fixed Navigation Sidebar */
+.sidebar {
+width: var(--sidebar-width);
+background-color: var(--surface);
+border-right: 1px solid var(--border);
+position: fixed;
+top: 0;
+bottom: 0;
+left: 0;
+overflow-y: auto;
+padding: 24px 18px;
+display: flex;
+flex-direction: column;
+gap: 16px;
+z-index: 900;
+box-shadow: 2px 0 16px rgba(0, 0, 0, 0.12);
+transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sidebar-header {
+padding-bottom: 16px;
+border-bottom: 1px solid var(--border-subtle);
+display: flex;
+flex-direction: column;
+gap: 12px;
+}
+
+.brand-container {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 12px;
+}
+
+.brand-logo {
+display: inline-flex;
+align-items: center;
+height: 38px;
+font-family: "Outfit", sans-serif;
+font-weight: 800;
+font-size: 1.55rem;
+line-height: 1;
+letter-spacing: 1px;
+color: #fff;
+text-decoration: none;
+cursor: pointer;
+transition: color 0.2s ease, opacity 0.2s ease;
+}
+.brand-logo:hover {
+color: #feb611;
+opacity: 0.95;
+}
+
+[data-theme="light"] .brand-logo {
+color: #000000;
+}
+[data-theme="light"] .brand-logo:hover {
+color: #b97a00;
+}
+
+.theme-icon-btn {
+width: 36px;
+height: 36px;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+background: var(--surface-elevated);
+border: 1px solid var(--border);
+color: var(--text);
+border-radius: 8px;
+font-size: 1rem;
+cursor: pointer;
+transition: var(--transition);
+flex-shrink: 0;
+}
+
+.theme-icon-btn:hover {
+background: var(--surface-hover);
+border-color: var(--primary);
+color: var(--primary);
+transform: scale(1.05);
+}
+
+.search-wrapper {
+position: relative;
+display: flex;
+align-items: center;
+}
+
+.search-icon {
+position: absolute;
+left: 12px;
+color: var(--text-dim);
+font-size: 0.82rem;
+pointer-events: none;
+}
+
+.sidebar-search {
+width: 100%;
+padding: 9px 12px 9px 34px;
+font-size: 0.85rem;
+border: 1px solid var(--border);
+border-radius: 8px;
+background: var(--surface-elevated);
+color: var(--text);
+outline: none;
+transition: var(--transition);
+font-family: inherit;
+}
+
+.sidebar-search::placeholder {
+color: var(--text-dim);
+opacity: 0.75;
+}
+
+.sidebar-search:focus {
+border-color: var(--primary);
+background: var(--surface);
+box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.nav-group-title {
+font-size: 0.72rem;
+text-transform: uppercase;
+letter-spacing: 0.08em;
+color: var(--primary);
+font-weight: 800;
+margin-top: 14px;
+margin-bottom: 6px;
+padding-left: 10px;
+}
+
+.nav-links {
+list-style: none;
+display: flex;
+flex-direction: column;
+gap: 3px;
+}
+
+.nav-links a {
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 8px 12px;
+color: var(--text-muted);
+text-decoration: none;
+font-size: 0.92rem;
+font-weight: 600;
+border-radius: 8px;
+transition: var(--transition);
+}
+
+[data-theme="light"] .nav-links a {
+color: #0f172a;
+}
+
+[data-theme="light"] .nav-group-title {
+color: #c87a00;
+font-weight: 800;
+}
+
+[data-theme="light"] .card, 
+[data-theme="light"] .star-card, 
+[data-theme="light"] .hero-banner {
+background: linear-gradient(135deg, var(--surface) 0%, var(--surface-elevated) 100%);
+border: 1px solid var(--border);
+border-radius: var(--card-radius);
+padding: 44px 48px;
+margin-bottom: 48px;
+position: relative;
+overflow: hidden;
+box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18);
+}
+
+[data-theme="light"] .card p,
+[data-theme="light"] .star-card p,
+[data-theme="light"] .hero-desc,
+[data-theme="light"] .card li,
+[data-theme="light"] td {
+color: #0f172a;
+font-weight: 500;
+}
+
+.nav-links a:hover {
+background-color: var(--surface-hover);
+color: var(--text);
+transform: translateX(2px);
+}
+
+.nav-links a.active {
+background-color: var(--primary-glow);
+color: var(--primary);
+font-weight: 700;
+border-left: 3px solid var(--primary);
+border-radius: 0 8px 8px 0;
+}
+
+/* Main Container */
+.main-content {
+margin-left: var(--sidebar-width);
+flex: 1;
+padding: 48px 56px 120px;
+max-width: 1240px;
+min-width: 0;
+}
+
+/* Hero Banner */
+.hero-banner {
+background: linear-gradient(135deg, var(--surface) 0%, var(--surface-elevated) 100%);
+border: 1px solid var(--border);
+border-radius: var(--card-radius);
+padding: 44px 48px;
+margin-bottom: 48px;
+position: relative;
+overflow: hidden;
+box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18);
+}
+
+.hero-banner::before {
+content: "";
+position: absolute;
+top: -120px;
+right: -100px;
+width: 360px;
+height: 360px;
+background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+pointer-events: none;
+}
+
+.hero-eyebrow {
+font-size: 0.82rem;
+font-weight: 800;
+text-transform: uppercase;
+letter-spacing: 0.12em;
+color: var(--primary);
+margin-bottom: 12px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.hero-title {
+font-size: 3.5rem;
+font-weight: 900;
+letter-spacing: -0.03em;
+line-height: 1.15;
+margin-bottom: 16px;
+color: var(--text);
+}
+
+.hero-title span {
+color: var(--primary);
+font-weight: 800;
+font-size: 0.85em;
+}
+
+.hero-desc {
+font-size: 1.35rem;
+font-weight: 600;
+color: var(--text-muted);
+max-width: 880px;
+line-height: 1.7;
+}
+
+[data-theme="light"] .pill-gold,
+[data-theme="light"] .badge-primary {
+background: #FFB611 !important;
+color: #000000 !important;
+border: 1px solid #FFB611 !important;
+font-weight: 800 !important;
+}
+[data-theme="light"] .pill-wash,
+[data-theme="light"] .badge-wash {
+background: #fef08a !important;
+color: #000000 !important;
+border: 1px solid #FFB611 !important;
+font-weight: 700 !important;
+}
+
+/* Toggle Bar & Expand/Collapse Buttons */
+.toggle-bar {
+display: flex;
+align-items: center;
+gap: 10px;
+margin: 16px 0 20px 0;
+}
+
+.toggle-btn {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+padding: 7px 16px;
+font-size: 0.84rem;
+font-weight: 700;
+border-radius: 8px;
+border: 1px solid var(--border);
+background: var(--surface-elevated);
+color: var(--text);
+cursor: pointer;
+transition: var(--transition);
+box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.toggle-btn:hover {
+background: var(--surface-hover);
+border-color: var(--primary);
+color: var(--primary);
+transform: translateY(-1px);
+}
+
+[data-theme="light"] .toggle-btn {
+background: #ffffff;
+border-color: #cbd5e1;
+color: #1e293b;
+}
+
+[data-theme="light"] .toggle-btn:hover {
+background: #f8fafc;
+border-color: #f59e0b;
+color: #FFB611;
+}
+
+/* Collapsible Cards */
+.collapsible-card {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: var(--card-radius);
+margin-bottom: 16px;
+overflow: hidden;
+transition: var(--transition);
+}
+
+.collapsible-card summary {
+padding: 16px 20px;
+font-weight: 700;
+font-size: 0.98rem;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 12px;
+background: var(--surface-elevated);
+user-select: none;
+transition: background 0.2s ease;
+}
+
+.collapsible-card summary:hover {
+background: var(--surface-hover);
+}
+
+.collapsible-body {
+padding: 20px;
+border-top: 1px solid var(--border-subtle);
+}
+[data-theme="light"] th { color: #1e3a8a; }
+[data-theme="light"] .meta-tag strong {
+color: #0f172a;
+}
+[data-theme="light"] .section-num {
+background: #FFB611 !important;
+color: #000000 !important;
+border: 1.5px solid #FFB611 !important;
+box-shadow: 0 2px 8px rgba(255,182,17,0.35) !important;
+}
+[data-theme="light"] .table-title {
+color: #FFB611 !important;
+}
+[data-theme="light"] .col-type {
+color: #0f172a !important;
+background: #ffffff !important;
+border: 1.5px solid #FFB611 !important;
+font-weight: 700 !important;
+}
+[data-theme="light"] .col-type::before {
+content: "";
+display: inline-block;
+width: 7px;
+height: 7px;
+border-radius: 50%;
+background: #FFB611;
+margin-right: 6px;
+vertical-align: baseline;
+}
+[data-theme="light"] .pk-badge {
+background: #FFB611 !important;
+color: #000000 !important;
+border-color: #FFB611 !important;
+}
+[data-theme="light"] .fk-badge {
+background: #38bdf8 !important;
+color: #000000 !important;
+border-color: #38bdf8 !important;
+}
+[data-theme="light"] strong {
+color: #0f172a;
+}
+
+/* STAR Standard */
+.star-standard-container {
+margin-bottom: 54px;
+}
+
+.star-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+gap: 16px;
+margin-top: 20px;
+}
+
+.star-card {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: var(--card-radius);
+padding: 24px 22px;
+box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+transition: var(--transition);
+}
+
+.star-card:hover {
+border-color: var(--primary);
+transform: translateY(-2px);
+}
+
+.star-letter {
+font-size: 2.2rem;
+font-weight: 900;
+color: var(--primary);
+display: inline-block;
+line-height: 1;
+}
+
+.star-word {
+font-size: 1.25rem; /* tightened */
+font-weight: 800;
+color: var(--text);
+display: inline-block;
+margin-left: 0;
+}
+
+.star-desc {
+color: var(--text-muted);
+font-size: 0.94rem;
+line-height: 1.65;
+margin-top: 12px;
+}
+
+/* Sections */
+section {
+margin-bottom: 64px;
+scroll-margin-top: 40px;
+}
+
+.section-header {
+display: flex;
+align-items: center;
+gap: 14px;
+margin-bottom: 22px;
+padding-bottom: 12px;
+border-bottom: 2px solid var(--border);
+}
+
+.section-num {
+width: 40px;
+height: 40px;
+border-radius: 10px;
+background: #071a2d;
+color: var(--primary);
+border: 1px solid var(--border-accent);
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: 900;
+font-size: 0.95rem;
+font-family: 'JetBrains Mono', monospace;
+flex-shrink: 0;
+}
+
+.section-title {
+font-size: 1.65rem;
+font-weight: 800;
+letter-spacing: -0.02em;
+color: var(--text);
+}
+
+/* Grids & Cards */
+.grid-2 {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+gap: 20px;
+margin-top: 20px;
+}
+
+.grid-3 {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+gap: 18px;
+margin-top: 20px;
+}
+
+.solid-grid {
+display: grid;
+grid-template-columns: repeat(6, 1fr);
+gap: 20px;
+margin-top: 20px;
+}
+
+.solid-card {
+grid-column: span 2;
+display: flex;
+flex-direction: column;
+}
+
+.solid-card:nth-child(4),
+.solid-card:nth-child(5) {
+grid-column: span 3;
+}
+
+.solid-letter-badge {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+width: 28px;
+height: 28px;
+border-radius: 6px;
+background: var(--primary-glow);
+color: var(--primary);
+font-weight: 800;
+font-size: 0.95rem;
+border: 1px solid rgba(245, 166, 35, 0.3);
+margin-right: 8px;
+flex-shrink: 0;
+}
+
+.card {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: var(--card-radius);
+padding: 24px;
+box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+transition: var(--transition);
+}
+
+.card h4 .pill,
+.card h4 .badge {
+order: -1;
+flex-shrink: 0;
+}
+
+.card:hover {
+border-color: var(--primary);
+transform: translateY(-2px);
+box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.card h4 {
+font-size: 1.15rem;
+font-weight: 700;
+margin-bottom: 10px;
+color: var(--text);
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+gap: 8px;
+}
+
+.card p {
+color: var(--text-muted);
+font-size: 0.95rem;
+margin-bottom: 12px;
+line-height: 1.68;
+}
+
+.card ul, .card ol {
+padding-left: 22px;
+color: var(--text-muted);
+font-size: 0.94rem;
+margin-bottom: 12px;
+line-height: 1.65;
+}
+
+.card li {
+margin-bottom: 6px;
+}
+
+/* Callout Alerts */
+.callout {
+border-radius: 10px;
+padding: 18px 22px;
+margin: 22px 0;
+border-left: 4px solid var(--primary);
+background: var(--surface);
+border-top: 1px solid var(--border);
+border-right: 1px solid var(--border);
+border-bottom: 1px solid var(--border);
+font-size: 0.96rem;
+line-height: 1.7;
+}
+
+.callout-info { border-left-color: var(--primary); background: var(--primary-glow); }
+.callout-success { border-left-color: var(--success); background: var(--success-bg); }
+.callout-warning { border-left-color: var(--warning); background: var(--warning-bg); }
+.callout-danger { border-left-color: var(--danger); background: var(--danger-bg); }
+
+/* Pre-Build Checklist Styles */
+.checklist-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+gap: 18px;
+margin-top: 18px;
+}
+
+.doc-card {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: var(--card-radius);
+padding: 20px 22px;
+display: flex;
+flex-direction: column;
+gap: 12px;
+position: relative;
+transition: var(--transition);
+}
+
+.doc-card:hover {
+border-color: var(--primary);
+transform: translateY(-2px);
+box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.doc-card-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 10px;
+}
+
+.doc-num-badge {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+width: 26px;
+height: 26px;
+border-radius: 6px;
+background: var(--primary-glow);
+color: var(--primary);
+font-weight: 800;
+font-size: 0.85rem;
+border: 1px solid rgba(245, 166, 35, 0.35);
+flex-shrink: 0;
+}
+
+.doc-risk-badge {
+font-size: 0.72rem;
+font-weight: 700;
+padding: 3px 8px;
+border-radius: 4px;
+background: var(--danger-bg);
+color: var(--danger);
+border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.doc-meta-row {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+background: var(--surface-elevated);
+border-radius: 8px;
+padding: 10px 12px;
+font-size: 0.86rem;
+border: 1px solid var(--border-subtle);
+}
+
+.doc-meta-label {
+font-size: 0.72rem;
+font-weight: 800;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+margin-bottom: 2px;
+}
+
+.checklist-gate {
+background: var(--surface-elevated);
+border: 1px solid var(--border);
+border-radius: var(--card-radius);
+padding: 22px 26px;
+margin-top: 22px;
+}
+
+.check-item {
+display: flex;
+align-items: flex-start;
+gap: 12px;
+padding: 10px 0;
+border-bottom: 1px solid var(--border-subtle);
+font-size: 0.94rem;
+cursor: pointer;
+user-select: none;
+}
+
+.check-item:last-child {
+border-bottom: none;
+padding-bottom: 0;
+}
+
+.check-box {
+width: 20px;
+height: 20px;
+border-radius: 5px;
+border: 2px solid var(--border);
+background: var(--surface);
+display: inline-flex;
+align-items: center;
+justify-content: center;
+margin-top: 2px;
+flex-shrink: 0;
+transition: var(--transition);
+color: transparent;
+font-size: 0.8rem;
+font-weight: 900;
+}
+
+.check-item.active .check-box {
+background: var(--primary);
+border-color: var(--primary);
+color: #0b1120;
+}
+
+/* Tables */
+.table-container {
+width: 100%;
+max-width: 100%;
+overflow-x: auto;
+margin: 20px 0;
+border-radius: var(--card-radius);
+border: 1px solid var(--border);
+background: var(--surface);
+-webkit-overflow-scrolling: touch;
+}
+
+table {
+width: max-content;
+min-width: 100%;
+border-collapse: collapse;
+text-align: left;
+font-size: 0.92rem;
+}
+
+th {
+background: var(--surface-elevated);
+color: var(--primary);
+padding: 12px 18px;
+font-weight: 800;
+border-bottom: 2px solid var(--border);
+text-transform: uppercase;
+font-size: 0.76rem;
+letter-spacing: 0.06em;
+white-space: nowrap;
+}
+
+td {
+padding: 13px 18px;
+border-bottom: 1px solid var(--border-subtle);
+color: var(--text-muted);
+vertical-align: top;
+line-height: 1.6;
+font-size: 0.9rem;
+}
+
+tbody tr:nth-child(even) {
+background: rgba(255, 255, 255, 0.015);
+}
+
+[data-theme="light"] tbody tr:nth-child(even) {
+background: rgba(15, 23, 42, 0.02);
+}
+
+tr:last-child td {
+border-bottom: none;
+}
+
+tr:hover td {
+background: var(--surface-hover);
+color: var(--text);
+}
+
+/* Code Blocks */
+pre {
+background: var(--code-bg);
+border: 1px solid var(--code-border);
+border-radius: 10px;
+padding: 16px 18px;
+overflow-x: auto;
+font-family: 'JetBrains Mono', monospace;
+font-size: 0.88rem;
+color: var(--code-text);
+line-height: 1.65;
+margin: 16px 0;
+-webkit-overflow-scrolling: touch;
+}
+
+code {
+font-family: 'JetBrains Mono', monospace;
+font-size: 0.88em;
+padding: 3px 7px;
+border-radius: 6px;
+background: var(--surface-elevated);
+color: #f5a623;
+border: 1px solid var(--border);
+font-weight: 500;
+}
+
+[data-theme="light"] code {
+background: #e9eef6;
+color: #053364;
+border-color: rgba(5,51,100,0.25);
+font-weight: 600;
+}
+
+pre code {
+background: transparent;
+padding: 0;
+border: none;
+color: inherit;
+}
+/* Solid Gold system: code blocks stay deep dark slate in BOTH themes */
+[data-theme="light"] pre,
+[data-theme="dark"] pre {
+background: #0b101b !important;
+border: 1px solid #1e293b !important;
+color: #f0f6fc !important;
+}
+[data-theme="light"] pre code {
+background: transparent !important;
+color: inherit !important;
+border: none !important;
+}
+
+/* Badges */
+.badge {
+display: inline-flex;
+align-items: center;
+padding: 3px 8px;
+border-radius: 6px;
+font-size: 0.74rem;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.04em;
+}
+
+.badge-primary { background: var(--primary-glow); color: var(--primary); border: 1px solid var(--border-accent); }
+.badge-success { background: var(--success-bg); color: var(--success); }
+.badge-warning { background: var(--warning-bg); color: var(--warning); }
+.badge-danger { background: var(--danger-bg); color: var(--danger); }
+
+/* Visual Architecture & Flow Diagrams */
+.arch-diagram {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+gap: 12px;
+margin: 20px 0;
+position: relative;
+}
+
+.arch-node {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 10px;
+padding: 16px;
+position: relative;
+transition: var(--transition);
+display: flex;
+flex-direction: column;
+gap: 6px;
+}
+
+.arch-node:hover {
+border-color: var(--primary);
+transform: translateY(-2px);
+box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+}
+
+.arch-node-tag {
+font-family: 'JetBrains Mono', monospace;
+font-size: 0.7rem;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.04em;
+color: var(--primary);
+}
+
+.arch-node-title {
+font-size: 0.98rem;
+font-weight: 800;
+color: var(--text);
+}
+
+.arch-node-desc {
+font-size: 0.82rem;
+color: var(--text-muted);
+line-height: 1.5;
+}
+
+.flow-pipeline {
+display: flex;
+align-items: center;
+gap: 8px;
+flex-wrap: wrap;
+margin: 18px 0;
+padding: 14px 18px;
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 10px;
+}
+
+.flow-pipeline-step {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+padding: 6px 12px;
+border-radius: 6px;
+background: var(--surface-elevated);
+border: 1px solid var(--border);
+font-size: 0.82rem;
+font-weight: 700;
+color: var(--text);
+}
+
+.flow-pipeline-arrow {
+color: var(--primary);
+font-weight: 900;
+font-size: 1rem;
+}
+
+/* Workflow Diagram Steps */
+.flow-step {
+display: flex;
+gap: 16px;
+margin-bottom: 16px;
+position: relative;
+}
+
+.flow-step:not(:last-child)::after {
+content: "";
+position: absolute;
+left: 19px;
+top: 40px;
+bottom: -16px;
+width: 2px;
+background: var(--border);
+}
+
+.flow-icon {
+width: 40px;
+height: 40px;
+border-radius: 10px;
+background: var(--surface-elevated);
+border: 1px solid var(--border);
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: 900;
+font-size: 1rem;
+color: var(--primary);
+flex-shrink: 0;
+z-index: 1;
+}
+
+.flow-content {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 10px;
+padding: 16px 20px;
+flex: 1;
+}
+
+.flow-content h5 {
+font-size: 1.05rem;
+font-weight: 700;
+margin-bottom: 4px;
+color: var(--text);
+}
+
+.flow-content p {
+font-size: 0.92rem;
+color: var(--text-muted);
+margin-bottom: 0;
+}
+
+/* Back to top */
+.back-to-top {
+position: fixed;
+bottom: 24px;
+right: 24px;
+width: 44px;
+height: 44px;
+border-radius: 50%;
+background: var(--surface);
+border: 1px solid var(--border);
+color: var(--primary);
+display: flex;
+align-items: center;
+justify-content: center;
+text-decoration: none;
+font-size: 1.2rem;
+font-weight: bold;
+box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+cursor: pointer;
+opacity: 0;
+pointer-events: none;
+transition: var(--transition);
+z-index: 99;
+}
+
+.back-to-top.visible {
+opacity: 1;
+pointer-events: auto;
+}
+
+.back-to-top:hover {
+background: var(--primary);
+color: #070d18;
+transform: translateY(-3px);
+}
+
+/* Backdrop for mobile drawer */
+.sidebar-backdrop {
+display: none;
+position: fixed;
+inset: 0;
+background: rgba(0, 0, 0, 0.6);
+backdrop-filter: blur(3px);
+z-index: 850;
+}
+
+/* Architecture Diagram Containers & Layer Stacks */
+.diagram-container {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: var(--card-radius);
+padding: 26px;
+margin: 24px 0;
+overflow-x: auto;
+-webkit-overflow-scrolling: touch;
+box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+.layer-stack {
+display: flex;
+flex-direction: column;
+gap: 10px;
+max-width: 860px;
+margin: 0 auto;
+}
+.layer-box {
+background: var(--surface-elevated);
+border: 1px solid var(--border);
+border-radius: 8px;
+padding: 14px 18px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 16px;
+transition: var(--transition);
+box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+.layer-box:hover {
+border-color: var(--primary);
+}
+.layer-label {
+font-weight: 700;
+color: var(--text);
+font-size: 0.95rem;
+display: flex;
+align-items: center;
+gap: 10px;
+flex-wrap: wrap;
+}
+.layer-desc {
+font-size: 0.84rem;
+color: var(--text-dim);
+margin-top: 3px;
+}
+.layer-arrow {
+text-align: center;
+color: var(--primary);
+font-size: 0.85rem;
+font-weight: 700;
+line-height: 1;
+margin: -2px 0;
+}
+
+/* Hero Banner aliases & support */
+.doc-hero {
+background: linear-gradient(135deg, var(--surface) 0%, var(--surface-elevated) 100%);
+border: 1px solid var(--border);
+border-radius: var(--card-radius);
+padding: 44px 48px;
+margin-bottom: 48px;
+position: relative;
+overflow: hidden;
+box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18);
+}
+.doc-hero::before {
+content: "";
+position: absolute;
+top: -120px;
+right: -100px;
+width: 360px;
+height: 360px;
+background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+pointer-events: none;
+}
+.doc-hero h1 {
+font-size: 2.35rem;
+font-weight: 800;
+letter-spacing: -0.03em;
+line-height: 1.25;
+margin-bottom: 16px;
+color: var(--text);
+}
+.doc-hero .lead {
+font-size: 1.1rem;
+color: var(--text-muted);
+max-width: 900px;
+line-height: 1.75;
+}
+.doc-meta {
+display: flex;
+flex-wrap: wrap;
+gap: 12px;
+align-items: center;
+}
+.meta-tag {
+background: var(--surface-elevated);
+border: 1px solid var(--border);
+padding: 6px 14px;
+border-radius: 6px;
+font-size: 0.85rem;
+color: var(--text-muted);
+}
+.meta-tag strong {
+color: var(--text);
+}
+
+/* Mobile swipe hint - hidden on desktop, shown on touch/small screens */
+.mobile-swipe-hint {
+display: none;
+align-items: center;
+justify-content: center;
+gap: 6px;
+font-size: 0.78rem;
+font-weight: 700;
+color: var(--text-dim);
+background: var(--surface-elevated);
+border: 1px solid var(--border);
+border-radius: 999px;
+padding: 6px 12px;
+margin: 0 auto 12px;
+width: fit-content;
+max-width: 100%;
+}
+
+/* Prevent any accidental page-level horizontal scroll */
+html, body {
+overflow-x: clip;
+max-width: 100%;
+}
+img, svg, video {
+max-width: 100%;
+height: auto;
+}
+
+/* Mobile & Tablet Optimizations */
+@media (max-width: 1024px) {
+.mobile-topbar {
+display: flex;
+}
+
+.mobile-swipe-hint {
+display: inline-flex;
+}
+
+.sidebar {
+transform: translateX(-100%);
+top: 60px;
+max-height: calc(100vh - 60px);
+max-height: calc(100dvh - 60px);
+padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+box-shadow: 4px 0 24px rgba(0,0,0,0.3);
+}
+
+.sidebar.open {
+transform: translateX(0);
+}
+
+.sidebar-backdrop.open {
+display: block;
+}
+
+.main-content,
+.content {
+margin-left: 0;
+padding: 84px 18px 80px;
+max-width: 100%;
+width: 100%;
+min-width: 0;
+overflow-x: clip;
+}
+
+.doc-hero,
+.hero-banner {
+padding: 24px 20px;
+margin-bottom: 28px;
+}
+
+.doc-hero h1,
+.hero-title {
+font-size: 2.5rem;
+line-height: 1.2;
+overflow-wrap: anywhere;
+}
+
+.doc-hero .lead,
+.hero-desc {
+font-size: 1.1rem;
+font-weight: 600;
+}
+
+.layer-box {
+flex-direction: column;
+align-items: flex-start;
+gap: 8px;
+}
+
+.hero-title {
+font-size: 2.5rem;
+font-weight: 900;
+}
+
+.hero-desc {
+font-size: 1.1rem;
+font-weight: 600;
+}
+
+.section-header {
+flex-wrap: wrap;
+gap: 10px;
+}
+
+.section-title {
+font-size: 1.35rem;
+min-width: 0;
+overflow-wrap: break-word;
+line-height: 1.35;
+}
+
+.grid-2, .grid-3, .star-grid, .solid-grid, .checklist-grid {
+grid-template-columns: 1fr;
+gap: 14px;
+}
+
+.solid-card,
+.solid-card:nth-child(4),
+.solid-card:nth-child(5) {
+grid-column: span 1;
+}
+
+.card {
+padding: 20px;
+min-width: 0;
+}
+
+.card h4 {
+flex-wrap: wrap;
+overflow-wrap: break-word;
+}
+
+/* Toggle bars wrap cleanly, larger touch targets */
+.toggle-bar {
+flex-wrap: wrap;
+}
+.toggle-btn {
+min-height: 40px;
+flex: 1 1 auto;
+}
+
+/* Collapsible summaries never clip pills */
+.collapsible-card summary {
+flex-wrap: wrap;
+align-items: flex-start;
+gap: 10px;
+font-size: 0.92rem;
+line-height: 1.5;
+padding: 14px 16px;
+}
+.collapsible-card summary > span:first-child {
+flex: 1 1 100%;
+min-width: 0;
+overflow-wrap: break-word;
+word-break: break-word;
+}
+.collapsible-card summary
+.collapsible-card summary code,
+.collapsible-card summary span[style*="monospace"] {
+overflow-wrap: anywhere;
+word-break: break-all;
+white-space: normal;
+}
+.collapsible-body {
+padding: 16px;
+min-width: 0;
+}
+/* Taxonomy cards use padding:0 on desktop - restore breathing room on mobile */
+#file-taxonomy .collapsible-body[style*="padding: 0"],
+#onboarding .collapsible-body,
+#recipe-new-api .collapsible-body,
+#recipe-migration .collapsible-body {
+padding: 12px;
+}
+
+.doc-meta {
+gap: 8px;
+}
+.meta-tag {
+max-width: 100%;
+overflow-wrap: break-word;
+}
+
+.doc-meta-row {
+grid-template-columns: 1fr;
+}
+
+.diagram-container,
+.diagram-wrapper,
+.svg-container {
+padding: 16px 14px;
+}
+.diagram-title {
+flex-wrap: wrap;
+font-size: 1rem;
+}
+
+.table-card {
+padding: 16px 14px;
+}
+
+/* Generic tables: smooth horizontal swipe, no page overflow */
+.table-container,
+.table-responsive {
+width: 100%;
+max-width: 100%;
+overflow-x: auto;
+-webkit-overflow-scrolling: touch;
+scrollbar-width: thin;
+}
+table {
+width: max-content;
+min-width: 100%;
+}
+td, th {
+overflow-wrap: break-word;
+}
+td code, th code {
+overflow-wrap: anywhere;
+word-break: break-word;
+white-space: normal;
+}
+
+pre {
+max-width: 100%;
+overflow-x: auto;
+font-size: 0.8rem;
+padding: 12px 14px;
+}
+code {
+overflow-wrap: anywhere;
+word-break: break-word;
+}
+
+.arch-svg {
+min-width: 640px;
+}
+
+.flow-pipeline {
+gap: 6px;
+padding: 12px 14px;
+}
+.prototype-hero-card {
+min-width: 0;
+}
+.back-to-top {
+bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+right: 16px;
+}
+}
+
+/* Small phones: taxonomy tables become stacked cards - zero clipping */
+@media (max-width: 640px) {
+.main-content,
+.content {
+padding: 76px 12px 64px;
+}
+.doc-hero,
+.hero-banner {
+padding: 20px 16px;
+}
+.doc-hero h1 {
+font-size: 1.6rem !important;
+}
+.section-title {
+font-size: 1.2rem;
+}
+.toggle-bar {
+gap: 8px;
+}
+.toggle-btn {
+width: 100%;
+flex: 1 1 100%;
+}
+
+/* #file-taxonomy: card layout instead of clipped table */
+#file-taxonomy .table-container {
+overflow-x: visible;
+border: none;
+background: transparent;
+border-radius: 0;
+margin: 0;
+}
+#file-taxonomy table {
+min-width: 0;
+display: block;
+width: 100%;
+}
+#file-taxonomy thead {
+display: none;
+}
+#file-taxonomy tbody {
+display: flex;
+flex-direction: column;
+gap: 10px;
+padding: 2px;
+}
+#file-taxonomy tbody tr {
+display: block;
+width: 100%;
+background: var(--surface-elevated);
+border: 1px solid var(--border);
+border-radius: 10px;
+padding: 12px 14px;
+}
+#file-taxonomy tbody tr:nth-child(even) {
+background: var(--surface-elevated);
+}
+#file-taxonomy td {
+display: block;
+width: 100%;
+border: none;
+padding: 4px 0;
+font-size: 0.86rem;
+line-height: 1.6;
+}
+#file-taxonomy td:first-child {
+padding-bottom: 6px;
+}
+#file-taxonomy td code {
+display: inline-block;
+max-width: 100%;
+white-space: normal;
+word-break: break-all;
+overflow-wrap: anywhere;
+font-size: 0.8rem;
+}
+#file-taxonomy td
+
+/* Generic wide tables still swipe, but never force page scroll */
+.table-container table,
+.table-responsive table {
+width: max-content;
+min-width: 100%;
+}
+
+.tabs {
+gap: 6px;
+}
+.tab-btn {
+flex: 1 1 auto;
+min-height: 40px;
+padding: 8px 14px;
+font-size: 0.82rem;
+}
+.filter-btn {
+min-height: 36px;
+}
+.flow-step {
+gap: 10px;
+}
+.flow-icon {
+width: 34px;
+height: 34px;
+font-size: 0.9rem;
+}
+.arch-svg {
+min-width: 520px;
+}
+}
+
+@media (max-width: 380px) {
+.main-content,
+.content {
+padding-left: 10px;
+padding-right: 10px;
+}
+.card, .table-card {
+padding: 16px 12px;
+}
+.collapsible-card summary {
+padding: 12px;
+font-size: 0.88rem;
+}
+}
+
+/* Integrated Interactive Components */
+.filter-btn {
+padding: 8px 16px;
+border-radius: 20px;
+border: 1px solid var(--border);
+cursor: pointer;
+background: var(--surface);
+color: var(--text-dim);
+font-weight: 700;
+font-size: 0.82rem;
+transition: var(--transition);
+}
+.filter-btn:hover {
+background: var(--surface-hover);
+color: var(--text);
+}
+.filter-btn.active {
+background-color: var(--primary);
+border-color: var(--primary);
+color: #070d18;
+box-shadow: 0 2px 8px rgba(245, 166, 35, 0.25);
+}
+[data-theme="light"] .filter-btn.active {
+background-color: #f59e0b;
+border-color: #FFB611;
+color: #1e1e1e;
+font-weight: 800;
+box-shadow: 0 2px 8px rgba(217, 119, 6, 0.3);
+}
+.flow-element, .auto-flow-element {
+transition: opacity 0.4s ease;
+}
+.dimmed {
+opacity: 0.12 !important;
+}
+.svg-container {
+margin: 0 auto;
+max-width: 100%;
+overflow-x: auto;
+-webkit-overflow-scrolling: touch;
+background: var(--surface);
+border-radius: var(--card-radius);
+padding: 20px;
+border: 1px solid var(--border);
+}
+/* Flowchart Node fills and borders for Dark & Light Mode */
+.svg-container svg rect[fill="#ffffff"] {
+fill: var(--surface-elevated) !important;
+stroke: var(--border-subtle) !important;
+}
+.svg-container svg polygon[fill="#ffffff"] {
+fill: var(--surface-elevated) !important;
+}
+[data-theme="light"] .svg-container svg rect[fill="#ffffff"] {
+fill: #ffffff !important;
+stroke: #cbd7e6 !important;
+}
+[data-theme="light"] .svg-container svg polygon[fill="#ffffff"] {
+fill: #ffffff !important;
+}
+
+.svg-node-text { fill: var(--text); font-weight: 700; font-size: 12px; }
+.svg-sub-text { fill: var(--text-dim); font-weight: 500; font-size: 10px; }
+.svg-white-text { fill: #ffffff; font-weight: 800; font-size: 13px; }
+.svg-white-sub { fill: rgba(255, 255, 255, 0.85); font-weight: 500; font-size: 10px; }
+[data-theme="light"] .svg-node-text { fill: #0f172a !important; }
+[data-theme="light"] .svg-sub-text { fill: #475569 !important; }
+
+/* Tabs Component Styles */
+.tabs { display: flex; gap: 8px; justify-content: flex-start; margin-bottom: 24px; flex-wrap: wrap; }
+.tab-btn {
+padding: 10px 20px;
+border: 1px solid var(--border);
+background: var(--surface);
+border-radius: 8px;
+font-size: 0.88rem;
+font-weight: 600;
+cursor: pointer;
+color: var(--text-dim);
+transition: var(--transition);
+}
+.tab-btn:hover { border-color: var(--primary); color: var(--primary); }
+.tab-btn.active {
+background: var(--primary);
+border-color: var(--primary);
+color: #070d18;
+font-weight: 800;
+}
+[data-theme="light"] .tab-btn.active {
+background: #f59e0b;
+border-color: #FFB611;
+color: #1e1e1e;
+font-weight: 800;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+.diagram-wrapper {
+background: var(--surface);
+border-radius: var(--card-radius);
+border: 1px solid var(--border);
+padding: 26px;
+box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+overflow-x: auto;
+}
+.diagram-title {
+font-size: 1.15rem; font-weight: 800; color: var(--text);
+margin-bottom: 20px; padding-bottom: 12px;
+border-bottom: 1px solid var(--border);
+display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+
+.legend {
+display: flex; gap: 16px; flex-wrap: wrap;
+margin-top: 20px; padding-top: 16px;
+border-top: 1px solid var(--border-subtle);
+}
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--text-dim); }
+.legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+.arch-svg-container {
+position: relative;
+width: 100%;
+overflow-x: auto;
+-webkit-overflow-scrolling: touch;
+}
+.arch-svg {
+display: block;
+width: 100%;
+min-width: 950px;
+}
+
+/* Table Cards in Schema */
+.table-card {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: var(--card-radius);
+padding: 24px;
+margin-bottom: 24px;
+box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+width: 100%;
+max-width: 100%;
+box-sizing: border-box;
+overflow: hidden;
+}
+.table-responsive {
+width: 100%;
+max-width: 100%;
+overflow-x: auto;
+-webkit-overflow-scrolling: touch;
+margin: 10px 0 0 0;
+border-radius: 6px;
+}
+.table-responsive table {
+width: max-content;
+min-width: 100%;
+border-collapse: collapse;
+}
+.table-card-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 16px;
+border-bottom: 1px solid var(--border-subtle);
+padding-bottom: 12px;
+}
+.table-title {
+font-size: 1.2rem;
+font-weight: 700;
+color: var(--primary);
+margin: 0;
+}
+.key-badge {
+font-size: 0.72rem;
+font-weight: 800;
+padding: 2px 6px;
+border-radius: 4px;
+margin-left: 8px;
+display: inline-block;
+}
+.pk-badge { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245, 166, 35, 0.4); }
+.fk-badge { background: var(--primary-glow); color: var(--primary); border: 1px solid rgba(245, 166, 35, 0.3); }
+
+.col-type {
+font-family: 'JetBrains Mono', monospace;
+color: var(--primary);
+background: var(--surface-elevated);
+padding: 2px 6px;
+border-radius: 4px;
+font-size: 0.82rem;
+border: 1px solid var(--border-subtle);
+}
+.col-example {
+color: var(--text-dim);
+font-style: italic;
+}
+.notes-section {
+margin-top: 14px;
+padding: 16px;
+background: var(--surface-elevated);
+border-radius: 8px;
+font-size: 0.9rem;
+color: var(--text-muted);
+border: 1px solid var(--border-subtle);
+}
+[data-theme="dark"]
+
+/* Client Product Journey & Prototype Styles */
+.prototype-hero-card {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 20px;
+padding: 36px;
+margin-top: 24px;
+box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+display: flex;
+gap: 36px;
+align-items: center;
+transition: var(--transition);
+}
+.prototype-hero-card:hover {
+border-color: var(--primary);
+box-shadow: 0 14px 40px rgba(0,0,0,0.1);
+}
+.prototype-details {
+flex: 1.1;
+min-width: 320px;
+}
+.prototype-media {
+flex: 1.3;
+display: flex;
+justify-content: center;
+min-width: 320px;
+}
+.prototype-img-frame {
+display: block;
+width: 100%;
+text-decoration: none;
+border-radius: 14px;
+overflow: hidden;
+border: 1px solid var(--border);
+box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.prototype-img-frame:hover {
+transform: translateY(-4px) scale(1.02);
+box-shadow: 0 20px 45px rgba(0,0,0,0.2);
+}
+.prototype-img {
+width: 100%;
+height: auto;
+display: block;
+}
+.launch-btn-cfs {
+display: inline-flex;
+align-items: center;
+gap: 12px;
+padding: 14px 30px;
+font-size: 1rem;
+font-weight: 700;
+color: #ffffff !important;
+background: #053364;
+border-radius: 50px;
+text-decoration: none;
+box-shadow: 0 10px 24px -4px rgba(5, 51, 100, 0.4);
+transition: all 0.25s ease;
+cursor: pointer;
+}
+.launch-btn-cfs:hover {
+background: #00224a;
+transform: translateY(-2px);
+box-shadow: 0 14px 30px -4px rgba(5, 51, 100, 0.55);
+}
+[data-theme="light"] .launch-btn-cfs {
+background: #053364;
+color: #ffffff !important;
+}
+@media (max-width: 900px) {
+.prototype-hero-card {
+flex-direction: column;
+padding: 24px;
+gap: 24px;
+}
+.prototype-details, .prototype-media {
+min-width: 100%;
+}
+}
+
+    /* Unified Light Mode & Solid Gold Brand Polish */
+    [data-theme="light"] pre,
+    [data-theme="dark"] pre {
+      background: #0b101b !important;
+      border: 1px solid #1e293b !important;
+      color: #f0f6fc !important;
+    }
+    [data-theme="light"] pre code,
+    [data-theme="light"] pre span,
+    [data-theme="dark"] pre code,
+    [data-theme="dark"] pre span {
+      background: transparent !important;
+      color: inherit;
+      border: none !important;
+    }
+    [data-theme="light"] .badge-primary {
+      background: #FFB611 !important;
+      color: #000000 !important;
+      font-weight: 800 !important;
+      border: 1px solid #e09e05 !important;
+    }
+    [data-theme="light"] .back-to-top {
+      background: #FFB611 !important;
+      color: #000000 !important;
+      border: 1px solid #e09e05 !important;
+      font-weight: 900 !important;
+    }
+    [data-theme="light"] .back-to-top:hover {
+      background: #e09e05 !important;
+      color: #000000 !important;
+    }
+    [data-theme="light"] .section-num {
+      background: #FFB611 !important;
+      color: #000000 !important;
+      font-weight: 900 !important;
+      border: none !important;
+    }
+    [data-theme="light"] /* Sleek Theme Switcher Pill */
+    .theme-icon-btn {
+      min-width: 44px;
+      height: 34px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    .theme-icon-btn:hover {
+      background: var(--surface-hover);
+      border-color: #FFB611;
+      color: #FFB611;
+      transform: translateY(-1px);
+    }
+    [data-theme="light"] .theme-icon-btn {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #0f172a;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    [data-theme="light"] .theme-icon-btn:hover {
+      background: #e2e8f0;
+      border-color: #FFB611;
+      color: #FFB611;
+    }
+
+  
+
+
+    /* High-Legibility Electric Gold in Light Mode */
+      color: #FFB611 !important;
+      font-weight: 800 !important;
+    }
+    [data-theme="light"] [style*="color:var(--primary)"] {
+      color: #053364 !important;
+      font-weight: 700 !important;
+    }
+
+    /* Fixed Theme Pill & Mobile Topbar */
+    .theme-icon-btn {
+      min-width: 44px;
+      height: 34px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    [data-theme="light"] .theme-icon-btn {
+      background: #f1f5f9 !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #0f172a !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    [data-theme="light"] .theme-icon-btn:hover {
+      background: #e2e8f0 !important;
+      border-color: #FFB611 !important;
+      color: #FFB611 !important;
+    }
+
+.hero-title{ max-width:100%; overflow-wrap:break-word; word-wrap:break-word; }
+.hero-title span{ display:block; max-width:100%; overflow-wrap:break-word; font-size:0.85em; line-height:1.2; font-weight:800; }
+.hero-desc{ max-width:100%; overflow-wrap:break-word; }/* DEKODE light-mode navy body text - final overrides (hero/titles untouched) */
+[data-theme="light"] .badge-primary{color:#053364!important;border-color:rgba(5,51,100,.35)!important;background:rgba(5,51,100,.08)!important}
+[data-theme="light"] .badge-wash,[data-theme="light"] .pill-gold-wash,[data-theme="light"] .pill-amber{color:#053364!important;border-color:rgba(5,51,100,.35)!important;background:rgba(5,51,100,.08)!important}
+[data-theme="light"] code{color:#053364!important;background:rgba(5,51,100,.08)!important;border-color:rgba(5,51,100,.25)!important}
+[data-theme="light"] .code-keyword{color:#053364!important}
+[data-theme="light"] .arch-node-tag{color:#053364!important;background:rgba(5,51,100,.10)!important}
+[data-theme="light"] [style*="color:var(--primary)"]{color:#053364!important}
+[data-theme="light"] [style*="color:var(--primary-accent)"]{color:#053364!important}
+[data-theme="light"] .layer-arrow{color:#053364!important}
+[data-theme="light"] .layer-box code{color:#053364!important;background:rgba(5,51,100,.08)!important;border-color:rgba(5,51,100,.25)!important}
+[data-theme="light"] pre code,[data-theme="dark"] pre code{color:#f0f6fc !important;background:transparent !important;border:none !important;}
+</style>
+</head>
+<body>
+<header class="mobile-topbar"><div style="display:flex;align-items:center;gap:10px;"><a class="brand-logo" href="/">DEKODE</a></div><div style="display:flex;align-items:center;gap:8px;"><button class="mobile-menu-btn" onclick="toggleMobileMenu()">Menu</button></div></header>
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<div class="brand-container"><a class="brand-logo" href="/">DEKODE</a>
+</div>
+<div class="search-wrapper"><input type="text" id="sidebar-filter" class="sidebar-search" placeholder="Search overview..." oninput="filterNav()"></div>
+</div>
+<nav id="nav-container">
+<div class="nav-group-title">OptiFlow Client Overview</div>
+<ul class="nav-links">
+<li><a href="#what-it-does">01. What OptiFlow Does</a></li>
+<li><a href="#problem-context">02. The Business Challenge</a></li>
+<li><a href="#manual-vs-automated">03. Manual vs Automated Impact</a></li>
+<li><a href="#prototype">04. Live Prototype</a></li>
+<li><a href="#next-steps">05. Onboarding & Next Steps</a></li>
+<div class="nav-group-title">Deeper Dive: How It Works</div>
+<ul class="nav-links">
+<li><a href="#discovery-context">06. Discovery & Problem Context</a></li>
+<li><a href="#manual-process">07. Current Process: Manual</a></li>
+<li><a href="#proposed-process">08. Proposed Process: OptiFlow</a></li>
+<li><a href="#allocation-engine">09. Allocation Logic Flow</a></li>
+<li><a href="#infrastructure-topology">10. Architecture Diagram</a></li>
+</ul>
+<li><a href="#faq">11. FAQ</a></li>
+<li><a href="#contact">12. Contact</a></li>
+</ul>
+</nav>
+</aside>
+<main class="main-content">
+<header class="hero-banner">
+<div class="hero-title">OptiFlow<br><span>Automated Optical Inventory Replenishment</span></div>
+<p class="hero-desc">OptiFlow keeps every store shelf perfectly stocked , automatically calculating what each location needs and preparing replenishment plans from the central warehouse in seconds instead of days.</p>
+<div class="grid-2" style="margin-top:24px;">
+<div class="card" style="border-left:4px solid var(--primary);"><h4>What OptiFlow Does</h4><p>OptiFlow replaces slow manual spreadsheet work with an automated replenishment workflow. Store needs are calculated automatically, suitable items are matched from warehouse stock, and your team simply reviews and approves , saving thousands of hours every year.</p></div>
+<div class="card" style="border-left:4px solid var(--success);"><h4>Built for Retail Chains</h4><p>Designed for multi-store optical networks: one central warehouse supplying dozens of locations on different schedules, with full visibility, consistent decisions, and a complete history of every replenishment run.</p></div>
+</div>
+</header>
+<section id="what-it-does"><div class="section-header"><span class="section-num">01</span><h2 class="section-title">What OptiFlow Does</h2></div>
+<p class="lead">In plain language: OptiFlow makes sure the right frames are on the right shelves at the right time , without the spreadsheet grind.</p>
+<div class="grid-2" style="margin-top:20px;">
+<div class="card"><h4>Upload store &amp; warehouse data</h4><p>Your team uploads routine stock exports. No complex formulas, no manual lookups.</p></div>
+<div class="card"><h4>Review &amp; approve in seconds</h4><p>OptiFlow prepares a clear replenishment plan per store. Managers review exceptions and click approve.</p></div>
+</div></section>
+<section id="problem-context"><div class="section-header"><span class="section-num">02</span><h2 class="section-title">The Business Challenge</h2></div>
+<p><strong>Centre For Sight (CFS)</strong> runs a nationwide network of 95+ optical stores supplied by a central warehouse in <strong>Dwarka, New Delhi</strong>.</p>
+<div class="grid-2">
+<div class="card" style="border-left:4px solid var(--primary);"><h4>Store Network</h4><ul style="margin-top:8px;"><li><strong>22 Flagship stores:</strong> high-traffic city locations, restocked weekly.</li><li><strong>30 Regional stores:</strong> mid-size centres, restocked every two weeks.</li><li><strong>43 Satellite clinics:</strong> smaller locations, restocked monthly.</li></ul></div>
+<div class="card" style="border-left:4px solid var(--danger);"><h4>Why Manual Work Slows Stores Down</h4><p>Today, replenishment runs on manual spreadsheets, comparing what each store should display against what it has, then hand-picking items to ship. It is slow, repetitive, and hard to check, while bare shelves mean missed sales.</p></div>
+</div></section>
+<section id="manual-vs-automated"><div class="section-header"><span class="section-num">03</span><h2 class="section-title">Manual vs Automated: The Impact</h2></div>
+<p class="lead">OptiFlow turns slow manual checking into a quick review.</p>
+<div class="table-container" style="margin-top: 24px;">
+<table>
+<thead>
+<tr>
+<th>Evaluation Metric</th>
+<th>Legacy Manual Process</th>
+<th>Proposed OptiFlow Solution</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Run Duration</strong></td>
+<td>5.5 hours per store run</td>
+<td>&lt; 3 seconds per store run</td>
+<td><span class="badge badge-success">99.8% Faster</span></td>
+</tr>
+<tr>
+<td><strong>Network Annual Effort</strong></td>
+<td>12,600+ manual analyst hours</td>
+<td>~60 hours (Exception Reviews only)</td>
+<td><span class="badge badge-success">12,540 hrs saved</span></td>
+</tr>
+<tr>
+<td><strong>Substitution Quality</strong></td>
+<td>Subjective analyst guesswork</td>
+<td>Automatic smart matching</td>
+<td><span class="badge badge-primary">100% Consistent</span></td>
+</tr>
+<tr>
+<td><strong>Auditability & History</strong></td>
+<td>Fragmented Excel files</td>
+<td>Full history and audit trail</td>
+<td><span class="badge badge-primary">Complete Audit Trail</span></td>
+</tr>
+</tbody>
+</table>
+</div></section>
+<section id="prototype"><div class="section-header"><span class="section-num">04</span><h2 class="section-title">Live Prototype</h2></div>
+<p>Explore the working prototype , zonal overviews, per-store needs, and simple approval screens:</p>
+<div class="prototype-hero-card"><div class="prototype-details">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><span class="badge badge-primary">Live Prototype</span><span class="badge badge-success">Interactive</span></div>
+<h3 style="font-size:1.85rem;font-weight:800;margin-bottom:14px;color:var(--text);">OptiFlow Interactive Prototype</h3>
+<p style="color:var(--text-muted);font-size:1.02rem;line-height:1.65;margin-bottom:24px;">See replenishment plans, store-level detail views, and the approval workflow in action.</p>
+<a href="https://optiflow-poc.pages.dev" target="_blank" rel="noopener noreferrer" class="launch-btn-cfs"><span>Launch Prototype</span><span style="font-size:1.25rem;line-height:1;">-></span></a>
+
+</div><div class="prototype-media"><a href="https://optiflow-poc.pages.dev" target="_blank" rel="noopener noreferrer" class="prototype-img-frame" title="Click to launch interactive prototype"><img src="prototype_dashboard.png" alt="OptiFlow Interactive Prototype Dashboard" class="prototype-img"></a></div></div></section>
+<section id="next-steps"><div class="section-header"><span class="section-num">05</span><h2 class="section-title">Onboarding &amp; Next Steps</h2></div>
+<div class="grid-2"><div class="card"><h4>1. Walkthrough</h4><p>We demo the live prototype with your team using familiar store scenarios.</p></div>
+<div class="card"><h4>2. Pilot with real data</h4><p>We run a pilot on a small set of stores using your standard stock exports.</p></div></div>
+<div class="grid-2" style="margin-top:16px;"><div class="card"><h4>3. Rollout</h4><p>We extend to the full network with training and support for your merchandising team.</p></div>
+<div class="card"><h4>What we need from you</h4><p>Routine stock exports, target display lists per store, and one point of contact for approvals.</p></div></div></section>
+<section id="discovery-context">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <h2 class="section-title">Discovery: Client Problem & Operational Context</h2>
+      </div>
+
+      <p>
+        <strong>Centre For Sight (CFS)</strong> operates a distributed nationwide retail network of optical stores across PAN India. Their entire physical inventory replenishment is supplied by a central logistics warehouse located in <strong>Dwarka, New Delhi</strong>.
+      </p>
+
+      <div class="grid-2">
+        <div class="card" style="border-left: 4px solid var(--primary);">
+          <h4>Client Operational Baseline</h4>
+          <p>
+            The Dwarka warehouse serves as the central hub supplying 95+ retail store locations across three tiers:
+          </p>
+          <ul style="margin-top: 8px;">
+            <li><strong>22 Grade A Stores:</strong> High velocity metropolitan flagships with weekly distribution cycles.</li>
+            <li><strong>30 Grade B Stores:</strong> Regional centers running on fortnightly replenishment schedules.</li>
+            <li><strong>43 Grade C Stores:</strong> Satellite clinics on monthly allocation cycles.</li>
+          </ul>
+        </div>
+
+        <div class="card" style="border-left: 4px solid var(--danger);">
+          <h4>The Core Challenge</h4>
+          <p>
+            The logistical challenge is accurately calculating specific <strong>Planogram deficits</strong> at each store and determining exactly which frames or sunglasses (or acceptable substitutes) must be dispatched from Dwarka to maintain display compliance.
+          </p>
+          <p style="margin-top: 8px; color: var(--text-dim); font-size: 0.92rem;">
+            Because store managers cannot afford bare shelves, any replenishment delay directly degrades optical sales revenue.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 02: Current Process: Manual -->
+
+<section id="manual-process">
+      <div class="section-header">
+        <span class="section-num">07</span>
+        <h2 class="section-title">Current Process: Manual Spreadsheet Distribution</h2>
+      </div>
+
+      <div class="callout callout-danger" style="margin-bottom: 24px;">
+        <h3 style="color: #ea580c; margin-top: 0; margin-bottom: 8px; font-size: 1.25rem;">The Legacy Problem</h3>
+        <p style="margin-bottom: 12px; line-height: 1.6;">
+          Currently, inventory replenishment is driven entirely by manual Excel spreadsheets. Merchandisers must export raw ERP dumps, execute complex nested VLOOKUPs to compare store stock on hand against target planograms, and manually guess which substitute frame to send when central warehouse stockouts occur.
+        </p>
+        <p style="margin-bottom: 16px; font-weight: 600;">
+          This manual process introduces severe operational bottlenecks and subjective decision-making into the supply chain.
+        </p>
+        <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 14px 18px;">
+          <div style="font-size: 1.1rem; font-weight: 800; color: #dc2626;">
+            191 total manual events/month &times; 5.5 hours per store run = <span style="font-size: 1.3rem;">12,600+ Hours Wasted Annually</span>
+          </div>
+          <div style="font-size: 0.88rem; color: #b91c1c; margin-top: 4px;">
+            Over ₹16,00,000+ wasted per year assuming standard skilled inventory analyst wages in Delhi.
+          </div>
+        </div>
+      </div>
+
+      <!-- Legacy Manual Flowchart SVG -->
+      <div class="diagram-wrapper">
+        <div class="diagram-title">
+          <span>Legacy Workflow: Manual Distribution Loop</span>
+          <span class="badge badge-danger">Manual Bottleneck</span>
+        </div>
+        <div class="arch-svg-container">
+          <div class="mobile-swipe-hint">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18-6-6 6-6"/><path d="m15 18 6-6-6-6"/></svg>
+            Swipe to explore diagram
+          </div>
+          <svg width="100%" height="1060" viewBox="250 20 780 1060" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 900px; margin: 0 auto; display: block;">
+            <defs>
+              <marker id="legacy-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#94a3b8" />
+              </marker>
+              <marker id="legacy-arrow-loop" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+              </marker>
+            </defs>
+
+            <!-- 1. Start -->
+            <rect x="300" y="30" width="300" height="60" rx="30" fill="#053364" />
+            <text x="450" y="55" class="svg-white-text" text-anchor="middle">Start</text>
+            <text x="450" y="75" fill="#94a3b8" font-size="11" text-anchor="middle">(Distribution Day) Manual Allocation</text>
+
+            <path d="M450 90 V140" stroke="#94a3b8" stroke-width="2" marker-end="url(#legacy-arrow)"/>
+
+            <!-- 2. Get Planned Stock -->
+            <rect x="300" y="140" width="300" height="50" rx="8" fill="var(--surface-elevated)" stroke="var(--border)" stroke-width="2"/>
+            <text x="450" y="170" class="svg-node-text" text-anchor="middle">Get Planned Stock for Store</text>
+
+            <path d="M450 190 V240" stroke="#94a3b8" stroke-width="2" marker-end="url(#legacy-arrow)"/>
+
+            <!-- 3. Get Sales -->
+            <rect x="300" y="240" width="300" height="50" rx="8" fill="var(--surface-elevated)" stroke="var(--border)" stroke-width="2"/>
+            <text x="450" y="270" class="svg-node-text" text-anchor="middle">Get Last 7 Day Sales</text>
+
+            <path d="M450 290 V340" stroke="#94a3b8" stroke-width="2" marker-end="url(#legacy-arrow)"/>
+
+            <!-- 4. Get Current Stock -->
+            <rect x="300" y="340" width="300" height="50" rx="8" fill="var(--surface-elevated)" stroke="var(--border)" stroke-width="2"/>
+            <text x="450" y="370" class="svg-node-text" text-anchor="middle">Get Current Stock for Store</text>
+
+            <path d="M450 390 V440" stroke="#94a3b8" stroke-width="2" marker-end="url(#legacy-arrow)"/>
+
+            <!-- 5. Get WH Stock -->
+            <rect x="300" y="440" width="300" height="50" rx="8" fill="var(--surface-elevated)" stroke="var(--border)" stroke-width="2"/>
+            <text x="450" y="470" class="svg-node-text" text-anchor="middle">Get Warehouse Stock</text>
+
+            <path d="M450 490 V540" stroke="#94a3b8" stroke-width="2" marker-end="url(#legacy-arrow)"/>
+
+            <!-- 6. Logistics Manager / Analyst manually... -->
+            <rect x="280" y="540" width="340" height="60" rx="8" fill="#f59e0b" stroke="#FFB611" stroke-width="2"/>
+            <text x="450" y="565" fill="#0f172a" font-weight="800" font-size="14" text-anchor="middle">Logistics Manager / Analyst</text>
+            <text x="450" y="582" fill="#1e293b" font-weight="600" font-size="12" text-anchor="middle">Manually cross-references all inputs (Excel VLOOKUPs)</text>
+
+            <path d="M450 600 V650" stroke="#94a3b8" stroke-width="2" marker-end="url(#legacy-arrow)"/>
+
+            <!-- 7. Dispatch to Store -->
+            <rect x="320" y="650" width="260" height="50" rx="8" fill="#053364" stroke="#053364" stroke-width="2"/>
+            <text x="450" y="680" class="svg-white-text" text-anchor="middle">Dispatch to Store</text>
+
+            <path d="M450 700 V750" stroke="#94a3b8" stroke-width="2" marker-end="url(#legacy-arrow)"/>
+
+            <!-- 8. Stock Reconciled -->
+            <rect x="300" y="750" width="300" height="60" rx="8" fill="var(--surface-elevated)" stroke="var(--border)" stroke-width="2"/>
+            <text x="450" y="775" class="svg-node-text" text-anchor="middle">Stock Reconciled</text>
+            <text x="450" y="792" class="svg-sub-text" text-anchor="middle">(Store + Warehouse)</text>
+
+            <path d="M450 810 V860" stroke="#94a3b8" stroke-width="2" marker-end="url(#legacy-arrow)"/>
+
+            <!-- 9. Diamond: More Stores? -->
+            <polygon points="450,860 580,900 450,940 320,900" fill="var(--surface-elevated)" stroke="#f59e0b" stroke-width="2"/>
+            <text x="450" y="904" class="svg-node-text" text-anchor="middle">More Stores Pending?</text>
+
+            <!-- YES Path (Next Store Loop) -->
+            <path d="M580 900 H980 V60 H600" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="8 8" fill="none" marker-end="url(#legacy-arrow-loop)"/>
+            <rect x="580" y="889" width="40" height="22" rx="11" fill="#10b981" />
+            <text x="600" y="904" fill="white" font-size="11" font-weight="700" text-anchor="middle">YES</text>
+            <text x="965" y="480" fill="#f59e0b" font-size="12" font-weight="800" text-anchor="middle" transform="rotate(-90 965 480)">NEXT STORE (5.5 hrs each)</text>
+
+            <!-- NO Path -->
+            <path d="M450 940 V990" stroke="#94a3b8" stroke-width="2" marker-end="url(#legacy-arrow)"/>
+            <rect x="430" y="949" width="40" height="22" rx="11" fill="#ef4444" />
+            <text x="450" y="964" fill="white" font-size="11" font-weight="700" text-anchor="middle">NO</text>
+
+            <!-- 10. END -->
+            <rect x="350" y="990" width="200" height="50" rx="25" fill="#053364" />
+            <text x="450" y="1020" class="svg-white-text" text-anchor="middle">END</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 03: Proposed Process: OptiFlow -->
+
+<section id="proposed-process">
+      <div class="section-header">
+        <span class="section-num">08</span>
+        <h2 class="section-title">Proposed Process: Automated OptiFlow Replenishment</h2>
+      </div>
+
+      <p class="lead">
+        OptiFlow transitions Centre For Sight from manual spreadsheet analysis to an automated, intelligent allocation workflow.
+      </p>
+
+      <div class="grid-2" style="margin-top: 20px;">
+        <div class="card" style="border-left: 4px solid var(--success);">
+          <h4 style="color:var(--success);">Automates 95% of Standard Replenishment</h4>
+          <p>
+            We are deploying a deterministic <strong>Logic Engine</strong> paired with a <strong>Human-in-the-Loop (HITL) Dashboard</strong>. This eliminates manual Excel math entirely.
+          </p>
+          <p style="margin-top: 10px;">
+            The merchandiser simply uploads the raw store and warehouse CSV/ERP data. OptiFlow automatically calculates Planogram deficits and executes allocations in under 3 seconds.
+          </p>
+        </div>
+
+        <div class="card" style="border-left: 4px solid var(--primary);">
+          <h4 style="color:var(--primary);">Intelligent Exception Handling</h4>
+          <p>
+            If an exact frame is out of stock in the Dwarka warehouse, the system automatically scores and finds the closest matching substitute (using heuristics: MRP &plusmn;20%, Color, Material, Shape).
+          </p>
+          <p style="margin-top: 10px;">
+            The human manager only has to click <strong>"Approve"</strong> on rare exceptions, reducing a 5.5-hour manual ordeal into seconds.
+          </p>
+        </div>
+      </div>
+
+      <div class="table-container" style="margin-top: 24px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Evaluation Metric</th>
+              <th>Legacy Manual Process</th>
+              <th>Proposed OptiFlow Solution</th>
+              <th>Impact</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Run Duration</strong></td>
+              <td>5.5 hours per store run</td>
+              <td>&lt; 3 seconds per store run</td>
+              <td><span class="badge badge-success">99.8% Faster</span></td>
+            </tr>
+            <tr>
+              <td><strong>Network Annual Effort</strong></td>
+              <td>12,600+ manual analyst hours</td>
+              <td>~60 hours (Exception Reviews only)</td>
+              <td><span class="badge badge-success">12,540 hrs saved</span></td>
+            </tr>
+            <tr>
+              <td><strong>Substitution Quality</strong></td>
+              <td>Subjective analyst guesswork</td>
+              <td>Deterministic multi-attribute heuristic</td>
+              <td><span class="badge badge-primary">100% Consistent</span></td>
+            </tr>
+            <tr>
+              <td><strong>Auditability & History</strong></td>
+              <td>Fragmented Excel files</td>
+              <td>Immutable UUID snapshots & SQL audit logs</td>
+              <td><span class="badge badge-primary">Complete Audit Trail</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Automated Decision Workflow Flowchart -->
+      <div class="diagram-wrapper" style="margin-top: 28px;">
+        <div class="diagram-title">
+          <span>Automated Decision Workflow</span>
+          <span class="badge badge-success">95% Automated · HITL Exceptions</span>
+        </div>
+        <p style="color: var(--text-dim); font-size: 0.94rem; margin-bottom: 20px;">
+          End-to-end logic for how the system processes store schedules, calculates deficits, and routes exceptions.
+        </p>
+
+        <!-- Dynamic Filters for Automated Workflow -->
+        <div style="margin-bottom: 24px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+          <button class="filter-btn active" onclick="highlightAutoPath(event, 'all')">Show Full Workflow</button>
+          <button class="filter-btn" onclick="highlightAutoPath(event, 'path-skip')">Path 1: Stock Adequate</button>
+          <button class="filter-btn" onclick="highlightAutoPath(event, 'path-match')">Path 2: Auto-Allocate</button>
+          <button class="filter-btn" onclick="highlightAutoPath(event, 'path-exception')">Path 3: Substitute Match</button>
+          <button class="filter-btn" onclick="highlightAutoPath(event, 'path-stockout')">Path 4: Total Stockout</button>
+        </div>
+
+        <div class="arch-svg-container">
+          <div class="mobile-swipe-hint">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18-6-6 6-6"/><path d="m15 18 6-6-6-6"/></svg>
+            Swipe to explore diagram
+          </div>
+          <svg id="auto-workflow-svg" width="100%" height="1300" viewBox="100 0 800 1300" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 820px; margin: 0 auto; display: block;">
+            <defs>
+              <linearGradient id="primaryGradAuto" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#053364"/>
+                <stop offset="100%" stop-color="#053364"/>
+              </linearGradient>
+              <marker id="auto-arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+              </marker>
+            </defs>
+
+            <!-- COMMON PATH (1-6) -->
+            <g class="auto-flow-element path-skip path-match path-exception path-stockout">
+              <!-- 1. Start -->
+              <rect x="350" y="30" width="200" height="55" rx="27.5" fill="#053364" />
+              <text x="450" y="55" class="svg-white-text" text-anchor="middle">Start</text>
+              <text x="450" y="72" fill="#94a3b8" font-size="11" text-anchor="middle">(Allocation Day)</text>
+              <path d="M450 85 V120" stroke="#64748b" stroke-width="2" marker-end="url(#auto-arrow)"/>
+
+              <!-- 2. Upload Planogram -->
+              <rect x="300" y="120" width="300" height="45" rx="8" fill="var(--surface-elevated)" stroke="var(--border)" stroke-width="2"/>
+              <text x="450" y="146" class="svg-node-text" text-anchor="middle">Upload/Retrieve Planogram(s)</text>
+              <path d="M450 165 V200" stroke="#64748b" stroke-width="2" marker-end="url(#auto-arrow)"/>
+
+              <!-- 3. Upload Sales -->
+              <rect x="300" y="200" width="300" height="45" rx="8" fill="var(--surface-elevated)" stroke="var(--border)" stroke-width="2"/>
+              <text x="450" y="226" class="svg-node-text" text-anchor="middle">Upload/Retrieve Last 7 Day Sales</text>
+              <path d="M450 245 V280" stroke="#64748b" stroke-width="2" marker-end="url(#auto-arrow)"/>
+
+              <!-- 4. Upload Current Stock -->
+              <rect x="300" y="280" width="300" height="45" rx="8" fill="var(--surface-elevated)" stroke="var(--border)" stroke-width="2"/>
+              <text x="450" y="306" class="svg-node-text" text-anchor="middle">Upload/Retrieve Current Stock(s)</text>
+              <path d="M450 325 V360" stroke="#64748b" stroke-width="2" marker-end="url(#auto-arrow)"/>
+
+              <!-- 5. Upload WH Stock -->
+              <rect x="300" y="360" width="300" height="45" rx="8" fill="var(--surface-elevated)" stroke="var(--border)" stroke-width="2"/>
+              <text x="450" y="386" class="svg-node-text" text-anchor="middle">Upload/Retrieve Warehouse Stock</text>
+              <path d="M450 405 V440" stroke="#64748b" stroke-width="2" marker-end="url(#auto-arrow)"/>
+
+              <!-- OptiFlow Engine -->
+              <rect x="300" y="440" width="300" height="50" rx="8" fill="#f59e0b" stroke="#FFB611" stroke-width="2"/>
+              <text x="450" y="470" fill="#0f172a" font-weight="800" font-size="14" text-anchor="middle">OptiFlow Engine Processing</text>
+              <path d="M450 490 V520" stroke="#64748b" stroke-width="2" marker-end="url(#auto-arrow)"/>
+
+              <!-- 6. Generate Report -->
+              <rect x="250" y="520" width="400" height="50" rx="8" fill="url(#primaryGradAuto)"/>
+              <text x="450" y="550" class="svg-white-text" text-anchor="middle">Generate Allocation/Replenishment Report</text>
+              <path d="M450 570 V610" stroke="#64748b" stroke-width="2" marker-end="url(#auto-arrow)"/>
+
+              <!-- 7. Diamond: Deficit Exists? -->
+              <polygon points="450,610 560,650 450,690 340,650" fill="var(--surface-elevated)" stroke="#f59e0b" stroke-width="2"/>
+              <text x="450" y="654" class="svg-node-text" text-anchor="middle">Deficit Exists?</text>
+            </g>
+
+            <!-- PATH 1: STOCK ADEQUATE (NO) -->
+            <g class="auto-flow-element path-skip">
+              <path d="M340 650 H180 V1240 H350" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#auto-arrow)"/>
+              <rect x="240" y="639" width="40" height="22" rx="11" fill="#ef4444" />
+              <text x="260" y="654" fill="white" font-size="11" font-weight="700" text-anchor="middle">NO</text>
+            </g>
+
+            <!-- COMMON PATH (Deficit YES) -->
+            <g class="auto-flow-element path-match path-exception path-stockout">
+              <path d="M450 690 V750" stroke="#64748b" stroke-width="2" marker-end="url(#auto-arrow)"/>
+              <rect x="430" y="709" width="40" height="22" rx="11" fill="#10b981" />
+              <text x="450" y="724" fill="white" font-size="11" font-weight="700" text-anchor="middle">YES</text>
+
+              <!-- 8. Diamond: Exact SKU Found? -->
+              <polygon points="450,750 560,790 450,830 340,790" fill="var(--surface-elevated)" stroke="#f59e0b" stroke-width="2"/>
+              <text x="450" y="794" class="svg-node-text" text-anchor="middle">Exact SKU Found?</text>
+            </g>
+
+            <!-- PATH 2: AUTO-ALLOCATE (Exact SKU Found YES) -->
+            <g class="auto-flow-element path-match">
+              <path d="M560 790 H760 V1015" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#auto-arrow)"/>
+              <rect x="620" y="779" width="40" height="22" rx="11" fill="#10b981" />
+              <text x="640" y="794" fill="white" font-size="11" font-weight="700" text-anchor="middle">YES</text>
+            </g>
+
+            <!-- COMMON PATH (Exact SKU Found NO) -->
+            <g class="auto-flow-element path-exception path-stockout">
+              <path d="M450 830 V890" stroke="#64748b" stroke-width="2" marker-end="url(#auto-arrow)"/>
+              <rect x="430" y="849" width="40" height="22" rx="11" fill="#ef4444" />
+              <text x="450" y="864" fill="white" font-size="11" font-weight="700" text-anchor="middle">NO</text>
+
+              <!-- 9. Process: Find Substitute -->
+              <rect x="300" y="890" width="300" height="50" rx="8" fill="var(--surface-elevated)" stroke="var(--border)" stroke-width="2"/>
+              <text x="450" y="913" class="svg-node-text" text-anchor="middle">Find Substitute</text>
+              <text x="450" y="930" fill="var(--text-dim)" font-size="12" text-anchor="middle">Score: Heuristics &amp; Other Metrics</text>
+              <path d="M450 940 V1000" stroke="#64748b" stroke-width="2" marker-end="url(#auto-arrow)"/>
+
+              <!-- 10. Diamond: Perfect Substitute? -->
+              <polygon points="450,1000 560,1040 450,1080 340,1040" fill="var(--surface-elevated)" stroke="#f59e0b" stroke-width="2"/>
+              <text x="450" y="1044" class="svg-node-text" text-anchor="middle">Perfect Substitute?</text>
+            </g>
+
+            <!-- PATH 3: SUBSTITUTE MATCH (Perfect Substitute YES) -->
+            <g class="auto-flow-element path-exception">
+              <path d="M560 1040 H660" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#auto-arrow)"/>
+              <rect x="580" y="1029" width="40" height="22" rx="11" fill="#10b981" />
+              <text x="600" y="1044" fill="white" font-size="11" font-weight="700" text-anchor="middle">YES</text>
+            </g>
+
+            <!-- PATHWAY TO ALLOCATION & DISPATCH (SHARED BY 2 & 3) -->
+            <g class="auto-flow-element path-match path-exception">
+              <!-- 11. Allocate SKU -->
+              <rect x="660" y="1015" width="200" height="50" rx="8" fill="url(#primaryGradAuto)"/>
+              <text x="760" y="1045" class="svg-white-text" text-anchor="middle">Allocate SKU</text>
+              <path d="M760 1065 V1140" stroke="#64748b" stroke-width="2" marker-end="url(#auto-arrow)"/>
+
+              <!-- 12. Dispatch Order -->
+              <rect x="640" y="1140" width="240" height="50" rx="8" fill="var(--surface-elevated)" stroke="#10b981" stroke-width="2"/>
+              <text x="760" y="1170" class="svg-node-text" text-anchor="middle">Dispatch Order Generated</text>
+              <path d="M760 1190 V1240 H550" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#auto-arrow)"/>
+            </g>
+
+            <!-- PATH 4: STOCKOUT (Perfect Substitute NO) -->
+            <g class="auto-flow-element path-stockout">
+              <path d="M450 1080 V1140" stroke="#64748b" stroke-width="2" marker-end="url(#auto-arrow)"/>
+              <rect x="430" y="1099" width="40" height="22" rx="11" fill="#ef4444" />
+              <text x="450" y="1114" fill="white" font-size="11" font-weight="700" text-anchor="middle">NO</text>
+              <rect x="330" y="1140" width="240" height="45" rx="8" fill="var(--surface-elevated)" stroke="#ef4444" stroke-width="2"/>
+              <text x="450" y="1167" class="svg-node-text" text-anchor="middle">Report Generated</text>
+              <path d="M450 1185 V1215" stroke="#64748b" stroke-width="2" marker-end="url(#auto-arrow)"/>
+            </g>
+
+            <!-- COMMON END NODE -->
+            <g class="auto-flow-element path-skip path-match path-exception path-stockout">
+              <!-- 13. END -->
+              <rect x="350" y="1215" width="200" height="50" rx="25" fill="#053364" />
+              <text x="450" y="1245" class="svg-white-text" text-anchor="middle">END</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 04: Prototype & Interactive POC -->
+
+
+
+    <!-- Section 05: Allocation Logic Flow -->
+
+<section id="allocation-engine">
+      <div class="section-header">
+        <span class="section-num">09</span>
+        <h2 class="section-title">Deterministic Allocation Logic Flow &amp; Rules Engine</h2>
+      </div>
+
+      <p>
+        At the heart of OptiFlow is the <strong>Deterministic Allocation Engine</strong> (<code>backend/app/business/allocation_engine.py</code>). It replaces subjective human spreadsheets with strict mathematical constraints and a tiered waterfall matching algorithm.
+      </p>
+
+      <div class="callout callout-info">
+        <strong>The Deficit Formula:</strong> <code>Deficit = Target (Facing + Depth) - Store Stock On Hand (SOH)</code>. If Deficit &gt; 0, the allocation waterfall begins.
+      </div>
+
+      <div class="grid-3" style="margin-bottom: 24px;">
+        <div class="card">
+          <h4>Tier 1: Recent Sales Match</h4>
+          <p>Fetches exact SKUs sold in the store over the lookback window (Last 7 Days). Verifies warehouse stock and allocates directly.</p>
+        </div>
+        <div class="card">
+          <h4>Tier 2: Historical Sales Match</h4>
+          <p>If Tier 1 stock is unavailable, searches exact SKUs sold over the last 6 months to maintain customer brand affinity.</p>
+        </div>
+        <div class="card">
+          <h4>Tier 3: Substitute Cascade</h4>
+          <p>If exact SKUs are exhausted, evaluates substitute frames within <strong>MRP &plusmn;20%</strong>, systematically relaxing <em>Color &rarr; Material &rarr; Shape</em>.</p>
+        </div>
+      </div>
+
+      <!-- Integrated Interactive SVG Allocation Workflow -->
+<div class="flowchart-section">
+      <h2 style="margin-top: 0; margin-bottom: 8px;">Automated Decision Workflow</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 24px;">End-to-end logic for how the system processes store schedules, calculates deficits, and routes exceptions.</p>
+
+      <!-- Dynamic Interactive Filters -->
+      <div style="margin-bottom: 30px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <button class="filter-btn active" onclick="highlightPath('all')">Show Full Workflow</button>
+        <button class="filter-btn" onclick="highlightPath('path-skip')">Target Met (No Deficit)</button>
+        <button class="filter-btn" onclick="highlightPath('path-t1')">T1 Auto-Allocate</button>
+        <button class="filter-btn" onclick="highlightPath('path-t2')">T2 Auto-Allocate</button>
+        <button class="filter-btn" onclick="highlightPath('path-sub')">T3 Substitute Match</button>
+      </div>
+
+      <div class="svg-container">
+        <svg width="100%" height="1600" viewBox="0 0 1150 1600" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#5a738e" />
+            </marker>
+            <marker id="arrow-orange" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#f5a623" />
+            </marker>
+          </defs>
+
+          <!-- ================= COMMON HEADER & NO-DEFICIT PATHS ================= -->
+          <g class="flow-element path-skip path-t1 path-t2 path-sub path-loop">
+            <!-- Connectors -->
+            <path d="M575 95 V150" stroke="#5a738e" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <path d="M575 195 V240" stroke="#5a738e" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <path d="M575 285 V310" stroke="#5a738e" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+            <!-- 1. Start -->
+            <rect x="475" y="40" width="200" height="55" rx="27.5" fill="#0f3a68" />
+            <text x="575" y="65" class="svg-white-text" text-anchor="middle">Start</text>
+            <text x="575" y="80" class="svg-white-sub" text-anchor="middle">OptiFlow Allocation Process</text>
+
+            <!-- 2. Rank Stores -->
+            <rect x="425" y="150" width="300" height="45" rx="8" fill="#ffffff" stroke="#d9e2ec" stroke-width="2"/>
+            <text x="575" y="168" class="svg-node-text" text-anchor="middle">Initialize &amp; Rank Stores</text>
+            <text x="575" y="182" class="svg-sub-text" text-anchor="middle">Grade Priority A, B, C &amp; Inner Lists</text>
+
+            <!-- 3. Calculate Deficit -->
+            <rect x="425" y="240" width="300" height="45" rx="8" fill="#ffffff" stroke="#d9e2ec" stroke-width="2"/>
+            <text x="575" y="258" class="svg-node-text" text-anchor="middle">Calculate Store Deficits</text>
+            <text x="575" y="227" class="svg-sub-text" text-anchor="middle">Deficit = Target (Facing+Depth) - SOH</text>
+
+            <!-- 4. Diamond: Deficit Exist? -->
+            <polygon points="575,310 655,360 575,410 495,360" fill="#ffffff" stroke="#f5a623" stroke-width="2"/>
+            <text x="575" y="364" class="svg-node-text" text-anchor="middle">Is Deficit &gt; 0?</text>
+          </g>
+
+          <!-- YES branch from Deficit Check (active for Paths 2, 3, 4) -->
+          <g class="flow-element path-t1 path-t2 path-sub path-loop">
+            <path d="M575 410 V510 H240 V570" stroke="#5a738e" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+            <rect x="220" y="500" width="40" height="22" rx="11" fill="#10b981" />
+            <text x="240" y="515" fill="white" font-size="11" font-weight="800" text-anchor="middle">YES</text>
+          </g>
+
+          <!-- Deficit NO Branch (Only active in Path 1) -->
+          <g class="flow-element path-skip">
+            <path d="M495 360 H40 V1510 H475" stroke="#5a738e" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+            <rect x="20" y="349" width="40" height="22" rx="11" fill="#ef4444" />
+            <text x="40" y="364" fill="white" font-size="11" font-weight="800" text-anchor="middle">NO</text>
+          </g>
+
+
+          <!-- ================= COLUMN 1: TIER 1 (Center x=240) ================= -->
+          <!-- T1 Base Nodes (Used in Paths 2, 3, 4, 5) -->
+          <g class="flow-element path-t1 path-t2 path-sub path-loop">
+            <!-- 6. Tier 1 Box -->
+            <rect x="130" y="570" width="220" height="45" rx="8" fill="#ffffff" stroke="#d9e2ec" stroke-width="2"/>
+            <text x="240" y="588" class="svg-node-text" text-anchor="middle">Tier 1: Recent Sales Match</text>
+            <text x="240" y="602" class="svg-sub-text" text-anchor="middle">Fetch exact SKUs sold in Last X Days</text>
+
+            <!-- T1 Constraints Check -->
+            <path d="M240 615 V655" stroke="#5a738e" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <polygon points="240,655 310,705 240,755 170,705" fill="#ffffff" stroke="#f5a623" stroke-width="2"/>
+            <text x="240" y="709" class="svg-node-text" text-anchor="middle">Constraints Met?</text>
+
+            <!-- T1 Constraints Check YES -> In Stock? -->
+            <path d="M240 755 V795" stroke="#5a738e" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <rect x="220" y="764" width="40" height="22" rx="11" fill="#10b981" />
+            <text x="240" y="779" fill="white" font-size="11" font-weight="800" text-anchor="middle">YES</text>
+
+            <!-- T1 Stock Check -->
+            <polygon points="240,795 310,845 240,895 170,845" fill="#ffffff" stroke="#f5a623" stroke-width="2"/>
+            <text x="240" y="849" class="svg-node-text" text-anchor="middle">In Stock?</text>
+          </g>
+
+          <!-- T1 Stock Check NO -> Tier 2 (active for Paths 3, 4) -->
+          <g class="flow-element path-t2 path-sub">
+            <path d="M310 845 H390 V592.5 H465" stroke="#5a738e" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+            <rect x="340" y="834" width="40" height="22" rx="11" fill="#ef4444" />
+            <text x="360" y="849" fill="white" font-size="11" font-weight="800" text-anchor="middle">NO</text>
+          </g>
+
+          <!-- T1 Allocation Path (active for Paths 2, 5) -->
+          <g class="flow-element path-t1 path-loop">
+            <!-- T1 Stock Check YES -->
+            <path d="M240 895 V955" stroke="#5a738e" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <rect x="220" y="915" width="40" height="22" rx="11" fill="#10b981" />
+            <text x="240" y="930" fill="white" font-size="11" font-weight="800" text-anchor="middle">YES</text>
+
+            <!-- 7. Allocate T1 Box -->
+            <rect x="150" y="955" width="180" height="45" rx="8" fill="#ffffff" stroke="#d9e2ec" stroke-width="2"/>
+            <text x="240" y="983" class="svg-node-text" text-anchor="middle">Allocate SKU &amp; Deficit</text>
+
+            <!-- T1 Deficit Filled Check -->
+            <path d="M240 1000 V1035" stroke="#5a738e" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <polygon points="240,1035 310,1085 240,1135 170,1085" fill="#ffffff" stroke="#f5a623" stroke-width="2"/>
+            <text x="240" y="1089" class="svg-node-text" text-anchor="middle">Filled?</text>
+
+            <!-- YES -> FIFO -->
+            <path d="M240 1135 V1210 H425 V1240" stroke="#5a738e" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+            <rect x="220" y="1155" width="40" height="22" rx="11" fill="#10b981" />
+            <text x="240" y="1170" fill="white" font-size="11" font-weight="800" text-anchor="middle">YES</text>
+          </g>
+
+          <!-- T1 Loopbacks (active for Path 5) -->
+          <g class="flow-element path-loop">
+            <!-- Constraints Met? NO Loopback -->
+            <path d="M170 705 H90 V592.5 H130" stroke="#f5a623" stroke-width="2.5" stroke-dasharray="6 6" fill="none" marker-end="url(#arrow-orange)"/>
+            <rect x="70" y="630" width="40" height="22" rx="11" fill="#ef4444" />
+            <text x="90" y="645" fill="white" font-size="11" font-weight="800" text-anchor="middle">NO</text>
+            <text x="80" y="600" fill="#f5a623" font-size="10" font-weight="700" text-anchor="middle" transform="rotate(-90 80 600)">NEXT SKU</text>
+
+            <!-- Filled? NO Loopback -->
+            <path d="M170 1085 H90 V592.5 H130" stroke="#f5a623" stroke-width="2.5" stroke-dasharray="6 6" fill="none" marker-end="url(#arrow-orange)"/>
+            <rect x="70" y="955" width="40" height="22" rx="11" fill="#ef4444" />
+            <text x="90" y="970" fill="white" font-size="11" font-weight="800" text-anchor="middle">NO</text>
+          </g>
+
+
+          <!-- ================= COLUMN 2: TIER 2 (Center x=575) ================= -->
+          <!-- T2 Base Nodes (active for Paths 3, 4) -->
+          <g class="flow-element path-t2 path-sub">
+            <!-- 8. Tier 2 Box -->
+            <rect x="465" y="570" width="220" height="45" rx="8" fill="#ffffff" stroke="#d9e2ec" stroke-width="2"/>
+            <text x="575" y="588" class="svg-node-text" text-anchor="middle">Tier 2: Historical Sales Match</text>
+            <text x="575" y="602" class="svg-sub-text" text-anchor="middle">Fetch exact SKUs sold in Last 6 Months</text>
+
+            <!-- T2 Constraints Check -->
+            <path d="M575 615 V655" stroke="#5a738e" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <polygon points="575,655 645,705 575,755 505,705" fill="#ffffff" stroke="#f5a623" stroke-width="2"/>
+            <text x="575" y="709" class="svg-node-text" text-anchor="middle">Constraints Met?</text>
+
+            <!-- T2 Constraints Check YES -->
+            <path d="M575 755 V795" stroke="#5a738e" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <rect x="555" y="764" width="40" height="22" rx="11" fill="#10b981" />
+            <text x="575" y="779" fill="white" font-size="11" font-weight="800" text-anchor="middle">YES</text>
+
+            <!-- T2 Stock Check -->
+            <polygon points="575,795 645,845 575,895 505,845" fill="#ffffff" stroke="#f5a623" stroke-width="2"/>
+            <text x="575" y="849" class="svg-node-text" text-anchor="middle">In Stock?</text>
+          </g>
+
+          <!-- T2 Stock Check NO -> Tier 3 (active for Path 4) -->
+          <g class="flow-element path-sub">
+            <path d="M645 845 H760 V592.5 H800" stroke="#5a738e" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+            <rect x="700" y="834" width="40" height="22" rx="11" fill="#ef4444" />
+            <text x="720" y="849" fill="white" font-size="11" font-weight="800" text-anchor="middle">NO</text>
+          </g>
+
+          <!-- T2 Allocation Path (active for Path 3) -->
+          <g class="flow-element path-t2">
+            <!-- T2 Stock Check YES -->
+            <path d="M575 895 V955" stroke="#5a738e" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <rect x="555" y="915" width="40" height="22" rx="11" fill="#10b981" />
+            <text x="575" y="930" fill="white" font-size="11" font-weight="800" text-anchor="middle">YES</text>
+
+            <!-- 9. Allocate T2 Box -->
+            <rect x="485" y="955" width="180" height="45" rx="8" fill="#ffffff" stroke="#d9e2ec" stroke-width="2"/>
+            <text x="575" y="983" class="svg-node-text" text-anchor="middle">Allocate SKU &amp; Deficit</text>
+
+            <!-- T2 Deficit Filled Check -->
+            <path d="M575 1000 V1035" stroke="#5a738e" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <polygon points="575,1035 645,1085 575,1135 505,1085" fill="#ffffff" stroke="#f5a623" stroke-width="2"/>
+            <text x="575" y="1089" class="svg-node-text" text-anchor="middle">Filled?</text>
+
+            <!-- YES -> FIFO -->
+            <path d="M575 1135 V1240" stroke="#5a738e" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <rect x="555" y="1155" width="40" height="22" rx="11" fill="#10b981" />
+            <text x="575" y="1170" fill="white" font-size="11" font-weight="800" text-anchor="middle">YES</text>
+          </g>
+
+          <!-- T2 Loopbacks (active for Path 5) -->
+          <g class="flow-element path-loop">
+            <!-- Constraints Met? NO Loopback -->
+            <path d="M505 705 H430 V592.5 H465" stroke="#f5a623" stroke-width="2.5" stroke-dasharray="6 6" fill="none" marker-end="url(#arrow-orange)"/>
+            <rect x="410" y="630" width="40" height="22" rx="11" fill="#ef4444" />
+            <text x="430" y="645" fill="white" font-size="11" font-weight="800" text-anchor="middle">NO</text>
+
+            <!-- Filled? NO Loopback -->
+            <path d="M505 1085 H430 V592.5 H465" stroke="#f5a623" stroke-width="2.5" stroke-dasharray="6 6" fill="none" marker-end="url(#arrow-orange)"/>
+            <rect x="410" y="955" width="40" height="22" rx="11" fill="#ef4444" />
+            <text x="430" y="970" fill="white" font-size="11" font-weight="800" text-anchor="middle">NO</text>
+          </g>
+
+
+          <!-- ================= COLUMN 3: TIER 3 (Center x=910) ================= -->
+          <!-- T3 Base Nodes (active for Path 4) -->
+          <g class="flow-element path-sub">
+            <!-- 10. Tier 3 Box -->
+            <rect x="800" y="570" width="220" height="45" rx="8" fill="#ffffff" stroke="#d9e2ec" stroke-width="2"/>
+            <text x="910" y="588" class="svg-node-text" text-anchor="middle">Tier 3: Substitute Cascade</text>
+            <text x="910" y="602" class="svg-sub-text" text-anchor="middle">MRP ±20% | Relax: Color->Mat->Shape</text>
+
+            <!-- T3 Constraints Check -->
+            <path d="M910 615 V655" stroke="#5a738e" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <polygon points="910,655 980,705 910,755 840,705" fill="#ffffff" stroke="#f5a623" stroke-width="2"/>
+            <text x="910" y="709" class="svg-node-text" text-anchor="middle">Constraints Met?</text>
+
+            <!-- T3 Constraints Check YES -> In Stock? -->
+            <path d="M910 755 V795" stroke="#5a738e" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <rect x="890" y="764" width="40" height="22" rx="11" fill="#10b981" />
+            <text x="910" y="779" fill="white" font-size="11" font-weight="800" text-anchor="middle">YES</text>
+
+            <!-- T3 Stock Check -->
+            <polygon points="910,795 980,845 910,895 840,845" fill="#ffffff" stroke="#f5a623" stroke-width="2"/>
+            <text x="910" y="849" class="svg-node-text" text-anchor="middle">In Stock?</text>
+
+            <!-- T3 Stock Check YES -->
+            <path d="M910 895 V955" stroke="#5a738e" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <rect x="890" y="915" width="40" height="22" rx="11" fill="#10b981" />
+            <text x="910" y="930" fill="white" font-size="11" font-weight="800" text-anchor="middle">YES</text>
+
+            <!-- 11. Allocate T3 Box -->
+            <rect x="820" y="955" width="180" height="45" rx="8" fill="#ffffff" stroke="#d9e2ec" stroke-width="2"/>
+            <text x="910" y="983" class="svg-node-text" text-anchor="middle">Allocate Substitute SKU</text>
+
+            <!-- T3 Deficit Filled Check -->
+            <path d="M910 1000 V1035" stroke="#5a738e" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <polygon points="910,1035 980,1085 910,1135 840,1085" fill="#ffffff" stroke="#f5a623" stroke-width="2"/>
+            <text x="910" y="1089" class="svg-node-text" text-anchor="middle">Filled?</text>
+
+            <!-- T3 Deficit Filled YES -> Routes down to FIFO -->
+            <path d="M910 1135 V1210 H725 V1240" stroke="#5a738e" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+            <rect x="890" y="1155" width="40" height="22" rx="11" fill="#10b981" />
+            <text x="910" y="1170" fill="white" font-size="11" font-weight="800" text-anchor="middle">YES</text>
+          </g>
+
+          <!-- T3 Stock Check NO -> Routes right and down on the margin (x=1110) to center right side of FIFO (y=1280) -->
+          <g class="flow-element path-sub">
+            <path d="M980,845 H1110 V1280 H725" stroke="#5a738e" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+            <rect x="1030" y="834" width="40" height="22" rx="11" fill="#ef4444" />
+            <text x="1050" y="849" fill="white" font-size="11" font-weight="800" text-anchor="middle">NO</text>
+          </g>
+
+          <!-- T3 Loopbacks (active for Path 5) -->
+          <g class="flow-element path-loop">
+            <!-- Constraints Met? NO Loopback -->
+            <path d="M840 705 H800 V592.5 H800" stroke="#f5a623" stroke-width="2.5" stroke-dasharray="6 6" fill="none" marker-end="url(#arrow-orange)"/>
+            <rect x="780" y="630" width="40" height="22" rx="11" fill="#ef4444" />
+            <text x="800" y="645" fill="white" font-size="11" font-weight="800" text-anchor="middle">NO</text>
+
+            <!-- Filled? NO Loopback -->
+            <path d="M840 1085 H800 V592.5 H800" stroke="#f5a623" stroke-width="2.5" stroke-dasharray="6 6" fill="none" marker-end="url(#arrow-orange)"/>
+            <rect x="780" y="955" width="40" height="22" rx="11" fill="#ef4444" />
+            <text x="800" y="970" fill="white" font-size="11" font-weight="800" text-anchor="middle">NO</text>
+          </g>
+
+
+          <!-- ================= COMMON FOOTER SECTION ================= -->
+          <!-- Active for Paths 2, 3, 4, 5 -->
+          <g class="flow-element path-t1 path-t2 path-sub path-loop">
+            <!-- 12. FIFO Batch Rule -->
+            <rect x="425" y="1240" width="300" height="80" rx="8" fill="#ffffff" stroke="#d9e2ec" stroke-width="2"/>
+            <text x="575" y="1270" class="svg-node-text" text-anchor="middle">Apply FIFO Batch Rule</text>
+            <text x="575" y="1290" class="svg-sub-text" text-anchor="middle">Pull oldest warehouse stock age first</text>
+
+            <path d="M575 1320 V1380" stroke="#5a738e" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+            <!-- 13. Dispatch Order -->
+            <rect x="425" y="1380" width="300" height="45" rx="8" fill="#ffffff" stroke="#10b981" stroke-width="2"/>
+            <text x="575" y="1407" class="svg-node-text" text-anchor="middle">Generate Dispatch Order</text>
+
+            <path d="M575 1407" stroke="#5a738e" stroke-width="2.5"/> <!-- anchor link spacer -->
+            <path d="M575 1425 V1485" stroke="#5a738e" stroke-width="2.5" marker-end="url(#arrow)"/>
+          </g>
+
+          <!-- 14. END Node (Active in all paths) -->
+          <g class="flow-element path-skip path-t1 path-t2 path-sub path-loop">
+            <rect x="475" y="1485" width="200" height="50" rx="25" fill="#0f3a68" />
+            <text x="575" y="1515" class="svg-white-text" text-anchor="middle">END</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  
+    </section>
+
+    <!-- Section 06: Architecture Diagram -->
+
+<section id="infrastructure-topology">
+      <div class="section-header">
+        <span class="section-num">10</span>
+        <h2 class="section-title">Architecture Diagram: Hybrid &amp; Cloud GCP Topology</h2>
+      </div>
+
+      <p>
+        OptiFlow is designed for hybrid deployment: running seamlessly as an on-premise local appliance in network edge environments, or as a horizontally scalable containerized system on <strong>Google Cloud Platform (GCP)</strong>.
+      </p>
+
+      <!-- Interactive Architecture Diagrams Tabbed View -->
+      <div class="card" style="padding: 24px;">
+<div class="tabs">
+    <button class="tab-btn active" onclick="openArchTab(event,'system-layer-arch')">System Layer Architecture</button>
+    <button class="tab-btn" onclick="openArchTab(event,'onprem-hl')">On-Premise Infrastructure</button>
+    <button class="tab-btn" onclick="openArchTab(event,'onprem-ll')">On-Premise Data Pipelines</button>
+    <button class="tab-btn" onclick="openArchTab(event,'cloud-hl')">Cloud GCP Infrastructure</button>
+    <button class="tab-btn" onclick="openArchTab(event,'cloud-ll')">Cloud GCP Data Pipelines</button>
+</div>
+
+<!-- ============================================================
+     TAB 0: SYSTEM LAYER ARCHITECTURE (UPDATED)
+     ============================================================ -->
+<div id="system-layer-arch" class="tab-content active">
+    <div class="diagram-wrapper">
+        <div class="diagram-title">
+            System Layer Architecture - Multi-Tier Topology
+            <span class="badge">Core Architecture</span>
+        </div>
+        <p style="margin: 0 0 16px 0; font-size: 14px; color: var(--text-muted);">
+            Clear separation of concerns: The <strong>REST API / API Gateway</strong> sits directly between the <strong>Client Layer</strong> and the <strong>Business Services Layer</strong>, while the <strong>Data Access Layer</strong> strictly manages database persistence.
+        </p>
+        <div style="display: flex; justify-content: center; background: var(--surface); border-radius: 12px; padding: 16px; border: 1px solid var(--border);">
+            <img src="arch.png" alt="OptiFlow System Layer Architecture Diagram" style="width: 100%; max-width: 950px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);" />
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================
+     TAB 1: ON-PREM HIGH LEVEL
+     ============================================================ -->
+<div id="onprem-hl" class="tab-content">
+    <div class="diagram-wrapper">
+        <div class="diagram-title">
+            On-Premise - High-Level System Architecture
+            <span class="badge">High Level</span>
+        </div>
+
+        <div class="arch-svg-container">
+            <div class="mobile-swipe-hint">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18-6-6 6-6"/><path d="m15 18 6-6-6-6"/></svg>
+                Swipe to explore diagram
+            </div>
+            <svg class="arch-svg" viewBox="0 0 1000 340" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+                <defs>
+                    <marker id="hl-arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#64748b"/></marker>
+                    <marker id="hl-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#2563eb"/></marker>
+                    <marker id="hl-purple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#7c3aed"/></marker>
+
+                    <!-- LUCIDE VECTOR ICON SYMBOLS -->
+                    <!-- User Icon -->
+                    <g id="icon-user" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </g>
+                    <!-- Shield/Lock Icon -->
+                    <g id="icon-shield" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </g>
+                    <!-- Chart Icon -->
+                    <g id="icon-chart" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="20" x2="18" y2="10"/>
+                        <line x1="12" y1="20" x2="12" y2="4"/>
+                        <line x1="6" y1="20" x2="6" y2="14"/>
+                    </g>
+                    <!-- Globe Icon -->
+                    <g id="icon-globe" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="2" y1="12" x2="22" y2="12"/>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </g>
+                    <!-- Layout/React Icon -->
+                    <g id="icon-layout" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="3" y1="9" x2="21" y2="9"/>
+                        <line x1="9" y1="21" x2="9" y2="9"/>
+                    </g>
+                    <!-- Zap Icon -->
+                    <g id="icon-zap" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </g>
+                    <!-- Cpu Engine Icon -->
+                    <g id="icon-cpu" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="4" width="16" height="16" rx="2"/>
+                        <rect x="9" y="9" width="6" height="6"/>
+                        <line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/>
+                        <line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/>
+                        <line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="15" x2="23" y2="15"/>
+                        <line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="15" x2="4" y2="15"/>
+                    </g>
+                    <!-- Database Icon -->
+                    <g id="icon-db" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                    </g>
+                    <!-- Folder/Storage Icon -->
+                    <g id="icon-folder" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </g>
+                    <!-- File Logs Icon -->
+                    <g id="icon-logs" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </g>
+                </defs>
+
+                <!-- Swimlane Backgrounds -->
+                <rect x="10"  y="20" width="145" height="290" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+                <rect x="170" y="20" width="145" height="290" rx="8" fill="#ecfeff" stroke="#a5f3fc" stroke-width="1.5"/>
+                <rect x="330" y="20" width="145" height="290" rx="8" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.5"/>
+                <rect x="490" y="20" width="145" height="290" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/>
+                <rect x="650" y="20" width="145" height="290" rx="8" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1.5"/>
+                <rect x="810" y="20" width="175" height="290" rx="8" fill="#fdf2f8" stroke="#f9a8d4" stroke-width="1.5"/>
+
+                <!-- Swimlane Headers -->
+                <text x="82"  y="42" text-anchor="middle" fill="#475569" font-size="11" font-weight="700">USERS</text>
+                <text x="242" y="42" text-anchor="middle" fill="#0891b2" font-size="11" font-weight="700">FRONTEND</text>
+                <text x="402" y="42" text-anchor="middle" fill="#FFB611" font-size="11" font-weight="700">API GATEWAY</text>
+                <text x="562" y="42" text-anchor="middle" fill="#1d4ed8" font-size="11" font-weight="700">ENGINE</text>
+                <text x="722" y="42" text-anchor="middle" fill="#6d28d9" font-size="11" font-weight="700">DATABASE</text>
+                <text x="897" y="42" text-anchor="middle" fill="#be185d" font-size="11" font-weight="700">STORAGE / LOGS</text>
+
+                <!-- NODES -->
+                <!-- Users -->
+                <rect x="25" y="70" width="115" height="60" rx="8" fill="#374151"/>
+                <use href="#icon-user" xlink:href="#icon-user" x="73" y="80" width="18" height="18" color="#9ca3af"/>
+                <text x="82" y="116" text-anchor="middle" fill="white" font-size="11" font-weight="600">Dashboard User</text>
+
+                <rect x="25" y="150" width="115" height="60" rx="8" fill="#4b5563"/>
+                <use href="#icon-shield" xlink:href="#icon-shield" x="73" y="160" width="18" height="18" color="#d1d5db"/>
+                <text x="82" y="196" text-anchor="middle" fill="white" font-size="11" font-weight="600">Admin User</text>
+
+                <rect x="25" y="230" width="115" height="60" rx="8" fill="#6b7280"/>
+                <use href="#icon-chart" xlink:href="#icon-chart" x="73" y="240" width="18" height="18" color="#e5e7eb"/>
+                <text x="82" y="276" text-anchor="middle" fill="white" font-size="11" font-weight="600">POS / ERP Source</text>
+
+                <!-- Frontend -->
+                <rect x="185" y="70" width="115" height="60" rx="8" fill="#0e7490"/>
+                <use href="#icon-globe" xlink:href="#icon-globe" x="233" y="80" width="18" height="18" color="#cffafe"/>
+                <text x="242" y="116" text-anchor="middle" fill="white" font-size="11" font-weight="700">Nginx Proxy</text>
+
+                <rect x="185" y="170" width="115" height="80" rx="8" fill="#0891b2"/>
+                <use href="#icon-layout" xlink:href="#icon-layout" x="233" y="180" width="18" height="18" color="#a5f3fc"/>
+                <text x="242" y="214" text-anchor="middle" fill="white" font-size="11" font-weight="700">React.js SPA</text>
+                <text x="242" y="234" text-anchor="middle" fill="#cffafe" font-size="9">TanStack Suite</text>
+
+                <!-- API Gateway -->
+                <rect x="345" y="120" width="115" height="80" rx="8" fill="#FFB611"/>
+                <use href="#icon-zap" xlink:href="#icon-zap" x="393" y="130" width="18" height="18" color="#fef3c7"/>
+                <text x="402" y="164" text-anchor="middle" fill="white" font-size="11" font-weight="700">FastAPI</text>
+                <text x="402" y="184" text-anchor="middle" fill="#fef3c7" font-size="9">REST & CSV Validator</text>
+
+                <!-- Engine -->
+                <rect x="505" y="120" width="115" height="80" rx="8" fill="#1d4ed8"/>
+                <use href="#icon-cpu" xlink:href="#icon-cpu" x="553" y="130" width="18" height="18" color="#bfdbfe"/>
+                <text x="562" y="164" text-anchor="middle" fill="white" font-size="11" font-weight="700">Python Engine</text>
+                <text x="562" y="184" text-anchor="middle" fill="#bfdbfe" font-size="9">Pandas / Polars</text>
+
+                <!-- Database -->
+                <rect x="665" y="120" width="115" height="80" rx="8" fill="#6d28d9"/>
+                <use href="#icon-db" xlink:href="#icon-db" x="713" y="130" width="18" height="18" color="#ede9fe"/>
+                <text x="722" y="164" text-anchor="middle" fill="white" font-size="11" font-weight="700">PostgreSQL 15</text>
+                <text x="722" y="184" text-anchor="middle" fill="#ede9fe" font-size="9">SQLAlchemy ORM + Alembic</text>
+
+                <!-- Storage / Ops -->
+                <rect x="830" y="70" width="135" height="60" rx="8" fill="#be185d"/>
+                <use href="#icon-folder" xlink:href="#icon-folder" x="888" y="80" width="18" height="18" color="#fce7f3"/>
+                <text x="897" y="116" text-anchor="middle" fill="white" font-size="11" font-weight="700">CSV Archive</text>
+
+                <rect x="830" y="170" width="135" height="60" rx="8" fill="#9d174d"/>
+                <use href="#icon-logs" xlink:href="#icon-logs" x="888" y="180" width="18" height="18" color="#fbcfe8"/>
+                <text x="897" y="216" text-anchor="middle" fill="white" font-size="11" font-weight="700">App Logs & Admin</text>
+
+                <!-- CLEAN STRAIGHT ARROWS -->
+                <line x1="140" y1="100" x2="183" y2="100" stroke="#64748b" stroke-width="1.5" marker-end="url(#hl-arr)"/>
+                <line x1="140" y1="190" x2="183" y2="190" stroke="#64748b" stroke-width="1.5" marker-end="url(#hl-arr)"/>
+                <line x1="140" y1="260" x2="183" y2="230" stroke="#64748b" stroke-width="1.5" marker-end="url(#hl-arr)"/>
+                
+                <line x1="242" y1="130" x2="242" y2="168" stroke="#0891b2" stroke-width="1.5" marker-end="url(#hl-arr)"/>
+                <line x1="300" y1="190" x2="343" y2="175" stroke="#64748b" stroke-width="1.5" marker-end="url(#hl-arr)"/>
+                
+                <line x1="460" y1="160" x2="503" y2="160" stroke="#2563eb" stroke-width="1.5" marker-end="url(#hl-blue)"/>
+                <line x1="620" y1="160" x2="663" y2="160" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#hl-purple)"/>
+                <line x1="780" y1="140" x2="828" y2="100" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#hl-arr)"/>
+                <line x1="780" y1="170" x2="828" y2="190" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#hl-arr)"/>
+            </svg>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#374151"></div> Users / External</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div> Frontend (React + Nginx)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#FFB611"></div> API Gateway (FastAPI)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#1d4ed8"></div> Allocation Engine (Python)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#6d28d9"></div> Database (PostgreSQL)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#be185d"></div> Storage / Ops</div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================
+     TAB 2: ON-PREM LOW LEVEL
+     ============================================================ -->
+<div id="onprem-ll" class="tab-content">
+    <div class="diagram-wrapper">
+        <div class="diagram-title">
+            On-Premise - Low-Level Request & Data Flow
+            <span class="badge">Low Level</span>
+        </div>
+
+        <div class="arch-svg-container">
+            <div class="mobile-swipe-hint">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18-6-6 6-6"/><path d="m15 18 6-6-6-6"/></svg>
+                Swipe to explore diagram
+            </div>
+            <svg class="arch-svg" viewBox="0 0 1080 560" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+                <defs>
+                    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#64748b"/></marker>
+                    <marker id="arr-red" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#dc2626"/></marker>
+                    <marker id="arr-green" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#16a34a"/></marker>
+                </defs>
+
+                <!-- FLOW 1: Auth & Dashboard Access -->
+                <rect x="20" y="15" width="290" height="22" rx="4" fill="#e2e8f0"/>
+                <text x="30" y="30" font-size="11" font-weight="700" fill="#1e293b">① AUTHENTICATION & DASHBOARD ACCESS</text>
+                
+                <rect x="20" y="45" width="130" height="50" rx="8" fill="#374151"/>
+                <text x="85" y="66" text-anchor="middle" fill="white" font-size="11" font-weight="700">Browser User</text>
+                <text x="85" y="82" text-anchor="middle" fill="#9ca3af" font-size="9">Opens On-Prem URL</text>
+                <line x1="150" y1="70" x2="175" y2="70" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                <rect x="177" y="45" width="140" height="50" rx="8" fill="#0891b2"/>
+                <text x="247" y="66" text-anchor="middle" fill="white" font-size="11" font-weight="700">Nginx Proxy</text>
+                <text x="247" y="82" text-anchor="middle" fill="#cffafe" font-size="9">Serves React SPA</text>
+                <line x1="317" y1="70" x2="342" y2="70" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                <rect x="344" y="45" width="150" height="50" rx="8" fill="#FFB611"/>
+                <text x="419" y="66" text-anchor="middle" fill="white" font-size="11" font-weight="700">FastAPI Auth</text>
+                <text x="419" y="82" text-anchor="middle" fill="#fef3c7" font-size="9">Verifies JWT Token</text>
+                <line x1="494" y1="70" x2="519" y2="70" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                <rect x="521" y="45" width="160" height="50" rx="8" fill="#6d28d9"/>
+                <text x="601" y="66" text-anchor="middle" fill="white" font-size="11" font-weight="700">PostgreSQL Session</text>
+                <text x="601" y="82" text-anchor="middle" fill="#ede9fe" font-size="9">Fetches Master Data</text>
+                <line x1="681" y1="70" x2="706" y2="70" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                <rect x="708" y="45" width="170" height="50" rx="8" fill="#166534"/>
+                <text x="793" y="66" text-anchor="middle" fill="white" font-size="11" font-weight="700">Dashboard Render</text>
+                <text x="793" y="82" text-anchor="middle" fill="#bbf7d0" font-size="9">TanStack Grid Ready</text>
+
+                <!-- FLOW 2: Dashboard Edit Path -->
+                <rect x="20" y="115" width="300" height="22" rx="4" fill="#e2e8f0"/>
+                <text x="30" y="130" font-size="11" font-weight="700" fill="#1e293b">② DASHBOARD EDIT & AUDIT TRANSACTION</text>
+                
+                <rect x="20" y="145" width="130" height="50" rx="8" fill="#374151"/>
+                <text x="85" y="166" text-anchor="middle" fill="white" font-size="11" font-weight="700">User Edit</text>
+                <text x="85" y="182" text-anchor="middle" fill="#9ca3af" font-size="9">Modifies Team Rank</text>
+                <line x1="150" y1="170" x2="175" y2="170" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                <rect x="177" y="145" width="140" height="50" rx="8" fill="#FFB611"/>
+                <text x="247" y="166" text-anchor="middle" fill="white" font-size="11" font-weight="700">FastAPI</text>
+                <text x="247" y="182" text-anchor="middle" fill="#fef3c7" font-size="9">PATCH /stores/{id}</text>
+                <line x1="317" y1="170" x2="342" y2="170" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                <rect x="344" y="145" width="180" height="50" rx="8" fill="#7c3aed"/>
+                <text x="434" y="166" text-anchor="middle" fill="white" font-size="11" font-weight="700">PostgreSQL Transaction</text>
+                <text x="434" y="182" text-anchor="middle" fill="#ede9fe" font-size="9">BEGIN; SET LOCAL user</text>
+                <line x1="524" y1="170" x2="549" y2="170" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                <rect x="551" y="145" width="150" height="50" rx="8" fill="#6d28d9"/>
+                <text x="626" y="166" text-anchor="middle" fill="white" font-size="11" font-weight="700">UPDATE Table</text>
+                <text x="626" y="182" text-anchor="middle" fill="#ede9fe" font-size="9">Fires BEFORE Trigger</text>
+                <line x1="701" y1="170" x2="726" y2="170" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                <rect x="728" y="145" width="160" height="50" rx="8" fill="#166534"/>
+                <text x="808" y="166" text-anchor="middle" fill="white" font-size="11" font-weight="700">INSERT {table}_audit</text>
+                <text x="808" y="182" text-anchor="middle" fill="#bbf7d0" font-size="9">Mirror Copy -> COMMIT</text>
+
+                <!-- FLOW 3: CSV Upload Path -->
+                <rect x="20" y="215" width="270" height="22" rx="4" fill="#e2e8f0"/>
+                <text x="30" y="230" font-size="11" font-weight="700" fill="#1e293b">③ CSV UPLOAD & VALIDATION PIPELINE</text>
+                
+                <rect x="20" y="245" width="130" height="50" rx="8" fill="#374151"/>
+                <text x="85" y="266" text-anchor="middle" fill="white" font-size="11" font-weight="700">User Upload</text>
+                <text x="85" y="282" text-anchor="middle" fill="#9ca3af" font-size="9">Stock / Sales CSV</text>
+                <line x1="150" y1="270" x2="175" y2="270" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                <rect x="177" y="245" width="140" height="50" rx="8" fill="#FFB611"/>
+                <text x="247" y="266" text-anchor="middle" fill="white" font-size="11" font-weight="700">FastAPI</text>
+                <text x="247" y="282" text-anchor="middle" fill="#fef3c7" font-size="9">POST /upload/stock</text>
+                <line x1="317" y1="270" x2="342" y2="270" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                <rect x="344" y="245" width="150" height="50" rx="8" fill="#be185d"/>
+                <text x="419" y="266" text-anchor="middle" fill="white" font-size="11" font-weight="700">Pandas Validator</text>
+                <text x="419" y="282" text-anchor="middle" fill="#fce7f3" font-size="9">Schema & Alias Check</text>
+
+                <!-- PASS Branch -->
+                <line x1="494" y1="260" x2="529" y2="250" stroke="#16a34a" stroke-width="2" stroke-dasharray="4,2" marker-end="url(#arr-green)"/>
+                <text x="510" y="248" text-anchor="middle" fill="#16a34a" font-size="9" font-weight="700">PASS</text>
+                <rect x="531" y="235" width="170" height="50" rx="8" fill="#166534"/>
+                <text x="616" y="256" text-anchor="middle" fill="white" font-size="11" font-weight="700">PostgreSQL UPSERT</text>
+                <text x="616" y="272" text-anchor="middle" fill="#bbf7d0" font-size="9">Save & Archive to /data/</text>
+
+                <!-- FAIL Branch -->
+                <line x1="494" y1="280" x2="529" y2="300" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,2" marker-end="url(#arr-red)"/>
+                <text x="510" y="302" text-anchor="middle" fill="#dc2626" font-size="9" font-weight="700">FAIL</text>
+                <rect x="531" y="292" width="170" height="40" rx="8" fill="#fee2e2" stroke="#fca5a5" stroke-width="1.5"/>
+                <text x="616" y="310" text-anchor="middle" fill="#991b1b" font-size="10" font-weight="700">Reject Upload (csv_errors)</text>
+
+                <!-- FLOW 4: Allocation Run -->
+                <rect x="20" y="350" width="240" height="22" rx="4" fill="#e2e8f0"/>
+                <text x="30" y="365" font-size="11" font-weight="700" fill="#1e293b">④ ALLOCATION ENGINE RUN FLOW</text>
+                
+                <rect x="20" y="380" width="130" height="50" rx="8" fill="#374151"/>
+                <text x="85" y="401" text-anchor="middle" fill="white" font-size="11" font-weight="700">Admin User</text>
+                <text x="85" y="417" text-anchor="middle" fill="#9ca3af" font-size="9">Triggers Allocation</text>
+                <line x1="150" y1="405" x2="175" y2="405" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                <rect x="177" y="380" width="140" height="50" rx="8" fill="#FFB611"/>
+                <text x="247" y="401" text-anchor="middle" fill="white" font-size="11" font-weight="700">FastAPI</text>
+                <text x="247" y="417" text-anchor="middle" fill="#fef3c7" font-size="9">POST /allocations/run</text>
+                <line x1="317" y1="405" x2="342" y2="405" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                <rect x="344" y="380" width="150" height="50" rx="8" fill="#1d4ed8"/>
+                <text x="419" y="401" text-anchor="middle" fill="white" font-size="11" font-weight="700">Python Engine</text>
+                <text x="419" y="417" text-anchor="middle" fill="#bfdbfe" font-size="9">Async Worker (Celery/Cloud Run)</text>
+                <line x1="494" y1="405" x2="519" y2="405" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                <rect x="521" y="380" width="160" height="50" rx="8" fill="#2563eb"/>
+                <text x="601" y="401" text-anchor="middle" fill="white" font-size="11" font-weight="700">Matching Logic</text>
+                <text x="601" y="417" text-anchor="middle" fill="#bfdbfe" font-size="9">T1 -> T2 -> T3 Match</text>
+                <line x1="681" y1="405" x2="706" y2="405" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                <rect x="708" y="380" width="170" height="50" rx="8" fill="#6d28d9"/>
+                <text x="793" y="401" text-anchor="middle" fill="white" font-size="11" font-weight="700">SQLAlchemy Bulk Save</text>
+                <text x="793" y="417" text-anchor="middle" fill="#ede9fe" font-size="9">Batch run_id UUID</text>
+
+                <!-- FLOW 5: Rollback & Admin Alerts -->
+                <rect x="20" y="450" width="280" height="22" rx="4" fill="#e2e8f0"/>
+                <text x="30" y="465" font-size="11" font-weight="700" fill="#1e293b">⑤ ALLOCATION ROLLBACK & MONITORING</text>
+                
+                <rect x="20" y="480" width="130" height="50" rx="8" fill="#374151"/>
+                <text x="85" y="501" text-anchor="middle" fill="white" font-size="11" font-weight="700">Admin User</text>
+                <text x="85" y="517" text-anchor="middle" fill="#9ca3af" font-size="9">Clicks Rollback</text>
+                <line x1="150" y1="505" x2="175" y2="505" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                <rect x="177" y="480" width="140" height="50" rx="8" fill="#FFB611"/>
+                <text x="247" y="501" text-anchor="middle" fill="white" font-size="11" font-weight="700">FastAPI</text>
+                <text x="247" y="517" text-anchor="middle" fill="#fef3c7" font-size="9">DELETE /allocations/{id}</text>
+                <line x1="317" y1="505" x2="342" y2="505" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                <rect x="344" y="480" width="160" height="50" rx="8" fill="#7c3aed"/>
+                <text x="424" y="501" text-anchor="middle" fill="white" font-size="11" font-weight="700">Postgres Transaction</text>
+                <text x="424" y="517" text-anchor="middle" fill="#ede9fe" font-size="9">DELETE + Audit Rollback</text>
+                <line x1="504" y1="505" x2="529" y2="505" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                <rect x="531" y="480" width="160" height="50" rx="8" fill="#be185d"/>
+                <text x="611" y="501" text-anchor="middle" fill="white" font-size="11" font-weight="700">Structured App Log</text>
+                <text x="611" y="517" text-anchor="middle" fill="#fce7f3" font-size="9">JSON /var/log/optiflow</text>
+                <line x1="691" y1="505" x2="716" y2="505" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+                <rect x="718" y="480" width="160" height="50" rx="8" fill="#166534"/>
+                <text x="798" y="501" text-anchor="middle" fill="white" font-size="11" font-weight="700">Admin Log Viewer</text>
+                <text x="798" y="517" text-anchor="middle" fill="#bbf7d0" font-size="9">Email Alert on ERROR</text>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================
+     TAB 3: CLOUD HIGH LEVEL
+     ============================================================ -->
+<div id="cloud-hl" class="tab-content">
+    <div class="diagram-wrapper">
+        <div class="diagram-title">
+            Cloud (GCP) - High-Level System Architecture
+            <span class="badge">High Level</span>
+        </div>
+
+        <div class="arch-svg-container">
+            <div class="mobile-swipe-hint">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18-6-6 6-6"/><path d="m15 18 6-6-6-6"/></svg>
+                Swipe to explore diagram
+            </div>
+            <svg class="arch-svg" viewBox="0 0 1060 340" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+                <defs>
+                    <marker id="cg-arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#64748b"/></marker>
+                    <marker id="cg-green" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#16a34a"/></marker>
+                    <marker id="cg-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#2563eb"/></marker>
+                    <marker id="cg-purple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#7c3aed"/></marker>
+
+                    <g id="icon-user" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </g>
+                    <g id="icon-shield" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </g>
+                    <g id="icon-chart" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="20" x2="18" y2="10"/>
+                        <line x1="12" y1="20" x2="12" y2="4"/>
+                        <line x1="6" y1="20" x2="6" y2="14"/>
+                    </g>
+                    <g id="icon-globe" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="2" y1="12" x2="22" y2="12"/>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </g>
+                    <g id="icon-layout" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="3" y1="9" x2="21" y2="9"/>
+                        <line x1="9" y1="21" x2="9" y2="9"/>
+                    </g>
+                    <g id="icon-zap" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </g>
+                    <g id="icon-cpu" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="4" width="16" height="16" rx="2"/>
+                        <rect x="9" y="9" width="6" height="6"/>
+                        <line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/>
+                        <line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/>
+                        <line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="15" x2="23" y2="15"/>
+                        <line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="15" x2="4" y2="15"/>
+                    </g>
+                    <g id="icon-db" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                    </g>
+                    <g id="icon-folder" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </g>
+                    <g id="icon-logs" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </g>
+                </defs>
+
+                <!-- Swimlane BGs -->
+                <rect x="10"  y="20" width="130" height="290" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+                <rect x="155" y="20" width="135" height="290" rx="8" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.5"/>
+                <rect x="305" y="20" width="135" height="290" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/>
+                <rect x="455" y="20" width="135" height="290" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/>
+                <rect x="605" y="20" width="135" height="290" rx="8" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1.5"/>
+                <rect x="755" y="20" width="145" height="290" rx="8" fill="#fdf2f8" stroke="#f9a8d4" stroke-width="1.5"/>
+                <rect x="915" y="20" width="135" height="290" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+
+                <!-- Headers -->
+                <text x="75"  y="42" text-anchor="middle" fill="#475569" font-size="11" font-weight="700">USERS</text>
+                <text x="222" y="42" text-anchor="middle" fill="#FFB611" font-size="11" font-weight="700">CDN / HOSTING</text>
+                <text x="372" y="42" text-anchor="middle" fill="#16a34a" font-size="11" font-weight="700">API GATEWAY</text>
+                <text x="522" y="42" text-anchor="middle" fill="#2563eb" font-size="11" font-weight="700">ENGINE</text>
+                <text x="672" y="42" text-anchor="middle" fill="#7c3aed" font-size="11" font-weight="700">DATABASE</text>
+                <text x="827" y="42" text-anchor="middle" fill="#be185d" font-size="11" font-weight="700">CLOUD STORAGE</text>
+                <text x="982" y="42" text-anchor="middle" fill="#166534" font-size="11" font-weight="700">MONITORING</text>
+
+                <!-- NODES -->
+                <!-- Users -->
+                <rect x="20" y="70" width="110" height="60" rx="8" fill="#374151"/>
+                <use href="#icon-user" xlink:href="#icon-user" x="66" y="80" width="18" height="18" color="#9ca3af"/>
+                <text x="75" y="116" text-anchor="middle" fill="white" font-size="10" font-weight="600">Dashboard User</text>
+
+                <rect x="20" y="150" width="110" height="60" rx="8" fill="#4b5563"/>
+                <use href="#icon-shield" xlink:href="#icon-shield" x="66" y="160" width="18" height="18" color="#d1d5db"/>
+                <text x="75" y="196" text-anchor="middle" fill="white" font-size="10" font-weight="600">Admin User</text>
+
+                <rect x="20" y="230" width="110" height="60" rx="8" fill="#6b7280"/>
+                <use href="#icon-chart" xlink:href="#icon-chart" x="66" y="240" width="18" height="18" color="#e5e7eb"/>
+                <text x="75" y="276" text-anchor="middle" fill="white" font-size="10" font-weight="600">POS / ERP Source</text>
+
+                <!-- CDN / Hosting -->
+                <rect x="165" y="70" width="115" height="60" rx="8" fill="#FFB611"/>
+                <use href="#icon-globe" xlink:href="#icon-globe" x="213" y="80" width="18" height="18" color="#fef3c7"/>
+                <text x="222" y="116" text-anchor="middle" fill="white" font-size="10" font-weight="700">Firebase Hosting</text>
+
+                <rect x="165" y="170" width="115" height="80" rx="8" fill="#f59e0b"/>
+                <use href="#icon-layout" xlink:href="#icon-layout" x="213" y="180" width="18" height="18" color="#fef3c7"/>
+                <text x="222" y="214" text-anchor="middle" fill="white" font-size="10" font-weight="700">React SPA</text>
+                <text x="222" y="234" text-anchor="middle" fill="#fef3c7" font-size="9">Global Edge CDN</text>
+
+                <!-- API Gateway -->
+                <rect x="315" y="120" width="115" height="80" rx="8" fill="#16a34a"/>
+                <use href="#icon-zap" xlink:href="#icon-zap" x="363" y="130" width="18" height="18" color="#dcfce7"/>
+                <text x="372" y="164" text-anchor="middle" fill="white" font-size="10" font-weight="700">Cloud Run</text>
+                <text x="372" y="184" text-anchor="middle" fill="#dcfce7" font-size="9">FastAPI Gateway</text>
+
+                <!-- Engine -->
+                <rect x="465" y="120" width="115" height="80" rx="8" fill="#2563eb"/>
+                <use href="#icon-cpu" xlink:href="#icon-cpu" x="513" y="130" width="18" height="18" color="#bfdbfe"/>
+                <text x="522" y="164" text-anchor="middle" fill="white" font-size="10" font-weight="700">Cloud Run Job</text>
+                <text x="522" y="184" text-anchor="middle" fill="#bfdbfe" font-size="9">Python Worker Script</text>
+
+                <!-- Database -->
+                <rect x="615" y="120" width="115" height="80" rx="8" fill="#7c3aed"/>
+                <use href="#icon-db" xlink:href="#icon-db" x="663" y="130" width="18" height="18" color="#ede9fe"/>
+                <text x="672" y="164" text-anchor="middle" fill="white" font-size="10" font-weight="700">Cloud SQL</text>
+                <text x="672" y="184" text-anchor="middle" fill="#ede9fe" font-size="9">SQLAlchemy/Alembic</text>
+
+                <!-- Cloud Storage -->
+                <rect x="765" y="70" width="125" height="60" rx="8" fill="#be185d"/>
+                <use href="#icon-folder" xlink:href="#icon-folder" x="818" y="80" width="18" height="18" color="#fce7f3"/>
+                <text x="827" y="116" text-anchor="middle" fill="white" font-size="10" font-weight="700">Cloud Storage</text>
+
+                <rect x="765" y="170" width="125" height="60" rx="8" fill="#9d174d"/>
+                <use href="#icon-logs" xlink:href="#icon-logs" x="818" y="180" width="18" height="18" color="#fbcfe8"/>
+                <text x="827" y="216" text-anchor="middle" fill="white" font-size="10" font-weight="700">Artifact Registry</text>
+
+                <!-- Monitoring -->
+                <rect x="925" y="120" width="115" height="80" rx="8" fill="#166534"/>
+                <use href="#icon-chart" xlink:href="#icon-chart" x="973" y="130" width="18" height="18" color="#bbf7d0"/>
+                <text x="982" y="164" text-anchor="middle" fill="white" font-size="10" font-weight="700">Cloud Logging</text>
+                <text x="982" y="184" text-anchor="middle" fill="#bbf7d0" font-size="9">& Monitoring</text>
+
+                <!-- ARROWS -->
+                <line x1="130" y1="100" x2="163" y2="100" stroke="#64748b" stroke-width="1.5" marker-end="url(#cg-arr)"/>
+                <line x1="130" y1="180" x2="163" y2="180" stroke="#64748b" stroke-width="1.5" marker-end="url(#cg-arr)"/>
+                <line x1="130" y1="260" x2="163" y2="230" stroke="#64748b" stroke-width="1.5" marker-end="url(#cg-arr)"/>
+
+                <line x1="222" y1="130" x2="222" y2="168" stroke="#FFB611" stroke-width="1.5" marker-end="url(#cg-arr)"/>
+                <line x1="280" y1="200" x2="313" y2="175" stroke="#64748b" stroke-width="1.5" marker-end="url(#cg-arr)"/>
+
+                <line x1="430" y1="160" x2="463" y2="160" stroke="#16a34a" stroke-width="1.5" marker-end="url(#cg-green)"/>
+                <line x1="580" y1="160" x2="613" y2="160" stroke="#2563eb" stroke-width="1.5" marker-end="url(#cg-blue)"/>
+                <line x1="730" y1="160" x2="763" y2="100" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#cg-purple)"/>
+                <line x1="730" y1="160" x2="763" y2="190" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#cg-purple)"/>
+                <line x1="890" y1="160" x2="923" y2="160" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#cg-arr)"/>
+            </svg>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#374151"></div> Users / External</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#FFB611"></div> Firebase Hosting / CDN</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div> Cloud Run (FastAPI Gateway)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#2563eb"></div> Cloud Run Job (Python Engine)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div> Cloud SQL (PostgreSQL)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#be185d"></div> Cloud Storage & Registry</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#166534"></div> Cloud Logging & Alerts</div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================
+     TAB 4: CLOUD LOW LEVEL
+     ============================================================ -->
+<div id="cloud-ll" class="tab-content">
+    <div class="diagram-wrapper">
+        <div class="diagram-title">
+            Cloud (GCP) - Low-Level Request & Data Flow
+            <span class="badge">Low Level</span>
+        </div>
+
+        <div class="arch-svg-container">
+            <div class="mobile-swipe-hint">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18-6-6 6-6"/><path d="m15 18 6-6-6-6"/></svg>
+                Swipe to explore diagram
+            </div>
+            <svg class="arch-svg" viewBox="0 0 1080 560" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+                <defs>
+                    <marker id="cl" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#64748b"/></marker>
+                    <marker id="cl-red" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#dc2626"/></marker>
+                    <marker id="cl-green" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#16a34a"/></marker>
+                </defs>
+
+                <!-- FLOW 1: Auth & Dashboard Access -->
+                <rect x="20" y="15" width="330" height="22" rx="4" fill="#e2e8f0"/>
+                <text x="30" y="30" font-size="11" font-weight="700" fill="#1e293b">① AUTHENTICATION & DASHBOARD ACCESS (GCP)</text>
+                
+                <rect x="20" y="45" width="130" height="50" rx="8" fill="#374151"/>
+                <text x="85" y="66" text-anchor="middle" fill="white" font-size="11" font-weight="700">Browser User</text>
+                <text x="85" y="82" text-anchor="middle" fill="#9ca3af" font-size="9">Firebase Domain</text>
+                <line x1="150" y1="70" x2="175" y2="70" stroke="#64748b" stroke-width="1.5" marker-end="url(#cl)"/>
+
+                <rect x="177" y="45" width="140" height="50" rx="8" fill="#FFB611"/>
+                <text x="247" y="66" text-anchor="middle" fill="white" font-size="11" font-weight="700">Firebase Hosting</text>
+                <text x="247" y="82" text-anchor="middle" fill="#fef3c7" font-size="9">CDN serves React SPA</text>
+                <line x1="317" y1="70" x2="342" y2="70" stroke="#64748b" stroke-width="1.5" marker-end="url(#cl)"/>
+
+                <rect x="344" y="45" width="140" height="50" rx="8" fill="#166534"/>
+                <text x="414" y="66" text-anchor="middle" fill="white" font-size="11" font-weight="700">Firebase Auth</text>
+                <text x="414" y="82" text-anchor="middle" fill="#bbf7d0" font-size="9">OAuth JWT Verification</text>
+                <line x1="484" y1="70" x2="509" y2="70" stroke="#64748b" stroke-width="1.5" marker-end="url(#cl)"/>
+
+                <rect x="511" y="45" width="160" height="50" rx="8" fill="#16a34a"/>
+                <text x="591" y="66" text-anchor="middle" fill="white" font-size="11" font-weight="700">Cloud Run FastAPI</text>
+                <text x="591" y="82" text-anchor="middle" fill="#dcfce7" font-size="9">Validates Bearer Token</text>
+                <line x1="671" y1="70" x2="696" y2="70" stroke="#64748b" stroke-width="1.5" marker-end="url(#cl)"/>
+
+                <rect x="698" y="45" width="170" height="50" rx="8" fill="#7c3aed"/>
+                <text x="783" y="66" text-anchor="middle" fill="white" font-size="11" font-weight="700">Cloud SQL (Postgres)</text>
+                <text x="783" y="82" text-anchor="middle" fill="#ede9fe" font-size="9">Auth Proxy Connection</text>
+
+                <!-- FLOW 2: Dashboard Edit Path -->
+                <rect x="20" y="115" width="370" height="22" rx="4" fill="#e2e8f0"/>
+                <text x="30" y="130" font-size="11" font-weight="700" fill="#1e293b">② DASHBOARD EDIT & AUDIT TRANSACTION (CLOUD SQL)</text>
+                
+                <rect x="20" y="145" width="130" height="50" rx="8" fill="#374151"/>
+                <text x="85" y="166" text-anchor="middle" fill="white" font-size="11" font-weight="700">User Edit</text>
+                <text x="85" y="182" text-anchor="middle" fill="#9ca3af" font-size="9">Modifies Team Rank</text>
+                <line x1="150" y1="170" x2="175" y2="170" stroke="#64748b" stroke-width="1.5" marker-end="url(#cl)"/>
+
+                <rect x="177" y="145" width="140" height="50" rx="8" fill="#16a34a"/>
+                <text x="247" y="166" text-anchor="middle" fill="white" font-size="11" font-weight="700">Cloud Run FastAPI</text>
+                <text x="247" y="182" text-anchor="middle" fill="#dcfce7" font-size="9">PATCH /stores/{id}</text>
+                <line x1="317" y1="170" x2="342" y2="170" stroke="#64748b" stroke-width="1.5" marker-end="url(#cl)"/>
+
+                <rect x="344" y="145" width="180" height="50" rx="8" fill="#7c3aed"/>
+                <text x="434" y="166" text-anchor="middle" fill="white" font-size="11" font-weight="700">Cloud SQL Transaction</text>
+                <text x="434" y="182" text-anchor="middle" fill="#ede9fe" font-size="9">BEGIN; SET LOCAL user</text>
+                <line x1="524" y1="170" x2="549" y2="170" stroke="#64748b" stroke-width="1.5" marker-end="url(#cl)"/>
+
+                <rect x="551" y="145" width="150" height="50" rx="8" fill="#6d28d9"/>
+                <text x="626" y="166" text-anchor="middle" fill="white" font-size="11" font-weight="700">UPDATE Table</text>
+                <text x="626" y="182" text-anchor="middle" fill="#ede9fe" font-size="9">Fires BEFORE Trigger</text>
+                <line x1="701" y1="170" x2="726" y2="170" stroke="#64748b" stroke-width="1.5" marker-end="url(#cl)"/>
+
+                <rect x="728" y="145" width="160" height="50" rx="8" fill="#166534"/>
+                <text x="808" y="166" text-anchor="middle" fill="white" font-size="11" font-weight="700">INSERT {table}_audit</text>
+                <text x="808" y="182" text-anchor="middle" fill="#bbf7d0" font-size="9">Mirror Copy -> COMMIT</text>
+
+                <!-- FLOW 3: CSV Upload Path -->
+                <rect x="20" y="215" width="390" height="22" rx="4" fill="#e2e8f0"/>
+                <text x="30" y="230" font-size="11" font-weight="700" fill="#1e293b">③ CSV UPLOAD & STORAGE PIPELINE (CLOUD STORAGE)</text>
+                
+                <rect x="20" y="245" width="130" height="50" rx="8" fill="#374151"/>
+                <text x="85" y="266" text-anchor="middle" fill="white" font-size="11" font-weight="700">User Upload</text>
+                <text x="85" y="282" text-anchor="middle" fill="#9ca3af" font-size="9">Stock / Sales CSV</text>
+                <line x1="150" y1="270" x2="175" y2="270" stroke="#64748b" stroke-width="1.5" marker-end="url(#cl)"/>
+
+                <rect x="177" y="245" width="140" height="50" rx="8" fill="#16a34a"/>
+                <text x="247" y="266" text-anchor="middle" fill="white" font-size="11" font-weight="700">Cloud Run FastAPI</text>
+                <text x="247" y="282" text-anchor="middle" fill="#dcfce7" font-size="9">POST /upload/stock</text>
+                <line x1="317" y1="270" x2="342" y2="270" stroke="#64748b" stroke-width="1.5" marker-end="url(#cl)"/>
+
+                <rect x="344" y="245" width="150" height="50" rx="8" fill="#be185d"/>
+                <text x="419" y="266" text-anchor="middle" fill="white" font-size="11" font-weight="700">Pandas Validator</text>
+                <text x="419" y="282" text-anchor="middle" fill="#fce7f3" font-size="9">Schema & Alias Check</text>
+
+                <!-- PASS Branch -->
+                <line x1="494" y1="260" x2="529" y2="250" stroke="#16a34a" stroke-width="2" stroke-dasharray="4,2" marker-end="url(#cl-green)"/>
+                <text x="510" y="248" text-anchor="middle" fill="#16a34a" font-size="9" font-weight="700">PASS</text>
+                <rect x="531" y="235" width="180" height="50" rx="8" fill="#166534"/>
+                <text x="621" y="256" text-anchor="middle" fill="white" font-size="11" font-weight="700">Cloud SQL & GCS Bucket</text>
+                <text x="621" y="272" text-anchor="middle" fill="#bbf7d0" font-size="9">UPSERT Data & Versioned Archive</text>
+
+                <!-- FAIL Branch -->
+                <line x1="494" y1="280" x2="529" y2="300" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,2" marker-end="url(#cl-red)"/>
+                <text x="510" y="302" text-anchor="middle" fill="#dc2626" font-size="9" font-weight="700">FAIL</text>
+                <rect x="531" y="292" width="180" height="40" rx="8" fill="#fee2e2" stroke="#fca5a5" stroke-width="1.5"/>
+                <text x="621" y="310" text-anchor="middle" fill="#991b1b" font-size="10" font-weight="700">Reject Upload (csv_errors)</text>
+
+                <!-- FLOW 4: Allocation Run -->
+                <rect x="20" y="350" width="280" height="22" rx="4" fill="#e2e8f0"/>
+                <text x="30" y="365" font-size="11" font-weight="700" fill="#1e293b">④ CLOUD RUN JOB ALLOCATION ENGINE</text>
+                
+                <rect x="20" y="380" width="130" height="50" rx="8" fill="#374151"/>
+                <text x="85" y="401" text-anchor="middle" fill="white" font-size="11" font-weight="700">Admin User</text>
+                <text x="85" y="417" text-anchor="middle" fill="#9ca3af" font-size="9">Triggers Allocation</text>
+                <line x1="150" y1="405" x2="175" y2="405" stroke="#64748b" stroke-width="1.5" marker-end="url(#cl)"/>
+
+                <rect x="177" y="380" width="140" height="50" rx="8" fill="#16a34a"/>
+                <text x="247" y="401" text-anchor="middle" fill="white" font-size="11" font-weight="700">Cloud Run FastAPI</text>
+                <text x="247" y="417" text-anchor="middle" fill="#dcfce7" font-size="9">POST /allocations/run</text>
+                <line x1="317" y1="405" x2="342" y2="405" stroke="#64748b" stroke-width="1.5" marker-end="url(#cl)"/>
+
+                <rect x="344" y="380" width="150" height="50" rx="8" fill="#2563eb"/>
+                <text x="419" y="401" text-anchor="middle" fill="white" font-size="11" font-weight="700">Cloud Run Job</text>
+                <text x="419" y="417" text-anchor="middle" fill="#bfdbfe" font-size="9">Container On-Demand</text>
+                <line x1="494" y1="405" x2="519" y2="405" stroke="#64748b" stroke-width="1.5" marker-end="url(#cl)"/>
+
+                <rect x="521" y="380" width="160" height="50" rx="8" fill="#2563eb"/>
+                <text x="601" y="401" text-anchor="middle" fill="white" font-size="11" font-weight="700">Matching Logic</text>
+                <text x="601" y="417" text-anchor="middle" fill="#bfdbfe" font-size="9">T1 -> T2 -> T3 Match</text>
+                <line x1="681" y1="405" x2="706" y2="405" stroke="#64748b" stroke-width="1.5" marker-end="url(#cl)"/>
+
+                <rect x="708" y="380" width="170" height="50" rx="8" fill="#7c3aed"/>
+                <text x="793" y="401" text-anchor="middle" fill="white" font-size="11" font-weight="700">INSERT Allocations</text>
+                <text x="793" y="417" text-anchor="middle" fill="#ede9fe" font-size="9">Cloud SQL run_id UUID</text>
+
+                <!-- FLOW 5: Rollback & Admin Alerts -->
+                <rect x="20" y="450" width="310" height="22" rx="4" fill="#e2e8f0"/>
+                <text x="30" y="465" font-size="11" font-weight="700" fill="#1e293b">⑤ ALLOCATION ROLLBACK & CLOUD MONITORING</text>
+                
+                <rect x="20" y="480" width="130" height="50" rx="8" fill="#374151"/>
+                <text x="85" y="501" text-anchor="middle" fill="white" font-size="11" font-weight="700">Admin User</text>
+                <text x="85" y="517" text-anchor="middle" fill="#9ca3af" font-size="9">Clicks Rollback</text>
+                <line x1="150" y1="505" x2="175" y2="505" stroke="#64748b" stroke-width="1.5" marker-end="url(#cl)"/>
+
+                <rect x="177" y="480" width="140" height="50" rx="8" fill="#16a34a"/>
+                <text x="247" y="501" text-anchor="middle" fill="white" font-size="11" font-weight="700">Cloud Run FastAPI</text>
+                <text x="247" y="517" text-anchor="middle" fill="#dcfce7" font-size="9">DELETE /allocations/{id}</text>
+                <line x1="317" y1="505" x2="342" y2="505" stroke="#64748b" stroke-width="1.5" marker-end="url(#cl)"/>
+
+                <rect x="344" y="480" width="160" height="50" rx="8" fill="#7c3aed"/>
+                <text x="424" y="501" text-anchor="middle" fill="white" font-size="11" font-weight="700">Cloud SQL Transaction</text>
+                <text x="424" y="517" text-anchor="middle" fill="#ede9fe" font-size="9">DELETE + Audit Rollback</text>
+                <line x1="504" y1="505" x2="529" y2="505" stroke="#64748b" stroke-width="1.5" marker-end="url(#cl)"/>
+
+                <rect x="531" y="480" width="160" height="50" rx="8" fill="#166534"/>
+                <text x="611" y="501" text-anchor="middle" fill="white" font-size="11" font-weight="700">Cloud Logging Sink</text>
+                <text x="611" y="517" text-anchor="middle" fill="#bbf7d0" font-size="9">Auto-ingests stdout</text>
+                <line x1="691" y1="505" x2="716" y2="505" stroke="#64748b" stroke-width="1.5" marker-end="url(#cl)"/>
+
+                <rect x="718" y="480" width="160" height="50" rx="8" fill="#166534"/>
+                <text x="798" y="501" text-anchor="middle" fill="white" font-size="11" font-weight="700">Cloud Monitoring</text>
+                <text x="798" y="517" text-anchor="middle" fill="#bbf7d0" font-size="9">Alert policy -> Email/Slack</text>
+            </svg>
+        </div>
+    </div>
+</div>
+
+
+
+
+      </div>
+    </section>
+
+    <!-- Section 07: N-Tier Closed Layer Architecture -->
+
+<section id="faq"><div class="section-header"><span class="section-num">11</span><h2 class="section-title">Frequently Asked Questions</h2></div>
+<details class="collapsible-card" open><summary><span>Do we need technical skills to use OptiFlow?</span></summary><div class="collapsible-body"><p>No. If your team can export a spreadsheet and click approve, they can use OptiFlow.</p></div></details>
+<details class="collapsible-card"><summary><span>What happens if an exact frame is out of stock?</span></summary><div class="collapsible-body"><p>OptiFlow suggests the closest available alternative and your manager approves it , no guesswork.</p></div></details>
+<details class="collapsible-card"><summary><span>How long does a replenishment run take?</span></summary><div class="collapsible-body"><p>Seconds per store, versus 5.5 hours manually , a 99.8% time saving.</p></div></details>
+<details class="collapsible-card"><summary><span>Can we see the history of past runs?</span></summary><div class="collapsible-body"><p>Yes. Every run is saved with a full, auditable history of what was planned and approved.</p></div></details>
+<details class="collapsible-card"><summary><span>What data do you need from us to start?</span></summary><div class="collapsible-body"><p>Just your routine exports: current store stock, warehouse stock, your store list with grades, and display targets per store. Messy names and legacy codes are fine, OptiFlow maps them to clean master records automatically.</p></div></details>
+<details class="collapsible-card"><summary><span>How does the pilot work?</span></summary><div class="collapsible-body"><p>We start with a small set of stores using your real data and run OptiFlow side by side with your current manual process, so you can compare the plans, timing, and accuracy before committing to a full rollout.</p></div></details>
+<details class="collapsible-card"><summary><span>Who approves substitutions when stock runs short?</span></summary><div class="collapsible-body"><p>Your manager always has the final say. The engine suggests the closest available alternative in tiers, exact match first, then similar, then substitute, and nothing ships without your approval.</p></div></details>
+<details class="collapsible-card"><summary><span>Do high-priority stores get preferential treatment?</span></summary><div class="collapsible-body"><p>Yes. Store grades (A, B, C) and dispatch cycles are built into the allocation rules, so flagship stores are served first while every location still gets a fair, transparent share.</p></div></details>
+<details class="collapsible-card"><summary><span>Is our sales and inventory data safe?</span></summary><div class="collapsible-body"><p>Yes. Access is role-based, logins are secured, and every change, uploads, edits, approvals, is recorded in an immutable audit trail showing who did what and when.</p></div></details>
+<details class="collapsible-card"><summary><span>What training does our team need?</span></summary><div class="collapsible-body"><p>Very little. If your team can export a spreadsheet and click approve, they can use OptiFlow. We run a short onboarding session and stay on hand through the pilot.</p></div></details>
+<details class="collapsible-card"><summary><span>What happens when something looks wrong in a plan?</span></summary><div class="collapsible-body"><p>Exceptions are flagged in a review queue instead of slipping through. Your manager can adjust or override any line with a reason, and the override is logged, the system learns nothing silently, you stay in control.</p></div></details></section>
+<section id="contact"><div class="section-header"><span class="section-num">12</span><h2 class="section-title">Contact</h2></div><div class="card" style="border-left:4px solid var(--primary);"><h4>Talk to the DEKODE team</h4><p>Ready for a walkthrough or pilot? Reach out and we will schedule a session with your merchandising team.</p><p style="margin-top:12px;"><strong>Email:</strong> <a href="mailto:contactus@dekodeglobal.com" style="color:var(--primary);font-weight:700;">contactus@dekodeglobal.com</a><br><strong>Phone:</strong> <a href="tel:+61421196363" style="color:var(--primary);font-weight:700;">+61 421 196 363</a></p><p><strong>Melbourne (HQ):</strong> Little Collins Street, Melbourne VIC 3000<br><strong>New Delhi:</strong> Janak Puri, New Delhi 110058</p><p><a href="https://dekodeglobal.com" target="_blank" rel="noopener" style="color:var(--primary);font-weight:700;">dekodeglobal.com &nearr;</a></p><p style="margin-top:12px;"><a href="https://optiflow-poc.pages.dev" target="_blank" rel="noopener" style="color:var(--primary);font-weight:700;">View the live prototype -></a></p></div></section>
+</main>
+<a href="#" class="back-to-top" id="back-to-top" title="Back to top">↑</a>
+<script>const themeBtn=document.getElementById('theme-toggle');const themeIcon=document.getElementById('theme-icon');const htmlEl=document.documentElement;
+function applyTheme(t){htmlEl.setAttribute('data-theme',t);try{localStorage.setItem('optiflow-client-theme',t);}catch(e){}if(themeIcon)themeIcon.textContent=t==='light'?String.fromCharCode(0xD83C,0xDF19):String.fromCharCode(0x2600,0xFE0F);if(themeBtn)themeBtn.setAttribute('title',t==='light'?'Switch to Dark Mode':'Switch to Light Mode');}
+let saved='dark';try{saved=localStorage.getItem('optiflow-client-theme')||'dark';}catch(e){}applyTheme(saved);
+if(themeBtn)themeBtn.addEventListener('click',()=>{applyTheme(htmlEl.getAttribute('data-theme')==='light'?'dark':'light');});
+function filterNav(){const q=document.getElementById('sidebar-filter').value.toLowerCase();document.querySelectorAll('#nav-container a').forEach(a=>{a.parentElement.style.display=a.textContent.toLowerCase().includes(q)?'':'none';});}
+const btt=document.getElementById('back-to-top');window.addEventListener('scroll',()=>{btt.style.display=window.scrollY>600?'flex':'none';});btt.style.display='none';</script>
+<script>function toggleMobileMenu(){var s=document.getElementById("sidebar");if(s)s.classList.toggle("open");}</script></body>
+</html>

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { 
   ShieldCheck, 
   Lock, 
-  ExternalLink, 
   Layers, 
   Code2, 
   LogOut, 
@@ -15,39 +14,95 @@ import {
 } from 'lucide-react';
 
 const INTERNAL_AUTH_KEY = 'dekode_internal_kb_auth';
+const INTERNAL_ROLE_KEY = 'dekode_internal_kb_role';
 const INTERNAL_THEME_KEY = 'dekode_internal_kb_theme';
-const VALID_PASSWORD = 'deko1234';
+const TEAM_PASSWORD = 'deko1234';
+const CLIENT_PASSWORD = 'client1234';
 
 const MODULES = [
   {
     id: 'standards',
     num: '01',
-    title: 'Company Engineering Standards',
+    title: 'Company Standards',
     tag: 'Core Standards',
+    tier: 'internal',
     status: 'Ready',
+    statusLabel: 'Ready',
     icon: Code2,
+    accent: '#FFB611',
+    accentBg: 'rgba(255, 182, 17, 0.12)',
     url: '/internal-docs/company-standards/index.html',
-    desc: 'Engineering protocols, Git hygiene, security & testing benchmarks.'
+    desc: 'Engineering protocols, Git hygiene, security and testing benchmarks.'
   },
   {
     id: 'optiflow',
     num: '02',
     title: 'OptiFlow',
     tag: 'System & Architecture',
+    tier: 'internal',
     status: 'Ready',
+    statusLabel: 'Ready',
     icon: Layers,
+    accent: '#22d3ee',
+    accentBg: 'rgba(34, 211, 238, 0.12)',
     url: '/internal-docs/optiflow/index.html',
-    desc: 'Distribution engine, FIFO allocation, diagrams & contributor guide.'
+    desc: 'Distribution engine, FIFO allocation, diagrams and contributor guide.'
   },
   {
     id: 'krafc',
     num: '03',
     title: 'krafc',
     tag: '3D CAD & Spatial WebGL',
+    tier: 'internal',
     status: 'Ready',
+    statusLabel: 'Ready',
     icon: PackageCheck,
+    accent: '#0ea5e9',
+    accentBg: 'rgba(14, 165, 233, 0.12)',
     url: '/internal-docs/krafc/index.html',
-    desc: 'Dual-engine Konva/BabylonJS architecture, spatial math & technical specs.'
+    desc: 'Dual-engine Konva/BabylonJS architecture, spatial math and specs.'
+  },
+  {
+    id: 'client-standards',
+    num: 'C1',
+    title: 'Company Standards',
+    tag: 'Client Hub',
+    tier: 'external',
+    status: 'Ready',
+    statusLabel: 'Ready',
+    icon: Code2,
+    accent: '#FFB611',
+    accentBg: 'rgba(255, 182, 17, 0.12)',
+    url: '/client-docs/company-standards/index.html',
+    desc: 'How we work, what we deliver, FAQs and contact details.'
+  },
+  {
+    id: 'client-optiflow',
+    num: 'C2',
+    title: 'OptiFlow Overview',
+    tag: 'Client Hub',
+    tier: 'external',
+    status: 'Ready',
+    statusLabel: 'Ready',
+    icon: Layers,
+    accent: '#22d3ee',
+    accentBg: 'rgba(34, 211, 238, 0.12)',
+    url: '/client-docs/optiflow/index.html',
+    desc: 'Product tour, live prototype, FAQs and onboarding info.'
+  },
+  {
+    id: 'client-krafc',
+    num: 'C3',
+    title: 'krafc Overview',
+    tag: 'Client Hub',
+    tier: 'external',
+    status: 'Ready',
+    statusLabel: 'Ready',
+    icon: PackageCheck,
+    accent: '#0ea5e9',
+    accentBg: 'rgba(14, 165, 233, 0.12)',
+    url: '/client-docs/krafc/index.html',
+    desc: 'Product tour, live platform preview, FAQs and project flow.'
   }
 ];
 
@@ -61,6 +116,9 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
   const [passwordInput, setPasswordInput] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [selectedDoc, setSelectedDoc] = useState(null);
+  const [role, setRole] = useState(() => {
+    return sessionStorage.getItem(INTERNAL_ROLE_KEY) || 'internal';
+  });
 
   const isLight = theme === 'light';
 
@@ -83,28 +141,37 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
   };
 
   useEffect(() => {
-    document.title = 'DEKODE — Team Knowledge Base';
+    document.title = 'DEKODE - Knowledge Base';
     window.scrollTo(0, 0);
   }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (passwordInput.trim() === VALID_PASSWORD) {
-      sessionStorage.setItem(INTERNAL_AUTH_KEY, 'authenticated');
-      setIsAuthenticated(true);
-      setErrorMsg('');
+    const input = passwordInput.trim().toLowerCase();
+    let nextRole = null;
+    if (input === TEAM_PASSWORD.toLowerCase()) {
+      nextRole = 'internal';
+    } else if (input === CLIENT_PASSWORD.toLowerCase()) {
+      nextRole = 'external';
     } else {
-      setErrorMsg('Incorrect team password.');
+      setErrorMsg('Incorrect password.');
+      return;
     }
+    setErrorMsg('');
+    sessionStorage.setItem(INTERNAL_AUTH_KEY, 'authenticated');
+    sessionStorage.setItem(INTERNAL_ROLE_KEY, nextRole);
+    setRole(nextRole);
+    setIsAuthenticated(true);
   };
 
   const handleLogout = () => {
     sessionStorage.removeItem(INTERNAL_AUTH_KEY);
+    sessionStorage.removeItem(INTERNAL_ROLE_KEY);
     setIsAuthenticated(false);
     setSelectedDoc(null);
   };
 
-  // Clean, high-legibility minimalist palette
+    // Clean, consistent gold-accented palette across both light and dark modes
   const t = {
     bg: isLight ? '#f8fafc' : '#080d1a',
     surface: isLight ? '#ffffff' : '#0e1526',
@@ -113,8 +180,9 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
     text: isLight ? '#0f172a' : '#f8fafc',
     textMuted: isLight ? '#475569' : '#94a3b8',
     textDim: isLight ? '#64748b' : '#64748b',
-    gold: '#f5a623',
-    goldBg: isLight ? '#fffbeb' : 'rgba(245, 166, 35, 0.08)',
+    gold: '#FFB611',
+    goldBg: isLight ? 'rgba(255, 182, 17, 0.14)' : 'rgba(255, 182, 17, 0.12)',
+    goldSolidText: isLight ? '#000000' : '#FFB611',
     inputBg: isLight ? '#ffffff' : '#040711',
     cardHover: isLight ? '#f1f5f9' : '#131c33'
   };
@@ -125,13 +193,15 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
       <div style={{
         width: '100%',
         minHeight: '100vh',
-        backgroundColor: t.bg,
+        background: isLight
+          ? 'linear-gradient(180deg, #f8faff 0%, #e2e8f0 100%)'
+          : 'radial-gradient(circle at 50% 30%, rgba(255, 182, 17, 0.06), transparent 60%), #080d1a',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '20px',
         boxSizing: 'border-box',
-        fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif",
+        fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
         color: t.text,
         position: 'relative'
       }}>
@@ -141,10 +211,10 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
           aria-label="Toggle theme"
           style={{
             position: 'absolute',
-            top: '16px',
-            right: '16px',
-            background: 'none',
-            border: `1px solid ${t.border}`,
+            top: '20px',
+            right: '20px',
+            background: isLight ? '#ffffff' : 'none',
+            border: `1px solid ${isLight ? '#cbd5e1' : t.border}`,
             color: t.text,
             width: '38px',
             height: '38px',
@@ -152,47 +222,60 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            boxShadow: isLight ? '0 2px 8px rgba(0,0,0,0.05)' : 'none'
           }}
         >
-          {isLight ? <Moon size={16} /> : <Sun size={16} color={t.gold} />}
+          {isLight ? <Moon size={16} color="#0f172a" /> : <Sun size={16} color={t.gold} />}
         </button>
 
         <div style={{
           width: '100%',
           maxWidth: '380px',
-          backgroundColor: t.surface,
-          borderRadius: '16px',
-          border: `1px solid ${t.border}`,
-          padding: '32px 24px',
+          borderRadius: '20px',
+          border: isLight ? '1px solid #cbd5e1' : `1px solid ${t.border}`,
+          padding: '36px 28px',
           textAlign: 'center',
-          boxShadow: isLight ? '0 10px 30px rgba(0,0,0,0.04)' : '0 20px 50px rgba(0,0,0,0.5)'
+          boxShadow: isLight
+            ? '0 10px 30px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(0,0,0,0.04)'
+            : '0 20px 50px rgba(0,0,0,0.5), 0 0 60px rgba(255, 182, 17, 0.06)',
+          position: 'relative'
         }}>
           <div style={{
-            width: '48px',
-            height: '48px',
-            borderRadius: '12px',
-            background: t.goldBg,
-            border: `1px solid rgba(245, 166, 35, 0.25)`,
+            width: '64px',
+            height: '64px',
+            borderRadius: '18px',
+            background: isLight
+              ? '#FFB611'
+              : `radial-gradient(circle at 50% 35%, rgba(255, 182, 17, 0.25), ${t.goldBg})`,
+            border: isLight ? 'none' : '1px solid rgba(255, 182, 17, 0.35)',
+            boxShadow: isLight ? '0 4px 14px rgba(255, 182, 17, 0.35)' : '0 0 32px rgba(255, 182, 17, 0.20)',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
             marginBottom: '16px',
-            color: t.gold
+            color: isLight ? '#000000' : t.gold
           }}>
-            <ShieldCheck size={24} />
+            <ShieldCheck size={28} strokeWidth={2.5} />
           </div>
 
-          <div style={{ fontSize: '11px', letterSpacing: '0.1em', color: t.gold, fontWeight: 700, textTransform: 'uppercase', marginBottom: '6px' }}>
-            DEKODE Internal
+          <div style={{
+            fontSize: '11px',
+            letterSpacing: '0.12em',
+            color: isLight ? '#b45309' : t.gold,
+            fontWeight: 800,
+            textTransform: 'uppercase',
+            marginBottom: '6px'
+          }}>
+            DEKODE INTERNAL
           </div>
 
-          <h1 style={{ fontSize: '20px', fontWeight: 800, margin: '0 0 8px', letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontFamily: "'Outfit', sans-serif", fontSize: '22px', fontWeight: 800, margin: '0 0 8px', letterSpacing: '-0.02em', color: t.text }}>
             Team Knowledge Base
           </h1>
 
           <p style={{ fontSize: '13px', color: t.textMuted, margin: '0 0 24px', lineHeight: '1.4' }}>
-            Enter team passkey to access engineering documentation.
+            Enter your team or client passkey to access documentation.
           </p>
 
           <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -205,18 +288,21 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
                   setPasswordInput(e.target.value);
                   if (errorMsg) setErrorMsg('');
                 }}
-                placeholder="Team password"
+                placeholder="Team or client password"
                 autoFocus
+                onFocus={(e) => { e.target.style.borderColor = t.gold; e.target.style.boxShadow = '0 0 0 3px rgba(255, 182, 17, 0.25)'; }}
+                onBlur={(e) => { e.target.style.borderColor = errorMsg ? '#ef4444' : (isLight ? '#cbd5e1' : t.border); e.target.style.boxShadow = 'none'; }}
                 style={{
                   width: '100%',
                   padding: '12px 14px 12px 38px',
-                  backgroundColor: t.inputBg,
-                  border: errorMsg ? '1px solid #ef4444' : `1px solid ${t.border}`,
+                  backgroundColor: isLight ? '#f8fafc' : t.inputBg,
+                  border: errorMsg ? '1px solid #ef4444' : (isLight ? '1px solid #cbd5e1' : `1px solid ${t.border}`),
                   borderRadius: '10px',
                   color: t.text,
                   fontSize: '14px',
                   outline: 'none',
-                  boxSizing: 'border-box'
+                  boxSizing: 'border-box',
+                  transition: 'border-color 0.15s ease, box-shadow 0.15s ease'
                 }}
               />
             </div>
@@ -230,19 +316,23 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
 
             <button
               type="submit"
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 182, 17, 0.4)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
               style={{
                 width: '100%',
                 padding: '12px',
-                background: t.gold,
+                background: 'linear-gradient(135deg, #ffd34d 0%, #FFB611 50%, #e69a00 100%)',
                 border: 'none',
                 borderRadius: '10px',
                 color: '#080d1a',
-                fontWeight: 700,
+                fontFamily: "'Outfit', sans-serif",
+                fontWeight: 800,
                 fontSize: '14px',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                transition: 'transform 0.15s ease, box-shadow 0.15s ease'
               }}
             >
-              Continue
+              Enter Knowledge Base
             </button>
           </form>
         </div>
@@ -259,7 +349,7 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
         flexDirection: 'column',
         backgroundColor: t.bg,
         color: t.text,
-        fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif"
+        fontFamily: "'Inter', system-ui, -apple-system, sans-serif"
       }}>
         {/* Minimal Reader Bar */}
         <header style={{
@@ -324,27 +414,6 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
             >
               {isLight ? <Moon size={14} /> : <Sun size={14} color={t.gold} />}
             </button>
-
-            <a
-              href={selectedDoc.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Open full page"
-              style={{
-                background: t.goldBg,
-                border: `1px solid rgba(245, 166, 35, 0.3)`,
-                color: t.gold,
-                width: '32px',
-                height: '32px',
-                borderRadius: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textDecoration: 'none'
-              }}
-            >
-              <ExternalLink size={14} />
-            </a>
           </div>
         </header>
 
@@ -368,13 +437,17 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
   }
 
   // 3. Clean & Minimalist Knowledge Base Hub (Mobile First, No Fluff)
+  // View is driven by login role: team password shows internal docs,
+  // client password shows client-safe docs. No manual switching.
+  const visibleModules = MODULES.filter((m) => (m.tier || 'internal') === role);
+  const isClient = role === 'external';
   return (
     <div style={{
       width: '100%',
       minHeight: '100vh',
       backgroundColor: t.bg,
       color: t.text,
-      fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif",
+      fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
       boxSizing: 'border-box'
     }}>
       {/* Sleek Header */}
@@ -466,7 +539,7 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
             letterSpacing: '-0.02em',
             color: t.text
           }}>
-            Engineering Knowledge Base
+            {isClient ? 'Client Knowledge Base' : 'Engineering Knowledge Base'}
           </h1>
           <p style={{
             fontSize: '13px',
@@ -474,15 +547,38 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
             margin: 0,
             lineHeight: '1.4'
           }}>
-            Internal technical specifications, guidelines, and product guides.
+            {isClient ? 'Product guides, manuals and release notes.' : 'Internal technical specifications, guidelines, and product guides.'}
           </p>
         </div>
 
-        {/* Minimal Module Cards List */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {MODULES.map((item) => {
+        {/* Role badge with doc count (view is set by login, no manual switching) */}
+        <div style={{ marginBottom: '18px' }}>
+          <span style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            fontSize: '11px',
+            fontWeight: 700,
+            letterSpacing: '0.06em',
+            textTransform: 'uppercase',
+            padding: '5px 12px',
+            borderRadius: '999px',
+            backgroundColor: isLight ? '#FFB611' : t.goldBg,
+            border: `1px solid #FFB611`,
+            boxShadow: isLight ? '0 2px 8px rgba(255, 182, 17, 0.35)' : 'none',
+            color: isLight ? '#000000' : t.gold
+          }}>
+            {isClient ? 'Client-Facing Docs' : 'Internal Engineering'} · {visibleModules.length}
+          </span>
+        </div>
+
+        {/* Glassmorphic Module Row Cards */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {visibleModules.map((item) => {
             const Icon = item.icon;
             const isReady = item.status === 'Ready';
+            const accent = item.accent || t.gold;
+            const accentBg = item.accentBg || t.goldBg;
 
             return (
               <div
@@ -493,101 +589,93 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
                   }
                 }}
                 style={{
-                  backgroundColor: t.surface,
-                  borderRadius: '12px',
+                  background: isLight ? t.surface : `linear-gradient(135deg, ${t.surface} 0%, #111a2e 100%)`,
+                  borderRadius: '16px',
                   border: `1px solid ${t.border}`,
-                  padding: '16px 18px',
+                  padding: '16px 16px 14px',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'space-between',
+                  gap: '14px',
                   cursor: isReady ? 'pointer' : 'default',
                   opacity: isReady ? 1 : 0.65,
-                  transition: 'border-color 0.15s ease, transform 0.1s ease',
+                  transition: 'border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease',
                   userSelect: 'none'
                 }}
                 onMouseEnter={(e) => {
                   if (isReady) {
-                    e.currentTarget.style.borderColor = t.gold;
+                    e.currentTarget.style.borderColor = accent;
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.boxShadow = `0 8px 24px ${accentBg}`;
+                    const arrow = e.currentTarget.querySelector('[data-arrow]');
+                    if (arrow) { arrow.style.color = accent; arrow.style.filter = `drop-shadow(0 0 6px ${accent})`; arrow.style.transform = 'translateX(3px)'; }
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (isReady) {
                     e.currentTarget.style.borderColor = t.border;
+                    e.currentTarget.style.transform = 'none';
+                    e.currentTarget.style.boxShadow = 'none';
+                    const arrow = e.currentTarget.querySelector('[data-arrow]');
+                    if (arrow) { arrow.style.color = t.textDim; arrow.style.filter = 'none'; arrow.style.transform = 'none'; }
                   }
                 }}
               >
-                {/* Left: Number + Icon + Title */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1, minWidth: 0, marginRight: '12px' }}>
-                  <div style={{
-                    width: '38px',
-                    height: '38px',
-                    borderRadius: '10px',
-                    backgroundColor: isReady ? t.goldBg : (isLight ? '#f1f5f9' : '#1e293b'),
-                    color: isReady ? t.gold : t.textDim,
+                {/* Squircle icon badge with accent gradient tint */}
+                <div style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '14px',
+                  background: `linear-gradient(135deg, ${accentBg}, transparent)`,
+                  border: `1px solid ${accent}33`,
+                  color: isReady ? accent : t.textDim,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <Icon size={20} />
+                </div>
+
+                {/* Two-tier info: title + pill / value line */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px', flexWrap: 'wrap' }}>
+                    <h2 style={{ fontSize: '15px', fontWeight: 700, margin: 0, color: t.text }}>
+                      {item.title}
+                    </h2>
+                    {!isReady && (
+                      <span style={{
+                        fontSize: '10px',
+                        fontWeight: 700,
+                        letterSpacing: '0.04em',
+                        textTransform: 'uppercase',
+                        padding: '2px 8px',
+                        borderRadius: '999px',
+                        backgroundColor: isLight ? '#f1f5f9' : '#1e293b',
+                        border: `1px solid ${t.border}`,
+                        color: t.textDim,
+                        whiteSpace: 'nowrap'
+                      }}>
+                        Upcoming
+                      </span>
+                    )}
+                  </div>
+                  <p style={{ fontSize: '12.5px', color: t.textMuted, margin: 0, lineHeight: '1.45' }}>
+                    {item.desc}
+                  </p>
+                </div>
+
+                {/* Subtle arrow action */}
+                {isReady && (
+                  <span data-arrow style={{
+                    color: t.textDim,
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0
+                    flexShrink: 0,
+                    transition: 'color 0.15s ease, transform 0.15s ease, filter 0.15s ease'
                   }}>
-                    <Icon size={18} />
-                  </div>
-
-                  <div style={{ minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
-                      <span style={{ fontSize: '11px', color: t.textDim, fontWeight: 700 }}>
-                        {item.num}
-                      </span>
-                      <h2 style={{
-                        fontSize: '15px',
-                        fontWeight: 700,
-                        margin: 0,
-                        color: t.text,
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis'
-                      }}>
-                        {item.title}
-                      </h2>
-                    </div>
-                    <p style={{
-                      fontSize: '12px',
-                      color: t.textMuted,
-                      margin: 0,
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis'
-                    }}>
-                      {item.desc}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Right: Status Pill or Arrow */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-                  {isReady ? (
-                    <span style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      fontSize: '12px',
-                      fontWeight: 600,
-                      color: t.gold
-                    }}>
-                      Open <ChevronRight size={15} />
-                    </span>
-                  ) : (
-                    <span style={{
-                      fontSize: '11px',
-                      padding: '3px 8px',
-                      borderRadius: '6px',
-                      backgroundColor: isLight ? '#f1f5f9' : '#1e293b',
-                      color: t.textDim,
-                      fontWeight: 600
-                    }}>
-                      Upcoming
-                    </span>
-                  )}
-                </div>
+                    <ChevronRight size={20} />
+                  </span>
+                )}
               </div>
             );
           })}
@@ -600,7 +688,7 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
           fontSize: '11px',
           color: t.textDim
         }}>
-          DEKODE Engineering · Internal Team Reference
+          {isClient ? 'DEKODE · Client Reference' : 'DEKODE Engineering · Internal Team Reference'}
         </div>
       </main>
     </div>
