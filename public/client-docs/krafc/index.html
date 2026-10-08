@@ -677,6 +677,14 @@ table { font-size: 0.82rem; }
 th { padding: 10px 12px; font-size: 0.78rem; }
 td { padding: 10px 12px; font-size: 0.82rem; }
 }
+@media (max-width: 640px) {
+.grid-2, .grid-3 { grid-template-columns: 1fr; gap: 14px; }
+.grid-2 > *, .grid-3 > * { min-width: 0; }
+.card { padding: 18px; min-width: 0; }
+p, li, td, th { overflow-wrap: break-word; word-break: break-word; }
+img, svg { max-width: 100%; height: auto; }
+.main-content { min-width: 0; }
+}
 
     /* Unified Light Mode & Solid Gold Brand Polish */
     [data-theme="light"] pre,
@@ -990,5 +998,5 @@ function updateActiveNav(){var cur='';document.querySelectorAll('section').forEa
 window.addEventListener('scroll',updateActiveNav,{passive:true});
 window.addEventListener('DOMContentLoaded',updateActiveNav);
 </script>
-</body>
+<script>(function(){var HUB="/team-kb-d7x9q2";var navved=false;document.querySelectorAll('.nav-links a[href^="#"]').forEach(function(a){a.addEventListener("click",function(){navved=true;if(window.innerWidth<=1024){var s=document.getElementById("sidebar"),b=document.getElementById("sidebar-backdrop");if(s)s.classList.remove("open");if(b)b.classList.remove("open");}});});window.addEventListener("hashchange",function(){if(!location.hash&&navved){try{window.top.location.href=HUB;}catch(e){window.location.href=HUB;}}});})();</script></body>
 </html>

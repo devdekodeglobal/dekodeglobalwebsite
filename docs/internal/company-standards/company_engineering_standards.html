@@ -2938,22 +2938,17 @@ valid token, correct role              -&gt; 2xx</code></pre>
 
     function applyTheme(theme) {
       htmlEl.setAttribute('data-theme', theme);
-      localStorage.setItem('company_handbook_theme', theme);
-      if (theme === 'light') {
-        themeIcon.textContent = 'Dark';
-        if (themeLabel) themeLabel.textContent = 'Dark Mode';
-        themeBtn.setAttribute('title', 'Switch to Dark Mode');
-      } else {
-        themeIcon.textContent = 'Light';
-        if (themeLabel) themeLabel.textContent = 'Light Mode';
-        themeBtn.setAttribute('title', 'Switch to Light Mode');
-      }
+      try { localStorage.setItem('company_handbook_theme', theme); } catch (e) {}
+      if (themeIcon) themeIcon.textContent = theme === 'light' ? 'Dark' : 'Light';
+      if (themeLabel) themeLabel.textContent = theme === 'light' ? 'Dark Mode' : 'Light Mode';
+      if (themeBtn) themeBtn.setAttribute('title', theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode');
     }
 
-    const savedTheme = localStorage.getItem('company_handbook_theme') || 'dark';
+    var savedTheme = 'dark';
+    try { savedTheme = localStorage.getItem('company_handbook_theme') || 'dark'; } catch (e) {}
     applyTheme(savedTheme);
 
-    themeBtn.addEventListener('click', () => {
+    if (themeBtn) themeBtn.addEventListener('click', () => {
       const current = htmlEl.getAttribute('data-theme');
       applyTheme(current === 'dark' ? 'light' : 'dark');
     });
@@ -2974,8 +2969,8 @@ valid token, correct role              -&gt; 2xx</code></pre>
       }
     }
 
-    mobileBtn.addEventListener('click', toggleMobileNav);
-    backdrop.addEventListener('click', toggleMobileNav);
+    if (mobileBtn) mobileBtn.addEventListener('click', toggleMobileNav);
+    if (backdrop) backdrop.addEventListener('click', toggleMobileNav);
 
     // Close drawer when clicking a link on mobile
     document.querySelectorAll('.nav-links a').forEach(link => {
@@ -3064,5 +3059,5 @@ valid token, correct role              -&gt; 2xx</code></pre>
     window.addEventListener('DOMContentLoaded', updateNav);
     updateNav();
   </script>
-<script>function toggleMobileMenu(){var s=document.getElementById("sidebar");if(s)s.classList.toggle("open");}</script></body>
+<script>function toggleMobileMenu(){var s=document.getElementById("sidebar");if(s)s.classList.toggle("open");}</script><script>(function(){var HUB="/team-kb-d7x9q2";var navved=false;document.querySelectorAll('.nav-links a[href^="#"]').forEach(function(a){a.addEventListener("click",function(){navved=true;if(window.innerWidth<=1024){var s=document.getElementById("sidebar"),b=document.getElementById("sidebar-backdrop");if(s)s.classList.remove("open");if(b)b.classList.remove("open");}});});window.addEventListener("hashchange",function(){if(!location.hash&&navved){try{window.top.location.href=HUB;}catch(e){window.location.href=HUB;}}});})();</script></body>
 </html>
