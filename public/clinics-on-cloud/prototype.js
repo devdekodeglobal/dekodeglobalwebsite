@@ -29,6 +29,7 @@ function navigate(route) {
   const next = validRoutes.has(requested) ? requested : 'home';
   views.forEach(view => view.classList.toggle('active', view.dataset.view === next));
   document.body.classList.toggle('home-view', next === 'home');
+  document.body.classList.toggle('footer-hidden-view', ['organisations', 'catalogue', 'kiosk'].includes(next));
   document.querySelectorAll('[data-route]').forEach(control => control.classList.toggle('active', control.dataset.route === next));
   mobileNav.hidden = true;
   menuButton.setAttribute('aria-expanded', 'false');
