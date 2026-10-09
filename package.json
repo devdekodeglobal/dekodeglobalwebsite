@@ -24,7 +24,8 @@
     "nodemailer": "^9.0.5",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "three": "^0.185.1"
+    "three": "^0.185.1",
+    "vis-network": "^10.1.2"
   },
   "devDependencies": {
     "@types/react": "^19.2.17",

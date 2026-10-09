@@ -1,0 +1,846 @@
+<!-- Mobile Topbar -->
+<header class="mobile-topbar"><div style="display:flex;align-items:center;gap:10px;"><a class="brand-logo" href="/team-kb-d7x9q2" target="_top" title="Back to documents hub">DEKODE</a></div><div style="display:flex;align-items:center;gap:8px;"><button class="mobile-menu-btn" onclick="toggleMobileMenu()">Menu</button></div></header>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<div class="brand-container">
+<div style="display: flex; align-items: center; gap: 8px;">
+<a class="brand-logo" href="/team-kb-d7x9q2" target="_top" title="Back to documents hub">DEKODE</a>
+</div>
+
+</div>
+<div class="search-wrapper">
+<input type="text" id="sidebar-filter" class="sidebar-search" placeholder="Search krafc guide..." oninput="filterNav()">
+</div>
+</div>
+
+<nav id="nav-container">
+<div class="nav-group-title">System Architecture & Design Docs</div>
+<ul class="nav-links">
+<li><a href="#product-vision">01. Vision & Problem Statement</a></li>
+<li><a href="#dual-engine">02. Dual-Engine Architecture</a></li>
+<li><a href="#spatial-math">03. Spatial Math & Coordinate System</a></li>
+<li><a href="#room-topology">04. Room Shapes & Wall Topology</a></li>
+<li><a href="#konva-pipeline">05. 2D Blueprint Engine (Konva)</a></li>
+<li><a href="#babylon-pipeline">06. 3D WebGL Engine (BabylonJS)</a></li>
+<li><a href="#asset-registry">07. Asset Catalog & Procedural Gen</a></li>
+<li><a href="#report-bom">08. Automated BOM & Tech Report</a></li>
+</ul>
+
+<div class="nav-group-title">Coding Standards & Code Quality</div>
+<ul class="nav-links">
+<li><a href="#testing-standards">18. Vitest Suite & Verification</a></li>
+<li><a href="#validation-dos">13. Zero-Trust Payload & DoS Budget</a></li>
+</ul>
+
+<div class="nav-group-title">Contributor & Onboarding Playbooks</div>
+<ul class="nav-links">
+<li><a href="#onboarding-setup">15. 5-Min Developer Onboarding</a></li>
+<li><a href="#codebase-taxonomy">14. Codebase Directory Taxonomy</a></li>
+<li><a href="#recipe-new-asset">16. Recipe: Adding 3D GLTF/DAE Asset</a></li>
+<li><a href="#recipe-new-api">17. Recipe: New Cloudflare Endpoint</a></li>
+</ul>
+
+<div class="nav-group-title">API, Security & Data Models</div>
+<ul class="nav-links">
+<li><a href="#cloudflare-stack">10. Cloudflare Pages & D1 Schema</a></li>
+<li><a href="#interactive-erd">11. Interactive Database ERD</a></li>
+<li><a href="#security-auth">12. Auth, PBKDF2 & Security Gates</a></li>
+</ul>
+
+<div class="nav-group-title">Operations, CI/CD & Runbooks</div>
+<ul class="nav-links">
+<li><a href="#deployment-runbook">19. Deployment & Production Runbook</a></li>
+<li><a href="#offline-cache">09. Client-Side DB & Offline Blob</a></li>
+</ul>
+
+</nav>
+</aside>
+
+<!-- Main Content Area -->
+<main class="main-content">
+
+<!-- Hero Banner (Unified DEKODE Template) -->
+<header class="hero-banner">
+<span></span>
+</div>
+<div class="hero-title">
+krafc<br>
+<span>2D Architectural Drafting &amp; Real-Time 3D Spatial WebGL Engine</span>
+</div>
+<p class="hero-desc">
+Millimeter-accurate 2D blueprint drafting (HTML5 Canvas via Konva) synchronized in real-time with instant photorealistic 3D WebGL spatial simulation (BabylonJS 9.x), backed by an edge-native Cloudflare Pages &amp; D1 serverless backend.
+</p>
+
+<div class="grid-2" style="margin-top: 24px;">
+<div class="card" style="border-left: 4px solid var(--primary);">
+<h4>What krafc Solves</h4>
+<p>
+Traditional exhibition stall and interior design workflows force designers between clunky 3D CAD software (Blender, AutoCAD, 3ds Max) with steep learning curves, and flat 2D tools with zero real-time visualization. <strong>krafc provides instant bidirectional 2D &harr; 3D synchronization directly inside any web browser.</strong>
+</p>
+</div>
+<div class="card" style="border-left: 4px solid var(--lagoon);">
+<h4>Architectural Rule: Canonical Coordinate Contract</h4>
+<p>
+The 2D canvas strictly adopts a <strong>PPM = 100 scale (100 pixels = 1.00 metre)</strong>. The 3D Babylon engine projects X &rarr; X (meters), Z &rarr; -Y (meters, inverted depth), and Y &rarr; Z (elevation/height). No visual element escapes this coordinate mapping contract.
+</p>
+</div>
+</div>
+
+<!-- Live Interactive Platform Preview Link -->
+<a href="https://krafc.com" target="_blank" rel="noopener noreferrer" style="text-decoration: none; display: block;" title="Launch live krafc platform at krafc.com">
+<div class="app-preview-card" style="border-radius: var(--card-radius); overflow: hidden; border: 1px solid var(--border);">
+<img src="/internal-docs/krafc/krafc.png" alt="krafc 2D/3D Spatial CAD Platform" class="app-preview-img" style="width: 100%; height: auto; display: block;" />
+</div>
+<div style="display:flex; align-items:center; justify-content:space-between; padding: 12px 6px;">
+<span style="font-weight:800; font-size: 0.95rem;">krafc Live Platform Preview</span>
+<span style="font-weight:700; font-size: 0.9rem; color:var(--primary);">Visit krafc.com &nearr;</span>
+</div>
+</a>
+</header>
+
+<!-- Section 01: Vision & Problem Statement -->
+<section id="product-vision">
+<div class="section-header">
+<span class="section-num">01</span>
+<h2 class="section-title">Product Vision, Market Context &amp; Core Philosophy</h2>
+</div>
+<p>
+Exhibition booth design, interior space planning, and commercial retail fit-outs represent multi-billion-dollar industries plagued by fragmented toolchains. A typical workflow involves an architect sketching in AutoCAD, sending blueprints to a 3D visualizer working in 3ds Max / V-Ray, waiting hours for offline renders, sending drafts back to clients, and manually hand-compiling Bills of Materials (BOM) in Excel.
+</p>
+
+<div class="grid-3" style="margin-top: 20px;">
+<div class="card">
+<h4> Zero-Install Fluidity</h4>
+<p>Runs entirely inside any modern browser on desktop or tablet. No heavy CAD licenses, no GPU workstation requirements, and zero client installation required.</p>
+</div>
+<div class="card">
+<h4> Real-Time Split Visualization</h4>
+<p>Instant dual-view workspace: edits made on the 2D blueprint (moving walls, placing furniture, resizing counters) immediately reflect in the real-time 3D viewport with dynamic PBR lighting and shadows.</p>
+</div>
+<div class="card">
+<h4> Automated Executive BOM</h4>
+<p>Generates print-ready technical schematics, exact spatial coordinate manifests, furniture schedules, and procurement bills of materials with a single click.</p>
+</div>
+</div>
+
+<div class="callout callout-info">
+<strong>Design Philosophy: "What You Draw Is What You Walk Through"</strong><br>
+krafc eliminates mental coordinate translation. The 2D blueprint is not an abstract schematic; it is the real-time mathematical source of truth for the physical 3D world.
+</div>
+</section>
+
+<!-- Section 02: Dual-Engine Architecture -->
+<section id="dual-engine">
+<div class="section-header">
+<span class="section-num">02</span>
+<h2 class="section-title">Dual-Engine Architecture: 2D &harr; 3D Synchronization</h2>
+</div>
+<p>
+At the heart of krafc lies a decoupled dual-engine pipeline. The state lives in a centralized React tree (managed in <code>src/routes/editor.tsx</code>) with persistent synchronization to both the 2D Konva canvas and the BabylonJS 3D engine.
+</p>
+
+<div class="grid-2">
+<div class="card">
+<h4>2D Canvas Engine (Konva)</h4>
+<ul>
+<li><strong>Renderer:</strong> HTML5 Canvas 2D Context via <code>react-konva</code></li>
+<li><strong>Coordinate Space:</strong> Canvas Pixels (Screen Space)</li>
+<li><strong>Scale:</strong> <code>PPM = 100</code> (100 px = 1 meter)</li>
+<li><strong>Interaction:</strong> Snapping grid, draggable transformer bounds, multi-point polygon manipulators</li>
+<li><strong>File:</strong> <code>src/components/editor/Canvas.tsx</code></li>
+</ul>
+</div>
+<div class="card">
+<h4>3D Spatial Engine (BabylonJS 9.x)</h4>
+<ul>
+<li><strong>Renderer:</strong> WebGL 2.0 / WebGPU via <code>@babylonjs/core</code></li>
+<li><strong>Coordinate Space:</strong> Metric World Space (X, Y, Z in meters)</li>
+<li><strong>Lighting:</strong> Hemispheric ambient + Cascaded Directional Light with real-time soft shadows</li>
+<li><strong>Geometry:</strong> Custom procedural extrusions, Earcut polygon tessellation, GLTF/GLB/DAE mesh loader</li>
+<li><strong>File:</strong> <code>src/components/editor/Preview3D.tsx</code></li>
+</ul>
+</div>
+</div>
+
+<div class="card" style="margin-top: 20px;">
+<h4>State Flow Pipeline</h4>
+<pre><code>[User Event / Drag in 2D or 3D]
+│
+▼
+ [React State in editor.tsx] ────► [Local Storage / IndexedDB Cache]
+│, , , , , , , ,  │
+│ (State props),  │ (State props)
+▼, , , , , , , ,  ▼
+ [Konva 2D Canvas],  [BabylonJS 3D Scene]
+├─ Architectural, , ├─ Procedural Walls (Custom Mesh with cutouts)
+│, Symbols (SVG), , ├─ Earcut Polygon Floor (PBR/RAL Materials)
+└─ Drag Handles, ,  ├─ GLTF/DAE Assets + Custom Shadow Catcher
+└─ Directional Lights & Ground Shadow Generator</code></pre>
+</div>
+</section>
+
+<!-- Section 03: Spatial Math & Coordinate System -->
+<section id="spatial-math">
+<div class="section-header">
+<span class="section-num">03</span>
+<h2 class="section-title">Spatial Math, Units &amp; Canonical Coordinate Contracts</h2>
+</div>
+<p>
+A fundamental source of bugs in spatial software is mixed coordinate conventions. krafc enforces strict mathematical rules across the codebase:
+</p>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>2D Konva Space (Pixels)</th>
+<th>3D BabylonJS Space (Meters)</th>
+<th>Mathematical Conversion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Horizontal (Width)</strong></td>
+<td><code>x</code> (px, 0 at top-left / center)</td>
+<td><code>position.x</code> (meters, world center at 0)</td>
+<td><code>x_3d = (x_2d - totalWidthPx/2) / 100</code></td>
+</tr>
+<tr>
+<td><strong>Depth (Floor depth)</strong></td>
+<td><code>y</code> (px, increasing downwards)</td>
+<td><code>position.z</code> (meters, depth axis)</td>
+<td><code>z_3d = -(y_2d - totalDepthPx/2) / 100</code></td>
+</tr>
+<tr>
+<td><strong>Elevation (Height)</strong></td>
+<td>N/A (Layer order / zIndex)</td>
+<td><code>position.y</code> (meters, ground at y = 0)</td>
+<td><code>y_3d = (element.elevation || 0) + height/2</code></td>
+</tr>
+<tr>
+<td><strong>Rotation</strong></td>
+<td><code>rotation</code> (degrees, clockwise)</td>
+<td><code>rotation.y</code> (radians, counter-clockwise)</td>
+<td><code>rot_3d = -degToRad(rotation_2d)</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="card">
+<h4>Key Invariant: Pixels Per Metre (PPM)</h4>
+<pre><code>export const PPM = 100; // 100 pixels represents exactly 1.00 physical metre
+
+export function pxToMeters(px: number): number {
+return Number((px / PPM).toFixed(3));
+}
+
+export function metersToPx(meters: number): number {
+return Math.round(meters * PPM);
+}</code></pre>
+</div>
+</section>
+
+<!-- Section 04: Room Shapes & Wall Topology -->
+<section id="room-topology">
+<div class="section-header">
+<span class="section-num">04</span>
+<h2 class="section-title">Room Shapes, Wall Topology &amp; Procedural Boundaries</h2>
+</div>
+<p>
+Unlike naive rectangular floor planners, krafc supports parametric geometric room shapes managed by <code>src/lib/roomShapes.ts</code>:
+</p>
+
+<div class="grid-3">
+<div class="card">
+<h4>Rectangle / Square</h4>
+<p>4 Cardinal boundary edges (North, South, East, West). Support for independent wall disabling to create open-front exhibition booths.</p>
+</div>
+<div class="card">
+<h4>L-Shaped Plan</h4>
+<p>6-vertex concave polygon with parametric notch width (<code>lNotchWidth</code>) and depth (<code>lNotchDepth</code>). Computes interior corner normals.</p>
+</div>
+<div class="card">
+<h4>Regular Polygons &amp; Circles</h4>
+<p>Triangles, Pentagons, Hexagons, and N-segment regular circular polygons (configurable tessellation: 8 to 64 facets).</p>
+</div>
+</div>
+
+<div class="card" style="margin-top: 20px;">
+<h4>Earcut Polygon Floor Triangulation</h4>
+<p>
+BabylonJS utilizes the <code>earcut</code> library to triangulate concave and multi-point 2D room outlines into 3D index-buffer geometry:
+</p>
+<pre><code>// Triangulating arbitrary room polygons into 3D floor geometry:
+const shapeCorners = pts.map(p => new BABYLON.Vector3(p.x, 0, -p.y));
+const floorMesh = BABYLON.MeshBuilder.CreatePolygon("roomFloor", {
+shape: shapeCorners,
+sideOrientation: BABYLON.Mesh.DOUBLESIDE,
+updatable: true
+}, scene, earcut);</code></pre>
+</div>
+</section>
+
+<!-- Section 05: 2D Blueprint Engine (Konva) -->
+<section id="konva-pipeline">
+<div class="section-header">
+<span class="section-num">05</span>
+<h2 class="section-title">2D Blueprint Engine: Architecture &amp; Architectural Symbols</h2>
+</div>
+<p>
+Implemented in <code>src/components/editor/Canvas.tsx</code>, the 2D blueprint engine provides an industry-grade CAD drafting surface:
+</p>
+
+<div class="grid-2">
+<div class="card">
+<h4>CAD Drafting Capabilities</h4>
+<ul>
+<li><strong>Snapping Grid:</strong> Dynamic centimeter and 10cm grid rendering with customizable visibility and magnetic alignment.</li>
+<li><strong>Interactive Transformer:</strong> Scale, translate, and rotate elements with live bounding box feedback.</li>
+<li><strong>Wall Sub-Elements:</strong> Drag doors, windows, banners, and wall lights directly onto walls with automatic edge-clamping and orientation matching.</li>
+<li><strong>Multi-Selection &amp; Deletion:</strong> Keyboard hotkeys (Delete, Backspace, Ctrl+Z/Y for undo/redo).</li>
+</ul>
+</div>
+<div class="card">
+<h4>Architectural Symbol Rendering</h4>
+<p>
+Rather than generic rectangles, krafc renders standard ISO/DIN architectural floor plan symbols via <code>ArchitecturalSymbol2D.tsx</code>:
+</p>
+<ul>
+<li><strong>Chairs &amp; Armchairs:</strong> Rounded seat back contours with orientation arrow</li>
+<li><strong>Sofas &amp; Lounges:</strong> Multi-cushion division lines and armrest indicators</li>
+<li><strong>Tables:</strong> Solid conference / dining profiles with seat clearance clearance arcs</li>
+<li><strong>Fixtures &amp; Counters:</strong> Service side indicators and equipment symbols</li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- Section 06: 3D WebGL Engine (BabylonJS) -->
+<section id="babylon-pipeline">
+<div class="section-header">
+<span class="section-num">06</span>
+<h2 class="section-title">3D WebGL Engine: Real-Time PBR, Lighting &amp; Cameras</h2>
+</div>
+<p>
+Built with BabylonJS 9.x in <code>src/components/editor/Preview3D.tsx</code>, the 3D viewport provides high-fidelity architectural previews in real time:
+</p>
+
+<div class="grid-3">
+<div class="card">
+<h4>Camera Modes</h4>
+<ul>
+<li><strong>ArcRotateCamera:</strong> Intuitive orbital rotation around stall center, with constrained elevation angles.</li>
+<li><strong>FlyCamera / First-Person:</strong> Walkthrough mode with WASD / arrow key navigation at realistic eye height (1.65m).</li>
+<li><strong>Orthographic Views:</strong> Top-down plan view, North/South/East/West elevations for technical review.</li>
+</ul>
+</div>
+<div class="card">
+<h4>Lighting &amp; Shadows</h4>
+<ul>
+<li><strong>Ambient Hemispheric Light:</strong> Balanced environmental fill lighting without blown-out speculars.</li>
+<li><strong>Cascaded Directional Light:</strong> Realistic sun angle generating soft contact shadows.</li>
+<li><strong>Shadow Catcher Ground Plane:</strong> Transparent ground receiver preventing floating objects while preserving background clarity.</li>
+</ul>
+</div>
+<div class="card">
+<h4>Materials &amp; RAL Colors</h4>
+<ul>
+<li><strong>PBRMetallicRoughness:</strong> Physically based materials for brushed aluminum, chrome, wood laminate, glass, and fabrics.</li>
+<li><strong>RAL Classic System:</strong> Accurate hex conversions for over 200 European standard paint codes (<code>ralColors.ts</code>).</li>
+<li><strong>Procedural Textures:</strong> Ceramic tile, hardwood planks, carpet weave, and concrete finishes.</li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- Section 07: Asset Catalog & Procedural Gen -->
+<section id="asset-registry">
+<div class="section-header">
+<span class="section-num">07</span>
+<h2 class="section-title">Asset Catalog, Procedural Structures &amp; Formats</h2>
+</div>
+<p>
+The asset system is cataloged in <code>src/lib/assetRegistry.ts</code> and dynamically rendered in 2D and 3D:
+</p>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Asset Category</th>
+<th>3D Source Format</th>
+<th>Key Models</th>
+<th>Procedural Customization</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sofas &amp; Lounges</strong></td>
+<td>GLTF / DAE / Procedural</td>
+<td>Egg Chair, Soft II, Alcove, Baggio, Catifa Lounge</td>
+<td>Fabric color, cushion count, leather texture</td>
+</tr>
+<tr>
+<td><strong>Chairs &amp; Stools</strong></td>
+<td>GLTF / DAE</td>
+<td>Eames Bilbao, Hansen 3107, Feston, Catifa Bar, Babila</td>
+<td>Frame finish (Chrome / Black / Wood), seat shell color</td>
+</tr>
+<tr>
+<td><strong>Tables &amp; Desks</strong></td>
+<td>GLTF / Procedural</td>
+<td>Conference tables, round bistro tables, tripod side tables</td>
+<td>Length, width, height, table top material</td>
+</tr>
+<tr>
+<td><strong>Modular Architecture</strong></td>
+<td>Procedural Babylon Mesh</td>
+<td>Caged Slat Walls, Slat Ceilings, Pillars (Round/Square), Banners</td>
+<td>Parametric slat count, thickness, gap spacing, elevation</td>
+</tr>
+<tr>
+<td><strong>Exhibition Branding</strong></td>
+<td>Procedural + SVG Extrusion</td>
+<td>3D Logos, illuminated backlit acrylic letters, tension fabric banners</td>
+<td>Custom SVG upload, extrusion depth, bevel radius, LED emissive glow</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- Section 08: Automated BOM & Tech Report -->
+<section id="report-bom">
+<div class="section-header">
+<span class="section-num">08</span>
+<h2 class="section-title">Automated BOM &amp; Technical Report Generation</h2>
+</div>
+<p>
+In <code>src/lib/reportGenerator.ts</code>, krafc compiles an exhaustive Bill of Materials (BOM) and architectural dossier exportable as a standalone printable HTML document or PDF:
+</p>
+
+<div class="grid-2">
+<div class="card">
+<h4>Report Components</h4>
+<ul>
+<li><strong>Project Metadata:</strong> Document ID, designer name, client title, timestamp, stall dimensions, and total square meterage.</li>
+<li><strong>High-Resolution Multi-Angle Renders:</strong> Perspective 3D, Top-Down Orthographic, and Cardinal Elevation views captured directly from the WebGL canvas.</li>
+<li><strong>2D Technical Blueprint:</strong> Scaled schematic displaying exact (X, Y) coordinates, bounding boxes, and rotation angles of every object.</li>
+<li><strong>Procurement Schedule:</strong> Grouped counts of furniture, rental items, modular wall counts, linear meters of walling, and electrical fixture counts.</li>
+</ul>
+</div>
+<div class="card">
+<h4>Architectural Symbol Inclusion</h4>
+<p>
+Every line item in the BOM schedule features an inline SVG architectural glyph matching standard contractor floor plan notation:
+</p>
+<pre><code>const assetCounts = {
+id: "soft_ii",
+label: "Soft II Sofa",
+category: "SOFAS",
+dims: "1.32m × 0.79m × 0.82m",
+count: 2,
+svgSymbol: getArchitecturalSymbolSvgString("SOFAS", "soft_ii")
+};</code></pre>
+</div>
+</div>
+</section>
+
+<!-- Section 09: Client-Side DB & Offline Blob -->
+<section id="offline-cache">
+<div class="section-header">
+<span class="section-num">09</span>
+<h2 class="section-title">Client-Side IndexedDB &amp; Offline Asset Storage</h2>
+</div>
+<p>
+To support high-bandwidth 3D workflows without crushing network bandwidth or requiring constant cloud sync, krafc implements a client-side persistent storage subsystem in <code>src/lib/customAssetDB.ts</code>:
+</p>
+
+<div class="grid-3">
+<div class="card">
+<h4>IndexedDB Asset Cache</h4>
+<p>Stores binary 3D model files (GLTF/GLB/DAE), wall graphic high-res textures, and custom uploaded SVG logos locally on the user's machine.</p>
+</div>
+<div class="card">
+<h4>Zero-Loss LocalStorage</h4>
+<p>Automatic draft autosave on every transform event. If the browser tab crashes or refreshes, the active stall design is restored instantly from local storage.</p>
+</div>
+<div class="card">
+<h4>LRU In-Memory Image Cache</h4>
+<p>Managed in <code>src/lib/imageCache.ts</code>, preloads and pools texture canvases to prevent garbage collection pauses during real-time 3D navigation.</p>
+</div>
+</div>
+</section>
+
+<!-- Section 10: Cloudflare Pages & D1 Schema -->
+<section id="cloudflare-stack">
+<div class="section-header">
+<span class="section-num">10</span>
+<h2 class="section-title">Cloudflare Pages Functions &amp; D1 Database Schema</h2>
+</div>
+<p>
+The backend is 100% serverless, running as Cloudflare Pages Functions in V8 isolates across Cloudflare's global edge network. The primary database is Cloudflare D1 (distributed SQLite):
+</p>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Table Name</th>
+<th>Primary Key</th>
+<th>Purpose &amp; Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>users</code></td>
+<td><code>id</code> (TEXT, 32-char hex)</td>
+<td>User accounts, email, display name, PBKDF2 password hash, Google OAuth ID, verification status.</td>
+</tr>
+<tr>
+<td><code>sessions</code></td>
+<td><code>id</code> (TEXT, 32-char hex)</td>
+<td>Active user login sessions, cookie-bound, with 30-day ISO timestamp expirations.</td>
+</tr>
+<tr>
+<td><code>projects</code></td>
+<td><code>id</code> (TEXT, 32-char hex)</td>
+<td>Parent folders/projects grouping related designs and client spaces.</td>
+</tr>
+<tr>
+<td><code>designs</code></td>
+<td><code>id</code> (TEXT, 32-char hex)</td>
+<td>Spatial blueprints: contains JSON room config, JSON elements array, metadata, timestamps.</td>
+</tr>
+<tr>
+<td><code>security_limits</code></td>
+<td><code>id</code> (TEXT)</td>
+<td>Edge-native IP and user rate limiting counters with automatic timestamp resets.</td>
+</tr>
+<tr>
+<td><code>registration_challenges</code></td>
+<td><code>email</code> (TEXT)</td>
+<td>Pending user sign-ups: holds SHA-256 hashed 6-digit OTP codes and expiration timestamps.</td>
+</tr>
+<tr>
+<td><code>oauth_challenges</code></td>
+<td><code>id</code> (TEXT)</td>
+<td>PKCE verifier tokens for Google OAuth authorization handshakes.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- Section 11: Interactive Database ERD -->
+<section id="interactive-erd">
+<div class="section-header">
+<span class="section-num">11</span>
+<h2 class="section-title">Interactive Database ERD &amp; Relationship Topology</h2>
+</div>
+<p>
+Explore the relational structure of the krafc Cloudflare D1 database. Drag nodes to inspect relationships and foreign key cascades:
+</p>
+
+<div id="erd-container"></div>
+<p style="font-size: 0.85rem; color: var(--text-dim); text-align: center; margin-top: 6px;">
+Click and drag table nodes to reposition. Scroll to zoom in/out.
+</p>
+</section>
+
+<!-- Section 12: Auth, PBKDF2 & Security Gates -->
+<section id="security-auth">
+<div class="section-header">
+<span class="section-num">12</span>
+<h2 class="section-title">Authentication, Cryptographic Standards &amp; Security Gates</h2>
+</div>
+<p>
+Built in <code>functions/_auth-utils.ts</code>, the security model meets enterprise-grade specifications:
+</p>
+
+<div class="grid-2">
+<div class="card" style="border-left: 4px solid var(--primary);">
+<h4>PBKDF2 Password Hashing (Web Crypto API)</h4>
+<p>
+Passwords are never stored in plaintext or legacy weak hashes. We employ native Web Crypto PBKDF2:
+</p>
+<ul>
+<li><strong>Iterations:</strong> 100,000 rounds</li>
+<li><strong>Salt:</strong> 16 cryptographically random bytes via <code>crypto.getRandomValues</code></li>
+<li><strong>Digest:</strong> HMAC-SHA256 producing a 256-bit derived key</li>
+<li><strong>Format:</strong> <code>pbkdf2:100000:{saltHex}:{hashHex}</code></li>
+<li><strong>Timing Attacks:</strong> Constant-time string equality validation (<code>timingSafeEqual</code>)</li>
+</ul>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--success);">
+<h4>Session &amp; Cookie Security</h4>
+<p>
+Authentication cookies strictly enforce production defense-in-depth flags:
+</p>
+<pre><code>HttpOnly; Secure; SameSite=Lax; Max-Age=2592000; Path=/</code></pre>
+<p style="font-size:0.9rem; color:var(--text-muted); margin-top:8px;">
+Prevents cross-site scripting (XSS) extraction while ensuring secure transmission over HTTPS.
+</p>
+</div>
+</div>
+</section>
+
+<!-- Section 13: Zero-Trust Payload & DoS Budget -->
+<section id="validation-dos">
+<div class="section-header">
+<span class="section-num">13</span>
+<h2 class="section-title">Zero-Trust Payload Validation &amp; DoS Defense Budgets</h2>
+</div>
+<p>
+In <code>shared/validation.ts</code>, all untrusted inputs submitted to API endpoints undergo recursive budget parsing to stop denial-of-service (DoS) and prototype pollution attacks:
+</p>
+
+<div class="grid-3">
+<div class="card">
+<h4>Tree Budget Limit</h4>
+<p>Max recursive depth: <strong>12 levels</strong>.<br>Max AST node count: <strong>20,000 nodes</strong>.<br>Rejects deeply nested malicious JSON payloads before deserialization locks the thread.</p>
+</div>
+<div class="card">
+<h4>Prototype Pollution Defense</h4>
+<p>Rejects any payload property key matching <code>__proto__</code>, <code>constructor</code>, or <code>prototype</code>, or keys exceeding 80 characters in length.</p>
+</div>
+<div class="card">
+<h4>Design Size &amp; Element Limits</h4>
+<p>Max raw design payload: <strong>1 MiB</strong> (1,048,576 bytes).<br>Max element count: <strong>500 items</strong>.<br>Coordinates constrained to physical bounds (0 , 100 metres).</p>
+</div>
+</div>
+</section>
+
+<!-- Section 14: Codebase Directory Taxonomy -->
+<section id="codebase-taxonomy">
+<div class="section-header">
+<span class="section-num">14</span>
+<h2 class="section-title">Codebase Directory Taxonomy &amp; File Map</h2>
+</div>
+<p>
+A structural guide for new developers contributing to <code>3dproj</code>:
+</p>
+
+<div class="card">
+<pre><code>3dproj/
+├── functions/, , , , , , , , , , # Cloudflare Pages Functions (Edge Serverless)
+│,  ├── _auth-utils.ts, , , , , , # PBKDF2 hashing, session creation, cookies, OTP
+│,  ├── _security.ts, , , , , , , # Rate limiting, challenge tables, IP inspection
+│,  └── api/
+│, , ,  ├── auth/, , , , , , , ,  # Signin, signup, verify OTP, Google OAuth callback
+│, , ,  ├── designs/, , , , , , , # [id].ts and index.ts - CRUD for user spatial designs
+│, , ,  └── projects/, , , , , ,  # [id].ts and index.ts - CRUD for client project folders
+├── src/
+│,  ├── components/
+│,  │,  ├── editor/
+│,  │,  │,  ├── Canvas.tsx, , , , # 2D Konva CAD Blueprint Engine & snap grid
+│,  │,  │,  ├── Preview3D.tsx, ,  # 3D BabylonJS WebGL PBR Engine & Lighting
+│,  │,  │,  ├── Sidebar.tsx, , ,  # Asset catalog browser, category tabs, drag items
+│,  │,  │,  ├── Properties.tsx, , # Selected element property editor (dimensions, RAL)
+│,  │,  │,  ├── ArchitecturalSymbol2D.tsx, # ISO/DIN standard 2D symbols
+│,  │,  │,  ├── WallCanvas.tsx, , # Wall elevation editor for door/window cutouts
+│,  │,  │,  └── CloudProjectsDrawer.tsx, , # Cloud project sync & save drawer
+│,  │,  ├── Header.tsx, , , , , , # Top navigation, project title, export buttons
+│,  │,  └── ThemeToggle.tsx, , ,  # Light / Dark mode toggle
+│,  ├── lib/
+│,  │,  ├── assetRegistry.ts, , , # Active furniture & structure catalog definitions
+│,  │,  ├── blueprintMath.ts, , , # Coordinate transforms, bounds math, snapping logic
+│,  │,  ├── customAssetDB.ts, , , # IndexedDB client-side blob & model storage
+│,  │,  ├── materials.ts, , , , , # BabylonJS PBR materials, textures, finishes
+│,  │,  ├── ralColors.ts, , , , , # RAL Classic European color definitions
+│,  │,  ├── reportGenerator.ts, , # Single-click Bill of Materials (BOM) & PDF report
+│,  │,  └── roomShapes.ts, , , ,  # Parametric room outline points & wall edge math
+│,  └── routes/
+│, , ,  ├── editor.tsx, , , , , , # Central Workspace: Dual-panel 2D & 3D orchestration
+│, , ,  ├── dashboard.tsx, , , ,  # User project library and cloud designs overview
+│, , ,  └── about.tsx, , , , , ,  # Marketing overview & interactive feature tour
+├── shared/
+│,  └── validation.ts, , , , , ,  # Shared Zero-Trust schema, node budgets & DoS limits
+└── migrations/, , , , , , , , ,  # Cloudflare D1 SQL schema migrations</code></pre>
+</div>
+</section>
+
+<!-- Section 15: 5-Min Developer Onboarding -->
+<section id="onboarding-setup">
+<div class="section-header">
+<span class="section-num">15</span>
+<h2 class="section-title">5-Minute Contributor Onboarding &amp; Local Setup</h2>
+</div>
+<p>
+Get the full local development environment running in under 5 minutes:
+</p>
+
+<div class="card">
+<h4>1. Prerequisites</h4>
+<ul>
+<li><strong>Node.js:</strong> v20.x or v22.x LTS</li>
+<li><strong>npm:</strong> v10.x+</li>
+<li><strong>Wrangler:</strong> Cloudflare CLI (installed via devDependencies)</li>
+</ul>
+
+<h4 style="margin-top: 16px;">2. Clone &amp; Install</h4>
+<pre><code># Clone repository
+git clone https://github.com/dekodeglobal/3dproj.git
+cd 3dproj
+
+# Install dependencies
+npm install</code></pre>
+
+<h4 style="margin-top: 16px;">3. Start Development Server</h4>
+<pre><code># Starts Vite dev server with TanStack Router file watcher on port 5173
+npm run dev
+
+# Open in browser:
+# http://localhost:5173/editor</code></pre>
+
+<h4 style="margin-top: 16px;">4. Local Cloudflare Pages Emulation (API &amp; D1)</h4>
+<pre><code># Test serverless functions and D1 database locally with Wrangler:
+npx wrangler pages dev dist --d1 DB=krafc-local-db</code></pre>
+</div>
+</section>
+
+<!-- Section 16: Recipe: Adding 3D GLTF/DAE Asset -->
+<section id="recipe-new-asset">
+<div class="section-header">
+<span class="section-num">16</span>
+<h2 class="section-title">Developer Recipe: Adding a New 3D Asset to the Catalog</h2>
+</div>
+<p>
+Follow this standardized 3-step checklist to introduce a new furniture piece or architectural structure to the catalog:
+</p>
+
+<div class="card">
+<h4>Step 1: Place 3D Model in Public Directory</h4>
+<p>Save optimized <code>.glb</code>, <code>.gltf</code>, or <code>.dae</code> files into <code>public/models/{category}/{asset-id}/</code>. Ensure polygon count is under 25,000 triangles and textures are compressed (PNG/WebP, max 2048x2048).</p>
+
+<h4 style="margin-top: 16px;">Step 2: Register in Asset Catalog (<code>src/lib/assetRegistry.ts</code>)</h4>
+<pre><code>{
+id: "nordic-lounge-chair",
+category: "chairs",
+categoryFolder: "chairs",
+label: "Nordic Lounge Chair",
+details: "Width: 78 cm; Depth: 82 cm; Height: 85 cm; Oak frame, linen upholstery",
+w: 1, 
+h: 0.9512,
+specW: 0.78, // Meters in 3D
+specD: 0.82, // Meters in 3D
+specH: 0.85, // Meters in 3D
+facingOffset: 0 // Optional angular rotation offset
+}</code></pre>
+
+<h4 style="margin-top: 16px;">Step 3: Define 2D Architectural Symbol (<code>ArchitecturalSymbol2D.tsx</code>)</h4>
+<p>Map the asset ID to its 2D CAD representation so it renders legibly on the blueprint and in exported technical PDF reports.</p>
+</div>
+</section>
+
+<!-- Section 17: Recipe: New Cloudflare Endpoint -->
+<section id="recipe-new-api">
+<div class="section-header">
+<span class="section-num">17</span>
+<h2 class="section-title">Developer Recipe: Adding a Secure Cloudflare API Endpoint</h2>
+</div>
+<p>
+Creating a new serverless function under <code>functions/api/</code>:
+</p>
+
+<div class="card">
+<pre><code>import { getSessionId, getSessionUser, json, jsonError } from '../../_auth-utils';
+import { object, boundedTree, HttpError } from '../../../shared/validation';
+
+interface Env {
+DB: D1Database;
+}
+
+export const onRequestPost: PagesFunction&lt;Env&gt; = async ({ request, env }) => {
+// 1. Authenticate user
+const sessionId = getSessionId(request);
+const user = await getSessionUser(env.DB, sessionId || '');
+if (!user) return jsonError('Unauthorized', 401);
+
+// 2. Parse & validate payload within DoS budget
+let body: unknown;
+try {
+body = await request.json();
+boundedTree(body); // Limit recursion and AST depth
+} catch {
+return jsonError('Invalid payload', 400);
+}
+
+// 3. Execute parameterized SQL query
+const { results } = await env.DB.prepare(
+'SELECT * FROM designs WHERE user_id = ? ORDER BY updated_at DESC'
+).bind(user.id).all();
+
+// 4. Return secure JSON response
+return json({ success: true, data: results });
+};</code></pre>
+</div>
+</section>
+
+<!-- Section 18: Vitest Suite & Verification -->
+<section id="testing-standards">
+<div class="section-header">
+<span class="section-num">18</span>
+<h2 class="section-title">Testing Standards &amp; Vitest Verification Suite</h2>
+</div>
+<p>
+Run automated unit, integration, and security tests via Vitest:
+</p>
+
+<div class="grid-2">
+<div class="card">
+<h4>Active Test Suites</h4>
+<ul>
+<li><code>src/lib/authSecurity.test.ts</code>: Validates PBKDF2 derivation, timing attack protections, salt generation, and legacy hash upgrade pathways.</li>
+<li><code>src/lib/cookieConsent.test.ts</code>: Validates privacy compliance and consent banner state persistence.</li>
+<li><code>shared/validation.ts</code>: Tests DoS budgets, tree depth traps, and prototype pollution sanitization.</li>
+</ul>
+</div>
+<div class="card">
+<h4>Running Tests</h4>
+<pre><code># Run all test suites
+npm test
+
+# Run tests in watch mode
+npx vitest
+
+# Generate code coverage report
+npx vitest run --coverage</code></pre>
+</div>
+</div>
+</section>
+
+<!-- Section 19: Deployment & Production Runbook -->
+<section id="deployment-runbook">
+<div class="section-header">
+<span class="section-num">19</span>
+<h2 class="section-title">Production Deployment &amp; Cloudflare Runbook</h2>
+</div>
+<p>
+Deploying changes to the global edge network:
+</p>
+
+<div class="card">
+<h4>Production Deployment Command</h4>
+<pre><code># Build client bundle with Vite and deploy to Cloudflare Pages
+npm run deploy</code></pre>
+<p style="color:var(--text-muted); font-size:0.92rem; margin-top:10px;">
+This runs <code>vite build</code> to compile client assets into <code>dist/</code>, followed by <code>wrangler pages deploy dist</code>.
+</p>
+
+<h4 style="margin-top: 18px;">Pre-Deployment Checklist</h4>
+<ol>
+<li>Run <code>npm test</code> to ensure all cryptographic and unit tests pass.</li>
+<li>Run <code>npm run build</code> to verify TypeScript compiler checks and zero bundle warnings.</li>
+<li>Ensure database migrations in <code>migrations/</code> have been executed on the production D1 instance if schema changes were introduced.</li>
+<li>Verify production environmental variables (Resend API key, Google OAuth Client Secrets) in Cloudflare Pages dashboard.</li>
+</ol>
+</div>
+</section>
+
+</main>

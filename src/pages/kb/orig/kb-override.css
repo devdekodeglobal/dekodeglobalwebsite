@@ -1,0 +1,139 @@
+/* DEKODE KB override: light-mode only, blue navbar/sidebar, yellow-white text, white logo.
+   Imported AFTER each doc's original CSS so it wins. */
+.kb-orig {
+  background: #f4f7fd;
+}
+
+/* Hide any theme toggle buttons (light mode only) */
+.kb-orig #theme-toggle,
+.kb-orig .theme-toggle,
+.kb-orig .theme-icon-btn,
+.kb-orig [id*="theme-toggle"],
+.kb-orig [class*="theme-toggle"] {
+  display: none !important;
+}
+
+/* Blue navbar + sidebar */
+.kb-orig .mobile-topbar,
+.kb-orig .sidebar {
+  background: linear-gradient(180deg, #0a3d91 0%, #0b2f6e 100%) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+.kb-orig .mobile-topbar {
+  box-shadow: 0 2px 12px rgba(10, 61, 145, 0.35);
+}
+
+/* White DEKODE logo - Outfit 800, same as website header */
+.kb-orig .brand-logo,
+.kb-orig a.brand-logo {
+  color: #ffffff !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 800 !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+}
+.kb-orig .brand-logo:hover {
+  color: #FFB611 !important;
+}
+
+/* Sidebar text: white, accents yellow */
+.kb-orig .sidebar,
+.kb-orig .sidebar-header,
+.kb-orig .brand-container {
+  color: #ffffff;
+}
+.kb-orig .sidebar a,
+.kb-orig .sidebar .nav-links a,
+.kb-orig .nav-links a {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+.kb-orig .sidebar a:hover,
+.kb-orig .sidebar .nav-links a:hover,
+.kb-orig .nav-links a:hover {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+.kb-orig .sidebar .nav-links a.active,
+.kb-orig .nav-links a.active {
+  color: #FFB611 !important;
+  background: rgba(255, 182, 17, 0.14) !important;
+  border-left-color: #FFB611 !important;
+}
+.kb-orig .sidebar .nav-group-title,
+.kb-orig .sidebar .sidebar-title,
+.kb-orig .sidebar h1,
+.kb-orig .sidebar h2,
+.kb-orig .sidebar h3 {
+  color: #FFB611 !important;
+}
+.kb-orig .mobile-menu-btn {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
+}
+.kb-orig .sidebar-search,
+.kb-orig .sidebar input[type="text"],
+.kb-orig .sidebar input[type="search"] {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+}
+.kb-orig .sidebar-search::placeholder,
+.kb-orig .sidebar input::placeholder {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+/* Doc hero titles: flat, no shadow/glow */
+.kb-orig .hero-banner,
+.kb-orig .hero-title,
+.kb-orig .hero-title span,
+.kb-orig .doc-hero,
+.kb-orig .doc-hero h1 {
+  text-shadow: none !important;
+  filter: none !important;
+  -webkit-text-stroke: 0 !important;
+}
+.kb-orig .hero-banner { box-shadow: none !important; }
+.kb-orig .hero-banner::before { display: none !important; }
+
+/* OptiFlow hero: same scale as krafc/kopal docs */
+.kb-orig-internal-optiflow .hero-title,
+.kb-orig-client-optiflow .hero-title { font-size: 2.5rem !important; }
+.kb-orig-internal-optiflow .hero-title span,
+.kb-orig-client-optiflow .hero-title span { font-size: 0.72em !important; }
+
+/* Prototype card: keep screenshot inside the box */
+.kb-orig .prototype-hero-card { overflow: hidden; max-width: 100%; }
+.kb-orig .prototype-details,
+.kb-orig .prototype-media { min-width: 0 !important; max-width: 100%; }
+.kb-orig .prototype-media img,
+.kb-orig .prototype-img { max-width: 100%; height: auto; display: block; }
+.kb-orig .prototype-img-frame:hover { transform: translateY(-4px) !important; }
+
+/* Prototype card: stack cleanly on small screens */
+@media (max-width: 900px) {
+  .kb-orig .prototype-hero-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 20px !important;
+    padding: 20px !important;
+  }
+  .kb-orig .prototype-details,
+  .kb-orig .prototype-media {
+    min-width: 0 !important;
+    width: 100% !important;
+    flex: none !important;
+  }
+  .kb-orig .prototype-media { justify-content: stretch !important; order: -1 !important; }
+  .kb-orig .prototype-img-frame { width: 100% !important; }
+  .kb-orig .prototype-img-frame:hover { transform: none !important; }
+  .kb-orig .launch-btn-cfs {
+    width: 100% !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+  }
+}
+@media (max-width: 480px) {
+  .kb-orig .prototype-hero-card { padding: 16px !important; border-radius: 16px !important; }
+  .kb-orig .prototype-details h2 { font-size: 1.35rem !important; line-height: 1.25 !important; }
+}

@@ -1,143 +1,227 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  ShieldCheck, 
   Lock, 
   Layers, 
   Code2, 
   LogOut, 
   AlertCircle,
-  Sun,
-  Moon,
   PackageCheck,
   ChevronRight,
-  ArrowLeft
+  ArrowLeft,
+  ShieldCheck,
+  Sparkles
 } from 'lucide-react';
 
+import InternalCompanyStandards from './kb/internal/InternalCompanyStandards';
+import InternalOptiFlowGuide from './kb/internal/InternalOptiFlowGuide';
+import InternalKrafcGuide from './kb/internal/InternalKrafcGuide';
+import InternalInduction from './kb/internal/InternalInduction';
+import InternalKopal from './kb/internal/InternalKopal';
+import ClientCompanyStandards from './kb/client/ClientCompanyStandards';
+import ClientOptiFlowGuide from './kb/client/ClientOptiFlowGuide';
+import ClientKrafcGuide from './kb/client/ClientKrafcGuide';
+import ClientKopal from './kb/client/ClientKopal';
+import '../styles/kb.css';
+import krafcLogo from '../assets/krafc-logo.png';
+import optiFlowLogo from '../assets/optiflow-logo.svg';
+import kopalLogo from '../assets/kopal-logo.png';
+
+const DOC_COMPONENTS = {
+  induction: InternalInduction,
+  standards: InternalCompanyStandards,
+  optiflow: InternalOptiFlowGuide,
+  krafc: InternalKrafcGuide,
+  kopal: InternalKopal,
+  'client-standards': ClientCompanyStandards,
+  'client-optiflow': ClientOptiFlowGuide,
+  'client-krafc': ClientKrafcGuide,
+  'client-kopal': ClientKopal,
+};
 const INTERNAL_AUTH_KEY = 'dekode_internal_kb_auth';
 const INTERNAL_ROLE_KEY = 'dekode_internal_kb_role';
-const INTERNAL_THEME_KEY = 'dekode_internal_kb_theme';
 const TEAM_PASSWORD = 'deko1234';
 const CLIENT_PASSWORD = 'client1234';
 
 const MODULES = [
   {
-    id: 'standards',
+    id: 'induction',
     num: '01',
-    title: 'Company Standards',
-    tag: 'Core Standards',
+    title: 'Induction',
+    tag: 'Guide',
     tier: 'internal',
+    section: 'Induction',
     status: 'Ready',
     statusLabel: 'Ready',
+    updated: 'Oct 2026',
+    icon: ShieldCheck,
+    accent: '#0B3D91',
+    accentBg: 'rgba(11, 61, 145, 0.14)',
+    desc: 'Welcome to DEKODE, how we work, team setup and day-one checklist.'
+  },
+  {
+    id: 'standards',
+    num: '02',
+    title: 'Engineering Best Practices',
+    tag: 'Guide',
+    tier: 'internal',
+    section: 'Coding Standards',
+    status: 'Ready',
+    statusLabel: 'Ready',
+    updated: 'Oct 2026',
     icon: Code2,
-    accent: '#FFB611',
-    accentBg: 'rgba(255, 182, 17, 0.12)',
-    url: '/internal-docs/company-standards/index.html',
-    desc: 'Engineering protocols, Git hygiene, security and testing benchmarks.'
+    accent: '#B45309',
+    accentBg: 'rgba(180, 83, 9, 0.14)',
+    desc: 'Coding best practices, Git hygiene, security and testing benchmarks.'
   },
   {
     id: 'optiflow',
-    num: '02',
+    logo: optiFlowLogo,
+    num: '03',
     title: 'OptiFlow',
-    tag: 'System & Architecture',
+    tag: 'Architecture',
     tier: 'internal',
+    section: 'Products',
     status: 'Ready',
     statusLabel: 'Ready',
+    updated: 'Oct 2026',
     icon: Layers,
     accent: '#22d3ee',
     accentBg: 'rgba(34, 211, 238, 0.12)',
-    url: '/internal-docs/optiflow/index.html',
     desc: 'Distribution engine, FIFO allocation, diagrams and contributor guide.'
   },
   {
     id: 'krafc',
-    num: '03',
+    logo: krafcLogo,
+    num: '04',
     title: 'krafc',
-    tag: '3D CAD & Spatial WebGL',
+    tag: 'Spec',
     tier: 'internal',
+    section: 'Products',
     status: 'Ready',
     statusLabel: 'Ready',
+    updated: 'Oct 2026',
     icon: PackageCheck,
     accent: '#0ea5e9',
     accentBg: 'rgba(14, 165, 233, 0.12)',
-    url: '/internal-docs/krafc/index.html',
     desc: 'Dual-engine Konva/BabylonJS architecture, spatial math and specs.'
   },
   {
-    id: 'client-standards',
-    num: 'C1',
-    title: 'Company Standards',
-    tag: 'Client Hub',
-    tier: 'external',
+    id: 'kopal',
+    logo: kopalLogo,
+    num: '05',
+    title: 'KOPAL',
+    tag: 'Platform',
+    tier: 'internal',
+    section: 'Platforms',
     status: 'Ready',
     statusLabel: 'Ready',
-    icon: Code2,
-    accent: '#FFB611',
-    accentBg: 'rgba(255, 182, 17, 0.12)',
-    url: '/client-docs/company-standards/index.html',
-    desc: 'How we work, what we deliver, FAQs and contact details.'
+    updated: 'Oct 2026',
+    icon: Sparkles,
+    accent: '#a78bfa',
+    accentBg: 'rgba(167, 139, 250, 0.12)',
+    desc: 'Dual-interface Flutter platform, Go + Vertex AI backend, Firestore realtime control plane.'
   },
   {
     id: 'client-optiflow',
-    num: 'C2',
-    title: 'OptiFlow Overview',
-    tag: 'Client Hub',
+    logo: optiFlowLogo,
+    num: 'C1',
+    title: 'OptiFlow',
+    tag: 'Guide',
     tier: 'external',
+    section: 'Products',
     status: 'Ready',
     statusLabel: 'Ready',
+    updated: 'Oct 2026',
     icon: Layers,
     accent: '#22d3ee',
     accentBg: 'rgba(34, 211, 238, 0.12)',
-    url: '/client-docs/optiflow/index.html',
     desc: 'Product tour, live prototype, FAQs and onboarding info.'
   },
   {
     id: 'client-krafc',
-    num: 'C3',
-    title: 'krafc Overview',
-    tag: 'Client Hub',
+    logo: krafcLogo,
+    num: 'C2',
+    title: 'krafc',
+    tag: 'Guide',
     tier: 'external',
+    section: 'Products',
     status: 'Ready',
     statusLabel: 'Ready',
+    updated: 'Oct 2026',
     icon: PackageCheck,
     accent: '#0ea5e9',
     accentBg: 'rgba(14, 165, 233, 0.12)',
-    url: '/client-docs/krafc/index.html',
     desc: 'Product tour, live platform preview, FAQs and project flow.'
+  },
+  {
+    id: 'client-kopal',
+    logo: kopalLogo,
+    num: 'C3',
+    title: 'KOPAL',
+    tag: 'Platform',
+    tier: 'external',
+    section: 'Platforms',
+    status: 'Ready',
+    statusLabel: 'Ready',
+    updated: 'Oct 2026',
+    icon: Sparkles,
+    accent: '#a78bfa',
+    accentBg: 'rgba(167, 139, 250, 0.12)',
+    desc: 'Immersive AI literacy ecosystem for children - session journey, system overview and FAQs.'
   }
 ];
+
+const SECTION_ORDER = ['Induction', 'Coding Standards', 'Products', 'Platforms'];
+
+const HUB_PATH = '/team-kb-d7x9q2';
+const docPath = (id) => `${HUB_PATH}/doc/${id}`;
+const docIdFromPath = () => {
+  const m = window.location.pathname.match(/\/team-kb-d7x9q2\/doc\/([a-z-]+)/);
+  return m ? m[1] : null;
+};
 
 export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9q2' }) {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return sessionStorage.getItem(INTERNAL_AUTH_KEY) === 'authenticated';
   });
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem(INTERNAL_THEME_KEY) || 'dark';
-  });
+  const [theme] = useState('light');
   const [passwordInput, setPasswordInput] = useState('');
+  const [portalTab, setPortalTab] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
-  const [selectedDoc, setSelectedDoc] = useState(null);
+  const [selectedDoc, setSelectedDoc] = useState(() => {
+    const id = docIdFromPath();
+    return MODULES.find((m) => m.id === id && m.status === 'Ready' && DOC_COMPONENTS[id]) || null;
+  });
   const [role, setRole] = useState(() => {
     return sessionStorage.getItem(INTERNAL_ROLE_KEY) || 'internal';
   });
+  const [query, setQuery] = useState('');
 
-  const isLight = theme === 'light';
+  const isLight = true;
 
-  const toggleTheme = () => {
-    const nextTheme = isLight ? 'dark' : 'light';
-    setTheme(nextTheme);
-    localStorage.setItem(INTERNAL_THEME_KEY, nextTheme);
-    localStorage.setItem('company_handbook_theme', nextTheme);
-    localStorage.setItem('optiflow_guide_theme', nextTheme);
-    localStorage.setItem('krafc_guide_theme', nextTheme);
+  const handleThemeChange = () => {};
 
-    const iframe = document.querySelector('iframe');
-    if (iframe && iframe.contentDocument) {
-      try {
-        iframe.contentDocument.documentElement.setAttribute('data-theme', nextTheme);
-      } catch {
-        // Cross-origin fallback
-      }
-    }
+  // Browser / mobile back button support: each doc is its own page
+  useEffect(() => {
+    const onPop = () => {
+      const id = docIdFromPath();
+      setSelectedDoc(MODULES.find((m) => m.id === id && m.status === 'Ready' && DOC_COMPONENTS[id]) || null);
+      window.scrollTo(0, 0);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
+  const openDoc = (item) => {
+    window.history.pushState({ kbDoc: item.id }, '', docPath(item.id));
+    setSelectedDoc(item);
+    window.scrollTo(0, 0);
+  };
+
+  const goHub = () => {
+    window.history.pushState({ kbDoc: null }, '', HUB_PATH);
+    setSelectedDoc(null);
+    window.scrollTo(0, 0);
   };
 
   useEffect(() => {
@@ -169,6 +253,7 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
     sessionStorage.removeItem(INTERNAL_ROLE_KEY);
     setIsAuthenticated(false);
     setSelectedDoc(null);
+    window.history.replaceState({ kbDoc: null }, '', HUB_PATH);
   };
 
     // Clean, consistent gold-accented palette across both light and dark modes
@@ -187,161 +272,171 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
     cardHover: isLight ? '#f1f5f9' : '#131c33'
   };
 
-  // 1. Password Lock Gate
+  // 1. Password Lock Gate - blue, white DEKODE logo, portal picker then password
   if (!isAuthenticated) {
     return (
       <div style={{
         width: '100%',
         minHeight: '100vh',
-        background: isLight
-          ? 'linear-gradient(180deg, #f8faff 0%, #e2e8f0 100%)'
-          : 'radial-gradient(circle at 50% 30%, rgba(255, 182, 17, 0.06), transparent 60%), #080d1a',
+        background: 'radial-gradient(circle at 50% 25%, rgba(255, 182, 17, 0.12), transparent 55%), linear-gradient(180deg, #08203C 0%, #04101f 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '20px',
         boxSizing: 'border-box',
         fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
-        color: t.text,
         position: 'relative'
       }}>
-        {/* Minimal Theme Switcher */}
-        <button
-          onClick={toggleTheme}
-          aria-label="Toggle theme"
-          style={{
-            position: 'absolute',
-            top: '20px',
-            right: '20px',
-            background: isLight ? '#ffffff' : 'none',
-            border: `1px solid ${isLight ? '#cbd5e1' : t.border}`,
-            color: t.text,
-            width: '38px',
-            height: '38px',
-            borderRadius: '10px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            boxShadow: isLight ? '0 2px 8px rgba(0,0,0,0.05)' : 'none'
-          }}
-        >
-          {isLight ? <Moon size={16} color="#0f172a" /> : <Sun size={16} color={t.gold} />}
-        </button>
-
         <div style={{
           width: '100%',
           maxWidth: '380px',
-          borderRadius: '20px',
-          border: isLight ? '1px solid #cbd5e1' : `1px solid ${t.border}`,
-          padding: '36px 28px',
-          textAlign: 'center',
-          boxShadow: isLight
-            ? '0 10px 30px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(0,0,0,0.04)'
-            : '0 20px 50px rgba(0,0,0,0.5), 0 0 60px rgba(255, 182, 17, 0.06)',
-          position: 'relative'
+          textAlign: 'center'
         }}>
-          <div style={{
-            width: '64px',
-            height: '64px',
-            borderRadius: '18px',
-            background: isLight
-              ? '#FFB611'
-              : `radial-gradient(circle at 50% 35%, rgba(255, 182, 17, 0.25), ${t.goldBg})`,
-            border: isLight ? 'none' : '1px solid rgba(255, 182, 17, 0.35)',
-            boxShadow: isLight ? '0 4px 14px rgba(255, 182, 17, 0.35)' : '0 0 32px rgba(255, 182, 17, 0.20)',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: '16px',
-            color: isLight ? '#000000' : t.gold
-          }}>
-            <ShieldCheck size={28} strokeWidth={2.5} />
-          </div>
-
-          <div style={{
-            fontSize: '11px',
-            letterSpacing: '0.12em',
-            color: isLight ? '#b45309' : t.gold,
+          <div className="brand-logo" style={{
+            display: 'block',
+            fontFamily: "'Outfit', sans-serif",
             fontWeight: 800,
+            fontSize: '28px',
+            letterSpacing: '1px',
+            color: '#ffffff',
             textTransform: 'uppercase',
-            marginBottom: '6px'
+            textAlign: 'center',
+            marginBottom: '4px'
           }}>
-            DEKODE INTERNAL
+            DEKODE
+          </div>
+          <div style={{ fontSize: '15px', fontWeight: 600, color: 'rgba(255,255,255,0.85)', marginBottom: '24px', textAlign: 'center' }}>
+            Knowledge Base
           </div>
 
-          <h1 style={{ fontFamily: "'Outfit', sans-serif", fontSize: '22px', fontWeight: 800, margin: '0 0 8px', letterSpacing: '-0.02em', color: t.text }}>
-            Team Knowledge Base
-          </h1>
-
-          <p style={{ fontSize: '13px', color: t.textMuted, margin: '0 0 24px', lineHeight: '1.4' }}>
-            Enter your team or client passkey to access documentation.
-          </p>
-
-          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div style={{ position: 'relative' }}>
-              <Lock size={15} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: t.textDim }} />
-              <input
-                type="password"
-                value={passwordInput}
-                onChange={(e) => {
-                  setPasswordInput(e.target.value);
-                  if (errorMsg) setErrorMsg('');
-                }}
-                placeholder="Team or client password"
-                autoFocus
-                onFocus={(e) => { e.target.style.borderColor = t.gold; e.target.style.boxShadow = '0 0 0 3px rgba(255, 182, 17, 0.25)'; }}
-                onBlur={(e) => { e.target.style.borderColor = errorMsg ? '#ef4444' : (isLight ? '#cbd5e1' : t.border); e.target.style.boxShadow = 'none'; }}
-                style={{
-                  width: '100%',
-                  padding: '12px 14px 12px 38px',
-                  backgroundColor: isLight ? '#f8fafc' : t.inputBg,
-                  border: errorMsg ? '1px solid #ef4444' : (isLight ? '1px solid #cbd5e1' : `1px solid ${t.border}`),
-                  borderRadius: '10px',
-                  color: t.text,
-                  fontSize: '14px',
-                  outline: 'none',
-                  boxSizing: 'border-box',
-                  transition: 'border-color 0.15s ease, box-shadow 0.15s ease'
-                }}
-              />
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.04)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            borderRadius: '20px',
+            padding: '28px 24px',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.4)',
+            backdropFilter: 'blur(12px)',
+            minHeight: '236px',
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center'
+          }}>
+            {!portalTab ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {[
+                { id: 'internal', label: 'Internal Team' },
+                { id: 'client', label: 'Client Portal' },
+              ].map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => { setPortalTab(p.id); setErrorMsg(''); setPasswordInput(''); }}
+                  style={{
+                    width: '100%',
+                    padding: '13px',
+                    borderRadius: '10px',
+                    border: 'none',
+                    background: 'linear-gradient(135deg, #ffd34d 0%, #FFB611 50%, #e69a00 100%)',
+                    color: '#080d1a',
+                    fontWeight: 800,
+                    fontSize: '14px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {p.label}
+                </button>
+              ))}
             </div>
+            ) : (
+              <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => { setPortalTab(null); setErrorMsg(''); setPasswordInput(''); }}
+                    aria-label="Back"
+                    style={{ background: 'none', border: '1px solid rgba(255,255,255,0.25)', borderRadius: '8px', color: '#ffffff', fontSize: '14px', fontWeight: 700, cursor: 'pointer', padding: '6px 12px' }}
+                  >
+                    ←
+                  </button>
+                </div>
+                <div style={{ position: 'relative' }}>
+                  <Lock size={15} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+                  <input
+                    type="password"
+                    value={passwordInput}
+                    onChange={(e) => {
+                      setPasswordInput(e.target.value);
+                      if (errorMsg) setErrorMsg('');
+                    }}
+                    placeholder={portalTab === 'internal' ? 'Team password' : 'Client password'}
+                    autoFocus
+                    onFocus={(e) => { e.target.style.borderColor = t.gold; e.target.style.boxShadow = '0 0 0 3px rgba(255, 182, 17, 0.25)'; }}
+                    onBlur={(e) => { e.target.style.borderColor = errorMsg ? '#ef4444' : '#cbd5e1'; e.target.style.boxShadow = 'none'; }}
+                    style={{
+                      width: '100%',
+                      padding: '12px 14px 12px 38px',
+                      backgroundColor: '#f8fafc',
+                      border: errorMsg ? '1px solid #ef4444' : '1px solid #cbd5e1',
+                      borderRadius: '10px',
+                      color: '#0f172a',
+                      fontSize: '14px',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                      transition: 'border-color 0.15s ease, box-shadow 0.15s ease'
+                    }}
+                  />
+                </div>
 
-            {errorMsg && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#ef4444', fontSize: '12px', textAlign: 'left' }}>
-                <AlertCircle size={14} />
-                <span>{errorMsg}</span>
-              </div>
-            )}
+                {errorMsg && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#ef4444', fontSize: '12px', textAlign: 'left' }}>
+                    <AlertCircle size={14} />
+                    <span>{errorMsg}</span>
+                  </div>
+                )}
 
-            <button
-              type="submit"
-              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 182, 17, 0.4)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
-              style={{
-                width: '100%',
-                padding: '12px',
-                background: 'linear-gradient(135deg, #ffd34d 0%, #FFB611 50%, #e69a00 100%)',
-                border: 'none',
-                borderRadius: '10px',
-                color: '#080d1a',
-                fontFamily: "'Outfit', sans-serif",
-                fontWeight: 800,
+                <button
+                  type="submit"
+                  onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 182, 17, 0.4)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    background: 'linear-gradient(135deg, #ffd34d 0%, #FFB611 50%, #e69a00 100%)',
+                    border: 'none',
+                    borderRadius: '10px',
+                    color: '#080d1a',
+                    fontFamily: "'Outfit', sans-serif",
+                    fontWeight: 800,
                 fontSize: '14px',
                 cursor: 'pointer',
                 transition: 'transform 0.15s ease, box-shadow 0.15s ease'
               }}
             >
-              Enter Knowledge Base
+              Enter
             </button>
           </form>
+            )
+          }
+          </div>
         </div>
       </div>
     );
   }
 
-  // 2. Focused Full-Screen Document Reader (Mobile responsive top bar)
+  // 2. Native React Document Reader (own page per doc)
   if (selectedDoc) {
+    const DocComponent = DOC_COMPONENTS[selectedDoc.id];
+    const docRole = selectedDoc.tier === 'external' ? 'Client' : 'Internal';
+    if (DocComponent) {
+      return (
+        <DocComponent
+          theme={theme}
+          onThemeChange={handleThemeChange}
+          onNavigateHome={goHub}
+        />
+      );
+    }
     return (
       <div style={{
         height: '100vh',
@@ -396,41 +491,12 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-            <button
-              onClick={toggleTheme}
-              aria-label="Toggle theme"
-              style={{
-                background: 'none',
-                border: `1px solid ${t.border}`,
-                color: t.text,
-                width: '32px',
-                height: '32px',
-                borderRadius: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer'
-              }}
-            >
-              {isLight ? <Moon size={14} /> : <Sun size={14} color={t.gold} />}
-            </button>
           </div>
         </header>
 
-        {/* Iframe Viewport */}
-        <div style={{ flex: 1, width: '100%', position: 'relative', backgroundColor: t.bg }}>
-          <iframe
-            src={selectedDoc.url}
-            title={selectedDoc.title}
-            onLoad={(e) => {
-              try {
-                e.target.contentDocument.documentElement.setAttribute('data-theme', theme);
-              } catch {
-                // Ignore cross-origin fallback
-              }
-            }}
-            style={{ width: '100%', height: '100%', border: 'none' }}
-          />
+        {/* Fallback (should not happen - all docs have React components) */}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <p>Document not found.</p>
         </div>
       </div>
     );
@@ -441,6 +507,8 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
   // client password shows client-safe docs. No manual switching.
   const visibleModules = MODULES.filter((m) => (m.tier || 'internal') === role);
   const isClient = role === 'external';
+  const q = query.trim().toLowerCase();
+  const filtered = q ? visibleModules.filter((m) => `${m.title} ${m.desc} ${m.tag}`.toLowerCase().includes(q)) : visibleModules;
   return (
     <div style={{
       width: '100%',
@@ -450,16 +518,16 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
       fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
       boxSizing: 'border-box'
     }}>
-      {/* Sleek Header */}
+      {/* Blue Header */}
       <header style={{
-        backgroundColor: t.surface,
-        borderBottom: `1px solid ${t.border}`,
+        background: 'linear-gradient(180deg, #0a3d91 0%, #0b2f6e 100%)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.14)',
         position: 'sticky',
         top: 0,
         zIndex: 20
       }}>
         <div style={{
-          maxWidth: '680px',
+          maxWidth: '800px',
           margin: '0 auto',
           padding: '12px 18px',
           display: 'flex',
@@ -467,48 +535,20 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
           justifyContent: 'space-between'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '15px', fontWeight: 900, letterSpacing: '-0.02em', color: t.text }}>
+            <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: '1.55rem', fontWeight: 800, lineHeight: 1, letterSpacing: '-0.01em', color: '#ffffff' }}>
               DEKODE
-            </span>
-            <span style={{
-              fontSize: '10px',
-              padding: '2px 6px',
-              borderRadius: '4px',
-              backgroundColor: t.goldBg,
-              color: t.gold,
-              fontWeight: 700
-            }}>
-              KB
             </span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <button
-              onClick={toggleTheme}
-              aria-label="Toggle theme"
-              style={{
-                background: 'none',
-                border: `1px solid ${t.border}`,
-                color: t.text,
-                width: '32px',
-                height: '32px',
-                borderRadius: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer'
-              }}
-            >
-              {isLight ? <Moon size={14} /> : <Sun size={14} color={t.gold} />}
-            </button>
-
-            <button
               onClick={handleLogout}
-              title="Lock & Logout"
+              title="Log out of Knowledge Base"
+              aria-label="Log out of Knowledge Base"
               style={{
-                background: 'none',
-                border: `1px solid ${t.border}`,
-                color: t.textDim,
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.3)',
+                color: '#ffffff',
                 width: '32px',
                 height: '32px',
                 borderRadius: '8px',
@@ -526,164 +566,142 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
 
       {/* Clean Main Container */}
       <main style={{
-        maxWidth: '680px',
+        maxWidth: '800px',
         margin: '0 auto',
-        padding: '28px 18px 48px'
+        padding: '40px 24px 48px'
       }}>
         {/* Minimal Hero Header */}
-        <div style={{ marginBottom: '24px' }}>
+        <div style={{ marginBottom: '16px' }}>
           <h1 style={{
-            fontSize: '22px',
+            fontSize: '28px',
             fontWeight: 800,
-            margin: '0 0 6px',
-            letterSpacing: '-0.02em',
+            margin: '0 0 8px',
+            letterSpacing: '-0.01em',
             color: t.text
           }}>
             {isClient ? 'Client Knowledge Base' : 'Engineering Knowledge Base'}
           </h1>
           <p style={{
-            fontSize: '13px',
+            fontSize: '15px',
             color: t.textMuted,
             margin: 0,
-            lineHeight: '1.4'
+            lineHeight: '1.5'
           }}>
             {isClient ? 'Product guides, manuals and release notes.' : 'Internal technical specifications, guidelines, and product guides.'}
           </p>
         </div>
 
-        {/* Role badge with doc count (view is set by login, no manual switching) */}
-        <div style={{ marginBottom: '18px' }}>
-          <span style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            fontSize: '11px',
-            fontWeight: 700,
-            letterSpacing: '0.06em',
-            textTransform: 'uppercase',
-            padding: '5px 12px',
-            borderRadius: '999px',
-            backgroundColor: isLight ? '#FFB611' : t.goldBg,
-            border: `1px solid #FFB611`,
-            boxShadow: isLight ? '0 2px 8px rgba(255, 182, 17, 0.35)' : 'none',
-            color: isLight ? '#000000' : t.gold
-          }}>
-            {isClient ? 'Client-Facing Docs' : 'Internal Engineering'} · {visibleModules.length}
-          </span>
+        <div style={{ marginBottom: '32px' }}>
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search docs…"
+            aria-label="Search docs"
+            style={{ width: '100%', boxSizing: 'border-box', padding: '12px 16px', borderRadius: '12px', border: `1px solid ${t.border}`, fontSize: '15px', outline: 'none', background: t.surface, color: t.text }}
+          />
         </div>
 
-        {/* Glassmorphic Module Row Cards */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {visibleModules.map((item) => {
+        {/* Grouped Module Sections */}
+        {SECTION_ORDER.map((section) => {
+          const items = filtered.filter((m) => (m.section || 'Products') === section);
+          if (!items.length) return null;
+          return (
+            <div key={section} style={{ marginBottom: '32px' }}>
+              <div style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#5b6478', margin: '32px 0 12px' }}>
+                {section}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {items.map((item) => {
             const Icon = item.icon;
             const isReady = item.status === 'Ready';
             const accent = item.accent || t.gold;
             const accentBg = item.accentBg || t.goldBg;
 
+            const cardProps = isReady ? {
+              role: 'link', tabIndex: 0,
+              onClick: () => openDoc(item),
+              onKeyDown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDoc(item); } },
+            } : { 'aria-disabled': true };
             return (
               <div
                 key={item.id}
-                onClick={() => {
-                  if (isReady && item.url) {
-                    setSelectedDoc(item);
-                  }
-                }}
+                {...cardProps}
                 style={{
-                  background: isLight ? t.surface : `linear-gradient(135deg, ${t.surface} 0%, #111a2e 100%)`,
+                  background: t.surface,
                   borderRadius: '16px',
-                  border: `1px solid ${t.border}`,
-                  padding: '16px 16px 14px',
+                  border: '1px solid #e5e7ee',
+                  padding: '20px',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '14px',
+                  gap: '16px',
                   cursor: isReady ? 'pointer' : 'default',
                   opacity: isReady ? 1 : 0.65,
-                  transition: 'border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease',
-                  userSelect: 'none'
+                  transition: 'transform .15s, box-shadow .15s, border-color .15s',
+                  userSelect: 'none',
+                  outline: 'none'
                 }}
                 onMouseEnter={(e) => {
                   if (isReady) {
-                    e.currentTarget.style.borderColor = accent;
+                    e.currentTarget.style.borderColor = '#c7cce0';
                     e.currentTarget.style.transform = 'translateY(-1px)';
-                    e.currentTarget.style.boxShadow = `0 8px 24px ${accentBg}`;
-                    const arrow = e.currentTarget.querySelector('[data-arrow]');
-                    if (arrow) { arrow.style.color = accent; arrow.style.filter = `drop-shadow(0 0 6px ${accent})`; arrow.style.transform = 'translateX(3px)'; }
+                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(20, 30, 80, .08)';
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (isReady) {
-                    e.currentTarget.style.borderColor = t.border;
-                    e.currentTarget.style.transform = 'none';
-                    e.currentTarget.style.boxShadow = 'none';
-                    const arrow = e.currentTarget.querySelector('[data-arrow]');
-                    if (arrow) { arrow.style.color = t.textDim; arrow.style.filter = 'none'; arrow.style.transform = 'none'; }
-                  }
+                  e.currentTarget.style.borderColor = '#e5e7ee';
+                  e.currentTarget.style.transform = 'none';
+                  e.currentTarget.style.boxShadow = 'none';
                 }}
+                onFocus={(e) => { e.currentTarget.style.boxShadow = '0 0 0 3px rgba(11,61,145,.35)'; }}
+                onBlur={(e) => { e.currentTarget.style.boxShadow = 'none'; }}
               >
-                {/* Squircle icon badge with accent gradient tint */}
+                {/* Uniform 48px left icon */}
                 <div style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '14px',
-                  background: `linear-gradient(135deg, ${accentBg}, transparent)`,
-                  border: `1px solid ${accent}33`,
-                  color: isReady ? accent : t.textDim,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '12px',
+                  background: item.logo ? '#fff' : accentBg,
+                  border: '1px solid #e5e7ee',
+                  display: 'grid',
+                  placeItems: 'center',
+                  flexShrink: 0,
+                  overflow: 'hidden',
+                  boxSizing: 'border-box'
                 }}>
-                  <Icon size={20} />
+                  {item.logo
+                    ? <img src={item.logo} alt={`${item.title} logo`} style={{ width: '38px', height: '38px', objectFit: 'contain' }} />
+                    : <Icon size={22} color={accent} />}
                 </div>
 
-                {/* Two-tier info: title + pill / value line */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px', flexWrap: 'wrap' }}>
-                    <h2 style={{ fontSize: '15px', fontWeight: 700, margin: 0, color: t.text }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
+                    <h2 style={{ fontSize: '16px', fontWeight: 700, margin: 0, color: t.text, letterSpacing: '-0.01em' }}>
                       {item.title}
                     </h2>
-                    {!isReady && (
-                      <span style={{
-                        fontSize: '10px',
-                        fontWeight: 700,
-                        letterSpacing: '0.04em',
-                        textTransform: 'uppercase',
-                        padding: '2px 8px',
-                        borderRadius: '999px',
-                        backgroundColor: isLight ? '#f1f5f9' : '#1e293b',
-                        border: `1px solid ${t.border}`,
-                        color: t.textDim,
-                        whiteSpace: 'nowrap'
-                      }}>
-                        Upcoming
-                      </span>
-                    )}
                   </div>
-                  <p style={{ fontSize: '12.5px', color: t.textMuted, margin: 0, lineHeight: '1.45' }}>
+                  <p style={{ fontSize: '15px', color: t.textMuted, margin: '0 0 4px', lineHeight: '1.5' }}>
                     {item.desc}
                   </p>
+                  <div style={{ fontSize: '12px', color: '#5b6478' }}>Updated {item.updated}</div>
                 </div>
 
-                {/* Subtle arrow action */}
                 {isReady && (
-                  <span data-arrow style={{
-                    color: t.textDim,
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexShrink: 0,
-                    transition: 'color 0.15s ease, transform 0.15s ease, filter 0.15s ease'
-                  }}>
+                  <span data-arrow style={{ color: t.textDim, display: 'flex', alignItems: 'center', flexShrink: 0, alignSelf: 'center' }}>
                     <ChevronRight size={20} />
                   </span>
                 )}
               </div>
             );
           })}
-        </div>
+              </div>
+            </div>
+          );
+        })}
 
         {/* Minimal Footer */}
         <div style={{
-          marginTop: '36px',
+          marginTop: '32px',
           textAlign: 'center',
           fontSize: '11px',
           color: t.textDim
