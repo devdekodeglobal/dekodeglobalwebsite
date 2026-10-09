@@ -128,12 +128,21 @@
   .kb-orig .prototype-img-frame { width: 100% !important; }
   .kb-orig .prototype-img-frame:hover { transform: none !important; }
   .kb-orig .launch-btn-cfs {
-    width: 100% !important;
+    width: auto !important;
+    max-width: 240px !important;
     justify-content: center !important;
     box-sizing: border-box !important;
+    padding: 10px 20px !important;
+    font-size: 0.9rem !important;
+    gap: 8px !important;
   }
 }
 @media (max-width: 480px) {
   .kb-orig .prototype-hero-card { padding: 16px !important; border-radius: 16px !important; }
   .kb-orig .prototype-details h2 { font-size: 1.35rem !important; line-height: 1.25 !important; }
+  .kb-orig .launch-btn-cfs {
+    padding: 9px 18px !important;
+    font-size: 0.85rem !important;
+    max-width: 220px !important;
+  }
 }

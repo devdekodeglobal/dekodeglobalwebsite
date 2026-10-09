@@ -278,7 +278,7 @@ export default function InternalKnowledgeBase({ _secretPath = '/internal-kb-d7x9
       <div style={{
         width: '100%',
         minHeight: '100vh',
-        background: 'radial-gradient(circle at 50% 25%, rgba(255, 182, 17, 0.12), transparent 55%), linear-gradient(180deg, #08203C 0%, #04101f 100%)',
+        background: 'linear-gradient(180deg, #08203C 0%, #04101f 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
