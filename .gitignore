@@ -27,6 +27,8 @@ dist-ssr
 # Environment Variables
 .env
 .env.*
+.dev.vars*
+!.dev.vars.example
 
 # Cloudflare Wrangler Build Artifacts
 .wrangler/

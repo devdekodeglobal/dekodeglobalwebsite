@@ -4,6 +4,10 @@
   "exclude": [
     "/assets/*",
     "/internal-docs/*",
+    "/clinics-on-cloud/*.html",
+    "/clinics-on-cloud/*.css",
+    "/clinics-on-cloud/*.js",
+    "/clinics-on-cloud/*.png",
     "/favicon.png",
     "/icons.svg",
     "/og-image.png",
