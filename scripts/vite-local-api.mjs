@@ -6,6 +6,67 @@ import queryProposal from '../api/proposals/query.js'
 import getCalendarAvailability from '../api/calendar/availability.js'
 import bookCalendarMeeting from '../api/calendar/book.js'
 import chatApi from '../api/chat.js'
+import {
+  clearSessionCookie,
+  createSessionCookie,
+  hasConfiguration,
+  readSession,
+  verifyPassword,
+} from '../api/_catalogue/security.js'
+
+const catalogueAttempts = new Map()
+const localCatalogueError =
+  'We could not verify this catalogue password. Please contact the DEKODE team.'
+
+const toLocalCookie = (cookie) => String(cookie || '').replace(/;\s*Secure/gi, '')
+
+const fetchLikeRequest = (nodeRequest) => ({
+  headers: {
+    get: (name) => nodeRequest.headers[String(name).toLowerCase()] ?? null,
+  },
+})
+
+async function catalogueAccessLocal(request, response) {
+  if (request.method !== 'POST') {
+    return response.status(405).json({ ok: false, error: 'Method not allowed.' })
+  }
+  const env = process.env
+  if (!hasConfiguration(env)) {
+    return response.status(503).json({ ok: false, error: 'Catalogue access is temporarily unavailable.' })
+  }
+  const ip = String(request.headers['cf-connecting-ip'] || request.socket?.remoteAddress || 'unknown')
+  const now = Date.now()
+  const current = catalogueAttempts.get(ip)
+  const attempt =
+    !current || now > current.resetAt
+      ? { count: 1, resetAt: now + 900000 }
+      : { count: current.count + 1, resetAt: current.resetAt }
+  catalogueAttempts.set(ip, attempt)
+  if (attempt.count > 8) {
+    return response.status(429).json({ ok: false, error: localCatalogueError })
+  }
+  const valid = await verifyPassword(request.body?.password, env)
+  if (!valid) {
+    return response.status(401).json({ ok: false, error: localCatalogueError })
+  }
+  catalogueAttempts.delete(ip)
+  response.setHeader('Set-Cookie', toLocalCookie(await createSessionCookie(env)))
+  console.info('[Catalogue audit] Access granted (local)', { at: new Date().toISOString() })
+  return response.status(200).json({ ok: true })
+}
+
+async function catalogueSessionLocal(request, response) {
+  if (request.method !== 'GET') {
+    return response.status(405).json({ ok: false, error: 'Method not allowed.' })
+  }
+  const authenticated = Boolean(await readSession(fetchLikeRequest(request), process.env))
+  return response.status(200).json({ ok: true, authenticated })
+}
+
+async function catalogueLogoutLocal(request, response) {
+  response.setHeader('Set-Cookie', toLocalCookie(clearSessionCookie()))
+  return response.status(200).json({ ok: true })
+}
 
 const MAX_LOCAL_BODY_BYTES = 64_000
 
@@ -19,6 +80,9 @@ const handlers = new Map([
   ['/api/proposals/logout', logoutProposal],
   ['/api/proposals/query', queryProposal],
   ['/api/chat', chatApi],
+  ['/api/catalogue/access', catalogueAccessLocal],
+  ['/api/catalogue/session', catalogueSessionLocal],
+  ['/api/catalogue/logout', catalogueLogoutLocal],
 ])
 
 const readRequestBody = async (request) => {
