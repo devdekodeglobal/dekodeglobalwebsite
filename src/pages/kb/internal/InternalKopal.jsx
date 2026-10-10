@@ -63,8 +63,6 @@ function Shell({ children }) {
         <div className="sidebar-header">
           <div className="brand-container">
             <a className="brand-logo" href="/team-kb-d7x9q2" target="_top" title="Back to documents hub">DEKODE</a>
-            <a href="/team-kb-d7x9q2" target="_top" title="Back to documents hub"
-              style={{ fontSize: '13px', fontWeight: 700, textDecoration: 'none', border: '1px solid var(--border, #dbe4f5)', borderRadius: '8px', padding: '4px 10px', color: 'inherit', whiteSpace: 'nowrap' }}>Back</a>
           </div>
           <div className="search-wrapper">
             <input type="text" className="sidebar-search" placeholder="Search kopal guide..." value={query} onChange={(e) => setQuery(e.target.value)} />

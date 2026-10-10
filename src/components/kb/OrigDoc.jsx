@@ -51,22 +51,18 @@ ${scriptJs}
     const root = ref.current;
     if (root) root.addEventListener('click', onHomeClick);
 
-    // Inject a "Back" button: in the mobile topbar it sits on the right next
-    // to Menu; in the desktop sidebar it sits next to the DEKODE logo.
+    // Inject a "Back" button in the mobile topbar on the right next to Menu.
     // Done via JS so every static body.html guide gets it without edits.
+    // (No button inside the open sidebar drawer - not needed there.)
     try {
-      const mkHub = (inTopbar) => {
+      const mkHub = () => {
         const a = document.createElement('a');
         a.href = '/team-kb-d7x9q2';
         a.target = '_top';
         a.title = 'Back to documents hub';
         a.textContent = 'Back';
-        a.className = 'kb-hub-back kb-hub-back-inline' + (inTopbar ? ' mobile-menu-btn' : '');
-        if (inTopbar) {
-          a.style.cssText = 'text-decoration:none;';
-        } else {
-          a.style.cssText = 'font-size:13px;font-weight:700;text-decoration:none;border:1px solid rgba(255,255,255,.35);border-radius:8px;padding:4px 10px;color:#fff;white-space:nowrap;margin-left:8px;';
-        }
+        a.className = 'kb-hub-back kb-hub-back-inline mobile-menu-btn';
+        a.style.cssText = 'text-decoration:none;';
         if (onNavigateHome) a.addEventListener('click', (e) => { e.preventDefault(); onNavigateHome(); });
         return a;
       };
@@ -74,13 +70,7 @@ ${scriptJs}
         // Mobile topbar: right side, before the Menu button
         const topbar = root.querySelector('.mobile-topbar');
         const menuBtn = topbar && topbar.querySelector('.mobile-menu-btn');
-        if (menuBtn) menuBtn.before(mkHub(true));
-        // Desktop sidebar: next to the DEKODE logo
-        const sideLogo = root.querySelector('.sidebar .brand-logo, .sidebar-header .brand-logo');
-        if (sideLogo && !(sideLogo.nextElementSibling && sideLogo.nextElementSibling.classList &&
-            sideLogo.nextElementSibling.classList.contains('kb-hub-back-inline'))) {
-          sideLogo.after(mkHub(false));
-        }
+        if (menuBtn) menuBtn.before(mkHub());
       }
     } catch {}
 

@@ -107,13 +107,6 @@
   box-sizing: border-box !important;
 }
 
-/* Sidebar Back link next to logo: keep it compact */
-.kb-orig .brand-container a:not(.brand-logo) {
-  font-size: 0.8rem !important;
-  line-height: 1.2 !important;
-  padding: 5px 10px !important;
-  box-sizing: border-box !important;
-}
 /* Inline menu buttons must NOT inherit the floating pill positioning */
 .kb-hub-back-inline {
   position: static !important;
