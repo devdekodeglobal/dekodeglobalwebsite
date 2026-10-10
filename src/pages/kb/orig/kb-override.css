@@ -96,6 +96,54 @@
 .kb-orig .hero-banner { box-shadow: none !important; }
 .kb-orig .hero-banner::before { display: none !important; }
 
+/* Back button: <a> must match <button>.mobile-menu-btn sizing exactly */
+.kb-orig a.mobile-menu-btn {
+  font-family: inherit !important;
+  font-size: 1rem !important;
+  line-height: 1.2 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+}
+
+/* Sidebar Back link next to logo: keep it compact */
+.kb-orig .brand-container a:not(.brand-logo) {
+  font-size: 0.8rem !important;
+  line-height: 1.2 !important;
+  padding: 5px 10px !important;
+  box-sizing: border-box !important;
+}
+/* Inline menu buttons must NOT inherit the floating pill positioning */
+.kb-hub-back-inline {
+  position: static !important;
+  bottom: auto !important;
+  left: auto !important;
+  z-index: auto !important;
+  box-shadow: none !important;
+}
+.kb-hub-back-inline:not(.mobile-menu-btn) {
+  background: transparent !important;
+}
+
+/* Shared floating "back to hub" button (OrigDoc guides: krafc, OptiFlow, standards) */
+.kb-hub-back {
+  position: fixed;
+  bottom: 22px;
+  left: 22px;
+  z-index: 9999;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  color: #ffffff !important;
+  background: #0a3d91;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  padding: 9px 16px;
+  box-shadow: 0 4px 16px rgba(10, 61, 145, 0.4);
+}
+.kb-hub-back:hover { background: #0b2f6e; color: #FFB611 !important; }
+
 /* OptiFlow hero: same scale as krafc/kopal docs */
 .kb-orig-internal-optiflow .hero-title,
 .kb-orig-client-optiflow .hero-title { font-size: 2.5rem !important; }

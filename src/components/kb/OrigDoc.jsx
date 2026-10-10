@@ -42,7 +42,7 @@ ${scriptJs}
     document.body.appendChild(scriptEl);
 
     const onHomeClick = (e) => {
-      const a = e.target.closest && e.target.closest('a.brand-logo');
+      const a = e.target.closest && e.target.closest('a.brand-logo, a.kb-hub-back');
       if (a && onNavigateHome) {
         e.preventDefault();
         onNavigateHome();
@@ -50,6 +50,39 @@ ${scriptJs}
     };
     const root = ref.current;
     if (root) root.addEventListener('click', onHomeClick);
+
+    // Inject a "Back" button: in the mobile topbar it sits on the right next
+    // to Menu; in the desktop sidebar it sits next to the DEKODE logo.
+    // Done via JS so every static body.html guide gets it without edits.
+    try {
+      const mkHub = (inTopbar) => {
+        const a = document.createElement('a');
+        a.href = '/team-kb-d7x9q2';
+        a.target = '_top';
+        a.title = 'Back to documents hub';
+        a.textContent = 'Back';
+        a.className = 'kb-hub-back kb-hub-back-inline' + (inTopbar ? ' mobile-menu-btn' : '');
+        if (inTopbar) {
+          a.style.cssText = 'text-decoration:none;';
+        } else {
+          a.style.cssText = 'font-size:13px;font-weight:700;text-decoration:none;border:1px solid rgba(255,255,255,.35);border-radius:8px;padding:4px 10px;color:#fff;white-space:nowrap;margin-left:8px;';
+        }
+        if (onNavigateHome) a.addEventListener('click', (e) => { e.preventDefault(); onNavigateHome(); });
+        return a;
+      };
+      if (root && !root.querySelector('.kb-hub-back-inline')) {
+        // Mobile topbar: right side, before the Menu button
+        const topbar = root.querySelector('.mobile-topbar');
+        const menuBtn = topbar && topbar.querySelector('.mobile-menu-btn');
+        if (menuBtn) menuBtn.before(mkHub(true));
+        // Desktop sidebar: next to the DEKODE logo
+        const sideLogo = root.querySelector('.sidebar .brand-logo, .sidebar-header .brand-logo');
+        if (sideLogo && !(sideLogo.nextElementSibling && sideLogo.nextElementSibling.classList &&
+            sideLogo.nextElementSibling.classList.contains('kb-hub-back-inline'))) {
+          sideLogo.after(mkHub(false));
+        }
+      }
+    } catch {}
 
     const observer = new MutationObserver(() => {
       const next = document.documentElement.getAttribute('data-theme');
@@ -68,9 +101,28 @@ ${scriptJs}
     };
   }, [docId]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const goHome = (e) => {
+    if (onNavigateHome) {
+      e.preventDefault();
+      onNavigateHome();
+    }
+    // else: let the plain href="/team-kb-d7x9q2" navigate
+  };
+
   return (
-    <div ref={ref} className={`kb-orig kb-orig-${docId}`} data-theme="light"
-      style={{ background: '#f4f7fd' }}
-      dangerouslySetInnerHTML={{ __html: bodyHtml }} />
+    <div style={{ position: 'relative' }}>
+      <a
+        href="/team-kb-d7x9q2"
+        target="_top"
+        onClick={goHome}
+        title="Back to documents hub"
+        className="kb-hub-back"
+      >
+        Back
+      </a>
+      <div ref={ref} className={`kb-orig kb-orig-${docId}`} data-theme="light"
+        style={{ background: '#f4f7fd' }}
+        dangerouslySetInnerHTML={{ __html: bodyHtml }} />
+    </div>
   );
 }
